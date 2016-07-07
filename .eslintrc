@@ -1,0 +1,39 @@
+{
+  "parser": "babel-eslint",
+  "extends": "airbnb",
+  "env": {
+    "mocha": true
+  },
+  "globals": {
+    "__root": 0,
+    "__config": 0,
+    "__log": 0
+  },
+  "rules": {
+    "indent": [2, 2, {"SwitchCase": 1}],
+    "no-console": 0,
+    "comma-dangle": [2, "never"],
+    "no-use-before-define": 0,
+    "consistent-return": 0,
+    "import/no-unresolved": 0,
+    "global-require": 0,
+    "padded-blocks": 0,
+    "func-names": 0,
+    "no-shadow": 0,
+    "react/jsx-curly-spacing": [2, "never"],
+    "react/jsx-space-before-closing": [2, "never"],
+    "react/prefer-stateless-function": 0,
+    "no-param-reassign": 0,
+    "no-restricted-syntax": 0,
+    "no-underscore-dangle": 0,
+    "no-confusing-arrow": 0,
+    "key-spacing": 0,
+    "no-nested-ternary": 0,
+    "no-empty": 0,
+    "react/prop-types": 0,
+    "default-case": 0,
+    "jsx-quotes": [1, "prefer-single"],
+    "react/sort-comp": 0,
+    "react/jsx-boolean-value": [2, "never"]
+  }
+}
