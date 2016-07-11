@@ -11,8 +11,8 @@ Starter boilerplate for an isomorphic single-page React/Express application.
 * Websockets with Socket.io
 * Webpack, Webpack Dev Server
 * Auth layer, JSON Web Tokens & OAuth2
-* Route-less API server with Isomorphine, Express
-* Server-Side Rendering
+* Route-less API with Isomorphine
+* Express server, server-side rendering
 * Mongoose models
 * Basic User model with auth
 * Cron-like Periodic Tasks
