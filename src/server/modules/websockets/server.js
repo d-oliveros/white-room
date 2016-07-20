@@ -31,8 +31,6 @@ export default {
   attachTo(server) {
     debug('Starting the socketIO server.');
 
-    console.log(server);
-
     const io = socketio(server, { serveClient: false });
     extend(this, io);
 

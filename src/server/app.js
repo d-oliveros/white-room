@@ -1,6 +1,7 @@
 import path from 'path';
 import express from 'express';
 import less from 'less-middleware';
+import http from 'http';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import promisify from 'es6-promisify';
@@ -57,13 +58,13 @@ app.get('*', serveClient);
 app.use(errorHandler);
 
 // Bootsraps the server's services
-app.bootstrap = async (port) => {
-  const server = await (promisify(app.listen, app)(port));
+app.bootstrap = (port, callback) => {
+  const server = http.createServer(app);
   uploaderLib.ensurePaths();
   socketServer.attachTo(server);
   search.bootstrap();
   startCron();
-  return server;
+  server.listen(port, callback);
 };
 
 export default app;

@@ -20,9 +20,10 @@ if (env.ENABLE_API === 'true') {
   const app = require('./src/server/app').default;
   const appPort = __config.server.port;
 
-  app.bootstrap(appPort)
-    .then(() => console.log(`App listening on port: ${appPort}`))
-    .catch((err) => console.error(err));
+  app.bootstrap(appPort, (err) => {
+    if (err) return console.error(err);
+    console.log(`App listening on port: ${appPort}`);
+  });
 }
 
 /**
