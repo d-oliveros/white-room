@@ -12,6 +12,7 @@ const routes = {
     { path: '/login',          component: pages.Login },
     { path: '/signup',         component: pages.Signup },
     { path: '/about',          component: pages.About },
+    { path: '/password-reset', component: pages.PasswordReset },
     { path: '/user/:userPath', component: pages.User }
   ]
 };

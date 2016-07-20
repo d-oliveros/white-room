@@ -1,5 +1,6 @@
-import serializeError from 'serialize-error';
+import errio from 'errio';
 
+const isRenderer = __config.interfaces.RENDERER;
 const isProduction = __config.env === 'production';
 
 /**
@@ -8,33 +9,45 @@ const isProduction = __config.env === 'production';
 export default function errorHandler(err, req, res, next) { // eslint-disable-line no-unused-vars
   const status = err.status || err.statusCode || 500;
 
-  // Internal Errors
-  if (status >= 500) {
-    __log.error(err);
-  }
+  const shouldLogError = status >= 500 && (!err.isRenderer || !isRenderer);
 
-  // Redirection
-  if (status === 301 || status === 302) {
-    return res.status(status).redirect(err.redirection || '/');
+  // Internal Errors
+  if (shouldLogError) {
+    __log.error(err);
   }
 
   if (isProduction) {
     return res.sendStatus(status);
   }
 
-  const serialized = serializeError(err);
+  switch (status) {
+    case 301:
+    case 302:
+      res.status(status).redirect(err.redirection || '/');
+      break;
 
-  const errData = !req.isInitial ? serialized : `
-    <html>
-      <head>
-        <title>${status} error</title>
-      </head>
-      <body>
-        <pre>${err.stack.replace('\n', '<br>')}</pre>
-        <h4>Stringified error:</h4>
-        <pre>${JSON.stringify(serialized, null, 2)}</pre>
-      </body>
-    </html>`;
+    case 404:
+      res.sendStatus(status);
+      break;
 
-  res.status(status).send(errData);
+    default: {
+      const serialized = errio.stringify(err);
+
+      // returns a JSON object if request is AJAX,
+      // returns a mini HTML page with error info if requesting the client
+      const errData = !req.isInitial ? serialized : `
+        <html>
+          <head>
+            <title>${status} error</title>
+          </head>
+          <body>
+            <pre>${err.stack.replace('\n', '<br>')}</pre>
+            <h4>Stringified error:</h4>
+            <pre>${JSON.stringify(err, null, 2)}</pre>
+          </body>
+        </html>`;
+
+      res.status(status).send(errData);
+    }
+  }
 }

@@ -1,9 +1,10 @@
+var env = process.env;
 
 module.exports = {
-  pygmy: process.env.PYGMY_HOST || null,
-  intercom: process.env.INTERCOM_KEY || null,
+  pygmy: env.PYGMY_HOST || null,
+  intercom: env.INTERCOM_KEY || null,
   slack: {
-    endpoint: process.env.SLACK_ENDPOINT || null,
-    channel: process.env.SLACK_CHANNEL || '#the-castle'
+    endpoint: env.SLACK_ENDPOINT || null,
+    channel: env.SLACK_CHANNEL || '#the-castle'
   }
 };

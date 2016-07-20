@@ -1,7 +1,7 @@
 import assert from 'http-assert';
 import { pick } from 'lodash';
 
-const debug = __log.debug('boilerplate:User:emailSignup');
+const debug = __log.debug('whiteroom:User:emailSignup');
 
 const whitelist = [
   'email',

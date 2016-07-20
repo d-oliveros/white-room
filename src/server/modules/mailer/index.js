@@ -2,7 +2,7 @@ import { map, extend } from 'lodash';
 import tasks from './tasks';
 import { sendMail, sanitizeParams, subscribeToList } from './util';
 
-const debug = __log.debug('boilerplate:mailer');
+const debug = __log.debug('whiteroom:mailer');
 
 export default async function mailer(taskName, params) {
   const { EmailLog } = require('../../models');

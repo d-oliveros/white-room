@@ -14,7 +14,7 @@ const oauth = new OAuth.OAuth(
   'HMAC-SHA1'
 );
 
-const debug = __log.debug('boilerplate:modules:findFriends');
+const debug = __log.debug('whiteroom:modules:findFriends');
 const endpoint = 'https://api.twitter.com/1.1/friends/ids.json';
 
 export default class Twitter {

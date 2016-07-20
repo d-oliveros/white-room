@@ -2,7 +2,7 @@ import request from 'superagent';
 import { parseJSON } from 'cd-common';
 
 const pygmyEndpoint = __config.integrations.pygmy;
-const debug = __log.debug('boilerplate:modules:pygmy');
+const debug = __log.debug('whiteroom:modules:pygmy');
 
 export default {
   async shorten(link) {

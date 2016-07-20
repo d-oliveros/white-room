@@ -64,7 +64,7 @@ This will let you configure your databases, and start app instances with a singl
 
 #### Starts the development server
 ```
-npm run dev
+npm start
 // Now visit http://localhost:3000
 ```
 
@@ -82,5 +82,35 @@ npm run script create-admin
 
 # Scripts are located in `[project root]/util`
 ```
+
+## Docs
+
+#### Server-side Rendering
+
+Server-side rendering can get quite CPU-intensive sometimes, affecting the performance of the API server. That's why you should separate the main API server from the Renderer server.
+
+To separate the renderer server from the main API server, start two instances of your app, and modify your `.env` files accordingly.
+
+To start a Renderer server instance, change your .env to:
+```
+ENABLE_API = "false"
+ENABLE_RENDERER = "true"
+```
+
+To start an API server instance, change your .env to:
+```
+ENABLE_API = "true"
+ENABLE_RENDERER = "false"
+```
+
+Remember to change these lines as well
+
+```
+RENDERER_PORT = "3001" # Port to listen in
+RENDERER_ENDPOINT = "http://localhost:3001" # Renderer microservice endpoint
+```
+
+Please see `.env.default` in the project's root for more info.
+
 
 Cheers.

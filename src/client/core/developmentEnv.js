@@ -20,18 +20,4 @@ export default function developmentEnvironment(state) {
       return state.get();
     }
   });
-
-  // Sets an experiment value for development purposes
-  const request = require('superagent');
-
-  global.setExperiment = (key, val) => {
-    request
-      .post('/setexperiment')
-      .send({ key, val })
-      .set('Accept', 'application/json')
-      .end((err) => {
-        if (err) log.error(err);
-        log.info(`Changed ${key} to ${val}`);
-      });
-  };
 }

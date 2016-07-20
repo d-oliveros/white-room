@@ -1,7 +1,6 @@
 import s3 from 's3';
-import inspect from 'util-inspect';
 
-const debug = __log.debug('boilerplate:modules:s3');
+const debug = __log.debug('whiteroom:modules:s3');
 const { env } = process;
 
 const S3Mock = {
@@ -25,7 +24,7 @@ class S3 {
    * @return {Promise}
    */
   upload(params) {
-    debug(`Uploading ${inspect(params)}`);
+    debug('Uploading', params);
 
     return new Promise((resolve, reject) => {
       const uploader = this.client.uploadFile(params);

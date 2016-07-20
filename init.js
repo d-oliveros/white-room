@@ -11,22 +11,24 @@ require('./util/loadenv');
 global.__config = require('./config');
 global.__log = require('./src/server/lib/logger').default;
 
+var env = process.env;
+
 /**
  * Starts the API server
  */
-if (__config.interfaces.API) {
+if (env.ENABLE_API === 'true') {
   const app = require('./src/server/app').default;
-  const apiPort = __config.server.port;
+  const appPort = __config.server.port;
 
-  app.bootstrap(apiPort, () => {
-    console.log(`App listening on port: ${apiPort}`);
-  });
+  app.bootstrap(appPort)
+    .then(() => console.log(`App listening on port: ${appPort}`))
+    .catch((err) => console.error(err));
 }
 
 /**
  * Starts the Renderer microservice
  */
-if (__config.interfaces.RENDERER) {
+if (env.ENABLE_RENDERER === 'true') {
   const renderer = require('./src/server/modules/renderer').default;
   const rendererPort = process.env.RENDERER_PORT;
 

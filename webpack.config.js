@@ -3,9 +3,9 @@ require('./util/loadenv');
 const webpack = require('webpack');
 const path = require('path');
 const fs = require('fs');
-const env = require('./config/env');
 const auth = require('./config/auth');
 
+const env = process.env;
 const nodeModulesPath = path.resolve(__dirname, 'node_modules');
 const buildPath = path.resolve(__dirname, 'build');
 const srcPath = path.resolve(__dirname, 'src');
@@ -17,7 +17,7 @@ module.exports = {
     'babel-polyfill',
     'react-hot-loader/patch',
     'webpack-dev-server/client?http://localhost:8001',
-    'webpack/hot/dev-server',
+    'webpack/hot/only-dev-server',
     path.resolve(__dirname, 'src', 'client', 'main.js')
   ],
   output: {
@@ -70,16 +70,16 @@ module.exports = {
     new webpack.NoErrorsPlugin(),
     new webpack.DefinePlugin({
       'process.env': {
-        NODE_ENV:                `"${env}"`,
-        APP_HOST:                `"${process.env.APP_HOST}"`,
-        IMAGE_HOST:              `"${process.env.IMAGE_HOST}"`,
+        NODE_ENV:                `"${env.NODE_ENV}"`,
+        APP_HOST:                `"${env.APP_HOST}"`,
+        IMAGE_HOST:              `"${env.IMAGE_HOST}"`,
         OAUTH_GOOGLE_ID:         `"${auth.google.client_id}"`,
         OAUTH_GOOGLE_SCOPE:      `"${auth.google.scope}"`,
         OAUTH_GOOGLE_REDIRECT:   `"${auth.google.redirect_uri}"`,
         OAUTH_FACEBOOK_ID:       `"${auth.facebook.client_id}"`,
         OAUTH_FACEBOOK_REDIRECT: `"${auth.facebook.redirect_uri}"`,
         OAUTH_FACEBOOK_SCOPE:    `"${auth.facebook.scope}"`,
-        OAUTH_LINKEDIN_ID:       `"${process.env.OAUTH_LINKEDIN_ID}"`,
+        OAUTH_LINKEDIN_ID:       `"${env.OAUTH_LINKEDIN_ID}"`,
         OAUTH_LINKEDIN_REDIRECT: `"${auth.linkedin.redirect_uri}"`
       }
     })

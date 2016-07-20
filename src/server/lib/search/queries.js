@@ -8,7 +8,7 @@ import * as mappings from './mappings';
 
 const { index } = __config.search;
 const types = Object.keys(mappings);
-const debug = __log.debug('boilerplate:search:queries');
+const debug = __log.debug('whiteroom:search:queries');
 
 const defaultLimits = {
   user: 4,

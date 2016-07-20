@@ -6,7 +6,7 @@ import settings from './settings';
 import client from './client';
 
 const { index } = __config.search;
-const debug = __log.debug('boilerplate:search');
+const debug = __log.debug('whiteroom:search');
 
 /**
  * Ensures the search cluster's health, settings and indexes.

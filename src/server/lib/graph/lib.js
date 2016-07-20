@@ -5,7 +5,7 @@ import constants from './constants';
 import neo4j from '../../modules/db/neo4j';
 
 const allowedTypes = Object.keys(constants);
-const debug = __log.debug(`boilerplate:graph:lib`);
+const debug = __log.debug(`whiteroom:graph:lib`);
 
 /**
  * Serializes an object or array of fields for cypher queries.

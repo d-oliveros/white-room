@@ -2,7 +2,7 @@ import request from 'superagent';
 import { each } from 'lodash';
 import { stringify } from 'querystring';
 
-const debug = __log.debug('boilerplate:modules:findFriends');
+const debug = __log.debug('whiteroom:modules:findFriends');
 const endpoint = 'https://graph.facebook.com/v2.5/me/friends?fields=id&';
 
 export default class Facebook {
@@ -28,7 +28,7 @@ export default class Facebook {
     each(data, (user) => this.friends.push(`${user.id}`));
 
     if (paging && paging.next) {
-      debug(`getting next page`);
+      debug('getting next page');
       return this.http(paging.next);
     }
 

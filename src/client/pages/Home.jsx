@@ -25,7 +25,7 @@ export default class HomePage extends React.Component {
     return (
       <div className='column'>
         <div className='row'>
-          <h1>White Room Boilerplate</h1>
+          <h1 className='center'>White Room</h1>
 
           <div className='medium-4 columns'>
             <h3>Heading</h3>
@@ -38,6 +38,13 @@ export default class HomePage extends React.Component {
           </div>
 
           <div className='medium-4 columns'>
+            <h3>Heading</h3>
+            <p>Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris placerat eleifend leo.</p>
+          </div>
+
+        </div>
+        <div className='row'>
+          <div className='columns'>
             <h3>My Account</h3>
 
             {currentUser.roles.anonymous

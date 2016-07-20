@@ -1,9 +1,9 @@
 import url from 'url';
 import inspect from 'util-inspect';
 import { removeTrailingSlash, isURL } from 'cd-common';
-import { downloadOAuthProfileImage } from '../../../lib/filesystem/http-util';
+import { downloadOAuthProfileImage } from '../../../modules/uploader/http-util';
 
-const debug = __log.debug('boilerplate:User:oAuthSignup');
+const debug = __log.debug('whiteroom:User:oAuthSignup');
 
 export default async function oAuthSignup(profile) {
   const User = this;

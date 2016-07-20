@@ -5,7 +5,7 @@ import { User } from '../../models';
 import { getRequestIP } from '../../lib/geocoder';
 import { generateToken } from '../../modules/auth/token';
 
-const debug = __log.debug('boilerplate:Auth');
+const debug = __log.debug('whiteroom:Auth');
 
 export default async function signup(params) {
   assert(isObject(params), 400);

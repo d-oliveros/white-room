@@ -2,7 +2,7 @@ import { sample, isArray } from 'lodash';
 import inspect from 'util-inspect';
 import assert from 'http-assert';
 
-const debug = __log.debug('boilerplate:modules:experiments');
+const debug = __log.debug('whiteroom:modules:experiments');
 
 /**
  * Gets a set of experiments,

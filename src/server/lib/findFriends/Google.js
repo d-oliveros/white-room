@@ -1,7 +1,7 @@
 import request from 'superagent';
 import { each } from 'lodash';
 
-const debug = __log.debug('boilerplate:modules:findFriends');
+const debug = __log.debug('whiteroom:modules:findFriends');
 const endpoint = 'https://www.googleapis.com/plus/v1/people/me/people/visible';
 
 export default class Google {

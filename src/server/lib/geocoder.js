@@ -1,7 +1,7 @@
 import geoip from 'geoip-lite';
 import inspect from 'util-inspect';
 
-const debug = __log.debug('boilerplate:modules:geolocation');
+const debug = __log.debug('whiteroom:modules:geolocation');
 
 export function getIPLocation(ip) {
   if (!ip) return null;

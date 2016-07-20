@@ -6,7 +6,7 @@ import log from '../lib/log';
 import createTree from '../lib/tree';
 import initialState from '../initialState';
 
-const { NODE_ENV, IMMUTABLE_STATE } = process.env;
+const { NODE_ENV } = process.env;
 const debug = log.debug('state');
 const loaded = {};
 
@@ -43,8 +43,8 @@ export default function getStateFromBrowser() {
     asynchronous: true,
     autocommit: false,
 
-    // True when not in development environment and not specifically disabled
-    immutable: NODE_ENV !== 'production' && IMMUTABLE_STATE !== 'false'
+    // disabled in production as it has performance penalties
+    immutable: NODE_ENV !== 'production'
   };
 
   const tree = createTree(state, options);

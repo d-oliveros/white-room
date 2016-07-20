@@ -9,7 +9,7 @@ import userSocketsStore from './userSocketsStore';
 import handlers from './events';
 import eventNames from './constants';
 
-const debug = __log.debug('boilerplate:modules:sockets');
+const debug = __log.debug('whiteroom:modules:sockets');
 
 export default {
 
@@ -30,6 +30,8 @@ export default {
    */
   attachTo(server) {
     debug('Starting the socketIO server.');
+
+    console.log(server);
 
     const io = socketio(server, { serveClient: false });
     extend(this, io);

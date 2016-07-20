@@ -20,7 +20,7 @@ const matchAsync = promisify(match, { multiArgs: true });
 
 const useBuild = __config.server.useBuild;
 const initialStateKeys = Object.keys(clientInitialState());
-const debug = __log.debug('boilerplate:renderer');
+const debug = __log.debug('whiteroom:renderer');
 
 const defaultMetas = {
   pageTitle: 'White Room',

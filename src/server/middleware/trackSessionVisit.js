@@ -1,5 +1,5 @@
 
-const debug = __log.debug('boilerplate:middleware:trackSessionVisit');
+const debug = __log.debug('whiteroom:middleware:trackSessionVisit');
 
 /**
  * Checks if the user has not visited the site for at least 30 minutes

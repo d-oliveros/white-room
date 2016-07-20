@@ -1,4 +1,4 @@
-const debug = __log.debug('boilerplate:middleware:benchmark');
+const debug = __log.debug('whiteroom:middleware:benchmark');
 
 /**
  * Provides a function to measure the time spent on rendering the initial HTML.

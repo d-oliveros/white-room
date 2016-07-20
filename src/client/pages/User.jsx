@@ -17,7 +17,7 @@ export default class UserPage extends React.Component {
       section: 'User',
       bodyClasses: 'page-home',
       canonical: process.env.APP_HOST,
-      keywords: `${currentUser.name}, boilerplate`,
+      keywords: `${currentUser.name}, whiteroom`,
       description: `This is ${currentUser.name}'s page`
     };
   }

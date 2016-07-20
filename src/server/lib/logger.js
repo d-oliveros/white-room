@@ -1,9 +1,8 @@
-require('winston-loggly');
-const moment = require('moment');
-const debug = require('debug');
-const loggly = require('loggly');
-const SentryTransport = require('winston-sentry');
-const winston = require('winston');
+import 'winston-loggly';
+import moment from 'moment';
+import debug from 'debug';
+import SentryTransport from 'winston-sentry';
+import winston from 'winston';
 
 const { env } = process;
 const { Logger } = winston;
@@ -50,9 +49,10 @@ if (env.LOGGLY_KEY && env.LOGGLY_SUBDOMAIN) {
     stripColors: true
   }));
 }
+
 if (process.env.NODE_ENV === 'test') {
+  // when in test environment, only log errors in console
   transports = [
-    // Log errors in console
     new Console({
       level: 'error',
       colorize: true,
@@ -66,27 +66,5 @@ if (process.env.NODE_ENV === 'test') {
 const logger = new Logger({ transports });
 
 logger.debug = debug;
-
-/**
- * Interface to log client-side errors
- */
-logger.clientError = (err, tags = []) => {
-  logger.warn(`Client-side error`);
-  logger.error(err);
-  logger.warn('Client loggly key or subdomain not set up. Not logging client-side error', tags);
-};
-
-if (env.LOGGLY_KEY && env.LOGGLY_SUBDOMAIN) {
-  const client = loggly.createClient({
-    token: env.LOGGLY_KEY,
-    subdomain: env.LOGGLY_SUBDOMAIN,
-    tags: ['browser', logglyEnv]
-  });
-
-  logger.clientError = (err, tags = []) => {
-    const args = tags.length ? [err, tags] : [err];
-    client.log.apply(client, args);
-  };
-}
 
 export default logger;

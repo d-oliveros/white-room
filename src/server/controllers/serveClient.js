@@ -1,5 +1,6 @@
 import request from 'superagent';
 import createError from 'http-errors';
+import errio from 'errio';
 import clientInitialState from '../../client/initialState';
 
 const rendererServerEndpoint = process.env.RENDERER_ENDPOINT;
@@ -25,6 +26,10 @@ export default function serveClient(req, res, next) {
       }
 
       if (err) {
+        if (typeof err === 'string') {
+          err = errio.parse(err);
+        }
+        err.isRenderer = true;
         return next(err);
       }
 

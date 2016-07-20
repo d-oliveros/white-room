@@ -5,27 +5,22 @@ import { map, isString } from 'lodash';
 import { NavBar, Footer } from './components';
 import branch from './core/branch';
 
+/**
+ * Main application container
+ */
 @branch({
   bodyClasses: ['pageMetadata', 'bodyClasses'],
   currentUser: ['currentUser'],
   experiments: ['experiments']
 })
 export default class App extends React.Component {
-
-  /**
-   * Generates the CSS classes to be applied to the application's root HTML tag
-   * @return {String} CSS classes string
-   */
-  getBodyClasses() {
-    const { currentUser, bodyClasses, experiments } = this.props;
-    const experimentClasses = getExperimentClasses(experiments);
-    const stateClasses = { 'logged-out' : currentUser.roles.anonymous };
-    return classes(bodyClasses, experimentClasses, stateClasses);
-  }
-
   render() {
+    const { currentUser, bodyClasses, experiments } = this.props;
+    const stateClasses = { 'logged-out' : currentUser.roles.anonymous };
+    const experimentClasses = getExperimentClasses(experiments);
+
     return (
-      <div className={this.getBodyClasses()}>
+      <div className={classes(bodyClasses, experimentClasses, stateClasses)}>
         <NavBar/>
         <div id='main'>
           {this.props.children}

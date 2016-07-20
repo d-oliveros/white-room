@@ -1,7 +1,7 @@
 import { getRequestLocation } from '../lib/geocoder';
 import { User } from '../models';
 
-const debug = __log.debug('boilerplate:middleware:populateUser');
+const debug = __log.debug('whiteroom:middleware:populateUser');
 
 export default async function populateUser(req, res, next) {
   if (!req.user) return next();

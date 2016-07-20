@@ -1,10 +1,10 @@
 var keygrip = require('keygrip');
-var env = require('./env');
+var env = process.env;
 
 module.exports = {
-  keys:        keygrip(process.env.SECRET_KEYS.split(',')),
+  keys:        keygrip(env.SECRET_KEYS.split(',')),
   name:        'boilerplate::session',
-  secureProxy: env === 'production',
+  secureProxy: env.NODE_ENV === 'production',
   secure:      false,
   overwrite:   true,
   signed:      true,

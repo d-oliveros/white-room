@@ -3,7 +3,7 @@ import { chain } from 'lodash';
 import { createRelationship } from './lib';
 import constants from './constants';
 
-const debug = __log.debug('boilerplate:graph:import');
+const debug = __log.debug('whiteroom:graph:import');
 
 export const queries = {
   tag: {},

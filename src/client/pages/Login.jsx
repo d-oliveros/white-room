@@ -1,4 +1,5 @@
 import React, { PropTypes } from 'react';
+import { Link } from 'react-router';
 import branch from '../core/branch';
 import { Auth as AuthActions } from '../actions';
 
@@ -73,8 +74,12 @@ export default class LoginPage extends React.Component {
                 value={password}
                 placeholder='Password'
               />
+              <p>
+                <Link to='/password-reset'>Forgot your password?</Link>
+              </p>
               <button type='submit' className='button'>Log in</button>
             </form>
+
 
             <div>
               <h3>OAuth Login</h3>
