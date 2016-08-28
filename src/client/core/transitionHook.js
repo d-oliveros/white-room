@@ -81,5 +81,5 @@ export default function createTransitionHook(state) {
  * @param {String}  title  The new title to set.
  */
 function setPageTitle(title) {
-  document.querySelector('head title').innerHTML = title;
+  global.document.querySelector('head title').innerHTML = title;
 }

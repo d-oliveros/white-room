@@ -1,33 +1,30 @@
 import React, { PropTypes } from 'react';
-import { Link } from 'react-router';
 import branch from '../core/branch';
 import { Auth as AuthActions } from '../actions';
 
 @branch({
   currentUser: ['currentUser']
 })
-
-export default class LoginPage extends React.Component {
-  static getPageMetadata() {
-    return {
-      pageTitle: 'White Room - Login',
-      section: 'Login',
-      bodyClasses: ['some-body-class', 'another-body-class'],
-      description: 'Login through this page.'
-    };
-  }
-
+export default class SignupPage extends React.Component {
   static contextTypes = {
     router: PropTypes.object.isRequired
   };
+
+  static getPageMetadata() {
+    return {
+      pageTitle: 'White Room - Signup',
+      section: 'Signup',
+      description: 'Signup through this page.'
+    };
+  }
 
   constructor(props, context) {
     super(props, context);
 
     this.state = {
+      name: '',
       email: '',
-      password: '',
-      notFound: false
+      password: ''
     };
 
     if (!props.currentUser.roles.anonymous) {
@@ -39,23 +36,34 @@ export default class LoginPage extends React.Component {
     this.setState({ [e.target.name]: e.target.value });
   }
 
-  login(e) {
+  signup(e) {
     e.preventDefault();
-    const { email, password } = this.state;
-    this.props.dispatch(AuthActions.login, { email, password });
+    const { name, email, password } = this.state;
+    this.props.dispatch(AuthActions.signup, { name, email, password });
   }
 
   render() {
-    const { email, password } = this.state;
+    const { name, email, password } = this.state;
 
     return (
       <div className='column'>
         <div className='row'>
           <div className='medium-8 medium-offset-2 columns'>
 
-            <h4>Log In</h4>
+            <h4>Signup</h4>
 
-            <form onSubmit={::this.login}>
+            <form onSubmit={::this.signup}>
+
+              <label htmlFor='name'>Name</label>
+              <input
+                type='text'
+                name='name'
+                id='name'
+                onChange={::this.handleChange}
+                value={name}
+                placeholder='Name'
+              />
+
               <label htmlFor='email'>Email</label>
               <input
                 type='text'
@@ -65,6 +73,7 @@ export default class LoginPage extends React.Component {
                 value={email}
                 placeholder='Email'
               />
+
               <label htmlFor='password'>Password</label>
               <input
                 type='password'
@@ -74,18 +83,14 @@ export default class LoginPage extends React.Component {
                 value={password}
                 placeholder='Password'
               />
-              <p>
-                <Link to='/password-reset'>Forgot your password?</Link>
-              </p>
-              <button type='submit' className='button'>Log in</button>
+
+              <button type='submit' className='button'>Signup</button>
             </form>
 
-
             <div>
-              <h3>OAuth Login</h3>
+              <h3>OAuth Signup</h3>
               <span>todo</span>
             </div>
-
           </div>
         </div>
       </div>

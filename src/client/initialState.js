@@ -1,21 +1,18 @@
 import anonymousUser from './constants/anonymousUser';
 
-export default function initialStateFactory() {
-  return {
+export default () => ({
+  // session data
+  currentUser: { ...anonymousUser },
+  sessionId: null,
 
-    // session data
-    currentUser: Object.assign({}, anonymousUser),
-    sessionId: null,
+  // loaded data
+  users: [],
 
-    // loaded data
-    users: [],
+  // context flags
+  isNewSession: false,
+  transitioning: null,
 
-    // context flags
-    isNewSession: false,
-    transitioning: null,
-
-    // other stores
-    experiments: {},
-    pageMetadata: {}
-  };
-}
+  // other stores
+  experiments: {},
+  pageMetadata: {}
+});

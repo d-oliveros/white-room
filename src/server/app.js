@@ -1,10 +1,10 @@
 import path from 'path';
+import http from 'http';
 import express from 'express';
 import less from 'less-middleware';
 import http from 'http';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
-import promisify from 'es6-promisify';
 import isomorphineAPI from './api';
 import serveClient from './controllers/serveClient';
 import middleware from './middleware';
@@ -65,6 +65,7 @@ app.bootstrap = (port, callback) => {
   search.bootstrap();
   startCron();
   server.listen(port, callback);
+  return server;
 };
 
 export default app;

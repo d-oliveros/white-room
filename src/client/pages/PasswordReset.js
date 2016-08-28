@@ -12,6 +12,7 @@ export default class PasswordReset extends React.Component {
     return (
       <div>
         <p>Password reset</p>
+        <p>todo..</p>
       </div>
     );
   }

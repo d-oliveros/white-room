@@ -27,13 +27,13 @@ export default function getStateFromBrowser() {
 
   // Get the state from the `window` object. The state is passed from the server
   // to the client through a script tag added at the bottom of the <head> section
-  if (window.__INITIAL_STATE__) {
-    state = parseJSON(he.decode(window.__INITIAL_STATE__));
+  if (global.__INITIAL_STATE__) {
+    state = parseJSON(he.decode(global.__INITIAL_STATE__));
 
     debug('Serialized state', state);
     state = Object.assign(initialState(), state);
 
-    const serializedStateNode = document.getElementById('serialized-state');
+    const serializedStateNode = global.document.getElementById('serialized-state');
     serializedStateNode.parentNode.removeChild(serializedStateNode);
   }
 

@@ -1,7 +1,7 @@
 import '../src/server/modules/db';
 import { User } from '../src/server/models';
 
-let adminUser = {
+const adminUser = {
   name: 'Admin',
   path: 'admin-page',
   email: 'hello@wiselike.com',

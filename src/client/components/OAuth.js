@@ -11,7 +11,6 @@ const debug = log.debug('OAuth');
   twitterRequestToken: ['currentUser', 'twitterRequestToken'],
   sessionId: ['sessionId']
 })
-
 export default class OAuth extends React.Component {
   constructor() {
     super();
@@ -36,13 +35,11 @@ export default class OAuth extends React.Component {
 
     if (provider !== 'twitter') {
       providers[provider](authConfig[provider], this.onAuthentication);
+    } else if (twitterRequestToken) {
+      providers[provider](twitterRequestToken, this.onAuthentication);
+      actions.removeTwitterRequestToken();
     } else {
-      if (twitterRequestToken) {
-        providers[provider](twitterRequestToken, this.onAuthentication);
-        actions.removeTwitterRequestToken();
-      } else {
-        log.warn('No twitter data');
-      }
+      log.warn('No twitter data');
     }
   }
 
@@ -82,8 +79,8 @@ export default class OAuth extends React.Component {
     };
 
     return (
-      <a { ...linkProps }>
-        <span>{ message }</span>
+      <a {...linkProps}>
+        <span>{message}</span>
       </a>
     );
   }

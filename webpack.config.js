@@ -18,7 +18,7 @@ module.exports = {
     'react-hot-loader/patch',
     'webpack-dev-server/client?http://localhost:8001',
     'webpack/hot/only-dev-server',
-    path.resolve(__dirname, 'src', 'client', 'main.js')
+    path.resolve(__dirname, 'src', 'client', 'initializeBrowser.js')
   ],
   output: {
     path: buildPath,

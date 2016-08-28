@@ -7,11 +7,10 @@ import Logo from './Logo';
 @branch({
   currentUser: ['currentUser']
 })
-
 export default class NavBar extends React.Component {
-  handleLogout() {
+  handleLogout = () => {
     this.props.dispatch(AuthActions.logout);
-  }
+  };
 
   render() {
     const { currentUser } = this.props;
@@ -43,7 +42,7 @@ export default class NavBar extends React.Component {
                 </Link>
               </li>
               <li>
-                <a onClick={::this.handleLogout}>
+                <a onClick={this.handleLogout}>
                   Log Out
                 </a>
               </li>

@@ -1,6 +1,6 @@
 # White Room
 
-Starter boilerplate for an isomorphic single-page React/Express application.
+Starter boilerplate for an isomorphic single-page React/Express application, designed for simplicity.
 
 ## Features
 

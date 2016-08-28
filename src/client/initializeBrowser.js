@@ -5,7 +5,7 @@ import { render } from 'react-dom';
 import { browserHistory } from 'react-router';
 import toast from 'vanillatoasts';
 import { isObject } from 'lodash';
-import { MINUTE_TICK } from './constants/events';
+import { AppContainer } from 'react-hot-loader';
 import socketClient from './websockets/client';
 import analytics from './lib/analytics';
 import log from './lib/log';
@@ -13,7 +13,6 @@ import routes from './routes';
 import getStateFromBrowser from './core/getStateFromBrowser';
 import initDevelopmentEnv from './core/developmentEnv';
 import createTransitionHook from './core/transitionHook';
-import Root from './core/Root';
 import api from '../server/api';
 
 /**
@@ -59,7 +58,7 @@ api.addErrorHandler((err) => {
 browserHistory.listen(({ action }) => {
   setTimeout(() => {
     if (action !== 'POP') {
-      window.scrollTo(0, 0);
+      global.scrollTo(0, 0);
     }
   });
 });
@@ -81,11 +80,23 @@ if (state.get('trackSiteVisit')) {
 
 analytics.pageview();
 
-// emits a MINUTE_TICK event every minute
-setInterval(() => state.emit(MINUTE_TICK), 60 * 1000);
-
 // loads the application in the DOM
-const containerNode = document.getElementById('react-container');
-const rootedApp = <Root tree={state} routes={routes} history={browserHistory}/>;
+const containerNode = global.document.getElementById('react-container');
 
-render(rootedApp, containerNode);
+const renderAppInDOM = () => {
+  const Root = require('./core/Root').default;
+
+  const rootedApp = (
+    <AppContainer>
+      <Root tree={state} routes={routes} history={browserHistory}/>
+    </AppContainer>
+  );
+
+  render(rootedApp, containerNode);
+};
+
+if (module.hot) {
+  module.hot.accept('./core/Root', renderAppInDOM);
+}
+
+renderAppInDOM();
