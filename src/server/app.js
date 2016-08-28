@@ -2,7 +2,6 @@ import path from 'path';
 import http from 'http';
 import express from 'express';
 import less from 'less-middleware';
-import http from 'http';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import isomorphineAPI from './api';
