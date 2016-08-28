@@ -11,7 +11,7 @@ const schema = new Schema({
 
   // Identity
   id:          { type: String },
-  email:       { ...types.email },
+  email:       { ...types.emailType },
   name:        { type: String,   trim: true },
   path:        { type: String,   unique: true, sparse: true },
   image:       { type: String },
@@ -71,10 +71,6 @@ extend(schema.statics, statics, { fieldgroups });
 
 schema.index({ path: 1 });
 schema.index({ email: 1 });
-schema.index({ managed: 1 });
-schema.index({ managed: 1, random: 1 });
-schema.index({ managed: 1, 'roles.driver': 1, 'roles.admin': 1 });
-schema.index({ 'roles.driver': 1 });
 schema.index({ active: 1, _id: 1 });
 // schema.index({'coordinates': '2dsphere'});
 

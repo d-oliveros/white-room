@@ -5,7 +5,7 @@ const SALT_WORK_FACTOR = 8;
 export default function addHooks(schema) {
 
   // Populates the "id" field
-  schema.pre('save', function(next) {
+  schema.pre('save', function populateIdField(next) {
     if (this._id && !this.id) {
       this.id = this._id.toString();
     }
@@ -14,7 +14,7 @@ export default function addHooks(schema) {
   });
 
   // Hash password
-  schema.pre('save', function(next) {
+  schema.pre('save', function hashPassword(next) {
     const user = this;
 
     // Only hash password if it has been modified, or is new
@@ -39,7 +39,7 @@ export default function addHooks(schema) {
   });
 
   // Set the user's path
-  schema.pre('save', function(next) {
+  schema.pre('save', async function setUserPath(next) {
     const User = require('./index');
     const user = this;
 
@@ -47,11 +47,8 @@ export default function addHooks(schema) {
       return next();
     }
 
-    User.generatePath(user.path || user.name)
-      .then((path) => {
-        user.path = path;
-        next();
-      })
-      .catch(next);
+    user.path = await User.generatePath(user.path || user.name);
+
+    next();
   });
 }

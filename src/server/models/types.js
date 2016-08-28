@@ -1,6 +1,6 @@
 import validators from './validators';
 
-export const email = {
+export const emailType = {
   type:      String,
   trim:      true,
   lowercase: true,
@@ -9,4 +9,4 @@ export const email = {
   validate:  validators.email
 };
 
-export default { email };
+export default { emailType };

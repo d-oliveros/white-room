@@ -1,23 +1,23 @@
 # White Room
 
-Starter boilerplate for an isomorphic single-page React/Express application, designed for simplicity.
+Minimal starter kit for an React/Express full-stack isomorphic application. Designed for simplicity.
+
 
 ## Features
 
-* Promise-based codebase
-* Babel ES6+ - async/await, decorators
-* Front-end React app with React Router, Baobab (Single-State tree Flux variant)
-* Hot Reloading for react components and stylesheets with Webpack Dev Server
-* Websockets with Socket.io
-* Webpack, Webpack Dev Server
-* Auth layer, JSON Web Tokens & OAuth2
-* Route-less API with Isomorphine
-* Express server, server-side rendering
-* Mongoose models
-* Basic User model with auth
-* Cron-like Periodic Tasks
-* Worker Queues powered by Kue
-* Image & File uploads, S3 integration
+* React + [Baobab](http://christianalfoni.github.io/javascript/2015/02/06/plant-a-baobab-tree-in-your-flux-application.html) frontend. A minimal, zero-boilerplate flux variant. [Read more here.](http://christianalfoni.github.io/javascript/2015/02/06/plant-a-baobab-tree-in-your-flux-application.html)
+* Isomorphic, route-less API server with [Isomorphine](https://github.com/d-oliveros/isomorphine).
+* ES6, Express server, Server-Side Rendering.
+* Promise-based, Async/Await codebase.
+* Webpack Dev Server. Hot Reloading for react components and stylesheets.
+* Websockets with Socket.io.
+* Auth layer. JSON Web Tokens & OAuth2.
+* Mongo backend with [Mongoose](http://mongoosejs.com/).
+* User Model with auth included.
+* Server-side, cron-like periodic tasks.
+* A priority job Worker Queue, powered by [Kue](https://github.com/Automattic/kue) + [Redis](http://redis.io/).
+* Image & File uploads with [gm](https://www.npmjs.com/package/gm).
+* AWS S3 integration for uploads.
 * Tests with Chai & Mocha
 * Integrations
   * Segment
@@ -28,6 +28,7 @@ Starter boilerplate for an isomorphic single-page React/Express application, des
   * Mailchimp
   * Mandrill
 
+
 ## Dependencies
 
 * Node.js
@@ -37,9 +38,8 @@ Starter boilerplate for an isomorphic single-page React/Express application, des
 
 #### Optional dependencies
 
-* Graphicsmagick (For image processing)
-* Elasticsearch (For search capabilities)
-* Pygmy (For short URL generation)
+* [Graphicsmagick](https://www.npmjs.com/package/gm) (For image processing)
+* [Elasticsearch](https://www.elastic.co/) (For search capabilities)
 * Neo4j
 * AWS
 
@@ -47,12 +47,17 @@ Starter boilerplate for an isomorphic single-page React/Express application, des
 ## Setup
 
 #### Install Dependencies
+
 Install MongoDB and Redis.
 
+
 #### Install the application's modules
+
 `npm install`
 
+
 #### Configure the application's environment
+
 Copy the `.env.default` file located in the application's root to a file called `.env`, and modify the values according to the instance's purpose.
 
 This step is optional. If you don't do this, the defaults in `.env.default` will be used.
@@ -63,12 +68,15 @@ This will let you configure your databases, and start app instances with a singl
 ## Commands
 
 #### Starts the development server
+
 ```
 npm start
 // Now visit http://localhost:3000
 ```
 
+
 #### Runs a script
+
 
 ```bash
 npm run script               # Lists all available scripts
@@ -82,6 +90,7 @@ npm run script create-admin
 
 # Scripts are located in `[project root]/util`
 ```
+
 
 ## Docs
 
