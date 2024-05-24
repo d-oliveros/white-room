@@ -13,8 +13,8 @@ const genSaltAsync = promisify(bcrypt.genSalt.bind(bcrypt));
 const hashAsync = promisify(bcrypt.hash.bind(bcrypt));
 
 export default async function userSignup(userSignupData) {
-  const existingUser = knex('users')
-    .first(['id', 'status'])
+  const existingUser = await knex('users')
+    .first(['id'])
     .where({ phone: userSignupData.phone });
 
   if (existingUser) {
@@ -55,16 +55,6 @@ export default async function userSignup(userSignupData) {
         .insert(userData)
         .returning('*');
     }
-
-    await trx
-      .into('userMoveInDates')
-      .insert({
-        userId: createdUser.id,
-        moveInDate: createdUser.moveInDate,
-        createdDate: createdUser.moveInDateUpdatedDate,
-        moveInInstance: 1,
-      });
-
     return trx.commit(createdUser);
   });
 

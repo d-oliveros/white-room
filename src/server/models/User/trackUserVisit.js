@@ -7,7 +7,7 @@ export default async function trackUserVisit({ id, increaseSessionCount }) {
   typeCheck('increaseSessionCount::Boolean', increaseSessionCount);
 
   const userUpdates = {
-    lastVisitDate: new Date().toISOString(),
+    lastVisitAt: new Date().toISOString(),
   };
 
   if (increaseSessionCount) {

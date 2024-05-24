@@ -1,18 +1,18 @@
 import typeCheck from 'common/util/typeCheck';
 import knex from 'server/db/knex';
 
-export default async function getList({ filters, fieldgroup } = {}) {
-  typeCheck('filters::NonEmptyObject', filters);
+export default async function getList({ where, fieldgroup } = {}) {
+  typeCheck('where::Maybe NonEmptyObject', where);
 
   const queryChain = knex('users')
     .select(fieldgroup || '*');
 
-  if (filters.role) {
-    queryChain.whereRaw(`'${filters.role}' = ANY(roles)`);
+  if (where?.role) {
+    queryChain.whereRaw(`'${where.role}' = ANY(roles)`);
   }
 
-  if (filters.excludeRoles) {
-    queryChain.whereRaw(`NOT roles && '{${filters.excludeRoles.join(', ')}}'::text[]`);
+  if (where?.excludeRoles) {
+    queryChain.whereRaw(`NOT roles && '{${where.excludeRoles.join(', ')}}'::text[]`);
   }
 
   return queryChain;

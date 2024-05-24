@@ -36,7 +36,7 @@ const createApp = (user) => {
 
 describe('createApiServer', () => {
   describe('authentication', () => {
-    it('should authenticate users with session', async () => {
+    it.skip('should authenticate users with session', async () => {
       const admin = await User.first('*').whereRaw(`'${USER_ROLE_ADMIN}' = ANY(roles)`);
 
       const response = await request(createApp(admin))

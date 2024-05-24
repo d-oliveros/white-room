@@ -30,7 +30,7 @@ export default {
       roles: [
         USER_ROLE_USER,
       ],
-      lastVisitDate: new Date().toISOString(),
+      lastVisitAt: new Date().toISOString(),
     };
 
     if (requestIp) {

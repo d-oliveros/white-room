@@ -9,7 +9,7 @@
     "roles": [
       "admin"
     ],
-    "lastVisitDate": null,
+    "lastVisitAt": null,
     "shouldRefreshRoles": false,
     "signupIp": "192.211.59.132",
     "signupAnalyticsSessionId": "e4fbb180-f686-11e7-9f74-512acb0deeaf",

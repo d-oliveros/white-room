@@ -14,7 +14,7 @@ import redis from 'server/db/redis';
 import knex from 'server/db/knex';
 import User from 'server/models/User';
 
-import usersFixture from '../migrations/seeds-test/usersFixture.json';
+import usersFixture from '../migrations/seeds/usersFixture.json';
 
 const {
   NODE_ENV,
@@ -31,6 +31,7 @@ export async function clearDbData() {
 
   const tablesToReset = [
     'users',
+    'addresses',
   ];
 
   await knex.transaction(async (trx) => {

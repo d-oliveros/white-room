@@ -2,7 +2,7 @@ import { assert } from 'chai';
 import { v4 as uuidv4 } from 'uuid';
 
 import User from 'server/models/User';
-import usersFixture from '../../migrations/seeds-test/usersFixture.json';
+import usersFixture from '../../migrations/seeds/usersFixture.json';
 import {
   resetDbData,
 } from '../testHelpers';
@@ -29,13 +29,14 @@ describe('User', () => {
       const testUserSignupData = {
         ...usersFixture[0],
         phone: uuidv4(),
+        email: uuidv4(),
       };
 
       const user = await User.signup(testUserSignupData);
 
       const fieldNamesToIgnore = [
         'id',
-        'createdDate',
+        'createdAt',
         'signupUtmSource',
       ];
 

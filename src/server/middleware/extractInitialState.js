@@ -253,9 +253,9 @@ export default async function extractInitialStateMiddleware(req, res, next) {
       ? null
       : req.cookies[__config.cookies.lastVisit.name];
 
-    // If the user is logged in, use the value in `user.lastVisitDate`
-    if (initialState.currentUser.lastVisitDate) {
-      lastVisit = initialState.currentUser.lastVisitDate.getTime();
+    // If the user is logged in, use the value in `user.lastVisitAt`
+    if (initialState.currentUser.lastVisitAt) {
+      lastVisit = initialState.currentUser.lastVisitAt.getTime();
     }
 
     if (!lastVisit || ((now - lastVisit) / 60000) >= 30) {

@@ -10,8 +10,6 @@ const KUE_DEFAULT_TTL_MS = 259200000; // 3 days in ms.
 const debug = __log.debug('queue');
 const { QUEUE_DELETE_JOBS } = process.env;
 
-debug(`Kue job auto-delete set to: ${QUEUE_DELETE_JOBS === 'true'}`);
-
 const queue = kue.createQueue({
   prefix: 'q',
   redis: __config.database.redis,

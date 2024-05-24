@@ -22,7 +22,7 @@ exports.up = async (knex) => {
     t.string('signupUtmSource').nullable();
     t.string('signupProvider').notNullable();
 
-    t.timestamp('lastVisitDate').nullable();
+    t.timestamp('lastVisitAt').nullable();
     t.integer('sessionCount').unsigned().notNullable().defaultTo(1);
     t.jsonb('experimentActiveVariants').notNullable().defaultTo('{}');
     t.boolean('shouldRefreshRoles').notNullable().defaultTo(false);

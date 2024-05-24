@@ -1,15 +1,16 @@
 export const summaryFieldgroup = [
   'id',
-  'name',
+  'firstName',
+  'lastName',
   'roles',
-  'lastVisitDate',
+  'lastVisitAt',
   'signupProvider',
   'phone',
   'experimentActiveVariants',
   'email',
-  'createAt',
+  'createdAt',
   'sessionCount',
-  'profilePicture',
+  'profileImage',
   'shouldRefreshRoles',
 ];
 
@@ -20,7 +21,8 @@ export const loginFieldgroup = [
 
 export const teaserFieldgroup = [
   'id',
-  'name',
+  'firstName',
+  'lastName',
   'phone',
 ];
 
