@@ -1,59 +1,126 @@
+/* eslint-disable import/no-dynamic-require */
+require('./_initEnv');
 
-// Registers babel
-require('babel-register');
+const {
+  APP_PORT,
+  USE_BUILD,
+  RENDERER_PORT,
+  ENABLE_SERVER,
+  ENABLE_RENDERER,
+  ENABLE_CRON,
+  CRON_WHITELIST,
+} = process.env;
 
-// Loads the default environmental variables
-require('./util/loadenv');
+const moduleSourceDirectory = USE_BUILD === 'true' ? './lib' : './src';
+const knex = require(`${moduleSourceDirectory}/server/db/knex`);
 
 /**
- * Define global variables.
+ * Main application entry file.
+ * Initializes the application services defined in environmental variables.
  */
-global.__config = require('./config');
-global.__log = require('./src/server/lib/logger').default;
+Promise.resolve()
+  .then(() => {
+    /**
+     * Runs the latest database evolution.
+     */
+    __log.info('Checking if schema migration is needed.');
+    return knex.postgresMigrateToLatestSchema();
+  })
+  .then(() => {
+    /**
+     * Starts the API server.
+     */
+    if (ENABLE_SERVER === 'true') {
+      __log.info('Starting server.');
+      const server = require(`${moduleSourceDirectory}/server/server`).default;
 
-var env = process.env;
+      server.listen(APP_PORT, (err) => {
+        if (err) {
+          __log.error(err);
+          return;
+        }
+        __log.info(`Server listening on port: ${APP_PORT}`);
+      });
+    }
 
-/**
- * Starts the API server
- */
-if (env.ENABLE_API === 'true') {
-  const app = require('./src/server/app').default;
-  const appPort = __config.server.port;
+    /**
+     * Starts the Renderer service.
+     */
+    if (ENABLE_RENDERER === 'true') {
+      __log.info('Starting renderer API.');
+      const rendererApi = require(`${moduleSourceDirectory}/server/renderer/rendererApi`).default;
 
-  app.bootstrap(appPort, (err) => {
-    if (err) return console.error(err);
-    console.log(`App listening on port: ${appPort}`);
+      rendererApi.listen(RENDERER_PORT, () => {
+        __log.info(`Renderer service listening on port: ${RENDERER_PORT}`);
+      });
+    }
+
+    /**
+     * Starts the Cron service.
+     */
+    if (ENABLE_CRON === 'true' || ENABLE_CRON === 'whitelist_only') {
+      const startLogMessage = ENABLE_CRON === 'whitelist_only'
+        ? 'Starting cron service in whitelist only mode.'
+        : 'Starting cron service.';
+
+      __log.info(startLogMessage);
+
+      if (ENABLE_CRON === 'whitelist_only') {
+        if (!CRON_WHITELIST) {
+          throw new Error('CRON_WHITELIST is not defined.');
+        }
+        __log.info(`Whitelisted cron jobs: ${CRON_WHITELIST}`);
+      }
+
+      const initCronJobs = require(`${moduleSourceDirectory}/cron`).initCronJobs;
+      initCronJobs();
+
+      __log.info('Cron service started.');
+    }
+  })
+  .catch((error) => {
+    __log.error(error);
+    process.exit(1);
   });
-}
-
-/**
- * Starts the Renderer microservice
- */
-if (env.ENABLE_RENDERER === 'true') {
-  const renderer = require('./src/server/modules/renderer').default;
-  const rendererPort = process.env.RENDERER_PORT;
-
-  renderer.listen(rendererPort, () => {
-    console.log(`Renderer listening on port: ${rendererPort}`);
-  });
-}
 
 /**
  * Uncaught exception handler.
  *
- * The application will log uncaught exceptions. If 10 exceptions happen
- * in a 3 minute interval, the application will stop.
+ * The application will log uncaught exceptions. If enough exceptions happen
+ * in 1 minute intervals, the application will stop.
  *
  * Make sure you have a daemon restaring your instance when it crashes. eg. pm2
  */
-var errCount = 0;
+let errCount = 0;
+const errTreshold = 1500;
 process.on('uncaughtException', (exception) => {
-  __log.error(exception);
+  try {
+    __log.warn(`Uncaught exception #${errCount}`);
+    __log.error(exception);
+  }
+  catch (error) {} // eslint-disable-line no-empty
 
-  errCount++;
-  if (errCount === 10) {
+  errCount += 1;
+  if (errCount === errTreshold) {
+    __log.warn('Fatal uncaught exception, shutting down.');
     process.exit(1);
   }
 });
 
-setInterval(() => { errCount = 0; }, 180000);
+process.on('unhandledRejection', (exception) => {
+  try {
+    __log.warn(`Unhandled rejection #${errCount}`);
+    __log.error(exception);
+  }
+  catch (error) {} // eslint-disable-line no-empty
+
+  errCount += 1;
+  if (errCount === errTreshold) {
+    __log.warn('Fatal unhandled rejection, shutting down.');
+    process.exit(1);
+  }
+});
+
+setInterval(() => {
+  errCount = 0;
+}, 60000);

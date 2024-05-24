@@ -1,4 +1,4 @@
-var path = require('path');
+const path = require('path');
 
 module.exports = {
   path: '/src/client/style',
@@ -8,8 +8,8 @@ module.exports = {
     pathRoot: path.resolve(__dirname, '..'),
     render: {
       sourceMap: {
-        sourceMapFileInline: true
-      }
-    }
-  }
+        sourceMapFileInline: true,
+      },
+    },
+  },
 };

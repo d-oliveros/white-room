@@ -1,13 +1,16 @@
 
 # Environments
-.env
+.env*
+!.env.default
 
 # Uploads
 public/uploads/*
 
 # Build files
+lib/*
 build/*
 public/dist/*
+.storybook/dist/*
 
 # Logs
 *.log
@@ -28,6 +31,11 @@ lib-cov
 # Coverage directory used by tools like istanbul
 coverage
 
+# Cypress
+cypress/screenshots
+cypress/videos
+cypress/test-results
+
 # node-waf configuration
 .lock-wscript
 
@@ -45,5 +53,15 @@ node_modules
 # Ignored files
 *.ignore
 
+# Visual Studio Configs
+.vscode/*
+
 # This is stupid
 .DS_Store
+yarn.lock
+
+# Debugging files
+*.gitignore*
+
+# Storybook build files
+storybook-static*

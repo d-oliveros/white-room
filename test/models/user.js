@@ -1,26 +1,75 @@
-import '../testGlobals';
-import moment from 'moment';
-import { expect } from 'chai';
-import { User } from '../../src/server/models';
-import { userFixtures } from '../fixtures';
-import { clearDatabase, createUsers } from '../util';
+import { assert } from 'chai';
+import { v4 as uuidv4 } from 'uuid';
+
+import User from 'server/models/User';
+import usersFixture from '../../migrations/seeds-test/usersFixture.json';
+import {
+  resetDbData,
+} from '../testHelpers';
 
 describe('User', () => {
-  before(async () => {
-    await clearDatabase();
-    await createUsers();
+  beforeEach(() => resetDbData());
+  after(() => resetDbData());
+
+  describe('isValidLogin', () => {
+    it('should return false for incorrect passwords', async () => {
+      const loginResult = await User.isValidLogin({ phone: '1111111111', password: 'invalid' });
+      assert.isFalse(loginResult.success);
+    });
+
+    it('should return true for correct passwords', async () => {
+      const loginResult = await User.isValidLogin({ phone: '1111111111', password: '1111111111' });
+      assert.isTrue(loginResult.success);
+    });
   });
 
-  describe('generateNextDriverSubscription', () => {
-    it('should generate the next driver subscription', async () => {
-      const user = userFixtures[0];
-      const min = moment().add(12, 'hours').toDate();
-      const max = moment().add(72, 'hours').toDate();
+  describe('signup', function () {
+    this.timeout(5000);
+    it('should create a new user', async () => {
+      const testUserSignupData = {
+        ...usersFixture[0],
+        phone: uuidv4(),
+      };
 
-      await User.generateNextDriverSubscription(user._id);
-      const userDoc = await User.findById(user._id).exec();
-      const isBetween = moment(userDoc.driverSubscription.next).isBetween(min, max);
-      expect(isBetween).equal(true);
+      const user = await User.signup(testUserSignupData);
+
+      const fieldNamesToIgnore = [
+        'id',
+        'createdDate',
+        'signupUtmSource',
+      ];
+
+      User.fieldgroups.summaryFieldgroup
+        .filter((userSummaryFieldName) => !fieldNamesToIgnore.includes(userSummaryFieldName))
+        .forEach((userSummaryFieldName) => {
+          assert.deepEqual(
+            user[userSummaryFieldName],
+            testUserSignupData[userSummaryFieldName],
+            `Field: ${userSummaryFieldName}`
+          );
+        });
+    });
+  });
+
+  describe('trackUserVisit', () => {
+    it('should update the user\'s session counts by 1 and return user data', async () => {
+      const user1 = await User.first(['id', 'sessionCount']);
+      const initialSessionCount = user1.sessionCount;
+
+      const user2 = await User.trackUserVisit({ id: user1.id, increaseSessionCount: true });
+      assert.equal(user2.id, user1.id);
+
+      const user3 = await User.first(['sessionCount']).where({ id: user2.id });
+      assert.equal(user3.sessionCount, initialSessionCount + 1);
+    });
+  });
+
+  describe('getList', () => {
+    it('should get the list of users by filters', async () => {
+      const users = await User.getList({
+        fieldgroup: ['id', 'email', 'phone', 'roles'],
+      });
+      assert.equal(users.length, 1);
     });
   });
 });

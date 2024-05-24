@@ -1,0 +1,21 @@
+[
+  {
+    "firstName": "Admin",
+    "lastName": "User",
+    "slug": "admin",
+    "email": "admin@yopmail.com",
+    "phone": "1111111111",
+    "password": "$2a$08$3lzEjjM5p260NcCHoTBgK.wCHr..YGkd37zNjUUYdpoduMm5p9gwa",
+    "roles": [
+      "admin"
+    ],
+    "lastVisitDate": null,
+    "shouldRefreshRoles": false,
+    "signupIp": "192.211.59.132",
+    "signupAnalyticsSessionId": "e4fbb180-f686-11e7-9f74-512acb0deeaf",
+    "signupProvider": "phone",
+    "sessionCount": 1,
+    "profileImage": null,
+    "experimentActiveVariants": {}
+  }
+]

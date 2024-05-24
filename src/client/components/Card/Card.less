@@ -1,0 +1,149 @@
+.Card {
+  box-sizing: border-box;
+  border-radius: 24px;
+  padding: 23px 20px 25px 20px;
+  box-shadow: 0px 5px 21px 0px rgba(25, 51, 64, 0.05);
+  background: @white;
+  width: 100%;
+  margin-top: 20px;
+
+  @media screen and (max-width: 500px) {
+    border-radius: 14px;
+  }
+
+  &:first-child {
+    margin-top: 0;
+  }
+}
+
+.bulletColorGreen {
+  background-color: @green-dark;
+  box-shadow: 0px 9px 22px rgba(0, 122, 42, 0.17);
+}
+
+.bulletColorYellow {
+  background-color: @yellow-gold;
+  box-shadow: 0px 9px 22px rgba(219, 176, 0, 0.17);
+}
+
+.bulletColorBlue {
+  background-color: @blue-bright;
+  box-shadow: 0px 9px 22px rgba(0, 122, 255, 0.17);
+}
+
+.bulletColorPurple {
+  background-color: @purple-royal;
+  box-shadow: 0px 9px 22px rgba(173, 0, 173, 0.17);
+}
+
+.bulletColorBlack {
+  background-color: @blue-greycliff-text;
+  box-shadow: 0px 9px 22px rgba(19, 38, 48, 0.17);
+}
+
+.content-type-form-regular {
+  @media screen and (max-width: 500px) {
+    margin-top: 5px;
+
+    &.noSubheader {
+      margin-top: 27px;
+    }
+  }
+}
+
+.content-type-form-grid {
+  @media screen and (max-width: 500px) {
+    margin-top: 5px;
+
+    &.noSubheader {
+      margin-top: 15px;
+    }
+  }
+}
+
+.noContentPadding {
+  padding-right: 0;
+  padding-left: 0;
+}
+
+.contentContainer {
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+}
+
+.iconUrl {
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  width: 28px;
+  height: 28px;
+  border-radius: 5px;
+  margin-right: 11px;
+  flex-shrink: 0;
+  @media screen and (max-width: 500px) {
+    width: 23px;
+    height: 23px;
+    margin-top: 3px;
+  }
+}
+
+.header {
+  color: @black;
+  font-family: @font-greycliff;
+  font-weight: 800;
+  margin-right: 17px;
+  margin-bottom: 6px;
+  line-height: 28px;
+  @media screen and (max-width: 400px) {
+    margin-right: 0px;
+  }
+}
+
+.font-size-small {
+  font-size: 26px;
+}
+
+.font-size-regular {
+  font-size: 28px;
+  @media screen and (max-width: 500px) {
+    margin-right: 0;
+  }
+}
+
+.headerContainer {
+  display: flex;
+  align-items: flex-start;
+  padding: 0;
+  @media screen and (min-width: 500px) {
+    margin-bottom: 6px;
+  }
+}
+
+.headerPadding {
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+.headerTextContainer {
+  display: flex;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  width: 100%;
+  @media screen and (max-width: 500px) {
+    display: block;
+  }
+}
+
+.subheader{
+  color: rgba(19, 38, 48, 0.5);
+  font-family: @font-greycliff;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 25px;
+  margin-bottom: 4px;
+  @media screen and (max-width: 500px) {
+    display: block;
+    margin-top: 8px;
+  }
+}

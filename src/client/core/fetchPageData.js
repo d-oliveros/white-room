@@ -1,67 +1,54 @@
-import inspect from 'util-inspect';
-import assert from 'http-assert';
-import { log } from '../lib';
-
-const debug = log.debug('fetchPageData');
+import { serializeError } from 'serialize-error';
+import log from 'client/lib/log';
 
 /**
  * Runs the data fetching functions defined in the router state's component tree.
- *
- * @param  {Object}  routerState  The router's state to take the components from.
- * @param  {state}   state        The application's state.
- * @return {Promise}              A promise that will be resolved when all the
- *                                data has been fetched.
  */
-export default async function fetchPageData(routerState, tree) {
-  assert(routerState, 400, 'Router state is required');
-  assert(routerState.routes, 400, 'Router state does not have routes');
-  debug(`Fetching component data. Routes is:\n${inspect(routerState.routes)}`);
-
-  const components = routerState.routes.map(route => route.component);
-
-  await Promise.all(fetchComponentsData(components, routerState, tree));
-  setComponentsMeta(components, tree);
+export default async function fetchPageData(branch, inject) {
+  await Promise.all(fetchComponentsData(branch, inject));
+  setComponentsMeta(branch, inject);
 }
 
 /**
  * Run each component's fetchData static method.
  *
- * @param   {Array}   components   An array of components to be rendered
- * @param   {Object}  routerState  The current state of the router
- * @param   {Object}  tree         The application's state
- * @returns {Array}                An array of promises
+ * @param   {Array}  branch An array of components to be rendered.
+ * @param   {Object} inject The application's state.
+ * @returns {Array}         An array of promises.
  */
-function fetchComponentsData(components, routerState, tree) {
-
-  debug(`Components are:\n${inspect(components)}`);
-
-  const fetchDataPromises = components
-    .filter(component => component.fetchData)
-    .map(component => component.fetchData(routerState, tree));
-
-  debug('fetchDataPromises is', fetchDataPromises);
-
-  return fetchDataPromises;
+function fetchComponentsData(branch, inject) {
+  return branch
+    .filter(({ route }) => route.component.fetchData)
+    .map(({ route, match }) => route.component.fetchData(match, inject));
 }
 
 /**
  * Changes the state's metadata object
  *
- * @param  {Array}   components   An array of components to be rendered
- * @param  {Object}  tree         The application's state
+ * @param  {Array}  branch An array of components to be rendered.
+ * @param  {Object} inject The application's state.
  */
-function setComponentsMeta(components, tree) {
-  const metadataGetters = components
-    .filter(component => component.getPageMetadata)
-    .map(component => component.getPageMetadata);
+function setComponentsMeta(branch, inject) {
+  return branch
+    .filter(({ route }) => route.component.getPageMetadata)
+    .forEach(({ route, match }) => {
+      let pageMetadata;
+      try {
+        pageMetadata = route.component.getPageMetadata(inject.state, match);
+      }
+      catch (metadataGetterError) {
+        const error = new Error(`Error while generating page metatags: ${metadataGetterError.message}`);
+        error.name = 'PageMetadataGenerationError';
+        error.details = {
+          state: inject.state.get(),
+          stringifiedMetadataGetterFunction: route.component.getPageMetadata.toString(),
+        };
+        error.inner = serializeError(metadataGetterError);
+        log.error(error);
+      }
 
-  debug('metadataGetters are', metadataGetters);
-
-  metadataGetters.forEach((metadataGetter) => {
-    const pageMetadata = metadataGetter(tree);
-
-    if (typeof pageMetadata === 'object') {
-      tree.set('pageMetadata', pageMetadata);
-    }
-  });
+      if (typeof pageMetadata === 'object') {
+        inject.state.set('pageMetadata', pageMetadata);
+      }
+    });
 }

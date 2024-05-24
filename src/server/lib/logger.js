@@ -1,70 +1,69 @@
-import 'winston-loggly';
-import moment from 'moment';
-import debug from 'debug';
-import SentryTransport from 'winston-sentry';
+import createDebug from 'debug';
 import winston from 'winston';
 
-const { env } = process;
-const { Logger } = winston;
-const { File, Console, Loggly } = winston.transports;
+const {
+  APP_ID,
+  NODE_ENV,
+  NO_LOG_MODE,
+} = process.env;
 
-const logglyEnv = env.NODE_ENV === 'local' ? 'env-development' : `env-${env.NODE_ENV}`;
+const { Console } = winston.transports;
+const isProduction = NODE_ENV === 'production';
+const transports = [];
 
-let transports = [
-
-  // Log the errors in a log file
-  new File({
-    level: 'error',
-    timestamp: true,
-    prettyPrint: true,
-    filename: 'error.log'
-  }),
-
-  // Log everything in the console
+transports.push(
   new Console({
     level: 'silly',
-    colorize: true,
-    prettyPrint: true,
-    timestamp: () => moment().format('h:mm:ss'),
-    humanReadableUnhandledException: true
+    format: winston.format.combine(
+      isProduction ? winston.format.uncolorize() : winston.format.colorize(),
+      winston.format.timestamp(),
+      isProduction ? winston.format.json() : winston.format.simple(), // Format the Cloudwatch logs as JSON.
+    ),
   })
-];
+);
 
-// Log the errors in Sentry
-if (env.SENTRY_KEY) {
-  transports.push(new SentryTransport({
+const logger = winston.createLogger({
+  transports: transports,
+  silent: NO_LOG_MODE,
+});
+
+const _debugInstances = {};
+
+logger.debug = function createDebugWrapped(debugNamespace) {
+  debugNamespace = `${APP_ID}:${debugNamespace}`;
+
+  if (!_debugInstances[debugNamespace]) {
+    _debugInstances[debugNamespace] = NODE_ENV === 'production' || NO_LOG_MODE
+      ? function loggerEmptyDebug() { }
+      : createDebug(debugNamespace);
+  }
+
+  return (...args) => {
+    _debugInstances[debugNamespace](...args);
+  };
+};
+
+logger.error = (error) => {
+  logger.log({
     level: 'error',
-    dsn: env.SENTRY_KEY
-  }));
-}
+    message: error.message,
+    stack: error.stack,
+    ...error,
+  });
+};
 
-// Log everything in Loggly
-if (env.LOGGLY_KEY && env.LOGGLY_SUBDOMAIN) {
-  transports.push(new Loggly({
-    level: 'info',
-    token: env.LOGGLY_KEY,
-    subdomain: env.LOGGLY_SUBDOMAIN,
-    tags: ['server', logglyEnv],
-    json: true,
-    stripColors: true
-  }));
-}
+logger._info = logger.info;
 
-if (process.env.NODE_ENV === 'test') {
-  // when in test environment, only log errors in console
-  transports = [
-    new Console({
-      level: 'error',
-      colorize: true,
-      prettyPrint: true,
-      timestamp: () => moment().format('h:mm:ss'),
-      humanReadableUnhandledException: true
-    })
-  ];
-}
-
-const logger = new Logger({ transports });
-
-logger.debug = debug;
+logger.info = (info, metadata) => {
+  if (typeof info === 'string') {
+    logger._info(info, metadata);
+  }
+  else {
+    logger.log({
+      level: 'info',
+      ...info,
+    });
+  }
+};
 
 export default logger;

@@ -1,96 +1,114 @@
-import React, { PropTypes } from 'react';
-import { Link } from 'react-router';
-import branch from '../core/branch';
-import { Auth as AuthActions } from '../actions';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import { Redirect } from 'react-router-dom';
 
-@branch({
-  currentUser: ['currentUser']
+import {
+  API_ACTION_LOGIN,
+} from 'api/actionTypes';
+import {
+  USER_ROLE_ANONYMOUS,
+} from 'common/userRoles';
+import { SCREEN_ID_LOGIN } from 'client/constants/screenIds';
+
+import withTransitionHook from 'client/helpers/withTransitionHook';
+import withScreenId from 'client/helpers/withScreenId';
+import withScrollToTop from 'client/helpers/withScrollToTop';
+import withApiState from 'client/helpers/withApiState';
+import branch from 'client/core/branch';
+import { getUserLandingPage } from 'client/helpers/allowedRoles';
+
+import Box from 'client/components/Box/Box';
+import Link from 'client/components/Link/Link';
+import LoginForm from 'client/components/LoginForm/LoginForm';
+import Logo from 'client/components/Logo/Logo';
+
+import AuthActions from 'client/actions/Auth';
+
+@withTransitionHook
+@withApiState({
+  loginApiState: {
+    action: API_ACTION_LOGIN,
+  },
 })
-export default class LoginPage extends React.Component {
-  static getPageMetadata() {
-    return {
-      pageTitle: 'White Room - Login',
-      section: 'Login',
-      bodyClasses: ['some-body-class', 'another-body-class'],
-      description: 'Login through this page.'
-    };
+@withScreenId(SCREEN_ID_LOGIN)
+@withScrollToTop
+@branch({
+  currentUser: ['currentUser'],
+})
+class LoginPage extends Component {
+  static getPageMetadata = () => ({
+    pageTitle: 'Login',
+  });
+
+  static propTypes = {
+    currentUser: PropTypes.object.isRequired,
+    loginApiState: PropTypes.object.isRequired,
   }
 
-  static contextTypes = {
-    router: PropTypes.object.isRequired
-  };
-
-  constructor(props, context) {
-    super(props, context);
-
+  constructor(props) {
+    super(props);
     this.state = {
-      email: '',
-      password: '',
-      notFound: false
+      isSubmitting: false,
     };
-
-    this.login = ::this.login;
-    this.handleChange = ::this.handleChange;
-
-    if (!props.currentUser.roles.anonymous) {
-      context.router.push('/');
-    }
+    this.onFormSubmit = this.onFormSubmit.bind(this);
   }
 
-  handleChange(e) {
-    this.setState({ [e.target.name]: e.target.value });
-  }
+  async onFormSubmit(formValues) {
+    const { dispatch } = this.props;
 
-  login(e) {
-    e.preventDefault();
-    const { email, password } = this.state;
-    this.props.dispatch(AuthActions.login, { email, password });
+    this.setState({
+      isSubmitting: true,
+    });
+
+    await dispatch(AuthActions.login, {
+      phone: formValues.phone,
+      password: formValues.password,
+    });
+
+    this.setState({
+      isSubmitting: false,
+    });
   }
 
   render() {
-    const { email, password } = this.state;
+    const {
+      currentUser,
+      loginApiState,
+    } = this.props;
+
+    const {
+      isSubmitting,
+    } = this.state;
+
+    if (!isSubmitting && !currentUser.roles.includes(USER_ROLE_ANONYMOUS)) {
+      const userLandingPage = getUserLandingPage({
+        userRoles: currentUser.roles,
+      });
+      return (
+        <Redirect to={userLandingPage} />
+      );
+    }
 
     return (
-      <div className='column'>
-        <div className='row'>
-          <div className='medium-8 medium-offset-2 columns'>
-
-            <h4>Log In</h4>
-
-            <form onSubmit={this.login}>
-              <label htmlFor='email'>Email</label>
-              <input
-                type='text'
-                name='email'
-                id='email'
-                onChange={this.handleChange}
-                value={email}
-                placeholder='Email'
-              />
-              <label htmlFor='password'>Password</label>
-              <input
-                type='password'
-                name='password'
-                id='password'
-                onChange={this.handleChange}
-                value={password}
-                placeholder='Password'
-              />
-              <p>
-                <Link to='/password-reset'>Forgot your password?</Link>
-              </p>
-              <button type='submit' className='button'>Log in</button>
-            </form>
-
-
-            <div>
-              <h3>OAuth Login</h3>
-              <span>todo</span>
-            </div>
-
-          </div>
+      <Box>
+        <Logo redirectTo='/' />
+        <div className='loginFormContainer'>
+          <h1>Log In</h1>
+          <LoginForm
+            submitError={loginApiState.error}
+            isSubmitting={loginApiState.inProgress || isSubmitting}
+            onSubmit={this.onFormSubmit}
+          />
+          <Link to='/signup'>
+            create new account
+          </Link>
+          <Link to='/reset-password'>
+            Forgot Password?
+          </Link>
         </div>
-      </div>
+      </Box>
     );
   }
 }
+
+export default LoginPage;

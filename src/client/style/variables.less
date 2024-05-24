@@ -1,0 +1,115 @@
+@black: #000;
+@font-blue-dark: #04121F;
+@grey-dark: #222222;
+@white: #FFF;
+@white-cool: #F1F2F3;
+@grey-warm: #A7A59B;
+@grey-cool: #7B8488;
+@grey-color-500: #6B6768;
+@grey-color-400: #9B9B9B;
+@grey-color-300: #9EA7AA;
+@grey-color-200: #CED3DA;
+@grey-soft: #EBEDED;
+@grey-fill: #E7E9E9;
+@grey-fill-light: #F7F7F7;
+@grey-fill-lighter: #EFEFEF;
+@grey-fill-adobe: #eff0f1;
+@grey-warm-light: rgba(242,239,228,0.33);
+@grey-warm-bullet: #F2EFE4;
+@grey-placeholder: gainsboro;
+@grey-divider: rgba(123,132,136,0.1);
+@grey-background-color: rgba(123, 132, 136, 0.12);
+@grey-shadow: #DDDDDD;
+@grey-background-100: #F6F6F6;
+@grey-background-200: #ECEDEE;
+@grey-font: #C4C4C4;
+@grey-monochrome: #899397;
+@grey-monochrome-inactive: #BBBFC1;
+@grey-monochrome-inactive-light: #D4D6D8;
+@yellow-gold: #DBB000;
+@blue-navy: #152C5B;
+@blue-dark: #193340;
+@blue-medium: #005EC4;
+@blue-bright: #007AFF;
+@blue-100: #003166;
+@blue-200: #004999;
+@blue-400: #00448F;
+@blue-greycliff-text: #132630;
+@blue-dark-33: rgba(25,51,64,0.33);
+@blue-light-10: rgba(0,122,255,0.1);
+@blue-light: #EBF4FF;
+@blue-700: #CCE4FF;
+@purple: #AD00AD;
+@pantone: #828EFF;
+@darkBlue-shadow-color: rgba(25,51,64,0.08);
+@font-whitney: 'Whitney', sans-serif;
+@font-whitney-sc: 'Whitney Small-Caps', sans-serif;
+@font-chronicle: 'Chronicle Display';
+@font-greycliff: 'Greycliff';
+@yellow: #FFCD00;
+@yellow-300: #fff7d7;
+@yellow-fill-light: #FFFAE4;
+@yellow-darker: #FFEDA3;
+@yellow-sunrise-700: #FFF5CC;
+@yellow-sunrise-300: #BF9A00;
+@white-95: rgba(255,255,255,0.95);
+@green: #7CBF08;
+@green-100: #004116;
+@green-bright: #7ED321;
+@green-dark: #00A238;
+@green-darker: #00822B;
+@green-lighter: #E5F5EB;
+@red: #E8001D;
+@red-fill-darker: #FDA8AB;
+@red-fill-light: #FDE8EB;
+@red-fill-lighter: #FEF3F4;
+@tahiti-gold: #DC722A;
+@content-max-width: 1080px;
+@pink: #FF69B2;
+@orange: #FE917D;
+@orange-200: #FCF0E8;
+@orange-300: #E7711B;
+@orange-600: #F27A22;
+@orange-800: #F8D8C1;
+@purple: #BD10E0;
+@purple-royal: #AD00AD;
+@purple-dark: #734ACE;
+@gold: #997B00;
+
+@breakpoing-sm: 640px;
+@breakpoing-md: 768px;
+@breakpoing-lg: 1024px;
+@breakpoing-xl: 1280px;
+
+@min-with-md: ~"(min-width: @{breakpoing-md})";
+
+@covid-banner-height: 70px;
+@mobile-navbar-height: 50px;
+@desktop-navbar-height: 90px;
+
+
+@-webkit-keyframes highlightYellowFadeIn {
+  0% {opacity: 0; -webkit-transform: translateY(25px); background-color: rgba(255,205,0,0.33);}
+  25% {opacity: 1; -webkit-transform: translateY(0px); background-color: rgba(255,205,0,0.33);}
+  60% {opacity: 1; -webkit-transform: translateY(0px);}
+  100% {opacity: 1; -webkit-transform: translateY(0px); background-color: rgba(255,205,0,0);}
+}
+
+@keyframes highlightYellowFadeIn {
+  0% {opacity: 0; transform: translateY(25px); background-color: rgba(255,205,0,0.33);}
+  25% {opacity: 1; transform: translateY(0px); background-color: rgba(255,205,0,0.33);}
+  60% {opacity: 1; transform: translateY(0px);}
+  100% {opacity: 1; transform: translateY(0px); background-color: rgba(255,205,0,0);}
+}
+
+@iphoneStatusBarHeight: 20px;
+@iphoneXStatusBarHeight: 36px;
+@iphoneMediaQuery: ~"only screen and (device-width : 375px) and (device-height : 667px) and (-webkit-device-pixel-ratio : 2), only screen and (min-device-width : 320px) and (max-device-width : 568px) and (device-aspect-ratio: 40/71), only screen and (device-width : 414px) and (device-height : 736px) and (-webkit-device-pixel-ratio : 3)";
+@iphoneXMediaQuery: ~"only screen and (device-width : 375px) and (device-height : 812px) and (-webkit-device-pixel-ratio : 3), only screen and (device-width : 414px) and (device-height : 896px) and (-webkit-device-pixel-ratio : 2), only screen and (device-width : 414px) and (device-height : 896px) and (-webkit-device-pixel-ratio : 3)";
+// https://stackoverflow.com/questions/58087446/all-media-queries-for-iphone-12-pro-max-mini-and-older-iphones
+@iphoneXIMediaQuery: ~"only screen and (device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2) ";
+@iphoneXIProMediaQuery: ~"only screen and (device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) ";
+@iphoneXIProMaxMediaQuery: ~"only screen and (device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3) ";
+@iphoneXIIMiniMediaQuery: ~"only screen and (device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) ";
+@iphoneXIIMediaQuery: ~"only screen and (device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3) "; // iPhone 12 and iPhone 12 Pro
+@iphoneXIIMaxMediaQuery: ~"only screen and (device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3) ";

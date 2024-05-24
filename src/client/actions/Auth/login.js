@@ -1,27 +1,74 @@
-import { browserHistory } from 'react-router';
-import { Auth as AuthAPI } from 'src/server/api';
-import { analytics } from 'src/client/lib';
-import { anonymousUser } from 'src/client/constants';
-import socketClient from 'src/client/websockets/client';
+import analytics from 'client/analytics';
+import { ANALYTICS_EVENT_LOGGED_IN } from 'client/analytics/eventList';
+import { anonymousUser } from 'client/constants';
+import sendDataToMobileApp, {
+  MOBILE_APP_ACTION_TYPE_CURRENT_USER,
+} from 'client/helpers/sendDataToMobileApp';
+import safeLocalStorage from 'client/lib/safeLocalStorage';
+import updateDeviceRegistrationIds from 'client/actions/MobileApp/updateDeviceRegistrationIds';
 
-export default async function login(state, params) {
+import {
+  API_ACTION_LOGIN,
+} from 'api/actionTypes';
 
-  // logs the user in
-  const { user, token } = await AuthAPI.login(params);
+export async function onLogicSuccess({ state, apiClient, user, experimentActiveVariants }) {
+  const analyticsSessionId = state.get(['analytics', 'analyticsSessionId']);
+  const mobileAppState = state.get(['mobileApp']);
+  const currentUser = { ...anonymousUser, ...user };
 
-  // set the new user as the current user in the state
-  state.set('currentUser', Object.assign({}, anonymousUser, user));
-  state.commit();
+  // Set experiments.
+  if (experimentActiveVariants) {
+    state.set(['analytics', 'experiments', 'activeVariants'], experimentActiveVariants);
+  }
 
-  // registers this user with the socket connection
-  // so the server knows who this socket belongs to
-  socketClient.socket.emit('userLogin', token);
+  // Set filters.
+  state.set(['search', 'filters'], {
+    ...currentUser.searchFilters,
+  });
 
-  global.scroll(0, 0);
-  browserHistory.push(`/user/${user.path}`);
+  // Set the new user as the current user in the state.
+  state.set('currentUser', currentUser);
 
+  analytics.alias(user.id, analyticsSessionId);
   analytics.identify(user);
-  analytics.track('Login');
+  analytics.track(ANALYTICS_EVENT_LOGGED_IN);
 
-  return user;
+  if (mobileAppState.isMobileApp) {
+    sendDataToMobileApp({
+      actionType: MOBILE_APP_ACTION_TYPE_CURRENT_USER,
+      currentUser: currentUser,
+    });
+  }
+
+  if (
+    mobileAppState.isMobileApp &&
+    mobileAppState.askedPushNotificationPermission &&
+    mobileAppState.deviceRegistrationId
+  ) {
+    updateDeviceRegistrationIds(
+      { state, apiClient },
+      { newDeviceRegistrationId: mobileAppState.deviceRegistrationId }
+    );
+  }
+}
+
+export default async function login({ state, apiClient }, { phone, password, autoLoginToken }) {
+  return apiClient.postWithState({
+    action: API_ACTION_LOGIN,
+    state: state,
+    payload: {
+      phone,
+      password,
+      autoLoginToken,
+    },
+    onSuccess({ user, experimentActiveVariants }) {
+      safeLocalStorage.removeItem('viewedListingIds');
+      return onLogicSuccess({
+        state,
+        apiClient,
+        user,
+        experimentActiveVariants,
+      });
+    },
+  });
 }

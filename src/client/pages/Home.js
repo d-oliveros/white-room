@@ -1,61 +1,71 @@
-/* eslint-disable max-len */
-import React from 'react';
-import { Link } from 'react-router';
-import branch from '../core/branch';
+import React, { Component } from 'react';
 
-const HomePage = ({ currentUser }) => (
-  <div className='column'>
-    <div className='row'>
-      <h1 className='center'>White Room</h1>
+import { hasRoleAnonymous } from 'common/userRoles';
 
-      <div className='medium-4 columns'>
-        <h3>Heading</h3>
-        <p>Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris placerat eleifend leo.</p>
-      </div>
+import branch from 'client/core/branch';
+import { SCREEN_ID_HOME } from 'client/constants/screenIds';
+import withTransitionHook from 'client/helpers/withTransitionHook';
+import withScreenId from 'client/helpers/withScreenId';
+import withScrollToTop from 'client/helpers/withScrollToTop';
 
-      <div className='medium-4 columns'>
-        <h3>Heading</h3>
-        <p>Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris placerat eleifend leo.</p>
-      </div>
+import Link from 'client/components/Link/Link';
+import Flex from 'client/components/Flex/Flex';
+import Text from 'client/components/Text/Text';
+import Box from 'client/components/Box/Box';
 
-      <div className='medium-4 columns'>
-        <h3>Heading</h3>
-        <p>Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris placerat eleifend leo.</p>
-      </div>
+@withTransitionHook
+@withScreenId(SCREEN_ID_HOME)
+@withScrollToTop
+@branch({
+  currentUser: ['currentUser'],
+})
+class HomePage extends Component {
+  static getPageMetadata = () => ({
+    keywords: 'whiteroom, keyword',
+    description: (
+      'whiteroom home page.'
+    ),
+    image: 'https://whiteroom.com/images/metadata/og-house.jpg',
+  })
 
-    </div>
-    <div className='row'>
-      <div className='columns'>
-        <h3>My Account</h3>
+  render() {
+    const { currentUser } = this.props;
 
-        {currentUser.roles.anonymous
-          ?
-          <div>
-            <span>Please, <Link to='/login'>login</Link> or <Link to='/signup'>signup</Link>.</span>
-          </div>
+    return (
+      <Box width='80%' margin='0 auto'>
+        <h1>Home Page</h1>
+        <p>Hello! Thanks for visiting.</p>
 
-          :
-          <div>
-            <h4>{`You are logged in as ${currentUser.name || currentUser.email}!`}</h4>
-            <Link to={`/user/${currentUser.path}`}>Go to your profile page</Link>
-          </div>
+        {!hasRoleAnonymous(currentUser.roles) &&
+          <>
+            <p>{`You are ${currentUser.firstName}.`}</p>
+            <Link to='/logout'>Log out</Link>
+          </>
         }
-      </div>
-    </div>
-  </div>
-);
 
-HomePage.getPageMetadata = () => ({
-  pageTitle: 'White Room',
-  section: 'Home',
-  bodyClasses: 'page-home',
-  canonical: process.env.APP_HOST,
-  keywords: 'some, keywords',
-  description: 'Site description here.'
-});
+        {hasRoleAnonymous(currentUser.roles) &&
+          <Link to='/login'>Log In</Link>
+        }
 
-const HomePageDecorated = branch({
-  currentUser: ['currentUser']
-})(HomePage);
+        <div>
+          <h3>Users</h3>
+          <Link to='/user/1'>User 1</Link>
+        </div>
 
-export default HomePageDecorated;
+        <Flex>
+          <Text font='greycliff' weight='18' size='800' color='green'>
+            Hello! Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque gravida sem ac
+            tellus auctor, eget interdum erat sagittis. Sed rutrum erat et tortor venenatis
+            ullamcorper ut in augue. Sed sed metus erat. Sed mauris enim, condimentum ac pulvinar
+            eu, egestas imperdiet orci. Etiam tempus risus eu lacus tincidunt accumsan. Ut consequat
+            massa sed eros facilisis dictum nec sit amet lorem. Sed lacinia risus ut efficitur
+            vulputate. Donec elementum nisl eget nibh condimentum dapibus. Cras aliquam quis augue
+            eget posuere. Phasellus orci enim, luctus ac laoreet vitae, tincidunt eget lacus.
+          </Text>
+        </Flex>
+      </Box>
+    );
+  }
+}
+
+export default HomePage;

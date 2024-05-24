@@ -1,27 +1,31 @@
+export const summaryFieldgroup = [
+  'id',
+  'name',
+  'roles',
+  'lastVisitDate',
+  'signupProvider',
+  'phone',
+  'experimentActiveVariants',
+  'email',
+  'createAt',
+  'sessionCount',
+  'profilePicture',
+  'shouldRefreshRoles',
+];
 
-export const profile = {
-  _id: 1,
-  id: 1,
-  name: 1,
-  path: 1
-};
+export const loginFieldgroup = [
+  'id',
+  'password',
+];
 
-export const session = {
-  ...profile,
-  email: 1,
-  roles: 1,
-  logs: 1,
-  settings: 1,
-  providers: 1
-};
-
-export const loggingIn = {
-  ...session,
-  password: 1
-};
+export const teaserFieldgroup = [
+  'id',
+  'name',
+  'phone',
+];
 
 export default {
-  profile,
-  session,
-  loggingIn
+  summaryFieldgroup,
+  loginFieldgroup,
+  teaserFieldgroup,
 };

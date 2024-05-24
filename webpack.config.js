@@ -1,87 +1,156 @@
 require('./util/loadenv');
 
-const webpack = require('webpack');
 const path = require('path');
-const fs = require('fs');
-const auth = require('./config/auth');
+const webpack = require('webpack');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
+const { compact } = require('lodash');
 
-const env = process.env;
+const { NODE_ENV, COMMIT_HASH } = process.env;
+const isProd = NODE_ENV === 'production';
+
 const nodeModulesPath = path.resolve(__dirname, 'node_modules');
-const buildPath = path.resolve(__dirname, 'build');
+const buildPath = path.resolve(__dirname, 'public', 'dist');
 const srcPath = path.resolve(__dirname, 'src');
-const babelConfig = JSON.parse(fs.readFileSync(path.resolve('./.babelrc')));
 
-module.exports = {
-  devtool: 'cheap-module-source-map',
+// Read src folder to get list of folder names
+// then, build an object { [foldername]: path.resolve(srcPath, foldername)}
+
+const appBabelConfig = require('./babel.config');
+
+const webpackConfig = {
+  mode: isProd ? 'production' : 'development',
+  devtool: isProd ? 'source-map' : 'cheap-module-source-map',
   entry: [
-    'babel-polyfill',
-    'react-hot-loader/patch',
-    'webpack-dev-server/client?http://localhost:8001',
-    'webpack/hot/only-dev-server',
-    path.resolve(__dirname, 'src', 'client', 'initializeBrowser.js')
+    path.resolve(srcPath, 'client', 'initializeBrowser.js'),
   ],
   output: {
     path: buildPath,
-    filename: 'bundle.js',
-    publicPath: 'http://localhost:8001/build'
+    filename: `bundle${COMMIT_HASH ? '-' + COMMIT_HASH : ''}.js`,
+    publicPath: isProd ? '/' : '/dist/',
   },
   resolve: {
-    extensions: ['', '.js', '.jsx'],
+    modules: [srcPath, 'node_modules'],
     alias: {
-      src: srcPath
-    }
+      '@src': srcPath,
+    },
+    fallback: {
+      path: require.resolve('path-browserify'),
+    },
+  },
+  optimization: {
+    minimize: isProd,
+    minimizer: [
+      new TerserPlugin({
+        parallel: true,
+        terserOptions: {
+          compress: true,
+          mangle: true,
+        },
+      }),
+      new CssMinimizerPlugin(),
+    ],
+    splitChunks: {
+      cacheGroups: {
+        styles: {
+          name: 'styles',
+          test: /\.css$/,
+          chunks: 'all',
+          enforce: true,
+        },
+      },
+    },
   },
   module: {
-    preLoaders: [
+    rules: [
       {
-        test: /\.js$/,
-        loaders: ['isomorphine'],
-        exclude: [nodeModulesPath]
-      }
-    ],
-    loaders: [
-      {
-        loader: 'babel',
         test: /\.jsx?$/,
         exclude: [nodeModulesPath],
-        query: babelConfig
+        use: {
+          loader: 'babel-loader',
+          options: {
+            presets: appBabelConfig.presets,
+            plugins: appBabelConfig.plugins.map((plugin) =>
+              Array.isArray(plugin) && plugin[0] === 'react-css-modules'
+                ? [plugin[0], { ...plugin[1], removeImport: false }]
+                : plugin
+            ),
+          },
+        },
       },
       {
-        loader: 'json',
-        test: /\.json$/
-      }
-    ]
+        test: /\.less$/,
+        exclude: [path.resolve(srcPath, 'client/style')],
+        use: [
+          isProd ? MiniCssExtractPlugin.loader : 'style-loader',
+          {
+            loader: 'css-loader',
+            options: {
+              modules: {
+                localIdentName: '[name]--[local]--[hash:base64:5]',
+              },
+              importLoaders: 1,
+            },
+          },
+          'postcss-loader',
+          'less-loader',
+          {
+            loader: 'text-transform-loader',
+            options: {
+              prependText: (
+                `@import "${srcPath}/client/style/fonts.less";\n` +
+                `@import "${srcPath}/client/style/variables.less";\n`
+              ),
+            },
+          },
+        ],
+      },
+      {
+        test: /\.less$/,
+        include: [path.resolve(srcPath, 'client/style')],
+        use: [
+          isProd ? MiniCssExtractPlugin.loader : 'style-loader',
+          {
+            loader: 'css-loader',
+            options: {
+              modules: false,
+              importLoaders: 1,
+            },
+          },
+          'postcss-loader',
+          'less-loader',
+        ],
+      },
+      {
+        test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
+        use: {
+          loader: 'url-loader',
+          options: {
+            limit: 8192,
+            mimetype: 'application/font-woff',
+            name: 'fonts/[name].[ext]',
+          },
+        },
+      },
+    ],
   },
-  devServer: {
-    host: 'localhost',
-    port: 8001,
-    publicPath: 'http://localhost:8001/build',
-    hot: true,
-    contentBase: buildPath
-  },
-  node: {
-    fs: 'empty',
-    __filename: true
-  },
-  debug: true,
-  plugins: [
-    new webpack.optimize.OccurenceOrderPlugin(),
-    new webpack.HotModuleReplacementPlugin(),
-    new webpack.NoErrorsPlugin(),
+  plugins: compact([
+    isProd && new MiniCssExtractPlugin({
+      filename: `style${COMMIT_HASH ? '-' + COMMIT_HASH : ''}.css`,
+      chunkFilename: '[id].css',
+    }),
+    !isProd && new webpack.NoEmitOnErrorsPlugin(),
     new webpack.DefinePlugin({
+      'process.browser': true,
       'process.env': {
-        NODE_ENV:                `"${env.NODE_ENV}"`,
-        APP_HOST:                `"${env.APP_HOST}"`,
-        IMAGE_HOST:              `"${env.IMAGE_HOST}"`,
-        OAUTH_GOOGLE_ID:         `"${auth.google.client_id}"`,
-        OAUTH_GOOGLE_SCOPE:      `"${auth.google.scope}"`,
-        OAUTH_GOOGLE_REDIRECT:   `"${auth.google.redirect_uri}"`,
-        OAUTH_FACEBOOK_ID:       `"${auth.facebook.client_id}"`,
-        OAUTH_FACEBOOK_REDIRECT: `"${auth.facebook.redirect_uri}"`,
-        OAUTH_FACEBOOK_SCOPE:    `"${auth.facebook.scope}"`,
-        OAUTH_LINKEDIN_ID:       `"${env.OAUTH_LINKEDIN_ID}"`,
-        OAUTH_LINKEDIN_REDIRECT: `"${auth.linkedin.redirect_uri}"`
-      }
-    })
-  ]
+        NODE_ENV: JSON.stringify(NODE_ENV),
+      },
+    }),
+    isProd && new webpack.optimize.LimitChunkCountPlugin({
+      maxChunks: 1,
+    }),
+  ]),
 };
+
+module.exports = webpackConfig;

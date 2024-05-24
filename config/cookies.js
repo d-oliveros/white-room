@@ -1,16 +1,36 @@
-var appHost = process.env.APP_HOST;
-var appDomain = process.env.APP_DOMAIN;
+const parseUrl = require('url').parse;
 
-// Ensures the app domain contains a "." as the initial character
-if (appDomain && typeof appDomain === 'string' && appDomain[0] !== '.') {
-  appDomain = '.' + appDomain;
-}
+const { APP_URL } = process.env;
 
-module.exports = {
+const defaultSettings = {
   maxAge: 60 * 60 * 24 * 150 * 1000, // 150 days in seconds
-  host:   appHost,
-  domain: appDomain,
+  host:   parseUrl(APP_URL).hostname,
   safe:   true,
   httpOnly: true,
-  path:   '/'
+  path:   '/',
+};
+
+exports.session = {
+  name: 'session-token',
+  settings: defaultSettings,
+};
+
+exports.lastVisit = {
+  name: 'last-visit-timestamp',
+  settings: defaultSettings,
+};
+
+exports.analyticsSessionId = {
+  name: 'analytics-session-id',
+  settings: defaultSettings,
+};
+
+exports.experimentActiveVariants = {
+  name: 'experiment-active-variants',
+  settings: defaultSettings,
+};
+
+exports.utm = {
+  name: 'utm',
+  settings: defaultSettings,
 };

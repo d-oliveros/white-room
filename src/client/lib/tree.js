@@ -1,7 +1,7 @@
 import Baobab from 'baobab';
-import log from './log';
+import log from 'client/lib/log';
 
-const debug = log.debug(`lib:tree`);
+const debug = log.debug('lib:tree');
 
 /**
  * Creates a state object, which is an instance of Baobab,
@@ -21,11 +21,12 @@ export default function createTree(state, options) {
  * @override commit
  */
 function treeCommit() {
-  if (this.get('transitioning')) {
-    debug(`Transitioning. Not committing`);
+  if (this.get('isTransitioning')) {
+    debug('Transitioning. Not committing');
     this.set('pendingCommit', true);
-  } else {
-    debug(`Committing`);
+  }
+  else {
+    debug('Committing');
     this.__commit();
   }
 }

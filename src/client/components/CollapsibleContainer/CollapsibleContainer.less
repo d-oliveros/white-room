@@ -1,0 +1,58 @@
+.CollapsibleContainer {
+  box-sizing: border-box;
+
+  .headerContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+  }
+
+  .contentContainer {
+    padding: 0 16px 16px;
+  }
+
+  &.border-type-bottom-gray {
+    border-bottom: 1px solid @grey-color-200;
+
+    .contentContainer {
+      padding: 0 24px 24px;
+    }
+
+    .headerContainer {
+      padding: 24px;
+    }
+  }
+
+  &.status-not-started {
+    &.border-type-rounded {
+      border: 1px solid @grey-color-200;
+      border-radius: 8px;
+    }
+  }
+
+  &.status-complete {
+    &.border-type-rounded {
+      border: 1px solid @green-dark;
+      border-radius: 8px;
+    }
+  }
+
+  &.status-in-progress {
+    &.border-type-rounded {
+      border: 1px solid @orange-300;
+      border-radius: 8px;
+    }
+  }
+
+  &.status-error {
+    &.border-type-rounded {
+      border: 1px solid @red;
+      border-radius: 8px;
+    }
+  }
+}
+
+.pointer {
+  cursor: pointer;
+}

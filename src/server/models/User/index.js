@@ -1,4 +1,16 @@
-import mongoose from 'mongoose';
-import schema from './schema';
+import requireIndex from 'es6-requireindex';
+import knex from 'server/db/knex';
 
-export default mongoose.model('User', schema);
+const UserModel = new Proxy(requireIndex(), {
+  get(target, name) {
+    if (name in target) {
+      return target[name];
+    }
+    const _User = knex('users');
+    return typeof _User[name] === 'function'
+      ? _User[name].bind(_User)
+      : _User[name];
+  },
+});
+
+export default UserModel;

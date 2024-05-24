@@ -1,95 +1,77 @@
-import React from 'react';
-import invariant from 'invariant';
-import es6Promise from 'es6-promise';
-import { render } from 'react-dom';
-import { browserHistory } from 'react-router';
-import toast from 'vanillatoasts';
-import { isObject } from 'lodash';
-import { AppContainer } from 'react-hot-loader';
-import socketClient from './websockets/client';
-import analytics from './lib/analytics';
-import log from './lib/log';
-import routes from './routes';
-import getStateFromBrowser from './core/getStateFromBrowser';
-import initDevelopmentEnv from './core/developmentEnv';
-import createTransitionHook from './core/transitionHook';
-import api from '../server/api';
-
 /**
- * This is the entry file for the client application.
- * This file, when required, initializes the client in the browser.
+ * Entry point for the client application.
+ *
+ * This file initializes the client in the browser when required.
+ * It is designated as the entry file in the Webpack configuration.
+ *
+ * Responsibilities:
+ * - Bootstraps the client application
+ * - Ensures proper initialization in the browser environment
+ * - Configured as the entry point in Webpack
  */
-invariant(
+import React from 'react';
+import assert from 'assert';
+import { BrowserRouter } from 'react-router-dom';
+import { render } from 'react-dom';
+
+import createApiClient from 'api/createApiClient';
+import { ANALYTICS_EVENT_USER_SESSION } from 'client/analytics/eventList';
+import analytics from 'client/analytics';
+import log from 'client/lib/log';
+import getStoreFromBrowser from 'client/core/getStoreFromBrowser';
+import initDevelopmentEnv from 'client/core/developmentEnv';
+import './style/style.less';
+
+assert(
   process.browser,
-  'Only browsers are allowed to bootstrap the client');
+  'Only browsers are allowed to bootstrap the client'
+);
 
-// polyfills
-es6Promise.polyfill();
+log.info('Initializing browser client.');
 
-// gets the serialized state injected by the server
-// @see server/modules/renderer
-const state = getStateFromBrowser();
+// Gets the serialized state injected by the server.
+// @see server/renderer
+const store = getStoreFromBrowser();
 
-// initializes the development environment
+// Initializes the development environment.
 if (process.env.NODE_ENV !== 'production') {
-  initDevelopmentEnv(state);
+  initDevelopmentEnv(store);
 }
 
-// connects the websockets client to the server
-socketClient.init(state);
-
-// configures the analytics lib
-analytics.configure(state);
-
-// adds API error handlers
-api.addErrorHandler((err) => {
-  if (isObject(err)) {
-    const res = err.response;
-    log.error(res);
-    if (isObject(res) && res.body && res.body.message) {
-      toast.create({
-        title: res.body.message
-      });
-    }
-  }
+// Configures the analytics lib.
+analytics.configure({
+  store: store,
+  _window: global.window,
 });
 
-// scrolls to the top when transitioning pages
-browserHistory.listen(({ action }) => {
-  setTimeout(() => {
-    if (action !== 'POP') {
-      global.scrollTo(0, 0);
-    }
-  });
-});
+// Track user visit.
+analytics.identify();
 
-// registers a transition hook to be run when the URL changes
-browserHistory.listenBefore(createTransitionHook(state));
-
-// track site visit
-const currentUser = state.get('currentUser');
-const isAnonymous = currentUser.roles.anonymous;
-
-if (!isAnonymous) {
-  analytics.identify(currentUser);
+if (store.get(['analytics', 'shouldTrackNewSession'])) {
+  analytics.track(ANALYTICS_EVENT_USER_SESSION);
+  store.set(['analytics', 'shouldTrackNewSession'], false);
 }
 
-if (state.get('trackSiteVisit')) {
-  analytics.track(`${isAnonymous ? 'Anonymous' : 'User'}  Session`);
-}
-
-analytics.pageview();
-
-// loads the application in the DOM
+// Loads the application in the DOM.
 const containerNode = global.document.getElementById('react-container');
 
 const renderAppInDOM = () => {
   const Root = require('./core/Root').default;
 
+  // Inject API client.
+  const apiClient = createApiClient({
+    commitHash: store.get(['env', 'COMMIT_HASH']),
+    apiPath: '/api/v1',
+    sessionTokenName: 'X-Session-Token',
+  });
+
   const rootedApp = (
-    <AppContainer>
-      <Root tree={state} routes={routes} history={browserHistory}/>
-    </AppContainer>
+    <BrowserRouter>
+      <Root
+        tree={store}
+        apiClient={apiClient}
+      />
+    </BrowserRouter>
   );
 
   render(rootedApp, containerNode);

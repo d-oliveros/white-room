@@ -1,34 +1,56 @@
 import React from 'react';
-import { Router, RouterContext } from 'react-router';
-import BaobabPropTypes from 'baobab-react/prop-types';
+import PropTypes from 'prop-types';
+import { withRouter } from 'react-router';
+
+import ReactAppContext from './ReactAppContext';
+import App from '../App';
+import routes from '../routes';
 
 /**
  * Root component.
  * This component provides the application's state in its child context,
  * and renders the main router component.
  */
-export default class Root extends React.Component {
+@withRouter
+class Root extends React.Component {
   static childContextTypes = {
-    tree: BaobabPropTypes.baobab
+    userAgent: PropTypes.object,
   };
+
+  static propTypes = {
+    apiClient: PropTypes.object.isRequired,
+    tree: PropTypes.object.isRequired,
+    history: PropTypes.object.isRequired,
+  }
 
   getChildContext() {
     return {
-      tree: this.props.tree
+      userAgent: this.props.tree.get(['analytics', 'userAgent']),
     };
   }
 
   render() {
-    const { routes, history, componentBranch } = this.props;
-
-    // If a component branch was provided, a router context is rendered
-    // instead of a full router instance, useful for server-side rendering
-    if (componentBranch) {
-      return <RouterContext {...componentBranch}/>;
-    }
+    const {
+      apiClient,
+      tree,
+      history,
+    } = this.props;
 
     return (
-      <Router routes={routes} history={history}/>
+      <ReactAppContext.Provider
+        value={{
+          tree,
+          apiClient,
+          history,
+        }}
+      >
+        <App
+          routes={routes}
+          apiClient={apiClient}
+        />
+      </ReactAppContext.Provider>
     );
   }
 }
+
+export default Root;

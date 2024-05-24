@@ -1,59 +1,43 @@
-import { sample, isArray } from 'lodash';
-import inspect from 'util-inspect';
-import assert from 'http-assert';
-
-const debug = __log.debug('whiteroom:modules:experiments');
+import lodashSample from 'lodash/fp/sample';
 
 /**
  * Gets a set of experiments,
  * using the passed object as the current variations.
  *
- * @param  {Object}  experiments  Current experiment variations. (optional)
+ * @param  {Object} experiments Current experiment variations. (optional)
  *
- * @return {Object}               Object with the new experiments set,
- *                                and a property 'changed', true if the
- *                                experiments have changed.
+ * @return {Object} Object with the new experiments set, and a property 'changed',
+ *                  true if the experiments have changed.
  */
-export function getExperiments(expList, prevExperiments = {}) {
-  const experiments = {};
-  const experimentKeys = Object.keys(expList);
-  let changed = Object.keys(prevExperiments).length !== experimentKeys.length;
+export function getExperimentActiveVariants(params) {
+  const {
+    experimentsConfig,
+    isCrawler,
+  } = params;
 
-  for (const expKey in expList) {
-    if (!expList.hasOwnProperty(expKey)) {
-      continue;
-    }
+  const prevExperimentActiveVariants = params.prevExperimentActiveVariants || {};
 
-    const experiment = expList[expKey];
+  const experimentActiveVariants = {};
+  const experimentKeys = Object.keys(experimentsConfig);
 
-    const validVariation = experiment.type === Boolean
-      ? typeof prevExperiments[expKey] === 'boolean'
-      : experiment.variations.indexOf(prevExperiments[expKey]) > -1;
+  let changed = Object.keys(prevExperimentActiveVariants).length !== experimentKeys.length;
 
-    if (expKey in prevExperiments && validVariation) {
-      experiments[expKey] = prevExperiments[expKey];
-    } else {
+  Object.keys(experimentsConfig).forEach((experimentName) => {
+    const experimentVariants = experimentsConfig[experimentName];
+    const prevExperimentActiveVariant = prevExperimentActiveVariants[experimentName];
+
+    const variationShouldChanged = !experimentVariants.includes(prevExperimentActiveVariant);
+
+    if (variationShouldChanged) {
+      experimentActiveVariants[experimentName] = isCrawler
+        ? experimentVariants[0]
+        : lodashSample(experimentVariants);
       changed = true;
-      experiments[expKey] = getVariation(expList, expKey);
     }
-  }
+    else {
+      experimentActiveVariants[experimentName] = prevExperimentActiveVariants[experimentName];
+    }
+  });
 
-  debug(`Previous experiments:\n${inspect(prevExperiments)}`);
-  debug(`New experiments:\n${inspect(experiments)}`);
-
-  return { experiments, changed };
-}
-
-export function getVariation(expList, name) {
-  const experiment = expList[name];
-
-  switch (experiment.type) {
-    case Boolean:
-      return sample([true, false]);
-
-    case Array:
-      const validVariations = isArray(expList[name].variations);
-      assert(validVariations, 500, 'This experiment has invalid variations');
-      return sample(expList[name].variations);
-  }
+  return { experimentActiveVariants, changed };
 }
