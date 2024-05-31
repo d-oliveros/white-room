@@ -4,11 +4,11 @@ import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { useMediaQuery } from 'react-responsive';
 
-import Box from 'client/components/Box/Box';
-import Flex from 'client/components/Flex/Flex';
+import Box from '#client/components/Box/Box.js';
+import Flex from '#client/components/Flex/Flex.js';
 import Button, {
   BUTTON_THEME_BLUR,
-} from 'client/components/Button/Button';
+} from '#client/components/Button/Button.js';
 
 import './ModalV2.less';
 

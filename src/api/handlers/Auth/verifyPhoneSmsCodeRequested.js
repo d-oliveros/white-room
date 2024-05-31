@@ -1,9 +1,9 @@
-import typeCheck from 'common/util/typeCheck';
-import { sendVerificationCode } from 'server/lib/authyClient';
+import typeCheck from '#common/util/typeCheck.js';
+import { sendVerificationCode } from '#server/lib/authyClient';
 
 import {
   API_ACTION_VERIFY_PHONE_SMS_CODE_REQUESTED,
-} from 'api/actionTypes';
+} from '#api/actionTypes';
 
 export default {
   type: API_ACTION_VERIFY_PHONE_SMS_CODE_REQUESTED,

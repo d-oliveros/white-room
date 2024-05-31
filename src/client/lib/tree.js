@@ -1,5 +1,5 @@
 import Baobab from 'baobab';
-import log from 'client/lib/log';
+import log from '#client/lib/log.js';
 
 const debug = log.debug('lib:tree');
 

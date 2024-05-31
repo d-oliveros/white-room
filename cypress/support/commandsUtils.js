@@ -1,4 +1,4 @@
-import { API_ACTION_EXPERIMENT_ACTIVE_VARIANTS_UPDATE } from 'api/actionTypes';
+import { API_ACTION_EXPERIMENT_ACTIVE_VARIANTS_UPDATE } from '#api/actionTypes';
 import experimentsConfig from '../../config/experiments';
 
 function isApiResponse(res) {

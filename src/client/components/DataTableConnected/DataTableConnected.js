@@ -2,7 +2,7 @@ import { Component } from 'react';
 import PropTypes from 'prop-types';
 import {
   dataTableUIControls,
-} from 'client/helpers/dataTables';
+} from '#client/helpers/dataTables.js';
 
 const DEFAULT_COUNT = 10;
 

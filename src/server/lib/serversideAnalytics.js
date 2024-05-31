@@ -2,22 +2,23 @@ import assert from 'assert';
 import { Analytics } from '@segment/analytics-node';
 import { v4 as uuidv4 } from 'uuid';
 
-import typeCheck from 'common/util/typeCheck';
+import logger from '#common/logger.js';
+import typeCheck from '#common/util/typeCheck.js';
 import {
   USER_ROLE_ANONYMOUS,
   hasRoleAdmin,
   hasRoleAnonymous,
-} from 'common/userRoles';
+} from '#common/userRoles.js';
 
 import {
   transformUserDataToSegmentIdentifyTraits,
-} from 'client/analytics';
+} from '#client/analytics/analytics.js';
 
 const {
   SEGMENT_KEY,
 } = process.env;
 
-const debug = __log.debug('analytics:serversideAnalytics');
+const debug = logger.createDebug('analytics:serversideAnalytics');
 
 const anonymousUser = {
   roles: [

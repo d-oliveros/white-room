@@ -1,10 +1,10 @@
 import {
   sendMail,
-} from 'server/lib/sendgridClient';
+} from '#server/lib/sendgridClient.js';
 
 import {
   QUEUE_JOB_SENDGRID_EMAIL,
-} from 'queue/jobTypes';
+} from '#queue/jobTypes.js';
 
 export default {
   name: QUEUE_JOB_SENDGRID_EMAIL,

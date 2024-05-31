@@ -1,7 +1,7 @@
 import { assert } from 'chai';
 import { v4 as uuidv4 } from 'uuid';
 
-import User from 'server/models/User';
+import User from '#server/models/User/index.js';
 import usersFixture from '../../migrations/seeds/usersFixture.json';
 import {
   resetDbData,

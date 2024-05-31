@@ -14,12 +14,12 @@ import assert from 'assert';
 import { BrowserRouter } from 'react-router-dom';
 import { render } from 'react-dom';
 
-import createApiClient from 'api/createApiClient';
-import { ANALYTICS_EVENT_USER_SESSION } from 'client/analytics/eventList';
-import analytics from 'client/analytics';
-import log from 'client/lib/log';
-import getStoreFromBrowser from 'client/core/getStoreFromBrowser';
-import initDevelopmentEnv from 'client/core/developmentEnv';
+import createApiClient from '#api/createApiClient.js';
+import { ANALYTICS_EVENT_USER_SESSION } from '#client/analytics/eventList';
+import analytics from '#client/analytics.js';
+import log from '#client/lib/log.js';
+import getStoreFromBrowser from '#client/core/getStoreFromBrowser.js';
+import initDevelopmentEnv from '#client/core/developmentEnv.js';
 import './style/style.less';
 
 assert(

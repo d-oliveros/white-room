@@ -1,4 +1,4 @@
-import lodashOmit from 'lodash/fp/omit';
+import lodashOmit from 'lodash/fp/omit.js';
 
 const withoutId = lodashOmit('id');
 

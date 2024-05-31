@@ -1,9 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Flex from 'client/components/Flex/Flex';
-import Text from 'client/components/Text/Text';
-import Separator from 'client/components/Separator/Separator';
-import Box from 'client/components/Box/Box';
+import Flex from '#client/components/Flex/Flex.js';
+import Text from '#client/components/Text/Text.js';
+import Separator from '#client/components/Separator/Separator.js';
+import Box from '#client/components/Box/Box.js';
 
 const DividerLine = ({
   text,

@@ -1,7 +1,9 @@
 import createDebugger from 'debug';
 import { stringify } from 'flatted';
-import objectDiff from 'common/util/objectDiff';
-import checkLocalStorage from 'common/util/checkLocalStorage';
+
+import logger from '#common/logger.js';
+import objectDiff from '#common/util/objectDiff.js';
+import checkLocalStorage from '#common/util/checkLocalStorage.js';
 
 const {
   NODE_ENV,
@@ -31,7 +33,7 @@ const log = NODE_ENV === 'production'
     },
     error: (error) => {
       if (global.__log) {
-        global.__log.error(error);
+        global.logger.error(error);
       }
       if (process.browser) {
         console.error(error); // eslint-disable-line no-console
@@ -63,7 +65,7 @@ const log = NODE_ENV === 'production'
     _debuggers: {},
     info: (...args) => {
       if (global.__log) {
-        global.__log.info(...args);
+        global.logger.info(...args);
       }
       else {
         console.log(...args); // eslint-disable-line no-console
@@ -71,7 +73,7 @@ const log = NODE_ENV === 'production'
     },
     warn: (...args) => {
       if (global.__log) {
-        global.__log.warn(...args);
+        global.logger.warn(...args);
       }
       else {
         console.warn(...args); // eslint-disable-line no-console
@@ -79,7 +81,7 @@ const log = NODE_ENV === 'production'
     },
     error: (error) => {
       if (global.__log) {
-        global.__log.error(error);
+        global.logger.error(error);
       }
       else {
         console.error(error); // eslint-disable-line no-console

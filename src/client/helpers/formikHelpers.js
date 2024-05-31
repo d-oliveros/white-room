@@ -1,17 +1,18 @@
 import moment from 'moment';
 import { getIn, setIn } from 'formik';
+import faker from 'faker';
 
-import lodashSample from 'lodash/fp/sample';
-import lodashKeyBy from 'lodash/fp/keyBy';
+import lodashSample from 'lodash/fp/sample.js';
+import lodashKeyBy from 'lodash/fp/keyBy.js';
 
-import log from 'client/lib/log';
+import log from '#client/lib/log.js';
 
-import typeCheck from 'common/util/typeCheck';
-import objectNormalize from 'common/util/objectNormalize';
-import extractPhoneFromText from 'common/util/extractPhoneFromText';
-import momentWithAustinTimezone from 'common/util/momentWithAustinTimezone';
-import preventDefaultPropagation from 'client/helpers/preventDefaultPropagation';
-import { isChromeBrowser } from 'common/util/isUserAgentMobileApp';
+import typeCheck from '#common/util/typeCheck.js';
+import objectNormalize from '#common/util/objectNormalize.js';
+import extractPhoneFromText from '#common/util/extractPhoneFromText.js';
+import momentWithAustinTimezone from '#common/util/momentWithAustinTimezone.js';
+import preventDefaultPropagation from '#client/helpers/preventDefaultPropagation.js';
+import { isChromeBrowser } from '#common/util/isUserAgentMobileApp.js';
 
 const {
   NODE_ENV,
@@ -778,8 +779,6 @@ export function getFieldValueForPrePopulate(formField) {
   if (NODE_ENV === 'production') {
     throw new Error('prepopulateFormikFields can not be used on production.');
   }
-  const faker = require('faker');
-
   let prepopulatedValue = null;
 
   if (formField.devPrepopulateWith) {

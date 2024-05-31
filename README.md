@@ -2,7 +2,7 @@
 
 ## Dependencies
 
-* Node.js v16.10.0
+* Node.js v22.2.0
 * Docker
 
 

@@ -4,7 +4,7 @@ import {
   API_ERROR_REQUEST_FAILED,
   API_ERROR_REQUEST_NOT_HANDLED_OK,
   API_ERROR_ACTION_PAYLOAD_VALIDATION_FAILED,
-} from 'common/errorCodes';
+} from '#common/errorCodes.js';
 
 const DEFAULT_USER_ERROR_MESSAGE = 'Oops! It seems like there\'s a problem. We apologize for the trouble.';
 

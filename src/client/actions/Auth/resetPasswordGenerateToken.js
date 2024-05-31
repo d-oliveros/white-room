@@ -1,6 +1,6 @@
 import {
   API_ACTION_GENERATE_RESET_PASSWORD_TOKEN,
-} from 'api/actionTypes';
+} from '#api/actionTypes';
 
 /**
  * This action calls the api to request a JWT Token for reseting a user

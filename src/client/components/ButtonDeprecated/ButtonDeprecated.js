@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
-import Link from 'client/components/Link/Link';
+import Link from '#client/components/Link/Link.js';
 
 export const BUTTON_THEME_YELLOW = 'BUTTOM_THEME_YELLOW';
 export const BUTTON_THEME_DARK_GRAY = 'BUTTON_THEME_DARK_GRAY';

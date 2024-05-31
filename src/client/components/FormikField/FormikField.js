@@ -5,45 +5,45 @@ import { Field, getIn } from 'formik';
 import Autosuggest from 'react-autosuggest';
 import NumberFormat from 'react-number-format';
 import moment from 'moment';
-import lodashCompact from 'lodash/fp/compact';
+import lodashCompact from 'lodash/fp/compact.js';
 
-import emptyFunction from 'common/util/emptyFunction';
-import extractDateString from 'common/util/extractDateString';
+import emptyFunction from '#common/util/emptyFunction.js';
+import extractDateString from '#common/util/extractDateString.js';
 
 import {
   isPDFFile,
-} from 'client/lib/fileUploader';
+} from '#client/lib/fileUploader.js';
 
 import {
   transformStringToBoolean,
   getTextInputFieldAttributes,
-} from 'client/helpers/formikHelpers';
+} from '#client/helpers/formikHelpers.js';
 
 import Tooltip, {
   TOOLTIP_POSITION_LEFT,
   TOOLTIP_ICON_QUESTION_MARK,
   TOOLTIP_POSITIONS,
   TOOLTIP_BG_COLOR_TO_CLASSNAME_MAPPING,
-} from 'client/components/Tooltip/Tooltip';
-import DatePicker from 'client/components/DatePicker/DatePicker';
-import DateInput from 'client/components/DateInput/DateInput';
-import ExpirationDateInput from 'client/components/ExpirationDateInput/ExpirationDateInput';
-import CheckboxList from 'client/components/CheckboxList/CheckboxList';
-import FormikErrorMessage from 'client/components/FormikErrorMessage/FormikErrorMessage';
-import FilterCheckbox from 'client/components/FilterCheckbox/FilterCheckbox';
+} from '#client/components/Tooltip/Tooltip.js';
+import DatePicker from '#client/components/DatePicker/DatePicker.js';
+import DateInput from '#client/components/DateInput/DateInput.js';
+import ExpirationDateInput from '#client/components/ExpirationDateInput/ExpirationDateInput.js';
+import CheckboxList from '#client/components/CheckboxList/CheckboxList.js';
+import FormikErrorMessage from '#client/components/FormikErrorMessage/FormikErrorMessage.js';
+import FilterCheckbox from '#client/components/FilterCheckbox/FilterCheckbox.js';
 import Checkbox, {
   CHECKBOX_THEME_BOX,
-} from 'client/components/Checkbox/Checkbox';
-import FileUploader from 'client/components/FileUploader/FileUploader';
-import MultiFileUploader from 'client/components/MultiFileUploader/MultiFileUploader';
-import S3FileDisplay from 'client/components/S3FileDisplay/S3FileDisplay';
-import StarRating from 'client/components/StarRating/StarRating';
-import InfoOptionCheckboxList from 'client/components/InfoOptionCheckboxList/InfoOptionCheckboxList';
-import FormFieldTagList from 'client/components/FormFieldTagList/FormFieldTagList';
-import EditTextbox from 'client/components/EditTextbox/EditTextbox';
-import Text from 'client/components/Text/Text';
-import Box from 'client/components/Box/Box';
-import Flex from 'client/components/Flex/Flex';
+} from '#client/components/Checkbox/Checkbox.js';
+import FileUploader from '#client/components/FileUploader/FileUploader.js';
+import MultiFileUploader from '#client/components/MultiFileUploader/MultiFileUploader.js';
+import S3FileDisplay from '#client/components/S3FileDisplay/S3FileDisplay.js';
+import StarRating from '#client/components/StarRating/StarRating.js';
+import InfoOptionCheckboxList from '#client/components/InfoOptionCheckboxList/InfoOptionCheckboxList.js';
+import FormFieldTagList from '#client/components/FormFieldTagList/FormFieldTagList.js';
+import EditTextbox from '#client/components/EditTextbox/EditTextbox.js';
+import Text from '#client/components/Text/Text.js';
+import Box from '#client/components/Box/Box.js';
+import Flex from '#client/components/Flex/Flex.js';
 
 /* eslint-disable max-len */
 export const FIELD_THEME_RENTAL_APPLICATION_HORIZONTAL = 'rentalApplicationFieldHorizontal';

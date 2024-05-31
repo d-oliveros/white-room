@@ -1,7 +1,7 @@
 import React from 'react';
 import { useMediaQuery } from 'react-responsive';
 
-import Box from 'client/components/Box/Box';
+import Box from '#client/components/Box/Box.js';
 
 import ModalV2, {
   MODAL_THEME_SLIDE_UP,

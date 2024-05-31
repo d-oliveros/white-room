@@ -1,13 +1,13 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { useParams, useLocation } from 'react-router-dom';
-import lodashCompact from 'lodash/fp/compact';
+import lodashCompact from 'lodash/fp/compact.js';
 
-import analytics from 'client/analytics';
-import log from 'client/lib/log';
-import ReactAppContext from 'client/core/ReactAppContext';
-import configureDecoratedComponent from 'client/helpers/configureDecoratedComponent';
+import analytics from '#client/analytics.js';
+import log from '#client/lib/log.js';
+import ReactAppContext from '#client/core/ReactAppContext.js';
+import configureDecoratedComponent from '#client/helpers/configureDecoratedComponent.js';
 
-import useIsMounted from 'client/hooks/useIsMounted';
+import useIsMounted from '#client/hooks/useIsMounted.js';
 
 /**
  * Changes the page title HTML tag.

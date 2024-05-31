@@ -1,6 +1,6 @@
 import React from 'react';
 
-import Box from 'client/components/Box/Box';
+import Box from '#client/components/Box/Box.js';
 import CollapsibleContainer, {
   COLLAPSIBLE_CONTAINER_STATUS_COMPLETE,
   COLLAPSIBLE_CONTAINER_STATUS_NOT_STARTED,

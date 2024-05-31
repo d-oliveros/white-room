@@ -2,14 +2,14 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Prompt } from 'react-router-dom';
 import { Formik, Form } from 'formik';
-import lodashPick from 'lodash/fp/pick';
+import lodashPick from 'lodash/fp/pick.js';
 import lodashFindIndex from 'lodash/findIndex';
-import ReactAppContext from 'client/core/ReactAppContext';
+import ReactAppContext from '#client/core/ReactAppContext.js';
 import classNames from 'classnames';
 
 import {
   getHelpCardTitle,
-} from 'common/helpCardHelpers';
+} from '#common/helpCardHelpers';
 
 import {
   createInitialValues,
@@ -17,16 +17,16 @@ import {
   createFormServerValidationFn,
   validateFormField,
   scrollToFormField,
-} from 'client/helpers/formikHelpers';
+} from '#client/helpers/formikHelpers.js';
 
-import log from 'client/lib/log';
+import log from '#client/lib/log.js';
 
-import Box from 'client/components/Box/Box';
-import PartnerPageV2, { PARTNER_PAGE_V2_FONT_SIZE_SMALL } from 'client/components/PartnerPageV2/PartnerPageV2';
-import RouteLeavingGuard from 'client/components/RouteLeavingGuard/RouteLeavingGuard';
-import ErrorMessage from 'client/components/ErrorMessage/ErrorMessage';
-import HelpCardSection from 'client/components/HelpCardSection/HelpCardSection';
-import BuyerSideAgentFormBody from 'client/components/BuyerSideAgentFormPage/BuyerSideAgentFormBody';
+import Box from '#client/components/Box/Box.js';
+import PartnerPageV2, { PARTNER_PAGE_V2_FONT_SIZE_SMALL } from '#client/components/PartnerPageV2/PartnerPageV2';
+import RouteLeavingGuard from '#client/components/RouteLeavingGuard/RouteLeavingGuard.js';
+import ErrorMessage from '#client/components/ErrorMessage/ErrorMessage.js';
+import HelpCardSection from '#client/components/HelpCardSection/HelpCardSection.js';
+import BuyerSideAgentFormBody from '#client/components/BuyerSideAgentFormPage/BuyerSideAgentFormBody.js';
 
 export const MULTI_STEP_FORM_THEME_DEFAULT = 'MULTI_STEP_FORM_THEME_DEFAULT';
 export const MULTI_STEP_FORM_THEME_PARTNER_PAGE = 'MULTI_STEP_FORM_THEME_PARTNER_PAGE';

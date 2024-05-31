@@ -1,7 +1,9 @@
 import Twilio from 'twilio';
-import typeCheck from 'common/util/typeCheck';
-import ToE164Phone from 'common/util/ToE164Phone';
-import extractPhoneFromText from 'common/util/extractPhoneFromText';
+
+import logger from '#common/logger.js';
+import typeCheck from '#common/util/typeCheck.js';
+import ToE164Phone from '#common/util/ToE164Phone.js';
+import extractPhoneFromText from '#common/util/extractPhoneFromText.js';
 
 const {
   TWILIO_ACCOUNT_ID,
@@ -13,7 +15,7 @@ const twilioClient = TWILIO_ACCOUNT_ID && TWILIO_AUTH_TOKEN
   ? new Twilio(TWILIO_ACCOUNT_ID, TWILIO_AUTH_TOKEN)
   : null;
 
-const debug = __log.debug('twilioClient');
+const debug = logger.createDebug('twilioClient');
 
 export async function sendTwilioText({ sender, phone, message, mediaUrl }) {
   typeCheck('phone::Phone', phone);
@@ -49,7 +51,7 @@ export async function sendTwilioText({ sender, phone, message, mediaUrl }) {
     return twilioResponse;
   }
   catch (error) {
-    __log.error(error);
+    logger.error(error);
     return false;
   }
 }

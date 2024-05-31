@@ -1,8 +1,7 @@
-require('./util/loadenv');
-
-// const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
-const path = require('path');
-const { parse } = require('url');
+// import ReactRefreshWebpackPlugin from '@pmmmwh/react-refresh-webpack-plugin';
+import path from 'path';
+import { parse } from 'url';
+import webpackConfig from './webpack.config.js';
 
 const {
   APP_URL,
@@ -10,9 +9,7 @@ const {
   WEBPACK_DEVELOPMENT_SERVER_PUBLIC_PORT,
 } = process.env;
 
-const buildPath = path.resolve(__dirname, 'build');
-
-const webpackConfig = require('./webpack.config');
+const buildPath = path.resolve('build');
 
 const webpackDevServerUrl = (
   `${parse(APP_URL).hostname}:` +
@@ -65,4 +62,4 @@ const webpackDevConfig = {
   // ],
 };
 
-module.exports = webpackDevConfig;
+export default webpackDevConfig;

@@ -1,6 +1,6 @@
 import assert from 'assert';
 
-import log from 'client/lib/log';
+import log from '#client/lib/log.js';
 
 const debug = log.debug('sunroom:Analytics:setScreenId');
 const isBrowser = process.browser;

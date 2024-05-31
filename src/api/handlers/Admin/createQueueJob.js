@@ -1,13 +1,13 @@
-import queue from 'queue';
-import typeCheck from 'common/util/typeCheck';
+import queue from '#queue';
+import typeCheck from '#common/util/typeCheck.js';
 
 import {
   API_ACTION_ADMIN_CREATE_QUEUE_JOB,
-} from 'api/actionTypes';
+} from '#api/actionTypes.js';
 
 import {
   USER_ROLE_ADMIN,
-} from 'common/userRoles';
+} from '#common/userRoles.js';
 
 export default {
   type: API_ACTION_ADMIN_CREATE_QUEUE_JOB,

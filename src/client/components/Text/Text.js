@@ -1,8 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
-import { system as styledSystem } from '@styled-system/core';
-import objectOmitUndefined from 'common/util/objectOmitUndefined';
+import objectOmitUndefined from '#common/util/objectOmitUndefined.js';
 
 import './Text.less';
 
@@ -131,28 +130,6 @@ const TEXT_LETTER_SPACING_TO_CLASSNAME_MAPPING = {
   41: 'letter-spacing-41',
 };
 
-const styledParser = styledSystem({
-  fontSize: true,
-  fontStyle: true,
-  lineHeight: true,
-  opacity: true,
-  letterSpacing: true,
-  textShadow: true,
-  padding: true,
-  paddingTop: true,
-  paddingRight: true,
-  paddingBottom: true,
-  paddingLeft: true,
-  position: true,
-  minHeight: true,
-  textOverflow: true,
-  overflow: true,
-  overflowWrap: true,
-  wordBreak: true,
-  wordWrap: true,
-  verticalAlign: true,
-});
-
 function Text({
   children,
   align,
@@ -188,27 +165,6 @@ function Text({
   verticalAlign,
   ...props
 }) {
-  const styles = styledParser({
-    fontSize,
-    fontStyle,
-    lineHeight,
-    letterSpacing,
-    textShadow,
-    opacity,
-    padding,
-    paddingTop,
-    paddingBottom,
-    paddingRight,
-    paddingLeft,
-    position,
-    textOverflow,
-    overflow,
-    overflowWrap,
-    wordBreak,
-    wordWrap,
-    verticalAlign,
-  });
-
   return (
     <span
       styleName={classnames(
@@ -226,7 +182,6 @@ function Text({
         TEXT_WHITE_SPACE_TO_CLASSNAME_MAPPING[whiteSpace],
         TEXT_LETTER_SPACING_TO_CLASSNAME_MAPPING[spacing],
       )}
-      style={objectOmitUndefined(styles)}
       onClick={onClick}
       {...props}
     >{children}

@@ -4,8 +4,8 @@ import classnames from 'classnames';
 
 import './Button.less';
 
-import Box from 'client/components/Box/Box';
-import Flex from 'client/components/Flex/Flex';
+import Box from '#client/components/Box/Box.js';
+import Flex from '#client/components/Flex/Flex.js';
 
 export const BUTTON_THEME_ADOBE_YELLOW_TENANT_SCREENING_LISTING = 'BUTTON_THEME_ADOBE_YELLOW_TENANT_SCREENING_LISTING'; // eslint-disable-line max-len
 export const BUTTON_THEME_ADOBE_BLUE_PROPERTY_DOCS = 'BUTTON_THEME_ADOBE_BLUE_PROPERTY_DOCS';

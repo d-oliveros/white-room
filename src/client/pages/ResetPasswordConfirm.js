@@ -1,21 +1,21 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import queryString from 'query-string';
 
-import { SCREEN_ID_RESET_PASSWORD_CONFIRM } from 'client/constants/screenIds';
+import parseQueryString from '#common/util/parseQueryString.js';
+import { SCREEN_ID_RESET_PASSWORD_CONFIRM } from '#client/constants/screenIds';
 
-import { getUserLandingPage } from 'client/helpers/allowedRoles';
+import { getUserLandingPage } from '#client/helpers/allowedRoles';
 
-import branch from 'client/core/branch';
-import withTransitionHook from 'client/helpers/withTransitionHook';
-import withScreenId from 'client/helpers/withScreenId';
-import withScrollToTop from 'client/helpers/withScrollToTop';
+import branch from '#client/core/branch.js';
+import withTransitionHook from '#client/helpers/withTransitionHook.js';
+import withScreenId from '#client/helpers/withScreenId.js';
+import withScrollToTop from '#client/helpers/withScrollToTop.js';
 
-import PasswordResetConfirmForm from 'client/components/PasswordResetConfirmForm/PasswordResetConfirmForm';
-import Navbar from 'client/components/Navbar/Navbar';
-import Link from 'client/components/Link/Link';
+import PasswordResetConfirmForm from '#client/components/PasswordResetConfirmForm/PasswordResetConfirmForm.js';
+import Navbar from '#client/components/Navbar/Navbar.js';
+import Link from '#client/components/Link/Link.js';
 
-import AuthActions from 'client/actions/Auth';
+import AuthActions from '#client/actions/Auth.js';
 
 @withTransitionHook
 @branch({
@@ -43,7 +43,7 @@ class ResetPasswordConfirmPage extends Component {
 
   onPasswordResetConfirmFormSubmit = (formValues) => {
     const { dispatch, location } = this.props;
-    const { token } = queryString.parse(location.search);
+    const { token } = parseQueryString(location.search);
 
     dispatch(AuthActions.resetPasswordRequested, {
       token: token,

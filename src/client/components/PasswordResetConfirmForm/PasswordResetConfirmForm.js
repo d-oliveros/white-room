@@ -5,12 +5,12 @@ import { Formik, Form } from 'formik';
 import {
   createInitialValues,
   validatePasswordConfirm,
-} from 'client/helpers/formikHelpers';
+} from '#client/helpers/formikHelpers.js';
 
 import ButtonDeprecated, {
   BUTTON_THEME_YELLOW,
-} from 'client/components/ButtonDeprecated/ButtonDeprecated';
-import FormikField from 'client/components/FormikField/FormikField';
+} from '#client/components/ButtonDeprecated/ButtonDeprecated.js';
+import FormikField from '#client/components/FormikField/FormikField.js';
 
 const formFields = [
   {

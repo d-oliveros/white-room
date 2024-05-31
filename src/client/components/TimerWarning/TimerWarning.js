@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import Text from 'client/components/Text/Text';
-import useFromNowTimer from 'client/hooks/useFromNowTimer';
+import Text from '#client/components/Text/Text.js';
+import useFromNowTimer from '#client/hooks/useFromNowTimer.js';
 
 const TimerWarning = ({
   fromDate,

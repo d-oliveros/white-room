@@ -1,16 +1,18 @@
 import superagent from 'superagent';
 import { resolve as resolveUrl } from 'url';
 import { serializeError } from 'serialize-error';
-import typeCheck from 'common/util/typeCheck';
+
+import logger from '#common/logger.js';
+import typeCheck from '#common/util/typeCheck.js';
 
 import {
   FIREBASE_CLOUD_MESSAGING_ERROR_RESPONSE_NOT_OK,
-} from 'common/errorCodes';
+} from '#common/errorCodes.js';
 import {
   PUSH_NOTIFICATION_SOUND_DEFAULT,
-} from 'common/pushNotificationConstants';
+} from '#common/pushNotificationConstants';
 
-const debug = __log.debug('fcm');
+const debug = logger.createDebug('fcm');
 
 const {
   FIREBASE_API_KEY,
@@ -109,6 +111,6 @@ export async function sendNotification(params) {
     return result;
   }
   catch (superAgentError) {
-    __log.error(superAgentError);
+    logger.error(superAgentError);
   }
 }

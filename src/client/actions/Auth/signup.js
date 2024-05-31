@@ -1,18 +1,18 @@
 import {
   API_ACTION_SIGNUP,
-} from 'api/actionTypes';
+} from '#api/actionTypes';
 
 import {
   ANALYTICS_EVENT_SIGNUP,
-} from 'client/analytics/eventList';
+} from '#client/analytics/eventList.js';
 
-import log from 'client/lib/log';
-import analytics from 'client/analytics';
-import { anonymousUser } from 'client/constants';
+import log from '#client/lib/log.js';
+import analytics from '#client/analytics.js';
+import { anonymousUser } from '#client/constants';
 
 import sendDataToMobileApp, {
   MOBILE_APP_ACTION_TYPE_CURRENT_USER,
-} from 'client/helpers/sendDataToMobileApp';
+} from '#client/helpers/sendDataToMobileApp.js';
 
 export default async function signup({ state, apiClient }, params) {
   const analyticsSessionId = state.get(['analytics', 'analyticsSessionId']);

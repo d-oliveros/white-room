@@ -1,9 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import Box from 'client/components/Box/Box';
-import Text from 'client/components/Text/Text';
-import Icon from 'client/components/Icon/Icon';
+import Box from '#client/components/Box/Box.js';
+import Text from '#client/components/Text/Text.js';
+import Icon from '#client/components/Icon/Icon.js';
 
 const InfoSimpleChecklist = ({
   title,

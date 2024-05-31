@@ -1,6 +1,7 @@
-import { postSlackMessage } from 'server/lib/slackClient';
+import { postSlackMessage } from '#server/lib/slackClient';
 
-import { QUEUE_JOB_SLACK_MESSAGES } from 'queue/jobTypes';
+import logger from '#common/logger.js';
+import { QUEUE_JOB_SLACK_MESSAGES } from '#queue/jobTypes';
 
 export default {
   name: QUEUE_JOB_SLACK_MESSAGES,
@@ -13,7 +14,7 @@ export default {
           await postSlackMessage(slackMessage);
         }
         catch (postSlackMessageError) {
-          __log.error(postSlackMessageError);
+          logger.error(postSlackMessageError);
           postSlackMessageErrors.push(postSlackMessageError);
         }
       }

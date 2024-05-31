@@ -1,26 +1,25 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import queryString from 'query-string';
 
 import {
   API_ACTION_VERIFY_PHONE_SMS_CODE_REQUESTED,
-} from 'api/actionTypes';
-import { USER_ROLE_ANONYMOUS } from 'common/userRoles';
-import { SCREEN_ID_RESET_PASSWORD_VALIDATE_CODE } from 'client/constants/screenIds';
+} from '#api/actionTypes';
+import { USER_ROLE_ANONYMOUS } from '#common/userRoles.js';
+import { SCREEN_ID_RESET_PASSWORD_VALIDATE_CODE } from '#client/constants/screenIds';
 
-import log from 'client/lib/log';
-import branch from 'client/core/branch';
-import withTransitionHook from 'client/helpers/withTransitionHook';
-import withScreenId from 'client/helpers/withScreenId';
-import withScrollToTop from 'client/helpers/withScrollToTop';
-import allowedRoles from 'client/helpers/allowedRoles';
-import withApiState from 'client/helpers/withApiState';
-import AuthActions from 'client/actions/Auth';
+import log from '#client/lib/log.js';
+import branch from '#client/core/branch.js';
+import withTransitionHook from '#client/helpers/withTransitionHook.js';
+import withScreenId from '#client/helpers/withScreenId.js';
+import withScrollToTop from '#client/helpers/withScrollToTop.js';
+import allowedRoles from '#client/helpers/allowedRoles.js';
+import withApiState from '#client/helpers/withApiState.js';
+import AuthActions from '#client/actions/Auth.js';
 
-import PasswordResetSmsVerifyCode from 'client/components/PasswordResetSmsVerifyCode/PasswordResetSmsVerifyCode';
-import SmsSendingIndicator from 'client/components/SmsSendingIndicator/SmsSendingIndicator';
-import Navbar from 'client/components/Navbar/Navbar';
-import Link from 'client/components/Link/Link';
+import PasswordResetSmsVerifyCode from '#client/components/PasswordResetSmsVerifyCode/PasswordResetSmsVerifyCode.js';
+import SmsSendingIndicator from '#client/components/SmsSendingIndicator/SmsSendingIndicator.js';
+import Navbar from '#client/components/Navbar/Navbar.js';
+import Link from '#client/components/Link/Link.js';
 
 @withTransitionHook
 @allowedRoles({
@@ -80,11 +79,7 @@ class ResetPasswordVerifyCodePage extends Component {
         const token = await dispatch(AuthActions.resetPasswordGenerateToken, {
           phone,
         });
-        let url = '/reset-password-confirm?';
-        url += queryString.stringify({
-          ...queryString.parse(location.search || ''),
-          token,
-        });
+        const url = `/reset-password-confirm?token=${encodeURIComponent(token)}`;
         history.push(url);
       }
       else {

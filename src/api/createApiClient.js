@@ -1,19 +1,19 @@
 import shortid from 'shortid';
 import superagent from 'superagent';
-import queryString from 'query-string';
 import { v4 as uuidv4 } from 'uuid';
 import { serializeError } from 'serialize-error';
 
-import log from 'client/lib/log';
-import typeCheck from 'common/util/typeCheck';
-import handleUserErrorMessages from 'common/handleUserErrorMessages';
-import * as actionTypes from 'api/actionTypes';
+import typeCheck from '#common/util/typeCheck.js';
+import handleUserErrorMessages from '#common/handleUserErrorMessages.js';
 
 import {
   API_ERROR_REQUEST_INVALID_RESPONSE,
   API_ERROR_REQUEST_FAILED,
   API_ERROR_REQUEST_NOT_HANDLED_OK,
-} from 'common/errorCodes';
+} from '#common/errorCodes.js';
+
+import log from '#client/lib/log.js';
+import * as actionTypes from '#api/actionTypes.js';
 
 const {
   APP_PORT,
@@ -36,8 +36,9 @@ export function makeApiRequestUrl({ actionType, actionPayload, apiPath }) {
     },
   });
   typeCheck('actionPayload::Maybe Object', actionPayload);
+
   const query = actionPayload
-    ? `?${queryString.stringify(actionPayload)}`
+    ? `?${new URLSearchParams(actionPayload)}`
     : '';
 
   return `${requestPathUrlPrefix}${apiPath}/${actionType}${query}`;
@@ -51,7 +52,7 @@ function makeApiRequestMethod({
   apiPath,
   sessionTokenName,
 }) {
-  return async function ApiRequest(actionType, actionPayload, actionOptions = {}) {
+  return async function apiRequest(actionType, actionPayload, actionOptions = {}) {
     typeCheck('actionType::ValidActionType', actionType, {
       customTypes: {
         ValidActionType: {

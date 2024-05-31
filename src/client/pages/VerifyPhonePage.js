@@ -1,37 +1,37 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
-import { formatPhoneNumber } from 'common/formatters';
+import { formatPhoneNumber } from '#common/formatters';
 
 import {
   USER_ROLE_USER,
-} from 'common/userRoles';
+} from '#common/userRoles.js';
 
 import {
   API_ACTION_VERIFY_PHONE_SMS_CODE_REQUESTED,
   API_ACTION_VERIFY_PHONE_SMS_CODE_SUBMIT,
-} from 'api/actionTypes';
+} from '#api/actionTypes';
 
 import {
   SCREEN_ID_VERIFY_PHONE,
-} from 'client/constants/screenIds';
+} from '#client/constants/screenIds.js';
 
-import AuthActions from 'client/actions/Auth';
-import NavigatorActions from 'client/actions/Navigator';
+import AuthActions from '#client/actions/Auth.js';
+import NavigatorActions from '#client/actions/Navigator.js';
 
-import withTransitionHook from 'client/helpers/withTransitionHook';
-import withScreenId from 'client/helpers/withScreenId';
-import withScrollToTop from 'client/helpers/withScrollToTop';
-import withApiState from 'client/helpers/withApiState';
-import allowedRoles from 'client/helpers/allowedRoles';
+import withTransitionHook from '#client/helpers/withTransitionHook.js';
+import withScreenId from '#client/helpers/withScreenId.js';
+import withScrollToTop from '#client/helpers/withScrollToTop.js';
+import withApiState from '#client/helpers/withApiState.js';
+import allowedRoles from '#client/helpers/allowedRoles.js';
 
-import ButtonDeprecated from 'client/components/ButtonDeprecated/ButtonDeprecated';
-import InputText from 'client/components/InputText/InputText';
-import Navbar from 'client/components/Navbar/Navbar';
-import BackButton from 'client/components/BackButton/BackButton';
-import SmsSendingIndicator from 'client/components/SmsSendingIndicator/SmsSendingIndicator';
+import ButtonDeprecated from '#client/components/ButtonDeprecated/ButtonDeprecated.js';
+import InputText from '#client/components/InputText/InputText.js';
+import Navbar from '#client/components/Navbar/Navbar.js';
+import BackButton from '#client/components/BackButton/BackButton.js';
+import SmsSendingIndicator from '#client/components/SmsSendingIndicator/SmsSendingIndicator.js';
 
-import branch from 'client/core/branch';
+import branch from '#client/core/branch.js';
 
 @withTransitionHook
 @withScrollToTop

@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import lodashGet from 'lodash/fp/get';
+import lodashGet from 'lodash/fp/get.js';
 
-import { API_ERROR_ACTION_PAYLOAD_VALIDATION_FAILED } from 'common/errorCodes';
+import { API_ERROR_ACTION_PAYLOAD_VALIDATION_FAILED } from '#common/errorCodes.js';
 
 const initialState = {
   formState: {

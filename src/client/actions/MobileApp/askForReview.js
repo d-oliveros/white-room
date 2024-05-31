@@ -1,9 +1,9 @@
 import {
   isUserAgentIphoneApp,
-} from 'common/util/isUserAgentMobileApp';
+} from '#common/util/isUserAgentMobileApp.js';
 import {
   hasRoleAnonymous,
-} from 'common/userRoles';
+} from '#common/userRoles.js';
 
 export default function askForReview({ state }) {
   const currentUser = state.get(['currentUser']);

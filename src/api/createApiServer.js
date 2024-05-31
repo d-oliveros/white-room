@@ -3,18 +3,20 @@ import shortid from 'shortid';
 import { Router } from 'express';
 import bodyParser from 'body-parser';
 import { serializeError } from 'serialize-error';
-import typeCheck from 'common/util/typeCheck';
-import trimStringValues from 'common/util/trimStringValues';
-import handleUserErrorMessages from 'common/handleUserErrorMessages';
-import lodashKeyBy from 'lodash/fp/keyBy';
+import lodashKeyBy from 'lodash/fp/keyBy.js';
+
+import logger from '#common/logger.js';
+import typeCheck from '#common/util/typeCheck.js';
+import trimStringValues from '#common/util/trimStringValues.js';
+import handleUserErrorMessages from '#common/handleUserErrorMessages.js';
 
 import {
   API_ERROR_ACTION_NOT_FOUND,
   API_ERROR_NOT_ALLOWED,
   API_ERROR_ACTION_PAYLOAD_VALIDATION_FAILED,
-} from 'common/errorCodes';
+} from '#common/errorCodes.js';
 
-const debug = __log.debug('api');
+const debug = logger.createDebug('api');
 
 /**
  * Checks if the provided `actionSpec` is a valid `actionSpec`.
@@ -219,7 +221,7 @@ function handleActionRequest(actionSpecs) {
         shortId: errorShortId,
       };
 
-      __log.error(error);
+      logger.error(error);
       error.userMessage = handleUserErrorMessages({ error, shortId: errorShortId });
       rejectApiRequest({ res, error, actionType });
     }

@@ -2,8 +2,8 @@ import { assert } from 'chai';
 import express from 'express';
 import request from 'supertest';
 
-import knex from 'server/db/knex';
-import sitemapController from 'server/lib/sitemapController';
+import knex from '#server/db/knex.js';
+import sitemapController from '#server/lib/sitemapController.js';
 
 import { resetDbData } from '../testHelpers';
 

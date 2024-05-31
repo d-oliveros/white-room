@@ -1,5 +1,5 @@
-import lodashOmitBy from 'lodash/fp/omitBy';
-import lodashIsNil from 'lodash/fp/isNil';
+import lodashOmitBy from 'lodash/fp/omitBy.js';
+import lodashIsNil from 'lodash/fp/isNil.js';
 
 const omitNil = lodashOmitBy(lodashIsNil);
 

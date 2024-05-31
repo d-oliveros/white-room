@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import Text from 'client/components/Text/Text';
-import Flex from 'client/components/Flex/Flex';
+import Text from '#client/components/Text/Text.js';
+import Flex from '#client/components/Flex/Flex.js';
 
 function TextList({
   textList,

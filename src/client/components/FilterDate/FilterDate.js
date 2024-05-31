@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 
-import DatePicker from 'client/components/DatePicker/DatePicker';
+import DatePicker from '#client/components/DatePicker/DatePicker.js';
 
 class FilterDate extends Component {
   static propTypes = {

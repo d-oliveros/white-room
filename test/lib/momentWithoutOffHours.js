@@ -1,5 +1,5 @@
 import { assert } from 'chai';
-import momentWithAustinTimezone from 'common/util/momentWithAustinTimezone';
+import momentWithAustinTimezone from '#common/util/momentWithAustinTimezone.js';
 import momentWithoutOffHours, {
   getReminderDateOffHours,
 } from 'common/util/momentWithoutOffHours';

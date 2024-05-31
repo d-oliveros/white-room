@@ -1,4 +1,4 @@
-import { USER_ROLE_ANONYMOUS } from 'common/userRoles';
+import { USER_ROLE_ANONYMOUS } from '#common/userRoles.js';
 
 export default {
   roles: [

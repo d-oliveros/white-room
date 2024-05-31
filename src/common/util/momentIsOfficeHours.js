@@ -1,5 +1,5 @@
-import typeCheck from 'common/util/typeCheck';
-import momentWithAustinTimezone from 'common/util/momentWithAustinTimezone';
+import typeCheck from '#common/util/typeCheck.js';
+import momentWithAustinTimezone from '#common/util/momentWithAustinTimezone.js';
 
 export default function momentIsOfficeHours(momentInstance) {
   typeCheck('momentInstance::Moment', momentInstance);

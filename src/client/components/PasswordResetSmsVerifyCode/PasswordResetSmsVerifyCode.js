@@ -2,15 +2,15 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Formik, Form } from 'formik';
 
-import { createFormValidationFn, createInitialValues } from 'client/helpers/formikHelpers';
-import { formatPhoneNumber } from 'common/formatters';
-import branch from 'client/core/branch';
+import client from '@${module}/helpers/formikHelpers';
+import common from '@${module}/formatters';
+import client from '@${module}/core/branch.js';
 
 import ButtonDeprecated, {
   BUTTON_THEME_YELLOW,
-} from 'client/components/ButtonDeprecated/ButtonDeprecated';
+} from '#client/components/ButtonDeprecated/ButtonDeprecated.js';
 
-import FormikField from 'client/components/FormikField/FormikField';
+import client from '@${module}/components/FormikField/FormikField.js';
 
 function getFormFields({
   phone,

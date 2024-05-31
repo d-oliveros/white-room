@@ -2,10 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 
-import preventDefaultPropagation from 'client/helpers/preventDefaultPropagation';
-import Box from 'client/components/Box/Box';
-import Text from 'client/components/Text/Text';
-import Link from 'client/components/Link/Link';
+import preventDefaultPropagation from '#client/helpers/preventDefaultPropagation.js';
+import Box from '#client/components/Box/Box.js';
+import Text from '#client/components/Text/Text.js';
+import Link from '#client/components/Link/Link.js';
 
 import './CollapsibleContainer.less';
 

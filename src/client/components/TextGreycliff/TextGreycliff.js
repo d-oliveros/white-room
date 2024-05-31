@@ -1,6 +1,6 @@
 import React from 'react';
 
-import Text from 'client/components/Text/Text';
+import Text from '#client/components/Text/Text.js';
 
 const TextGreycliff = (props) => {
   return (

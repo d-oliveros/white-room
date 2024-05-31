@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import './NavigationButton.less';
 
-import Link from 'client/components/Link/Link';
+import Link from '#client/components/Link/Link.js';
 
 const NavigationButton = ({
   color,

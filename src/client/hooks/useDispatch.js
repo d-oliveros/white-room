@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 
-import log from 'client/lib/log';
-import ReactAppContext from 'client/core/ReactAppContext';
+import log from '#client/lib/log.js';
+import ReactAppContext from '#client/core/ReactAppContext.js';
 
 const debugActions = log.debug('client:actions');
 

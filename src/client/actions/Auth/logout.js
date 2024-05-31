@@ -1,10 +1,10 @@
-import analytics from 'client/analytics';
-import { ANALYTICS_EVENT_LOGOUT } from 'client/analytics/eventList';
-import makeInitialState from 'client/makeInitialState';
-import { API_ACTION_LOGOUT } from 'api/actionTypes';
+import analytics from '#client/analytics.js';
+import { ANALYTICS_EVENT_LOGOUT } from '#client/analytics/eventList';
+import makeInitialState from '#client/makeInitialState.js';
+import { API_ACTION_LOGOUT } from '#api/actionTypes';
 import sendDataToMobileApp, {
   MOBILE_APP_ACTION_TYPE_LOGOUT,
-} from 'client/helpers/sendDataToMobileApp';
+} from '#client/helpers/sendDataToMobileApp.js';
 
 export default async function logout({ state, apiClient }) {
   return apiClient.postWithState({

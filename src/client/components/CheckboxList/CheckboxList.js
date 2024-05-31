@@ -1,11 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
-import lodashTimes from 'lodash/fp/times';
+import lodashTimes from 'lodash/fp/times.js';
 import Checkbox, {
   CHECKBOX_THEME_INLINE,
   CHECKBOX_LIST_THEME_ICON_BOX,
-} from 'client/components/Checkbox/Checkbox';
+} from '#client/components/Checkbox/Checkbox.js';
 
 export const CHECKBOX_LIST_LAYOUT_NO_WRAP = 'noGridWrap';
 export const CHECKBOX_LIST_THEME_BULLET_GRID = 'bulletGrid';

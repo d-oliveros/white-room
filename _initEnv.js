@@ -1,28 +1,22 @@
-const useBuild = process.env.USE_BUILD === 'true';
+import { fileURLToPath } from 'url';
+import path from 'path';
 
-// Marks the project's source root dir.
-const path = require('path');
-require('app-module-path').addPath(path.join(__dirname, useBuild ? 'lib' : 'src'));
+// const __filename = fileURLToPath(import.meta.url);
+// const __dirname = path.dirname(__filename);
+
+// const libDir = useBuild ? './lib' : './src';
+
+const useBuild = process.env.USE_BUILD === 'true';
 
 // Registers babel.
 if (!useBuild) {
-  require('@babel/register');
+  const babelRegister = (await import('@babel/register')).default;
+  babelRegister({
+    extensions: ['.js', '.jsx', '.tsx'],
+    ignore: [/node_modules/],
+  });
+  console.log('Registered Babel.');
 }
-
-// Disables debug lib when the app is running the E2E tests
-if (process.env.CIRCLECI) {
-  require('debug').disable();
-}
-
-// Enabled TLS 1.0.
-require('tls').DEFAULT_MIN_VERSION = 'TLSv1';
 
 // Loads the default environmental variables.
-require('./util/loadenv');
-
-/**
- * Define global variables.
- */
-global.__config = require('./config');
-
-global.__log = require(`./${useBuild ? 'lib' : 'src'}/server/lib/logger`).default; // eslint-disable-line import/no-dynamic-require
+// await import(`${libDir}/util/loadenv.js`);

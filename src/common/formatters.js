@@ -1,8 +1,8 @@
 import moment from 'moment';
 import pluralize from 'pluralize';
-import typeCheck from 'common/util/typeCheck';
-import capitalize from 'common/util/capitalize';
-import momentWithAustinTimezone from 'common/util/momentWithAustinTimezone';
+import typeCheck from '#common/util/typeCheck.js';
+import capitalize from '#common/util/capitalize.js';
+import momentWithAustinTimezone from '#common/util/momentWithAustinTimezone.js';
 
 const ONE_DAY_IN_SECONDS = 24 * 60 * 60;
 

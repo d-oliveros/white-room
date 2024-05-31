@@ -1,4 +1,4 @@
-import typeCheck from 'common/util/typeCheck';
+import typeCheck from '#common/util/typeCheck.js';
 
 export default function nullify(fields) {
   typeCheck('fields::Array', fields);

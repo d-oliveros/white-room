@@ -1,9 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Link from 'client/components/Link/Link';
-import Text from 'client/components/Text/Text';
-import Flex from 'client/components/Flex/Flex';
-import Box from 'client/components/Box/Box';
+import Link from '#client/components/Link/Link.js';
+import Text from '#client/components/Text/Text.js';
+import Flex from '#client/components/Flex/Flex.js';
+import Box from '#client/components/Box/Box.js';
 
 const CardLink = ({ to, thumbnailUrl, title, label, sublabel }) => {
   return (

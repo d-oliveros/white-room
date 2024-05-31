@@ -1,12 +1,12 @@
 import assert from 'assert';
 import jwt from 'jsonwebtoken';
 
-import typeCheck from 'common/util/typeCheck';
-import User from 'server/models/User';
+import typeCheck from '#common/util/typeCheck.js';
+import User from '#server/models/User/index.js';
 
 import {
   API_ACTION_RESET_PASSWORD,
-} from 'api/actionTypes';
+} from '#api/actionTypes';
 
 const { JWT_KEY } = process.env;
 

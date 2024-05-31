@@ -1,6 +1,6 @@
 import React from 'react';
-import Box from 'client/components/Box/Box';
-import Text from 'client/components/Text/Text';
+import Box from '#client/components/Box/Box.js';
+import Text from '#client/components/Text/Text.js';
 
 import CollapsibleOption from './CollapsibleOption';
 

@@ -3,9 +3,9 @@ import PropTypes from 'prop-types';
 import { Portal } from 'react-portal';
 import classnames from 'classnames';
 
-import emptyFunction from 'common/util/emptyFunction';
-import isUserAgentMobileApp from 'common/util/isUserAgentMobileApp';
-import branch from 'client/core/branch';
+import emptyFunction from '#common/util/emptyFunction.js';
+import isUserAgentMobileApp from '#common/util/isUserAgentMobileApp.js';
+import branch from '#client/core/branch.js';
 
 @branch({
   userAgent: ['analytics', 'userAgent'],

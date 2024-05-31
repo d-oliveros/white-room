@@ -4,7 +4,7 @@ import {
   API_ACTION_LOGOUT,
 } from 'api/actionTypes';
 
-import typeCheck from 'common/util/typeCheck';
+import typeCheck from '#common/util/typeCheck.js';
 
 function makeSignupFormData(signupData) {
   const phone = signupData.phone;

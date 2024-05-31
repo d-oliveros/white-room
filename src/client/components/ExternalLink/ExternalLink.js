@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-import branch from 'client/core/branch';
-import isUserAgentMobileApp from 'common/util/isUserAgentMobileApp';
-import sendDataToMobileApp, { MOBILE_APP_ACTION_TYPE_OPEN_URL } from 'client/helpers/sendDataToMobileApp';
+import branch from '#client/core/branch.js';
+import isUserAgentMobileApp from '#common/util/isUserAgentMobileApp.js';
+import sendDataToMobileApp, { MOBILE_APP_ACTION_TYPE_OPEN_URL } from '#client/helpers/sendDataToMobileApp';
 
 @branch({
   userAgent: ['analytics', 'userAgent'],

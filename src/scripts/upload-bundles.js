@@ -1,23 +1,29 @@
 import fs from 'fs';
 import path from 'path';
 import mime from 'mime';
+import { fileURLToPath } from 'url';
 
 import {
   S3Client,
   PutObjectCommand,
 } from '@aws-sdk/client-s3';
 
+import logger from '#common/logger.js';
+
 import {
   getFiles,
   unlinkAsync,
   checkFileExists,
-} from 'common/fileHelpers';
+} from '#common/fileHelpers.js';
 
 const {
   COMMIT_HASH,
   AWS_ACCESS_KEY,
   AWS_SECRET_KEY,
 } = process.env;
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const client = new S3Client({
   credentials: {
@@ -30,19 +36,19 @@ const commitHashSuffix = COMMIT_HASH ? '-' + COMMIT_HASH : '';
 
 const bundles = [
   {
-    filePath: path.resolve(__dirname, `../public/dist/bundle${commitHashSuffix}.js`),
+    filePath: path.resolve(__dirname, `../../public/dist/bundle${commitHashSuffix}.js`),
     s3FilePath: `js/bundle${commitHashSuffix}.js`,
   },
   {
-    filePath: path.resolve(__dirname, `../public/dist/bundle${commitHashSuffix}.js.LICENSE.txt`),
+    filePath: path.resolve(__dirname, `../../public/dist/bundle${commitHashSuffix}.js.LICENSE.txt`),
     s3FilePath: `js/bundle${commitHashSuffix}.js.LICENSE.txt`,
   },
   {
-    filePath: path.resolve(__dirname, `../public/dist/bundle${commitHashSuffix}.js.map`),
+    filePath: path.resolve(__dirname, `../../public/dist/bundle${commitHashSuffix}.js.map`),
     s3FilePath: `js/bundle${commitHashSuffix}.js.map`,
   },
   {
-    filePath: path.resolve(__dirname, `../public/dist/style${commitHashSuffix}.css`),
+    filePath: path.resolve(__dirname, `../../public/dist/style${commitHashSuffix}.css`),
     s3FilePath: `css/style${commitHashSuffix}.css`,
   },
 ];
@@ -66,7 +72,7 @@ export default async function uploadBundles() {
   }
 
   const promises = bundles.map(async ({ filePath, s3FilePath }) => {
-    __log.info(`[uploadBundles] Uploading ${filePath} -> ${s3FilePath}`);
+    logger.info(`[uploadBundles] Uploading ${filePath} -> ${s3FilePath}`);
 
     const fileExists = await checkFileExists(filePath);
 

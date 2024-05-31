@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
-import Table from 'client/components/Table/Table';
+import Table from '#client/components/Table/Table.js';
 
 const DataTableUI = (props) => {
   const {

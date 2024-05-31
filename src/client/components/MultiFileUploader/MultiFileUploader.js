@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import log from 'client/lib/log';
+import log from '#client/lib/log.js';
 import pluralize from 'pluralize';
 
 import {
   createFileObjToBeUploaded,
   uploadFileToS3,
-} from 'client/lib/fileUploader';
+} from '#client/lib/fileUploader.js';
 
 class MultiFileUploader extends Component {
   static propTypes = {

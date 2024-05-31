@@ -4,12 +4,12 @@ import { useMediaQuery } from 'react-responsive';
 
 import {
   MEDIA_QUERY_SMALL_SCREEN,
-} from 'client/constants/mediaQueries';
+} from '#client/constants/mediaQueries.js';
 
 import Button, {
   BUTTON_THEME_ADOBE_GREEN,
   BUTTON_HEIGHT_MEDIUM,
-} from 'client/components/Button/Button';
+} from '#client/components/Button/Button.js';
 
 const FooterButton = ({
   hasBoxShadow,

@@ -1,5 +1,5 @@
 import moment from 'moment';
-import extractDateParts from 'common/util/extractDateParts';
+import extractDateParts from '#common/util/extractDateParts.js';
 
 export default function dateStringMomentWithCurrentTime(dateString) {
   const dateParts = extractDateParts(dateString);

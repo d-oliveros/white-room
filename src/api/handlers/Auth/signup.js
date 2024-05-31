@@ -1,14 +1,16 @@
 import jwt from 'jsonwebtoken';
-import lodashPick from 'lodash/fp/pick';
+import lodashPick from 'lodash/fp/pick.js';
 
-import { USER_ROLE_USER } from 'common/userRoles';
-import typeCheck from 'common/util/typeCheck';
+import * as cookiesConfig from '#config/cookies.js';
+import logger from '#common/logger.js';
+import { USER_ROLE_USER } from '#common/userRoles.js';
+import typeCheck from '#common/util/typeCheck.js';
 
-import User from 'server/models/User';
+import User from '#server/models/User/index.js';
 
 import {
   API_ACTION_SIGNUP,
-} from 'api/actionTypes';
+} from '#api/actionTypes.js';
 
 const {
   JWT_KEY,
@@ -37,7 +39,7 @@ export default {
       userSignupData.signupIp = requestIp;
     }
     else {
-      __log.warn(`[api:Auth:signup] Warning: No signup IP available for ${payload.phone}.`);
+      logger.warn(`[api:Auth:signup] Warning: No signup IP available for ${payload.phone}.`);
     }
 
     const user = await User.signup(userSignupData);
@@ -49,12 +51,12 @@ export default {
       const userSessionJwtToken = jwt.sign(userSession, JWT_KEY);
 
       setCookie(
-        __config.cookies.session.name,
+        cookiesConfig.session.name,
         userSessionJwtToken,
-        __config.cookies.session.settings,
+        cookiesConfig.session.settings,
       );
 
-      __log.info(`User signed up: ${userSignupData.phone}`);
+      logger.info(`User signed up: ${userSignupData.phone}`);
     }
 
     return {

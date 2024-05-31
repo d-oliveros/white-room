@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import deepEqual from 'deep-equal';
 
-import log from 'client/lib/log';
-import configureDecoratedComponent from 'client/helpers/configureDecoratedComponent';
-import ReactAppContext from 'client/core/ReactAppContext';
+import log from '#client/lib/log.js';
+import configureDecoratedComponent from '#client/helpers/configureDecoratedComponent.js';
+import ReactAppContext from '#client/core/ReactAppContext.js';
 
 const debugActions = log.debug('client:actions');
 

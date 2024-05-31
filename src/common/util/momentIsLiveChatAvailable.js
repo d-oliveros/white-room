@@ -1,4 +1,4 @@
-import momentWithAustinTimezone from 'common/util/momentWithAustinTimezone';
+import momentWithAustinTimezone from '#common/util/momentWithAustinTimezone.js';
 
 const availableHours = [
   ['08:15', '19:30'], // Sunday

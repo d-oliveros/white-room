@@ -1,9 +1,9 @@
-import typeCheck from 'common/util/typeCheck';
-import knex from 'server/db/knex';
+import typeCheck from '#common/util/typeCheck.js';
+import knex from '#server/db/knex.js';
 
 import {
   summaryFieldgroup,
-} from 'server/models/User/fieldgroups';
+} from '#server/models/User/fieldgroups.js';
 
 export default async function getSession(userId) {
   typeCheck('userId::PositiveNumber', userId);

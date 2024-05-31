@@ -1,4 +1,4 @@
-import lodashEach from 'lodash/fp/each';
+import lodashEach from 'lodash/fp/each.js';
 
 import jobs from './jobs';
 import queue from './queue';

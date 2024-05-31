@@ -1,5 +1,9 @@
-/* eslint-disable import/no-dynamic-require */
-require('./_initEnv');
+import './_initEnv.js';
+import { promisify } from 'util';
+
+console.log('init.js');
+
+// TODO: Check if module resolver works in this scope!
 
 const {
   APP_PORT,
@@ -12,76 +16,92 @@ const {
 } = process.env;
 
 const moduleSourceDirectory = USE_BUILD === 'true' ? './lib' : './src';
-const knex = require(`${moduleSourceDirectory}/server/db/knex`);
+
+const knex = (await import(`${moduleSourceDirectory}/server/db/knex.js`));
+const logger = (await import(`${moduleSourceDirectory}/common/logger.js`)).default;
+
+const startServer = async () => {
+  logger.info('Starting server.');
+  console.log('1111');
+  const { default: server } = await import(`${moduleSourceDirectory}/server/server.js`);
+  console.log('2222');
+
+  const listen = promisify(server.listen).bind(server);
+  await listen(APP_PORT);
+  console.log('aaa');
+  logger.info(`Server listening on port: ${APP_PORT}`);
+};
+
+const startRenderer = async () => {
+  return;
+  logger.info('Starting renderer API.');
+  const { default: rendererApi } = await import(`${moduleSourceDirectory}/server/renderer/rendererApi.js`);
+
+  const listen = promisify(rendererApi.listen).bind(rendererApi);
+  await listen(RENDERER_PORT);
+  logger.info(`Renderer service listening on port: ${RENDERER_PORT}`);
+};
+
+const startCron = async () => {
+  return;
+  const startLogMessage = ENABLE_CRON === 'whitelist_only'
+    ? 'Starting cron service in whitelist only mode.'
+    : 'Starting cron service.';
+
+  logger.info(startLogMessage);
+
+  if (ENABLE_CRON === 'whitelist_only') {
+    if (!CRON_WHITELIST) {
+      throw new Error('CRON_WHITELIST is not defined.');
+    }
+    logger.info(`Whitelisted cron jobs: ${CRON_WHITELIST}`);
+  }
+
+  const { initCronJobs } = await import(`${moduleSourceDirectory}/cron/cron.js`);
+  initCronJobs();
+
+  logger.info('Cron service started.');
+};
 
 /**
  * Main application entry file.
  * Initializes the application services defined in environmental variables.
  */
-Promise.resolve()
-  .then(() => {
-    /**
-     * Runs the latest database evolution.
-     */
-    __log.info('Checking if schema migration is needed.');
-    return knex.postgresMigrateToLatestSchema();
-  })
-  .then(() => {
-    /**
-     * Starts the API server.
-     */
+const init = async () => {
+  try {
+    logger.info('Checking if schema migration is needed.');
+    await knex.postgresMigrateToLatestSchema();
+
+    const promises = [];
+
+    // Start the API server
     if (ENABLE_SERVER === 'true') {
-      __log.info('Starting server.');
-      const server = require(`${moduleSourceDirectory}/server/server`).default;
-
-      server.listen(APP_PORT, (err) => {
-        if (err) {
-          __log.error(err);
-          return;
-        }
-        __log.info(`Server listening on port: ${APP_PORT}`);
-      });
+      promises.push(startServer());
     }
 
-    /**
-     * Starts the Renderer service.
-     */
+    // Start the renderer service
     if (ENABLE_RENDERER === 'true') {
-      __log.info('Starting renderer API.');
-      const rendererApi = require(`${moduleSourceDirectory}/server/renderer/rendererApi`).default;
-
-      rendererApi.listen(RENDERER_PORT, () => {
-        __log.info(`Renderer service listening on port: ${RENDERER_PORT}`);
-      });
+      promises.push(startRenderer());
     }
 
-    /**
-     * Starts the Cron service.
-     */
+    // Starts the cron service
     if (ENABLE_CRON === 'true' || ENABLE_CRON === 'whitelist_only') {
-      const startLogMessage = ENABLE_CRON === 'whitelist_only'
-        ? 'Starting cron service in whitelist only mode.'
-        : 'Starting cron service.';
-
-      __log.info(startLogMessage);
-
-      if (ENABLE_CRON === 'whitelist_only') {
-        if (!CRON_WHITELIST) {
-          throw new Error('CRON_WHITELIST is not defined.');
-        }
-        __log.info(`Whitelisted cron jobs: ${CRON_WHITELIST}`);
-      }
-
-      const initCronJobs = require(`${moduleSourceDirectory}/cron`).initCronJobs;
-      initCronJobs();
-
-      __log.info('Cron service started.');
+      promises.push(startCron());
     }
-  })
-  .catch((error) => {
-    __log.error(error);
+
+    if (promises.length === 0) {
+      throw new Error('No services enabled.');
+    }
+
+    // TODO: Start Queue!
+
+    await Promise.all(promises);
+
+  } catch (error) {
+    logger.error(error);
     process.exit(1);
-  });
+  }
+};
 
 /**
  * Uncaught exception handler.
@@ -95,28 +115,26 @@ let errCount = 0;
 const errTreshold = 1500;
 process.on('uncaughtException', (exception) => {
   try {
-    __log.warn(`Uncaught exception #${errCount}`);
-    __log.error(exception);
-  }
-  catch (error) {} // eslint-disable-line no-empty
+    logger.warn(`Uncaught exception #${errCount}`);
+    logger.error(exception);
+  } catch (error) {} // eslint-disable-line no-empty
 
   errCount += 1;
   if (errCount === errTreshold) {
-    __log.warn('Fatal uncaught exception, shutting down.');
+    logger.warn('Fatal uncaught exception, shutting down.');
     process.exit(1);
   }
 });
 
 process.on('unhandledRejection', (exception) => {
   try {
-    __log.warn(`Unhandled rejection #${errCount}`);
-    __log.error(exception);
-  }
-  catch (error) {} // eslint-disable-line no-empty
+    logger.warn(`Unhandled rejection #${errCount}`);
+    logger.error(exception);
+  } catch (error) {} // eslint-disable-line no-empty
 
   errCount += 1;
   if (errCount === errTreshold) {
-    __log.warn('Fatal unhandled rejection, shutting down.');
+    logger.warn('Fatal unhandled rejection, shutting down.');
     process.exit(1);
   }
 });
@@ -124,3 +142,6 @@ process.on('unhandledRejection', (exception) => {
 setInterval(() => {
   errCount = 0;
 }, 60000);
+
+// Initialize the service.
+init();

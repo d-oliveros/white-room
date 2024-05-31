@@ -1,10 +1,10 @@
 import { Component } from 'react';
 import PropTypes from 'prop-types';
 
-import log from 'client/lib/log';
+import client from '@${module}/lib/log.js';
 
-import MobileAppActions from 'client/actions/MobileApp';
-import branch from 'client/core/branch';
+import client from '@${module}/actions/MobileApp.js';
+import client from '@${module}/core/branch.js';
 
 export const WEB_APP_ACTION_TYPE_UPDATE_DEVICE_REGISTRATION_IDS = 'WEB_APP_ACTION_TYPE_UPDATE_DEVICE_REGISTRATION_IDS'; // eslint-disable-line max-len
 export const WEB_APP_ACTION_TYPE_INITIAL_MOBILE_CONFIG = 'WEB_APP_ACTION_TYPE_INITIAL_MOBILE_CONFIG';

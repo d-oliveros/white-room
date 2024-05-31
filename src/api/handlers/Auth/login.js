@@ -1,21 +1,22 @@
 import jwt from 'jsonwebtoken';
-import lodashOmit from 'lodash/fp/omit';
-import lodashXor from 'lodash/fp/xor';
+import lodashOmit from 'lodash/fp/omit.js';
+import lodashXor from 'lodash/fp/xor.js';
 
 import {
   API_ERROR_INVALID_CREDENTIALS,
-} from 'common/errorCodes';
+} from '#common/errorCodes.js';
 
-import typeCheck from 'common/util/typeCheck';
-import { getExperimentActiveVariants } from 'server/lib/experiments';
-import User from 'server/models/User';
+import experimentsConfig from '#config/experiments.js';
+import * as cookiesConfig from '#config/cookies.js';
+import typeCheck from '#common/util/typeCheck.js';
+import { getExperimentActiveVariants } from '#server/lib/experiments.js';
+import User from '#server/models/User/index.js';
 
 import {
   API_ACTION_LOGIN,
-} from 'api/actionTypes';
+} from '#api/actionTypes.js';
 
 const { JWT_KEY } = process.env;
-const experimentsConfig = __config.experiments;
 const omitExperimentActiveVariants = lodashOmit('experimentActiveVariants');
 
 export default {
@@ -72,14 +73,14 @@ export default {
 
     // Sets the user token in a cookie.
     setCookie(
-      __config.cookies.session.name,
+      cookiesConfig.session.name,
       userSessionJwtToken,
-      __config.cookies.session.settings
+      cookiesConfig.session.settings
     );
 
     // Sets analytic experiment variants, persist in cookie.
     // WARN(@d-oliveros): Duplicate logic here and in /server/middleware/extractInitialState.
-    const cookieExperimentActiveVariants = getCookie(__config.cookies.experimentActiveVariants.name) || {};
+    const cookieExperimentActiveVariants = getCookie(cookiesConfig.experimentActiveVariants.name) || {};
 
     const userExperimentActiveVariants = user.experimentActiveVariants || {};
 
@@ -99,9 +100,9 @@ export default {
     });
 
     setCookie(
-      __config.cookies.experimentActiveVariants.name,
+      cookiesConfig.experimentActiveVariants.name,
       experimentActiveVariants,
-      __config.cookies.experimentActiveVariants.settings,
+      cookiesConfig.experimentActiveVariants.settings,
     );
 
     if (changed || cookieAndUserHaveDifferentExperiments) {

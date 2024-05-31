@@ -1,13 +1,13 @@
-import lodashCompact from 'lodash/fp/compact';
-import lodashUniq from 'lodash/fp/uniq';
+import lodashCompact from 'lodash/fp/compact.js';
+import lodashUniq from 'lodash/fp/uniq.js';
 
-import typeCheck from 'common/util/typeCheck';
+import typeCheck from '#common/util/typeCheck.js';
 
 import {
   makeAddressStreetDisplay,
   makeFullAddressDisplay,
   makeLocationPointString,
-} from 'common/addressHelpers';
+} from '#common/addressHelpers';
 
 export {
   geocodeByAddress as getGooglePlaceByListingAddress,

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import FormikField from 'client/components/FormikField/FormikField';
+import FormikField from '#client/components/FormikField/FormikField.js';
 import GridRow from './GridRow';
 
 export default {

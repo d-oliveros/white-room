@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 
-import useBranch from 'client/hooks/useBranch';
-import configureDecoratedComponent from 'client/helpers/configureDecoratedComponent';
+import useBranch from '#client/hooks/useBranch.js';
+import configureDecoratedComponent from '#client/helpers/configureDecoratedComponent.js';
 
 export default function withScrollToTopDecorator(ComponentToDecorate) {
   function WithScrollToTop(props) {

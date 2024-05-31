@@ -1,14 +1,14 @@
 import React, { Component } from 'react';
-import { Redirect } from 'react-router-dom/cjs/react-router-dom';
+import { Redirect } from 'react-router-dom';
 
-import { hasRoleAnonymous } from 'common/userRoles';
+import { hasRoleAnonymous } from '#common/userRoles.js';
 
-import branch from 'client/core/branch';
-import { SCREEN_ID_SIGNUP } from 'client/constants/screenIds';
-import withScreenId from 'client/helpers/withScreenId';
-import withTransitionHook from 'client/helpers/withTransitionHook';
-import SignupForm from 'client/components/SignupForm/SignupForm';
-import { getUserLandingPage } from 'client/helpers/allowedRoles';
+import branch from '#client/core/branch.js';
+import { SCREEN_ID_SIGNUP } from '#client/constants/screenIds';
+import withScreenId from '#client/helpers/withScreenId.js';
+import withTransitionHook from '#client/helpers/withTransitionHook.js';
+import SignupForm from '#client/components/SignupForm/SignupForm.js';
+import { getUserLandingPage } from '#client/helpers/allowedRoles';
 
 @withTransitionHook
 @withScreenId(SCREEN_ID_SIGNUP)
@@ -16,7 +16,9 @@ import { getUserLandingPage } from 'client/helpers/allowedRoles';
   currentUser: ['currentUser'],
 })
 class SignUpPage extends Component {
-  static pageTitle = 'Sign Up'
+  static getPageMetadata = () => ({
+    pageTitle: 'Sign Up',
+  });
 
   render() {
     const { currentUser, dispatch } = this.props;

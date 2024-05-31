@@ -3,30 +3,30 @@ import PropTypes from 'prop-types';
 import { Form, Formik } from 'formik';
 import { useLocation } from 'react-router';
 
-import useBranch from 'client/hooks/useBranch';
+import useBranch from '#client/hooks/useBranch.js';
 import {
   initialApiActionState,
-} from 'api/createApiClient';
+} from '#api/createApiClient';
 import {
   API_ACTION_SIGNUP,
-} from 'api/actionTypes';
+} from '#api/actionTypes';
 import {
   createFormValidationFn,
   createInitialValues,
-} from 'client/helpers/formikHelpers';
+} from '#client/helpers/formikHelpers.js';
 
-import AuthActions from 'client/actions/Auth';
+import AuthActions from '#client/actions/Auth.js';
 
-import Box from 'client/components/Box/Box';
-import Card from 'client/components/Card/Card';
-import ErrorMessage from 'client/components/ErrorMessage/ErrorMessage';
-import FooterSaveButton from 'client/components/FooterSaveButton/FooterSaveButton';
-import Link from 'client/components/Link/Link';
-import StaticFooter from 'client/components/StaticFooter/StaticFooter';
-import Text from 'client/components/Text/Text';
+import Box from '#client/components/Box/Box.js';
+import Card from '#client/components/Card/Card.js';
+import ErrorMessage from '#client/components/ErrorMessage/ErrorMessage.js';
+import FooterSaveButton from '#client/components/FooterSaveButton/FooterSaveButton.js';
+import Link from '#client/components/Link/Link.js';
+import StaticFooter from '#client/components/StaticFooter/StaticFooter.js';
+import Text from '#client/components/Text/Text.js';
 import FormikField, {
   FIELD_THEME_ADOBE,
-} from 'client/components/FormikField/FormikField';
+} from '#client/components/FormikField/FormikField.js';
 
 const getFormFields = () => {
   const formFields = [

@@ -1,5 +1,5 @@
 import lodashPadStart from 'lodash/padStart';
-import momentWithAustinTimezone from 'common/util/momentWithAustinTimezone';
+import momentWithAustinTimezone from '#common/util/momentWithAustinTimezone.js';
 
 /**
  * Extracts a date string without time in YYYY-MM-DD format,

@@ -1,4 +1,4 @@
-import pages from 'client/pages';
+import pages from '#client/pages.js';
 
 /* eslint-disable max-len */
 const routes = [

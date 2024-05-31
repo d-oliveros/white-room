@@ -1,6 +1,7 @@
-import typeCheck from 'common/util/typeCheck';
+import logger from '#common/logger.js';
+import typeCheck from '#common/util/typeCheck.js';
 
-const debug = __log.debug('stateMachine');
+const debug = logger.createDebug('stateMachine');
 
 const statusUpdateHookManager = (() => {
   let _stateUpdateHooks = [];
@@ -42,7 +43,7 @@ const statusUpdateHookManager = (() => {
           await hook.handler(id);
         }
         catch (hookError) {
-          __log.error(hookError);
+          logger.error(hookError);
         }
       }
     },

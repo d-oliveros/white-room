@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Navbar from 'client/components/Navbar/Navbar';
+import Navbar from '#client/components/Navbar/Navbar.js';
 
 const Page = ({
   navbarProps,

@@ -1,19 +1,19 @@
-import typeCheck from 'common/util/typeCheck';
+import typeCheck from '#common/util/typeCheck.js';
 import {
   API_ERROR_NOT_ALLOWED,
-} from 'common/errorCodes';
+} from '#common/errorCodes.js';
 
 import {
   USER_ROLE_ADMIN,
   USER_ROLE_USER,
   hasRoleAdmin,
-} from 'common/userRoles';
+} from '#common/userRoles.js';
 
-import User from 'server/models/User';
+import User from '#server/models/User/index.js';
 
 import {
   API_ACTION_USER_GET_BY_ID,
-} from 'api/actionTypes';
+} from '#api/actionTypes.js';
 
 export default {
   type: API_ACTION_USER_GET_BY_ID,

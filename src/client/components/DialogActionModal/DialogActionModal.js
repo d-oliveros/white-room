@@ -3,10 +3,10 @@ import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { Portal } from 'react-portal';
 
-import isUserAgentMobileApp from 'common/util/isUserAgentMobileApp';
+import isUserAgentMobileApp from '#common/util/isUserAgentMobileApp.js';
 
-import preventDefaultPropagation from 'client/helpers/preventDefaultPropagation';
-import branch from 'client/core/branch';
+import preventDefaultPropagation from '#client/helpers/preventDefaultPropagation.js';
+import branch from '#client/core/branch.js';
 
 export const DIALOG_ACTION_THEME_DANGER = 'DIALOG_ACTION_THEME_DANGER';
 export const DIALOG_ACTION_THEME_ACTIVE = 'DIALOG_ACTION_THEME_ACTIVE';

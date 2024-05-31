@@ -4,27 +4,27 @@ import { Formik, Form } from 'formik';
 
 import {
   API_ACTION_BUG_REPORT,
-} from 'api/actionTypes';
+} from '#api/actionTypes';
 
 import {
   createInitialValues,
   createFormValidationFn,
-} from 'client/helpers/formikHelpers';
+} from '#client/helpers/formikHelpers.js';
 
-import postWithState from 'client/actions/postWithState';
+import postWithState from '#client/actions/postWithState.js';
 
-import useDispatch from 'client/hooks/useDispatch';
+import useDispatch from '#client/hooks/useDispatch.js';
 
 import FormikField, {
   FIELD_THEME_ADOBE,
-} from 'client/components/FormikField/FormikField';
-import Box from 'client/components/Box/Box';
-import Text from 'client/components/Text/Text';
-import Flex from 'client/components/Flex/Flex';
+} from '#client/components/FormikField/FormikField.js';
+import Box from '#client/components/Box/Box.js';
+import Text from '#client/components/Text/Text.js';
+import Flex from '#client/components/Flex/Flex.js';
 import Button, {
   BUTTON_THEME_ADOBE_GREY,
   BUTTON_THEME_ADOBE_BLUE,
-} from 'client/components/Button/Button';
+} from '#client/components/Button/Button.js';
 
 const formFields = [
   {

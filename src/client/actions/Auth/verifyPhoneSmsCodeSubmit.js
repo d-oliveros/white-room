@@ -1,6 +1,6 @@
 import {
   API_ACTION_VERIFY_PHONE_SMS_CODE_SUBMIT,
-} from 'api/actionTypes';
+} from '#api/actionTypes';
 
 export default async function verifyPhoneSmsCodeSubmit({ state, apiClient }, params) {
   const { phone, code } = params;

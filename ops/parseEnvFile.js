@@ -1,4 +1,3 @@
-// Taken from https://github.com/motdotla/dotenv/blob/master/lib/main.js
 const NEWLINE = '\n';
 const RE_INI_KEY_VAL = /^\s*([\w.-]+)\s*=\s*(.*)?\s*$/;
 const RE_NEWLINES = /\\n/g;
@@ -28,8 +27,7 @@ function parseEnvFile(src) {
         if (isDoubleQuoted) {
           val = val.replace(RE_NEWLINES, NEWLINE);
         }
-      }
-      else {
+      } else {
         // remove surrounding whitespace
         val = val.trim();
       }
@@ -41,4 +39,4 @@ function parseEnvFile(src) {
   return obj;
 }
 
-module.exports = parseEnvFile;
+export default parseEnvFile;

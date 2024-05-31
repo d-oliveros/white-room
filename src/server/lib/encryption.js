@@ -1,4 +1,5 @@
 import crypto from 'crypto';
+import logger from '#common/logger.js';
 
 const {
   ENCRYPTION_KEY,
@@ -29,7 +30,7 @@ export function decrypt(text) {
     return decrypted.toString();
   }
   catch (error) {
-    __log.error(error);
+    logger.error(error);
     return null;
   }
 }

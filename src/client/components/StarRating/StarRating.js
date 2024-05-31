@@ -1,9 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
-import lodashTimes from 'lodash/fp/times';
+import lodashTimes from 'lodash/fp/times.js';
 
-import ImagePreloader from 'client/components/ImagePreloader/ImagePreloader';
+import ImagePreloader from '#client/components/ImagePreloader/ImagePreloader.js';
 
 const StarRating = ({ rate, disabled, narrow, onChange }) => (
   <div className={classnames('StarRating', { narrow })}>

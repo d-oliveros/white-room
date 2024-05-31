@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import NativeAppBanner from 'client/components/NativeAppBanner/NativeAppBanner';
+import NativeAppBanner from '#client/components/NativeAppBanner/NativeAppBanner.js';
 
 const NavbarContainer = ({
   children,

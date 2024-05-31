@@ -1,5 +1,5 @@
-import useBranch from 'client/hooks/useBranch';
-import isBoolean from 'common/util/isBoolean';
+import useBranch from '#client/hooks/useBranch.js';
+import isBoolean from '#common/util/isBoolean.js';
 
 export default function useCard({ id, defaultExpandedValue }) {
   const cardId = `card:${id}`;

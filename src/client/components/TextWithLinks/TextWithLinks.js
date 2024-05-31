@@ -4,9 +4,9 @@ import PropTypes from 'prop-types';
 import lodashUniq from 'lodash/uniq';
 import lodashOrderBy from 'lodash/orderBy';
 
-import escapeHtml from 'common/util/escapeHtml';
-import matchUrls from 'common/util/matchUrls';
-import withHttpProtocol from 'common/util/withHttpProtocol';
+import escapeHtml from '#common/util/escapeHtml.js';
+import matchUrls from '#common/util/matchUrls.js';
+import withHttpProtocol from '#common/util/withHttpProtocol.js';
 
 export default class TextWithLinks extends Component {
   static propTypes = {

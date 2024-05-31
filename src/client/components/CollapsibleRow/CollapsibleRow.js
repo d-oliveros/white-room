@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 
-import Text from 'client/components/Text/Text';
+import Text from '#client/components/Text/Text.js';
 
 class CollapsibleRow extends Component {
   static propTypes = {

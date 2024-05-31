@@ -1,9 +1,9 @@
-import redis from 'server/db/redis';
-import { sendTwilioText } from 'server/lib/twilioClient';
+import redis from '#server/db/redis.js';
+import { sendTwilioText } from '#server/lib/twilioClient';
 
 import {
   QUEUE_JOB_TWILIO_TEXT,
-} from 'queue/jobTypes';
+} from '#queue/jobTypes';
 
 export default {
   name: QUEUE_JOB_TWILIO_TEXT,

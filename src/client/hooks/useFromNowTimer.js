@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import moment from 'moment';
-import lodashCompact from 'lodash/fp/compact';
+import lodashCompact from 'lodash/fp/compact.js';
 
 const MINUTE = 60;
 const HOUR = 60 * MINUTE;

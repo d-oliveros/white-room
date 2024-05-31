@@ -1,7 +1,7 @@
-FROM node:16.10.0-buster
+FROM node:22.2.0-alpine3.19
 
 # Maintainer
-# LABEL maintainer="White Room Engineering Squad<engineering@whiteroom.com>"
+# LABEL maintainer="David Oliveros<dato.oliveros@gmail.com>"
 
 # Enable build arguments
 ARG NODE_ENV="development"

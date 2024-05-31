@@ -1,5 +1,5 @@
-import momentWithAustinTimezone from 'common/util/momentWithAustinTimezone';
-import durationSettingsToMsArray from 'common/util/durationSettingsToMsArray';
+import momentWithAustinTimezone from '#common/util/momentWithAustinTimezone.js';
+import durationSettingsToMsArray from '#common/util/durationSettingsToMsArray.js';
 
 export default function momentWithoutOffHours({
   startMoment,

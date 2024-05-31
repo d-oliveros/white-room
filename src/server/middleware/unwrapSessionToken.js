@@ -1,12 +1,17 @@
 import jwt from 'jsonwebtoken';
 
-const { JWT_KEY } = process.env;
+import * as cookiesConfig from '#config/cookies.js';
+import logger from '#common/logger.js';
+
+const {
+  JWT_KEY,
+} = process.env;
 
 export default async function unwrapSessionToken(req, res, next) {
   try {
     const sessionToken =
       req.headers['x-session-token']
-      || req.cookies[__config.cookies.session.name]
+      || req.cookies[cookiesConfig.session.name]
       || req.query.sessionToken;
 
     if (!sessionToken) {
@@ -17,9 +22,9 @@ export default async function unwrapSessionToken(req, res, next) {
 
     if (req.query.sessionToken) {
       res.cookie(
-        __config.cookies.session.name,
+        cookiesConfig.session.name,
         req.query.sessionToken,
-        __config.cookies.session.settings,
+        cookiesConfig.session.settings,
       );
     }
 
@@ -29,8 +34,8 @@ export default async function unwrapSessionToken(req, res, next) {
     if (session && !session.userId && !session.roles) {
       session = null;
       res.clearCookie(
-        __config.cookies.session.name,
-        __config.cookies.session.settings,
+        cookiesConfig.session.name,
+        cookiesConfig.session.settings,
       );
     }
 
@@ -39,8 +44,8 @@ export default async function unwrapSessionToken(req, res, next) {
     next();
   }
   catch (err) {
-    __log.error(err);
-    res.clearCookie(__config.cookies.session.name, __config.cookies.session.settings);
+    logger.error(err);
+    res.clearCookie(cookiesConfig.session.name, cookiesConfig.session.settings);
     next();
   }
 }

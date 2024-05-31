@@ -3,10 +3,12 @@ import { promisify } from 'util';
 
 import {
   ERROR_USER_ALREADY_EXISTS,
-} from 'common/errorCodes';
-import knex from 'server/db/knex';
+} from '#common/errorCodes.js';
 
-const debug = __log.debug('models:User:signup');
+import logger from '#common/logger.js';
+import knex from '#server/db/knex.js';
+
+const debug = logger.createDebug('models:User:signup');
 
 const SALT_WORK_FACTOR = 8;
 const genSaltAsync = promisify(bcrypt.genSalt.bind(bcrypt));
@@ -23,7 +25,7 @@ export default async function userSignup(userSignupData) {
     error.details = {
       phone: userSignupData.phone,
     };
-    __log.warn(error);
+    logger.warn(error);
     return null;
   }
 

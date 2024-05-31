@@ -5,15 +5,15 @@ import { Portal } from 'react-portal';
 
 import sendDataToMobileApp, {
   MOBILE_APP_ACTION_TYPE_REQUEST_PUSH_NOTIFICATION_PERMISSION,
-} from 'client/helpers/sendDataToMobileApp';
+} from '#client/helpers/sendDataToMobileApp.js';
 
-import Box from 'client/components/Box/Box';
+import Box from '#client/components/Box/Box.js';
 import ButtonDeprecated, {
   BUTTON_THEME_WHITE,
   BUTTON_THEME_BLUE,
-} from 'client/components/ButtonDeprecated/ButtonDeprecated';
+} from '#client/components/ButtonDeprecated/ButtonDeprecated.js';
 
-import branch from 'client/core/branch';
+import branch from '#client/core/branch.js';
 
 @branch({
   currentUser: ['currentUser'],

@@ -2,25 +2,25 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { monkey } from 'baobab';
 import assert from 'assert';
-import lodashSortBy from 'lodash/fp/sortBy';
-import lodashCompact from 'lodash/fp/compact';
-import lodashPickBy from 'lodash/fp/pickBy';
+import lodashSortBy from 'lodash/fp/sortBy.js';
+import lodashCompact from 'lodash/fp/compact.js';
+import lodashPickBy from 'lodash/fp/pickBy.js';
 import { setIn } from 'formik';
 
-import typeCheck from 'common/util/typeCheck';
-import objectDiff from 'common/util/objectDiff';
+import typeCheck from '#common/util/typeCheck.js';
+import objectDiff from '#common/util/objectDiff.js';
 
-import branch from 'client/core/branch';
-import configureDecoratedComponent from 'client/helpers/configureDecoratedComponent';
-import withApiState from 'client/helpers/withApiState';
-import withInfiniteScroll from 'client/helpers/withInfiniteScroll';
-import log from 'client/lib/log';
+import branch from '#client/core/branch.js';
+import configureDecoratedComponent from '#client/helpers/configureDecoratedComponent.js';
+import withApiState from '#client/helpers/withApiState.js';
+import withInfiniteScroll from '#client/helpers/withInfiniteScroll.js';
+import log from '#client/lib/log.js';
 
 import {
   API_ACTION_DATATABLE_GET,
-} from 'api/actionTypes';
+} from '#api/actionTypes';
 
-import updateSettings from 'client/actions/User/updateSettings';
+import updateSettings from '#client/actions/User/updateSettings.js';
 
 const debug = log.debug('dataTables');
 const ALL_ITEMS_COUNT = 500000;

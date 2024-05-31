@@ -1,20 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { system as styledSystem } from '@styled-system/core';
-
-const styledParser = styledSystem({
-  display: true,
-  marginTop: true,
-  marginBottom: true,
-  opacity: true,
-  backgroundColor: true,
-});
-
-const Separator = ({ ..._styles }) => {
-  const style = styledParser(_styles);
+const Separator = () => {
   return (
-    <div style={style} className='Separator' />
+    <div className='Separator' />
   );
 };
 

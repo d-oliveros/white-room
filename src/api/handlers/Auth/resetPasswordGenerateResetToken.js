@@ -1,15 +1,15 @@
 import jwt from 'jsonwebtoken';
 
-import typeCheck from 'common/util/typeCheck';
-import User from 'server/models/User';
+import typeCheck from '#common/util/typeCheck.js';
+import User from '#server/models/User/index.js';
 
 import {
   API_ERROR_INVALID_CREDENTIALS,
-} from 'common/errorCodes';
+} from '#common/errorCodes.js';
 
 import {
   API_ACTION_GENERATE_RESET_PASSWORD_TOKEN,
-} from 'api/actionTypes';
+} from '#api/actionTypes.js';
 
 const { JWT_KEY } = process.env;
 

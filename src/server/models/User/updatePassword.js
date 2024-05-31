@@ -1,7 +1,8 @@
-import knex from 'server/db/knex';
+import logger from '#common/logger.js';
+import knex from '#server/db/knex.js';
 import makePasswordHash from './makePasswordHash';
 
-const debug = __log.debug('models:User:updatePassword');
+const debug = logger.createDebug('models:User:updatePassword');
 
 export default async function updatePassword(userId, password) {
   const passwordHash = await makePasswordHash(password);

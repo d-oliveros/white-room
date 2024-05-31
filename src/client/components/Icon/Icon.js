@@ -2,15 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 
-import { system as styledSystem } from '@styled-system/core';
-
-const styledParser = styledSystem({
-  marginLeft: true,
-  marginRight: true,
-  marginTop: true,
-  marginBottom: true,
-});
-
 const ICON_DISPLAY_TO_CLASSNAME_MAPPING = {
   inlineBlock: 'display-inline-block',
 };
@@ -19,7 +10,7 @@ const ICON_CURSOR_TO_CLASSNAME_MAPPING = {
   pointer: 'cursor-pointer',
 };
 
-const Icon = ({ display, cursor, className, ..._styles }) => {
+const Icon = ({ display, cursor, className }) => {
   return (
     <div
       className={classnames(
@@ -28,7 +19,6 @@ const Icon = ({ display, cursor, className, ..._styles }) => {
         ICON_CURSOR_TO_CLASSNAME_MAPPING[cursor],
         className,
       )}
-      style={styledParser(_styles)}
     />
   );
 };

@@ -2,13 +2,13 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 
-import Box from 'client/components/Box/Box';
+import Box from '#client/components/Box/Box.js';
 import ModalV2, {
   MODAL_THEME_FIXED_FOOTER_BUTTON,
-} from 'client/components/ModalV2/ModalV2';
+} from '#client/components/ModalV2/ModalV2.js';
 import {
   BUTTON_THEME_ADOBE_GREY,
-} from 'client/components/Button/Button';
+} from '#client/components/Button/Button.js';
 
 import './InfoTile.less';
 

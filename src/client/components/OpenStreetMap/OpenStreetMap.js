@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import withJsScript from 'client/helpers/withJsScript';
-import Box from 'client/components/Box/Box';
-import Link from 'client/components/Link/Link';
+import withJsScript from '#client/helpers/withJsScript.js';
+import Box from '#client/components/Box/Box.js';
+import Link from '#client/components/Link/Link.js';
 
 @withJsScript({
   scriptUrl:

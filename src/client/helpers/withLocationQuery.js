@@ -1,15 +1,15 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router';
-import queryString from 'query-string';
 
-import configureDecoratedComponent from 'client/helpers/configureDecoratedComponent';
+import parseQueryString from '#common/util/parseQueryString.js';
+import configureDecoratedComponent from '#client/helpers/configureDecoratedComponent.js';
 
 export default function withLocationQueryDecorator(ComponentToDecorate) {
   @withRouter
   class WithLocationQuery extends Component {
     render() {
       const { location } = this.props;
-      const locationQuery = queryString.parse(location.search);
+      const locationQuery = parseQueryString(location.search);
 
       return (
         <ComponentToDecorate

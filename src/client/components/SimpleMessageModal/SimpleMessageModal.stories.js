@@ -4,7 +4,7 @@ import {
   BUTTON_THEME_GREEN_ADOBE,
   BUTTON_THEME_GREY_ADOBE,
   BUTTON_THEME_RED_ADOBE,
-} from 'client/components/ButtonDeprecated/ButtonDeprecated';
+} from '#client/components/ButtonDeprecated/ButtonDeprecated.js';
 import SimpleMessageModal, { SIMPLE_MESSAGE_MODAL_THEME_SLIDE_UP } from './SimpleMessageModal';
 
 export default {

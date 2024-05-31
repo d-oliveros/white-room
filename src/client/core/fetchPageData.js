@@ -1,5 +1,5 @@
 import { serializeError } from 'serialize-error';
-import log from 'client/lib/log';
+import log from '#client/lib/log.js';
 
 /**
  * Runs the data fetching functions defined in the router state's component tree.

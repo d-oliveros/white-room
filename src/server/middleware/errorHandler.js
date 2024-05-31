@@ -1,4 +1,5 @@
 import { serializeError } from 'serialize-error';
+import logger from '#common/logger.js';
 
 const {
   NODE_ENV,
@@ -14,7 +15,7 @@ export default function errorHandler(err, req, res, next) { // eslint-disable-li
 
   // Internal Errors
   if (shouldLogError) {
-    __log.error(err);
+    logger.error(err);
   }
 
   if (res.headersSent) {

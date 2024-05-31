@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import CollapsibleContainer, {
   COLLAPSIBLE_CONTAINER_STATUSES,
   COLLAPSIBLE_CONTAINER_BORDER_TYPES,
-} from 'client/components/CollapsibleContainer/CollapsibleContainer';
+} from '#client/components/CollapsibleContainer/CollapsibleContainer.js';
 
 const CollapsibleContainerController = (props) => {
   const {

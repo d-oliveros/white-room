@@ -1,11 +1,12 @@
-require('../_initEnv');
-const fs = require('fs');
+import '../../_initEnv.js';
+import fs from 'fs';
+import logger from '#common/logger.js';
 
 const scriptName = process.argv[2];
 
 if (!scriptName) {
-  __log.error('Script name is required.\nTry "npm run script [scriptName]".\n\n');
-  __log.info('Available scripts:\n' + getScriptNames(__dirname));
+  logger.error('Script name is required.\nTry "npm run script [scriptName]".\n\n');
+  logger.info('Available scripts:\n' + getScriptNames(__dirname));
   process.exit(0);
 }
 
@@ -23,14 +24,14 @@ if (typeof mod === 'function') {
 
   if (ret && typeof ret === 'object' && ret !== null && typeof ret.then === 'function') {
     ret.then(finish).catch((err) => {
-      __log.error(err);
+      logger.error(err);
       process.exit(1);
     });
   }
 }
 
 function finish() {
-  __log.info(`Finished "${scriptName}"`);
+  logger.info(`Finished "${scriptName}"`);
   process.exit(0);
 }
 

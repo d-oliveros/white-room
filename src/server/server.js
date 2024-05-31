@@ -6,25 +6,17 @@ import cookieParser from 'cookie-parser';
 import {
   createApiServer,
   actionSpecsList,
-} from 'api';
+} from '#api/index.js';
 
-import { USER_ROLE_ADMIN } from 'common/userRoles';
+import { USER_ROLE_ADMIN } from '#common/userRoles.js';
 
-import sitemapController from './lib/sitemapController';
-import sendgridWebhookApi from './lib/sendgridWebhookApi';
-import fileUploadsController from './lib/fileUploadsController';
-import pdfViewerController from './lib/pdfViewerController';
+import * as cookiesConfig from '#config/cookies.js';
+import sitemapController from '#server/lib/sitemapController.js';
+import sendgridWebhookApi from '#server/lib/sendgridWebhookApi.js';
+import fileUploadsController from '#server/lib/fileUploadsController.js';
+import pdfViewerController from '#server/lib/pdfViewerController.js';
 
-import {
-  assetNotFound,
-  unwrapSessionToken,
-  handleCaps,
-  extractInitialState,
-  serveReactApp,
-  serveCdnAssets,
-  errorHandler,
-  segmentLibProxy,
-} from './middleware';
+import middleware from '#server/middleware/index.js';
 
 const {
   ENABLE_STORYBOOK,
@@ -33,6 +25,17 @@ const {
 } = process.env;
 
 const ROOT_DIR = path.resolve(__dirname, '..', '..');
+
+const {
+  assetNotFound,
+  unwrapSessionToken,
+  handleCaps,
+  extractInitialState,
+  serveReactApp,
+  serveCdnAssets,
+  errorHandler,
+  segmentLibProxy,
+} = middleware;
 
 const app = express();
 
@@ -66,7 +69,7 @@ app.use('/sendgrid/webhooks', sendgridWebhookApi);
 const adminRoles = [
   USER_ROLE_ADMIN,
 ];
-app.use(cookieParser(COOKIE_SECRET, __config.session));
+app.use(cookieParser(COOKIE_SECRET, cookiesConfig.session));
 app.use(unwrapSessionToken);
 app.use('/api/v1', createApiServer(actionSpecsList, {
   sessionName: 'session',

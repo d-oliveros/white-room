@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { formatPhoneNumber } from 'common/formatters';
+import { formatPhoneNumber } from '#common/formatters';
 
 class SmsSendingIndicator extends Component {
   constructor(props) {

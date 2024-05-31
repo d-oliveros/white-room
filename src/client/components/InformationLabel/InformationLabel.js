@@ -2,9 +2,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import Box from 'client/components/Box/Box';
-import Text from 'client/components/Text/Text';
-import Flex from 'client/components/Flex/Flex';
+import Box from '#client/components/Box/Box.js';
+import Text from '#client/components/Text/Text.js';
+import Flex from '#client/components/Flex/Flex.js';
 
 const InformationLabel = ({
   text,

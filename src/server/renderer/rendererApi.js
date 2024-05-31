@@ -1,9 +1,11 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import { serializeError } from 'serialize-error';
-import typeCheck from 'common/util/typeCheck';
 
-import renderReactApp from './renderReactApp';
+import logger from '#common/logger.js';
+import typeCheck from '#common/util/typeCheck.js';
+
+import renderReactApp from '#server/renderer/renderReactApp.js';
 
 /**
  * Renderer server.
@@ -67,10 +69,10 @@ renderer.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
   const status = err.status || err.statusCode || 500;
   const { url } = req.body;
 
-  __log.silly(`${status} - ${url}`);
+  logger.silly(`${status} - ${url}`);
 
   if (status >= 500 || status === 400) {
-    __log.error(err);
+    logger.error(err);
   }
 
   if (!res.headersSent) {

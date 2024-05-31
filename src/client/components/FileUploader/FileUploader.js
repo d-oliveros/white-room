@@ -1,23 +1,23 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-import { isImageFileUrl } from 'common/util/imageExtensions';
-import log from 'client/lib/log';
+import { isImageFileUrl } from '#common/util/imageExtensions';
+import log from '#client/lib/log.js';
 import {
   isPDFFile,
   createFileObjToBeUploaded,
   uploadFileToS3,
   makeProxiedS3FilePath,
   getFileValidationError,
-} from 'client/lib/fileUploader';
+} from '#client/lib/fileUploader.js';
 
 import ButtonDeprecated, {
   BUTTON_THEME_WHITE_ADOBE_SMALL,
-} from 'client/components/ButtonDeprecated/ButtonDeprecated';
-import S3FileDisplay from 'client/components/S3FileDisplay/S3FileDisplay';
-import Checkbox from 'client/components/Checkbox/Checkbox';
-import Box from 'client/components/Box/Box';
-import Text from 'client/components/Text/Text';
+} from '#client/components/ButtonDeprecated/ButtonDeprecated.js';
+import S3FileDisplay from '#client/components/S3FileDisplay/S3FileDisplay.js';
+import Checkbox from '#client/components/Checkbox/Checkbox.js';
+import Box from '#client/components/Box/Box.js';
+import Text from '#client/components/Text/Text.js';
 
 class FileUploader extends Component {
   static propTypes = {

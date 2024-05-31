@@ -2,17 +2,17 @@ import assert from 'assert';
 import faker from 'faker';
 import kue from 'kue';
 import { getIn } from 'formik';
-import lodashOmit from 'lodash/fp/omit';
+import lodashOmit from 'lodash/fp/omit.js';
 
-import parseJSON from 'common/util/parseJSON';
-import typeCheck from 'common/util/typeCheck';
-import generateRandomPhone from 'common/util/generateRandomPhone';
+import parseJSON from '#common/util/parseJSON.js';
+import typeCheck from '#common/util/typeCheck.js';
+import generateRandomPhone from '#common/util/generateRandomPhone.js';
 
-import queue from 'queue';
+import queue from '#queue';
 
-import redis from 'server/db/redis';
-import knex from 'server/db/knex';
-import User from 'server/models/User';
+import redis from '#server/db/redis.js';
+import knex from '#server/db/knex.js';
+import User from '#server/models/User/index.js';
 
 import usersFixture from '../migrations/seeds/usersFixture.json';
 

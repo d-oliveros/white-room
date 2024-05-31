@@ -2,14 +2,14 @@ import React, { useCallback, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Prompt } from 'react-router-dom';
 
-import NavigatorActions from 'client/actions/Navigator';
+import NavigatorActions from '#client/actions/Navigator.js';
 import {
   BUTTON_THEME_GREEN_ADOBE,
   BUTTON_THEME_RED_ADOBE,
-} from 'client/components/ButtonDeprecated/ButtonDeprecated';
+} from '#client/components/ButtonDeprecated/ButtonDeprecated.js';
 import SimpleMessageModal, {
   SIMPLE_MESSAGE_MODAL_THEME_SLIDE_UP,
-} from 'client/components/SimpleMessageModal/SimpleMessageModal';
+} from '#client/components/SimpleMessageModal/SimpleMessageModal.js';
 
 const RouteLeavingGuard = ({
   when,

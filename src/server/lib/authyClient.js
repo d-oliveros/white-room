@@ -1,13 +1,15 @@
 import superagent from 'superagent';
 import { resolve as resolveUrl } from 'url';
-import typeCheck from 'common/util/typeCheck';
-import queryString from 'query-string';
+
+import logger from '#common/logger.js';
+import typeCheck from '#common/util/typeCheck.js';
+import parseQueryString from '#common/util/parseQueryString.js';
 
 import {
   AUTHY_ERROR_RESPONSE_NOT_OK,
-} from 'common/errorCodes';
+} from '#common/errorCodes.js';
 
-const debug = __log.debug('authy');
+const debug = logger.createDebug('authy');
 
 const COUNTRY_CODE = 1;
 
@@ -133,7 +135,7 @@ export async function sendVerificationCode(params) {
     return result;
   }
   catch (superAgentError) {
-    __log.error(superAgentError);
+    logger.error(superAgentError);
   }
 }
 
@@ -155,7 +157,7 @@ export async function checkVerificationCode(params) {
     typeCheck('code::NonEmptyString', code);
     typeCheck('appName::NonEmptyString', appName);
 
-    const querySearch = queryString.stringify({
+    const querySearch = new URLSearchParams({
       phone_number: phone,
       country_code: COUNTRY_CODE,
       verification_code: code,
@@ -172,6 +174,6 @@ export async function checkVerificationCode(params) {
     return result;
   }
   catch (superAgentError) {
-    __log.error(superAgentError);
+    logger.error(superAgentError);
   }
 }

@@ -1,23 +1,21 @@
-require('./util/loadenv');
-
-const path = require('path');
-const webpack = require('webpack');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
-const TerserPlugin = require('terser-webpack-plugin');
-const { compact } = require('lodash');
+import { fileURLToPath } from 'url';
+import path from 'path';
+import webpack from 'webpack';
+import MiniCssExtractPlugin from 'mini-css-extract-plugin';
+import CssMinimizerPlugin from 'css-minimizer-webpack-plugin';
+import TerserPlugin from 'terser-webpack-plugin';
+import compact from 'lodash/fp/compact.js';
 
 const { NODE_ENV, COMMIT_HASH } = process.env;
 const isProd = NODE_ENV === 'production';
 
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const nodeModulesPath = path.resolve(__dirname, 'node_modules');
 const buildPath = path.resolve(__dirname, 'public', 'dist');
 const srcPath = path.resolve(__dirname, 'src');
 
 // Read src folder to get list of folder names
 // then, build an object { [foldername]: path.resolve(srcPath, foldername)}
-
-const appBabelConfig = require('./babel.config');
 
 const webpackConfig = {
   mode: isProd ? 'production' : 'development',
@@ -35,9 +33,9 @@ const webpackConfig = {
     alias: {
       '@src': srcPath,
     },
-    fallback: {
-      path: require.resolve('path-browserify'),
-    },
+    // fallback: {
+    //   path: require.resolve('path-browserify'),
+    // },
   },
   optimization: {
     minimize: isProd,
@@ -70,12 +68,7 @@ const webpackConfig = {
         use: {
           loader: 'babel-loader',
           options: {
-            presets: appBabelConfig.presets,
-            plugins: appBabelConfig.plugins.map((plugin) =>
-              Array.isArray(plugin) && plugin[0] === 'react-css-modules'
-                ? [plugin[0], { ...plugin[1], removeImport: false }]
-                : plugin
-            ),
+            configFile: path.resolve(__dirname, 'babel.client.config.js'),
           },
         },
       },
@@ -153,4 +146,4 @@ const webpackConfig = {
   ]),
 };
 
-module.exports = webpackConfig;
+export default webpackConfig;

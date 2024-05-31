@@ -1,4 +1,4 @@
-import momentWithAustinTimezone from 'common/util/momentWithAustinTimezone';
+import momentWithAustinTimezone from '#common/util/momentWithAustinTimezone.js';
 
 export default function isLastDayOfMonth() {
   const today = momentWithAustinTimezone();

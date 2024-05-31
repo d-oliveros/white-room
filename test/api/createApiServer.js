@@ -11,7 +11,7 @@ import {
   actionSpecsList,
 } from 'api';
 
-import User from 'server/models/User';
+import User from '#server/models/User/index.js';
 
 const SIGN_OTTER_WEBHOOKS_SERVER_API_KEY = '1234';
 

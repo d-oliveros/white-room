@@ -1,10 +1,10 @@
-import analytics from 'client/analytics';
+import analytics from '#client/analytics.js';
 
 import {
   API_ACTION_RESET_PASSWORD,
-} from 'api/actionTypes';
+} from '#api/actionTypes';
 
-import login from 'client/actions/Auth/login';
+import login from '#client/actions/Auth/login.js';
 
 /**
  * This action calls the api to set the new user password

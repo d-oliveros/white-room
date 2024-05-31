@@ -1,14 +1,14 @@
-import typeCheck from 'common/util/typeCheck';
+import typeCheck from '#common/util/typeCheck.js';
 
 import {
   USER_ROLE_ADMIN,
-} from 'common/userRoles';
+} from '#common/userRoles.js';
 
 import {
   API_ACTION_ADMIN_UPDATE_ITEM,
-} from 'api/actionTypes';
+} from '#api/actionTypes';
 
-import knex from 'server/db/knex';
+import knex from '#server/db/knex.js';
 
 export default {
   type: API_ACTION_ADMIN_UPDATE_ITEM,

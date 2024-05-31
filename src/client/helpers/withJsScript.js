@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import load from 'little-loader';
 
-import log from 'client/lib/log';
-import configureDecoratedComponent from 'client/helpers/configureDecoratedComponent';
+import log from '#client/lib/log.js';
+import configureDecoratedComponent from '#client/helpers/configureDecoratedComponent.js';
 
 const isBrowser = process.browser;
 const scriptsLoaded = [];

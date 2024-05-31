@@ -1,6 +1,6 @@
 import {
   API_ACTION_VERIFY_PHONE_SMS_CODE_REQUESTED,
-} from 'api/actionTypes';
+} from '#api/actionTypes';
 
 /**
  * This action generates a new SMS with a 4 digit code and is texted to the user.

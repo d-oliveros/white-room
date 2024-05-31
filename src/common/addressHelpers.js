@@ -1,6 +1,6 @@
-import lodashCompact from 'lodash/fp/compact';
-import typeCheck from 'common/util/typeCheck';
-import capitalizeAll from 'common/util/capitalizeAll';
+import lodashCompact from 'lodash/fp/compact.js';
+import typeCheck from '#common/util/typeCheck.js';
+import capitalizeAll from '#common/util/capitalizeAll.js';
 
 export function makeAddressStreetDisplay(address, { omitUnitWord, omitUnitNumber } = {}) {
   if (!address?.streetName) {

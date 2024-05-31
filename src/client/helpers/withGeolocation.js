@@ -1,17 +1,17 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-import isBoolean from 'common/util/isBoolean';
+import isBoolean from '#common/util/isBoolean.js';
 import {
   getCurrentWebGeolocation,
   getCurrentMobileGeolocation,
   getWebGeolocationPermission,
   setWebGeolocationPermission,
-} from 'common/geolocationHelpers';
-import isUserAgentMobileApp from 'common/util/isUserAgentMobileApp';
+} from '#common/geolocationHelpers';
+import isUserAgentMobileApp from '#common/util/isUserAgentMobileApp.js';
 
-import branch from 'client/core/branch';
-import configureDecoratedComponent from 'client/helpers/configureDecoratedComponent';
+import branch from '#client/core/branch.js';
+import configureDecoratedComponent from '#client/helpers/configureDecoratedComponent.js';
 
 export const GEOLOCATION_STATE_INIT = 'GEOLOCATION_STATE_INIT'; // Initial state.
 export const GEOLOCATION_STATE_UNAVAILABLE = 'GEOLOCATION_STATE_UNAVAILABLE'; // No geolocation capabilities.

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import lodashGet from 'lodash/fp/get';
+import lodashGet from 'lodash/fp/get.js';
 
 class FormikErrorMessage extends Component {
   static propTypes = {

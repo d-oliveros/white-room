@@ -1,7 +1,7 @@
 import { SitemapStream, streamToPromise } from 'sitemap';
 
-import redis from 'server/db/redis';
-import knex from 'server/db/knex';
+import redis from '#server/db/redis.js';
+import knex from '#server/db/knex.js';
 
 const {
   APP_URL,

@@ -1,16 +1,16 @@
 import assert from 'assert';
-import lodashGet from 'lodash/fp/get';
+import lodashGet from 'lodash/fp/get.js';
 
 import {
   USER_ROLE_ANONYMOUS,
-} from 'common/userRoles';
+} from '#common/userRoles.js';
 
-import log from 'client/lib/log';
-import makeApplicationContext from 'client/analytics/makeApplicationContext';
+import log from '#client/lib/log.js';
+import makeApplicationContext from '#client/analytics/makeApplicationContext.js';
 
 import {
   ANALYTICS_EVENT_PAGE_VIEWED,
-} from 'client/analytics/eventList';
+} from '#client/analytics/eventList.js';
 
 const { NODE_ENV } = process.env;
 const debug = log.debug('analytics');

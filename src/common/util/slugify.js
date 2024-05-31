@@ -1,4 +1,4 @@
-import lodashDeburr from 'lodash/fp/deburr';
+import lodashDeburr from 'lodash/fp/deburr.js';
 
 export default function slugify(string) {
   if (!string) {

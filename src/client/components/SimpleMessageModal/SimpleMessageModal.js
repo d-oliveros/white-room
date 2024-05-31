@@ -2,13 +2,13 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 
-import ButtonDeprecated from 'client/components/ButtonDeprecated/ButtonDeprecated';
-import Button from 'client/components/Button/Button';
-import DarkModal from 'client/components/DarkModal/DarkModal';
-import ModalContent from 'client/components/ModalContent/ModalContent';
-import Box from 'client/components/Box/Box';
-import Text from 'client/components/Text/Text';
-import SafariToolbarSpace from 'client/components/SafariToolbarSpace/SafariToolbarSpace';
+import ButtonDeprecated from '#client/components/ButtonDeprecated/ButtonDeprecated.js';
+import Button from '#client/components/Button/Button.js';
+import DarkModal from '#client/components/DarkModal/DarkModal.js';
+import ModalContent from '#client/components/ModalContent/ModalContent.js';
+import Box from '#client/components/Box/Box.js';
+import Text from '#client/components/Text/Text.js';
+import SafariToolbarSpace from '#client/components/SafariToolbarSpace/SafariToolbarSpace.js';
 
 import './SimpleMessageModal.less';
 

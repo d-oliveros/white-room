@@ -1,6 +1,8 @@
 import assert from 'assert';
-import { cloneDeep } from 'lodash';
+import lodashCloneDeep from 'lodash/fp/cloneDeep.js';
 import superagent from 'superagent';
+
+import logger from '#common/logger.js';
 
 const {
   APP_TITLE,
@@ -8,7 +10,7 @@ const {
   SLACK_REDIRECT_MESSAGES_CHANNEL,
 } = process.env;
 
-const debug = __log.debug('slack');
+const debug = logger.createDebug('slack');
 
 export const isSlackEnabled = !!SLACK_ENDPOINT;
 
@@ -84,11 +86,11 @@ export async function postSlackMessage(params) {
 
   const responses = [];
   for (const _channel of channels) {
-    __log.debug(`Sending slack message to channel ${_channel}`);
+    logger.createDebug(`Sending slack message to channel ${_channel}`);
     responses.push(
       await sendSingleSlackMessage({
         channel: _channel,
-        attachments: cloneDeep(attachmentsWithColor),
+        attachments: lodashCloneDeep(attachmentsWithColor),
         message: params.text,
         identity,
       })
@@ -129,7 +131,7 @@ const sendSingleSlackMessage = async ({ channel, attachments, message, identity 
       attachments,
       message,
     };
-    __log.error(error);
+    logger.error(error);
   }
   return slackResponse;
 };

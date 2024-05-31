@@ -1,7 +1,10 @@
-import { API_ACTION_EXPERIMENT_ACTIVE_VARIANTS_UPDATE } from 'api/actionTypes';
+import {
+  API_ACTION_EXPERIMENT_ACTIVE_VARIANTS_UPDATE,
+} from '#api/actionTypes.js';
 
-import typeCheck from 'common/util/typeCheck';
-import User from 'server/models/User';
+import * as cookiesConfig from '#config/cookies.js';
+import typeCheck from '#common/util/typeCheck.js';
+import User from '#server/models/User/index.js';
 
 export default {
   type: API_ACTION_EXPERIMENT_ACTIVE_VARIANTS_UPDATE,
@@ -15,9 +18,9 @@ export default {
         .where({ id: session.userId });
     }
     setCookie(
-      __config.cookies.experimentActiveVariants.name,
+      cookiesConfig.experimentActiveVariants.name,
       experimentActiveVariants,
-      __config.cookies.experimentActiveVariants.settings,
+      cookiesConfig.experimentActiveVariants.settings,
     );
     return {
       experimentActiveVariants,

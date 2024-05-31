@@ -1,23 +1,23 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import queryString from 'query-string';
 
+import parseQueryString from '#common/util/parseQueryString.js';
 import {
   hasRoleAnonymous,
-} from 'common/userRoles';
+} from '#common/userRoles.js';
 
 import {
   SCREEN_ID_LOGOUT,
-} from 'client/constants/screenIds';
+} from '#client/constants/screenIds.js';
 
-import Logo from 'client/components/Logo/Logo';
+import Logo from '#client/components/Logo/Logo.js';
 
-import log from 'client/lib/log';
-import AuthActions from 'client/actions/Auth';
-import branch from 'client/core/branch';
-import withTransitionHook from 'client/helpers/withTransitionHook';
-import withScreenId from 'client/helpers/withScreenId';
-import withScrollToTop from 'client/helpers/withScrollToTop';
+import log from '#client/lib/log.js';
+import AuthActions from '#client/actions/Auth.js';
+import branch from '#client/core/branch.js';
+import withTransitionHook from '#client/helpers/withTransitionHook.js';
+import withScreenId from '#client/helpers/withScreenId.js';
+import withScrollToTop from '#client/helpers/withScrollToTop.js';
 
 @withTransitionHook
 @withScreenId(SCREEN_ID_LOGOUT)
@@ -42,7 +42,7 @@ class LogoutPage extends Component {
       dispatch,
       history,
     } = this.props;
-    const locationQuery = queryString.parse(location.search);
+    const locationQuery = parseQueryString(location.search);
     const redirectUrl = locationQuery.next || '/login';
 
     if (!hasRoleAnonymous(currentUserRoles)) {

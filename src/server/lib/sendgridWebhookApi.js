@@ -1,19 +1,21 @@
 import { Router } from 'express';
 import { serializeError } from 'serialize-error';
-import lodashPick from 'lodash/fp/pick';
+import lodashPick from 'lodash/fp/pick.js';
 import moment from 'moment';
 import superagent from 'superagent';
-import { trackServersideEvent } from 'server/lib/serversideAnalytics';
+
+import logger from '#common/logger.js';
+import { trackServersideEvent } from '#server/lib/serversideAnalytics.js';
 import {
   SENDGRID_EVENT_OPENED,
   SENDGRID_EVENT_CLICKED,
   SENDGRID_EVENT_TO_ANALYTICS_EVENT_MAPPING,
-} from 'server/lib/sendgridClient';
+} from '#server/lib/sendgridClient.js';
 
-import knex from 'server/db/knex';
+import knex from '#server/db/knex.js';
 
 const sendgridWebhookApi = new Router();
-const debug = __log.debug('sendgridWebhookApi');
+const debug = logger.createDebug('sendgridWebhookApi');
 
 const whitelistFields = lodashPick([
   'email',
@@ -52,7 +54,7 @@ sendgridWebhookApi.post('/event-dispatcher', async (req, res, next) => {
       requestBody: req.body,
     };
     error.name = 'SendgridWebhookEventDispatcherError';
-    __log.error(error);
+    logger.error(error);
     next(error);
   }
 });
@@ -129,7 +131,7 @@ sendgridWebhookApi.post('/event', async (req, res, next) => {
       requestBody: req.body,
     };
     error.name = 'SendgridWebhookEventError';
-    __log.error(error);
+    logger.error(error);
     next(error);
   }
 });

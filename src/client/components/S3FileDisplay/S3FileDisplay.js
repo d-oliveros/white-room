@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
-import useBranch from 'client/hooks/useBranch';
+import useBranch from '#client/hooks/useBranch.js';
 import {
   makeProxiedS3FilePath,
-} from 'client/lib/fileUploader';
+} from '#client/lib/fileUploader.js';
 
-import Box from 'client/components/Box/Box';
+import Box from '#client/components/Box/Box.js';
 
 const S3FileDisplay = ({
   url,

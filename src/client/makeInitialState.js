@@ -1,4 +1,4 @@
-import anonymousUser from 'client/constants/anonymousUser';
+import anonymousUser from '#client/constants/anonymousUser.js';
 
 /**
  * Makes the initial client state.

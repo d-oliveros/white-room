@@ -1,14 +1,16 @@
 import os from 'os';
 import { serializeError } from 'serialize-error';
 
+import logger from '#common/logger.js';
+
 import {
   uploadIncomingFile,
   interpolateFilePath,
-} from 'common/fileHelpers';
+} from '#common/fileHelpers.js';
 
 import {
   uploadToS3,
-} from 'common/s3Client';
+} from '#common/s3Client.js';
 
 export default async function fileUploadsController(req, res) {
   try {
@@ -54,7 +56,7 @@ export default async function fileUploadsController(req, res) {
   }
   catch (error) {
     error.name = 'FileUploadError';
-    __log.error(error);
+    logger.error(error);
 
     res.json({
       success: false,

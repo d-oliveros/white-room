@@ -3,19 +3,22 @@ import UAParser from 'ua-parser-js';
 import MobileDetect from 'mobile-detect';
 import isBot from 'isbot';
 import jwt from 'jsonwebtoken';
-import lodashOmit from 'lodash/fp/omit';
-import lodashXor from 'lodash/fp/xor';
+import lodashOmit from 'lodash/fp/omit.js';
+import lodashXor from 'lodash/fp/xor.js';
 
-import isUserAgentMobileApp from 'common/util/isUserAgentMobileApp';
-import objectIsEqual from 'common/util/objectIsEqual';
-import makeInitialState from 'client/makeInitialState';
+import experimentsConfig from '#config/experiments.js';
+import * as cookiesConfig from '#config/cookies.js';
+
+import logger from '#common/logger.js';
+import isUserAgentMobileApp from '#common/util/isUserAgentMobileApp.js';
+import objectIsEqual from '#common/util/objectIsEqual.js';
+import makeInitialState from '#client/makeInitialState.js';
 import {
   getExperimentActiveVariants,
-} from 'server/lib/experiments';
-import User from 'server/models/User';
+} from '#server/lib/experiments.js';
+import User from '#server/models/User/index.js';
 
-const experimentsConfig = __config.experiments;
-const debug = __log.debug('middleware:makeInitialState');
+const debug = logger.createDebug('middleware:makeInitialState');
 const env = process.env;
 const isAnalyticsEnabled = !!env.SEGMENT_KEY;
 
@@ -58,13 +61,13 @@ export default async function extractInitialStateMiddleware(req, res, next) {
     }), {});
 
     // Get the current analytics session ID from cookies.
-    let analyticsSessionId = req.cookies[__config.cookies.analyticsSessionId.name];
+    let analyticsSessionId = req.cookies[cookiesConfig.analyticsSessionId.name];
     if (!analyticsSessionId) {
       analyticsSessionId = uuidv1();
       res.cookie(
-        __config.cookies.analyticsSessionId.name,
+        cookiesConfig.analyticsSessionId.name,
         analyticsSessionId,
-        __config.cookies.analyticsSessionId.settings,
+        cookiesConfig.analyticsSessionId.settings,
       );
     }
 
@@ -75,9 +78,9 @@ export default async function extractInitialStateMiddleware(req, res, next) {
     let shouldUpdateUtmValuesInCookie = !!utmValues;
 
     if (!utmValues) {
-      utmValues = req.cookies[__config.cookies.utm.name];
+      utmValues = req.cookies[cookiesConfig.utm.name];
       if (utmValues && typeof utmValues !== 'object') {
-        res.clearCookie(__config.cookies.utm.name, __config.cookies.utm.settings);
+        res.clearCookie(cookiesConfig.utm.name, cookiesConfig.utm.settings);
         utmValues = null;
       }
     }
@@ -98,9 +101,9 @@ export default async function extractInitialStateMiddleware(req, res, next) {
 
       if (shouldUpdateUtmValuesInCookie) {
         res.cookie(
-          __config.cookies.utm.name,
+          cookiesConfig.utm.name,
           utmValues,
-          __config.cookies.utm.options,
+          cookiesConfig.utm.options,
         );
       }
       initialState.analytics.utmValues = utmValues;
@@ -139,8 +142,8 @@ export default async function extractInitialStateMiddleware(req, res, next) {
       // If the user no longer exists in the DB, clear the session cookies.
       if (!userSession) {
         res.clearCookie(
-          __config.cookies.session.name,
-          __config.cookies.session.settings,
+          cookiesConfig.session.name,
+          cookiesConfig.session.settings,
         );
       }
       else {
@@ -153,9 +156,9 @@ export default async function extractInitialStateMiddleware(req, res, next) {
           }, env.JWT_KEY);
 
           res.cookie(
-            __config.cookies.session.name,
+            cookiesConfig.session.name,
             userSessionJwtToken,
-            __config.cookies.session.settings
+            cookiesConfig.session.settings
           );
           await User.update('shouldRefreshRoles', false).where('id', user.id);
         }
@@ -168,7 +171,7 @@ export default async function extractInitialStateMiddleware(req, res, next) {
     }
 
     // WARN: Duplicate logic here and in /api/handlers/Auth/login.
-    const cookieExperimentActiveVariants = req.cookies[__config.cookies.experimentActiveVariants.name] || {};
+    const cookieExperimentActiveVariants = req.cookies[cookiesConfig.experimentActiveVariants.name] || {};
     const userExperimentActiveVariants = user ? user.experimentActiveVariants || {} : null;
 
     const cookieAndUserHaveDifferentExperiments = (
@@ -198,7 +201,7 @@ export default async function extractInitialStateMiddleware(req, res, next) {
     });
 
     initialState.analytics.experiments.activeVariants = experimentActiveVariants;
-    initialState.analytics.experiments.config = __config.experiments;
+    initialState.analytics.experiments.config = experimentsConfig;
 
     const shouldUpdateCookie = (
       changed
@@ -210,7 +213,7 @@ export default async function extractInitialStateMiddleware(req, res, next) {
           || (
             !objectIsEqual(
               userExperimentActiveVariants,
-              req.cookies[__config.cookies.experimentActiveVariants.name],
+              req.cookies[cookiesConfig.experimentActiveVariants.name],
             )
           )
         )
@@ -224,9 +227,9 @@ export default async function extractInitialStateMiddleware(req, res, next) {
 
     if (shouldUpdateCookie) {
       res.cookie(
-        __config.cookies.experimentActiveVariants.name,
+        cookiesConfig.experimentActiveVariants.name,
         experimentActiveVariants,
-        __config.cookies.experimentActiveVariants.settings,
+        cookiesConfig.experimentActiveVariants.settings,
       );
     }
 
@@ -249,9 +252,9 @@ export default async function extractInitialStateMiddleware(req, res, next) {
 
     // Check if we should track a new session on browserside, turns the "shouldTrackNewSession" flag on.
     const now = Date.now();
-    let lastVisit = isNaN(req.cookies[__config.cookies.lastVisit.name])
+    let lastVisit = isNaN(req.cookies[cookiesConfig.lastVisit.name])
       ? null
-      : req.cookies[__config.cookies.lastVisit.name];
+      : req.cookies[cookiesConfig.lastVisit.name];
 
     // If the user is logged in, use the value in `user.lastVisitAt`
     if (initialState.currentUser.lastVisitAt) {
@@ -280,9 +283,9 @@ export default async function extractInitialStateMiddleware(req, res, next) {
     })}`);
 
     res.cookie(
-      __config.cookies.lastVisit.name,
+      cookiesConfig.lastVisit.name,
       now,
-      __config.cookies.lastVisit.settings,
+      cookiesConfig.lastVisit.settings,
     );
 
     res.locals.initialState = initialState;

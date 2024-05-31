@@ -1,6 +1,6 @@
-import typeCheck from 'common/util/typeCheck';
+import common from '@${module}/util/typeCheck.js';
 
-import log from 'client/lib/log';
+import client from '@${module}/lib/log.js';
 
 export const MOBILE_APP_ACTION_TYPE_ROUTE_CHANGED = 'MOBILE_APP_ACTION_TYPE_ROUTE_CHANGED';
 export const MOBILE_APP_ACTION_TYPE_OPEN_URL = 'MOBILE_APP_ACTION_TYPE_OPEN_URL';

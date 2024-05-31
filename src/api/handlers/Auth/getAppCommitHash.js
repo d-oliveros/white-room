@@ -1,6 +1,6 @@
 import {
   API_ACTION_GET_APP_COMMIT_HASH,
-} from 'api/actionTypes';
+} from '#api/actionTypes';
 
 const {
   COMMIT_HASH,

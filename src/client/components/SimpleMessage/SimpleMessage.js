@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 
-import Text from 'client/components/Text/Text';
-import ButtonDeprecated from 'client/components/ButtonDeprecated/ButtonDeprecated';
+import Text from '#client/components/Text/Text.js';
+import ButtonDeprecated from '#client/components/ButtonDeprecated/ButtonDeprecated.js';
 
 class SimpleMessage extends Component {
   static propTypes = {

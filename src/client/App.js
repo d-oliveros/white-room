@@ -1,29 +1,28 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
-import { LastLocationProvider } from 'react-router-last-location';
 import { withRouter } from 'react-router';
 import { renderRoutes } from 'react-router-config';
-import queryString from 'query-string';
 
+import parseQueryString from '#common/util/parseQueryString.js';
 import isUserAgentMobileApp, {
   isUserAgentIphoneApp,
-} from 'common/util/isUserAgentMobileApp';
+} from '#common/util/isUserAgentMobileApp.js';
 
 import {
   hasRoleAnonymous,
-} from 'common/userRoles';
+} from '#common/userRoles.js';
 
 import sendDataToMobileApp, {
   MOBILE_APP_ACTION_TYPE_ROUTE_CHANGED,
   MOBILE_APP_ACTION_TYPE_CURRENT_USER,
-} from 'client/helpers/sendDataToMobileApp';
+} from '#client/helpers/sendDataToMobileApp.js';
 
-import { API_ACTION_GET_APP_COMMIT_HASH } from 'api/actionTypes';
+import { API_ACTION_GET_APP_COMMIT_HASH } from '#api/actionTypes.js';
 
-import branch from 'client/core/branch';
-import MobileAppEventListener from 'client/components/MobileAppEventListener/MobileAppEventListener';
-import EnablePushNotificationsModal from 'client/components/EnablePushNotificationsModal/EnablePushNotificationsModal';
+import branch from '#client/core/branch.js';
+import MobileAppEventListener from '#client/components/MobileAppEventListener/MobileAppEventListener.js';
+import EnablePushNotificationsModal from '#client/components/EnablePushNotificationsModal/EnablePushNotificationsModal.js';
 
 // Interval for checking the app commit hash vs the server commit hash to reload the page when a new version is available.
 const CHECK_APP_VERSION_INTERVAL_MS = 1800000; // 30 minutes.
@@ -87,7 +86,7 @@ class App extends Component {
         sendDataToMobileApp({
           actionType: MOBILE_APP_ACTION_TYPE_ROUTE_CHANGED,
           routePath: location.pathname,
-          routeQuery: queryString.parse(location.search || ''),
+          routeQuery: parseQueryString(location.search || ''),
           currentUser: currentUser,
         });
       });
@@ -121,9 +120,7 @@ class App extends Component {
           },
         )}
       >
-        <LastLocationProvider>
-          {renderRoutes(routes)}
-        </LastLocationProvider>
+        {renderRoutes(routes)}
         <MobileAppEventListener />
         {askPushNotifications && (
           <EnablePushNotificationsModal

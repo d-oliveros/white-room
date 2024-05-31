@@ -2,17 +2,17 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withRouter } from 'react-router';
 import { Redirect } from 'react-router-dom';
-import queryString from 'query-string';
 import assert from 'assert';
 
-import typeCheck from 'common/util/typeCheck';
+import parseQueryString from '#common/util/parseQueryString.js';
+import typeCheck from '#common/util/typeCheck.js';
 import {
   hasRoleAdmin,
-} from 'common/userRoles';
+} from '#common/userRoles.js';
 
-import branch from 'client/core/branch';
-import log from 'client/lib/log';
-import configureDecoratedComponent from 'client/helpers/configureDecoratedComponent';
+import branch from '#client/core/branch.js';
+import log from '#client/lib/log.js';
+import configureDecoratedComponent from '#client/helpers/configureDecoratedComponent.js';
 
 const debug = log.debug('decorators:allowedRoles');
 
@@ -60,7 +60,7 @@ export default function allowedRoles(params) {
 
       render() {
         const { currentUserRoles, location } = this.props;
-        const locationQuery = queryString.parse(location.search);
+        const locationQuery = parseQueryString(location.search);
         const isAllowed = roles.some((allowedRole) => currentUserRoles.includes(allowedRole));
 
         const redirectTo = (

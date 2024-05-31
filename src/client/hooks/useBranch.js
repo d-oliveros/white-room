@@ -1,7 +1,7 @@
 import { useContext, useState, useEffect } from 'react';
 
-import ReactAppContext from 'client/core/ReactAppContext';
-import useDispatch from 'client/hooks/useDispatch';
+import ReactAppContext from '#client/core/ReactAppContext.js';
+import useDispatch from '#client/hooks/useDispatch.js';
 
 export default function useBranch(cursors) {
   const reactAppContext = useContext(ReactAppContext);

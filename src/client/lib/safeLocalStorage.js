@@ -1,5 +1,5 @@
-import log from 'client/lib/log';
-import checkLocalStorage from 'common/util/checkLocalStorage';
+import log from '#client/lib/log.js';
+import checkLocalStorage from '#common/util/checkLocalStorage.js';
 
 const hasLocalStorage = checkLocalStorage();
 const debug = log.debug('client:safeLocalStorage');

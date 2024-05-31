@@ -1,6 +1,10 @@
 import path from 'path';
-import lodashValues from 'lodash/fp/values';
-import requireIndex from 'es6-requireindex';
+import { fileURLToPath } from 'url';
+import lodashValues from 'lodash/fp/values.js';
+
+import { loadModules } from '#common/util/loadModules.js';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 function getActionSpecsList(actionSpecs) {
   const actionSpecValues = lodashValues(actionSpecs);
@@ -8,8 +12,7 @@ function getActionSpecsList(actionSpecs) {
     if (typeof actionSpecValue === 'object' && actionSpecValue) {
       if (typeof actionSpecValue.handler === 'function') {
         memo.push(actionSpecValue);
-      }
-      else {
+      } else {
         memo.push(...getActionSpecsList(actionSpecValue));
       }
     }
@@ -17,9 +20,9 @@ function getActionSpecsList(actionSpecs) {
   }, []);
 }
 
-export const actionSpecs = requireIndex(path.join(__dirname, 'handlers'));
+export const actionSpecs = await loadModules(path.join(__dirname, 'handlers'));
 export const actionSpecsList = getActionSpecsList(actionSpecs);
 
-export actionTypes from './actionTypes';
-export createApiClient from './createApiClient';
-export createApiServer from './createApiServer';
+export * as actionTypes from './actionTypes.js';
+export { default as createApiClient } from './createApiClient.js';
+export { default as createApiServer } from './createApiServer.js';

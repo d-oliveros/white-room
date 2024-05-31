@@ -2,12 +2,12 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Formik, Form } from 'formik';
 
-import { createFormValidationFn, createInitialValues } from 'client/helpers/formikHelpers';
+import { createFormValidationFn, createInitialValues } from '#client/helpers/formikHelpers';
 
 import ButtonDeprecated, {
   BUTTON_THEME_YELLOW,
-} from 'client/components/ButtonDeprecated/ButtonDeprecated';
-import FormikField from 'client/components/FormikField/FormikField';
+} from '#client/components/ButtonDeprecated/ButtonDeprecated.js';
+import FormikField from '#client/components/FormikField/FormikField.js';
 
 const getFormFields = ({ activatingAccount }) => {
   return [

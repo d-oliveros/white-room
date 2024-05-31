@@ -1,8 +1,8 @@
-import typeCheck from 'common/util/typeCheck';
+import logger from '#common/logger.js';
+import typeCheck from '#common/util/typeCheck.js';
+import knex from '#server/db/knex.js';
 
-import knex from 'server/db/knex';
-
-const debug = __log.debug('models:User:getById');
+const debug = logger.createDebug('models:User:getById');
 
 export default async function getById(userId, fieldgroup = '*') {
   typeCheck('userId::Maybe PositiveNumber', userId);

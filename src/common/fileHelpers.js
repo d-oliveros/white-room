@@ -5,9 +5,10 @@ import { v4 as uuidv4 } from 'uuid';
 import fs from 'fs';
 import os from 'os';
 
-import typeCheck from 'common/util/typeCheck';
+import logger from '#common/logger.js';
+import typeCheck from '#common/util/typeCheck.js';
 
-const debug = __log.debug('fileHelpers');
+const debug = logger.createDebug('fileHelpers');
 
 /**
  * Uploads an incoming file upload request to the directory in 'fileUploadDir'.

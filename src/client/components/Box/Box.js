@@ -2,8 +2,6 @@ import React, { forwardRef } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 
-import { system as styledSystem } from '@styled-system/core';
-
 const BOX_BG_COLOR_TO_CLASSNAME_MAPPING = {
   red: 'bg-color-red',
   red200: 'bg-color-red-200',
@@ -42,67 +40,6 @@ const BOX_DISPLAY_TO_CLASSNAME_MAPPING = {
   flex: 'display-flex',
 };
 
-const styledParser = styledSystem({
-  width: true,
-  minWidth: true,
-  maxWidth: true,
-  height: true,
-  minHeight: true,
-  maxHeight: true,
-  top: true,
-  left: true,
-  right: true,
-  bottom: true,
-  margin: true,
-  marginTop: true,
-  marginBottom: true,
-  marginRight: true,
-  marginLeft: true,
-  padding: true,
-  cursor: true,
-  filter: true,
-  paddingLeft: true,
-  paddingRight: true,
-  paddingTop: true,
-  paddingBottom: true,
-  border: true,
-  borderTop: true,
-  borderBottom: true,
-  borderRadius: true,
-  background: true,
-  backgroundImage: true,
-  backgroundPosition: true,
-  backgroundRepeat: true,
-  backgroundColor: true,
-  backgroundSize: true,
-  textAlign: true,
-  verticalAlign: true,
-  opacity: true,
-  overflow: true,
-  overflowX: true,
-  overflowY: true,
-  whiteSpace: true,
-  textOverflow: true,
-  boxShadow: true,
-  boxSizing: true,
-  scrollMargin: true,
-  flexShrink: true,
-  flexDirection: true,
-  flexWrap: true,
-  justifyContent: true,
-  alignItems: true,
-  alignSelf: true,
-  zIndex: true,
-  gap: true,
-  rowGap: true,
-  columnGap: true,
-  order: true,
-  float: true,
-  fontFamily: true,
-  lineHeight: true,
-  transform: true,
-});
-
 const Box = forwardRef(({
   children,
   className,
@@ -112,10 +49,7 @@ const Box = forwardRef(({
   position,
   onClick,
   id,
-  ..._styles
 }, ref) => {
-  const styles = styledParser(_styles);
-
   return (
     <div
       ref={ref}
@@ -129,7 +63,6 @@ const Box = forwardRef(({
         className
       )}
       onClick={onClick}
-      style={styles}
     >
       {children}
     </div>

@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import moment from 'moment';
 import Datetime from 'react-datetime';
-import lodashIsEqual from 'lodash/fp/isEqual';
-import isValidDateWithoutTimeString from 'common/util/isValidDateWithoutTimeString';
-import dateStringMomentWithCurrentTime from 'common/util/dateStringMomentWithCurrentTime';
+import lodashIsEqual from 'lodash/fp/isEqual.js';
+import isValidDateWithoutTimeString from '#common/util/isValidDateWithoutTimeString.js';
+import dateStringMomentWithCurrentTime from '#common/util/dateStringMomentWithCurrentTime.js';
 
 const onlyUpdateOnPropChangeNames = [
   'value',

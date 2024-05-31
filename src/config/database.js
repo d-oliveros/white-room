@@ -4,10 +4,10 @@ const config = {
   knex: {
     client: 'pg',
     connection: {
-      host :  env.POSTGRES_HOST,
-      port :  env.POSTGRES_PORT,
-      user : env.POSTGRES_USER,
-      password : env.POSTGRES_PASSWORD,
+      host: env.POSTGRES_HOST,
+      port: env.POSTGRES_PORT,
+      user: env.POSTGRES_USER,
+      password: env.POSTGRES_PASSWORD,
       database: env.POSTGRES_DATABASE,
       charset: 'utf8',
     },
@@ -25,4 +25,4 @@ const config = {
   },
 };
 
-module.exports = config;
+export default config;

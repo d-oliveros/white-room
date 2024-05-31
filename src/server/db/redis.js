@@ -1,17 +1,9 @@
 import redis from 'redis';
-import { promisify } from 'util';
-import redisCommands from 'redis-commands';
 
-const redisClient = redis.createClient(__config.database.redis);
+import dbConfig from '#config/database.js';
+import logger from '#common/logger.js';
 
-// Promisify redis methods.
-redisCommands.list.forEach((fullCommand) => {
-  const commandName = fullCommand.split(' ')[0];
-  if (commandName !== 'multi') {
-    redisClient[`${commandName}Async`] = promisify(redisClient[commandName]);
-  }
-});
-
-redisClient.on('error', (err) => __log.error(err));
+const redisClient = redis.createClient(dbConfig.redis);
+redisClient.on('error', (err) => logger.error(err));
 
 export default redisClient;

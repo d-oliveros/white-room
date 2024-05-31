@@ -1,15 +1,15 @@
-import typeCheck from 'common/util/typeCheck';
+import typeCheck from '#common/util/typeCheck.js';
 
 import {
   USER_ROLE_ADMIN,
   USER_ROLE_USER,
-} from 'common/userRoles';
+} from '#common/userRoles.js';
 
 import {
   API_ACTION_USER_UPDATE,
-} from 'api/actionTypes';
+} from '#api/actionTypes';
 
-import User from 'server/models/User';
+import User from '#server/models/User/index.js';
 
 export default {
   type: API_ACTION_USER_UPDATE,

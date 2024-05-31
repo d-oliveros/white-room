@@ -29,12 +29,12 @@ const logger = winston.createLogger({
 
 const _debugInstances = {};
 
-logger.debug = function createDebugWrapped(debugNamespace) {
+logger.createDebug = function createDebugWrapped(debugNamespace) {
   debugNamespace = `${APP_ID}:${debugNamespace}`;
 
   if (!_debugInstances[debugNamespace]) {
     _debugInstances[debugNamespace] = NODE_ENV === 'production' || NO_LOG_MODE
-      ? function loggerEmptyDebug() { }
+      ? () => {}
       : createDebug(debugNamespace);
   }
 

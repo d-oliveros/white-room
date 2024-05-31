@@ -3,17 +3,17 @@ import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { useMediaQuery } from 'react-responsive';
 
-import { MEDIA_QUERY_SMALL_SCREEN } from 'client/constants/mediaQueries';
+import { MEDIA_QUERY_SMALL_SCREEN } from '#client/constants/mediaQueries';
 
 import Tag, {
   TAG_THEMES,
-} from 'client/components/Tag/Tag';
+} from '#client/components/Tag/Tag.js';
 
 import './InfoOptionCheckbox.less';
 
-import Box from 'client/components/Box/Box';
-import Flex from 'client/components/Flex/Flex';
-import Text from 'client/components/Text/Text';
+import Box from '#client/components/Box/Box.js';
+import Flex from '#client/components/Flex/Flex.js';
+import Text from '#client/components/Text/Text.js';
 
 export const INFO_OPTION_CHECKBOX_THEME_ADOBE_BOLD = 'INFO_OPTION_CHECKBOX_THEME_ADOBE_BOLD';
 export const INFO_OPTION_CHECKBOX_THEME_ADOBE_UP = 'INFO_OPTION_CHECKBOX_THEME_ADOBE_UP';

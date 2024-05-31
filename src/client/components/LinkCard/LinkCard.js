@@ -1,9 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import Text from 'client/components/Text/Text';
-import Flex from 'client/components/Flex/Flex';
-import Link from 'client/components/Link/Link';
+import Text from '#client/components/Text/Text.js';
+import Flex from '#client/components/Flex/Flex.js';
+import Link from '#client/components/Link/Link.js';
 
 const LinkCard = ({
   title,

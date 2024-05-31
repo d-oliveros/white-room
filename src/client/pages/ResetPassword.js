@@ -4,25 +4,25 @@ import PropTypes from 'prop-types';
 import {
   API_ACTION_VERIFY_PHONE_SMS_CODE_REQUESTED,
   API_ACTION_VERIFY_ACCOUNT_EXIST,
-} from 'api/actionTypes';
-import { SCREEN_ID_RESET_PASSWORD } from 'client/constants/screenIds';
-import { USER_ROLE_ANONYMOUS } from 'common/userRoles';
+} from '#api/actionTypes';
+import { SCREEN_ID_RESET_PASSWORD } from '#client/constants/screenIds';
+import { USER_ROLE_ANONYMOUS } from '#common/userRoles.js';
 
-import log from 'client/lib/log';
-import withTransitionHook from 'client/helpers/withTransitionHook';
-import withScreenId from 'client/helpers/withScreenId';
-import withScrollToTop from 'client/helpers/withScrollToTop';
-import allowedRoles from 'client/helpers/allowedRoles';
-import withApiState from 'client/helpers/withApiState';
-import postWithState from 'client/actions/postWithState';
+import log from '#client/lib/log.js';
+import withTransitionHook from '#client/helpers/withTransitionHook.js';
+import withScreenId from '#client/helpers/withScreenId.js';
+import withScrollToTop from '#client/helpers/withScrollToTop.js';
+import allowedRoles from '#client/helpers/allowedRoles.js';
+import withApiState from '#client/helpers/withApiState.js';
+import postWithState from '#client/actions/postWithState.js';
 
-import AuthActions from 'client/actions/Auth';
+import AuthActions from '#client/actions/Auth.js';
 
-import PasswordResetSmsForm from 'client/components/PasswordResetSmsForm/PasswordResetSmsForm';
-import SmsSendingIndicator from 'client/components/SmsSendingIndicator/SmsSendingIndicator';
-import Navbar from 'client/components/Navbar/Navbar';
-import Link from 'client/components/Link/Link';
-import ErrorMessage from 'client/components/ErrorMessage/ErrorMessage';
+import PasswordResetSmsForm from '#client/components/PasswordResetSmsForm/PasswordResetSmsForm.js';
+import SmsSendingIndicator from '#client/components/SmsSendingIndicator/SmsSendingIndicator.js';
+import Navbar from '#client/components/Navbar/Navbar.js';
+import Link from '#client/components/Link/Link.js';
+import ErrorMessage from '#client/components/ErrorMessage/ErrorMessage.js';
 
 @withTransitionHook
 @allowedRoles({

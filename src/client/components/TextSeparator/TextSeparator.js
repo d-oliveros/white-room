@@ -1,9 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import Text from 'client/components/Text/Text';
-import Box from 'client/components/Box/Box';
-import Flex from 'client/components/Flex/Flex';
+import Text from '#client/components/Text/Text.js';
+import Box from '#client/components/Box/Box.js';
+import Flex from '#client/components/Flex/Flex.js';
 
 const TextSeparator = ({ text }) => {
   return (

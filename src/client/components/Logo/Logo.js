@@ -2,9 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 
-import { ANALYTICS_EVENT_LOGO_CLICK } from 'client/analytics/eventList';
-import analytics from 'client/analytics';
-import Link from 'client/components/Link/Link';
+import { ANALYTICS_EVENT_LOGO_CLICK } from '#client/analytics/eventList';
+import analytics from '#client/analytics.js';
+import Link from '#client/components/Link/Link.js';
 
 export const LOGO_ALIGN_CENTER = 'center';
 export const LOGO_ALIGN_LEFT = 'left';

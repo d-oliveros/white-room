@@ -4,25 +4,25 @@ import { Redirect } from 'react-router-dom';
 
 import {
   API_ACTION_LOGIN,
-} from 'api/actionTypes';
+} from '#api/actionTypes';
 import {
   USER_ROLE_ANONYMOUS,
-} from 'common/userRoles';
-import { SCREEN_ID_LOGIN } from 'client/constants/screenIds';
+} from '#common/userRoles.js';
+import { SCREEN_ID_LOGIN } from '#client/constants/screenIds';
 
-import withTransitionHook from 'client/helpers/withTransitionHook';
-import withScreenId from 'client/helpers/withScreenId';
-import withScrollToTop from 'client/helpers/withScrollToTop';
-import withApiState from 'client/helpers/withApiState';
-import branch from 'client/core/branch';
-import { getUserLandingPage } from 'client/helpers/allowedRoles';
+import withTransitionHook from '#client/helpers/withTransitionHook.js';
+import withScreenId from '#client/helpers/withScreenId.js';
+import withScrollToTop from '#client/helpers/withScrollToTop.js';
+import withApiState from '#client/helpers/withApiState.js';
+import branch from '#client/core/branch.js';
+import { getUserLandingPage } from '#client/helpers/allowedRoles';
 
-import Box from 'client/components/Box/Box';
-import Link from 'client/components/Link/Link';
-import LoginForm from 'client/components/LoginForm/LoginForm';
-import Logo from 'client/components/Logo/Logo';
+import Box from '#client/components/Box/Box.js';
+import Link from '#client/components/Link/Link.js';
+import LoginForm from '#client/components/LoginForm/LoginForm.js';
+import Logo from '#client/components/Logo/Logo.js';
 
-import AuthActions from 'client/actions/Auth';
+import AuthActions from '#client/actions/Auth.js';
 
 @withTransitionHook
 @withApiState({

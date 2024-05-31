@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-import Logo from 'client/components/Logo/Logo';
-import Link from 'client/components/Link/Link';
+import Logo from '#client/components/Logo/Logo.js';
+import Link from '#client/components/Link/Link.js';
 
 class Navbar extends Component {
   static propTypes = {

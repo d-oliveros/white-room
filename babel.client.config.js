@@ -4,6 +4,7 @@ module.exports = {
       loose: true,
       useBuiltIns: 'usage',
       corejs: 3,
+      targets: '> 0.25%, not dead',
     }],
     '@babel/preset-react',
   ],
@@ -22,14 +23,12 @@ module.exports = {
     '@babel/plugin-proposal-export-default-from',
     '@babel/plugin-proposal-logical-assignment-operators',
     '@babel/plugin-proposal-optional-chaining',
-    ['@babel/plugin-proposal-pipeline-operator', { proposal: 'minimal' }],
     '@babel/plugin-proposal-nullish-coalescing-operator',
-    '@babel/plugin-proposal-do-expressions',
     '@babel/plugin-proposal-function-bind',
     [
       'react-css-modules',
       {
-        removeImport: true,
+        removeImport: false,
         webpackHotModuleReloading: true,
         filetypes: {
           '.less': {
@@ -39,5 +38,5 @@ module.exports = {
         generateScopedName: '[name]--[local]--[hash:base64:5]',
       },
     ],
-  ].filter(Boolean),
+  ],
 };

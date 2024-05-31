@@ -1,10 +1,10 @@
 import assert from 'assert';
 import he from 'he';
 
-import parseJSON from 'common/util/parseJSON';
-import log from 'client/lib/log';
-import createTree from 'client/lib/tree';
-import makeInitialState from 'client/makeInitialState';
+import parseJSON from '#common/util/parseJSON.js';
+import log from '#client/lib/log.js';
+import createTree from '#client/lib/tree.js';
+import makeInitialState from '#client/makeInitialState.js';
 
 const debug = log.debug('state');
 

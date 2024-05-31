@@ -2,8 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 
-import FormikField from 'client/components/FormikField/FormikField';
-import Text from 'client/components/Text';
+import FormikField from '#client/components/FormikField/FormikField.js';
+import Text from '#client/components/Text.js';
 
 export const FORM_FIELD_GROUP_THEME_RENTAL_APPLICATION_LIST = 'rentalApplicationList';
 export const FORM_FIELD_GROUP_THEME_RENTAL_APPLICATION_GROUP = 'rentalApplicationGroup';

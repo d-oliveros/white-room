@@ -2,17 +2,17 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 
-import Box from 'client/components/Box/Box';
-import Card from 'client/components/Card/Card';
-import DarkModal from 'client/components/DarkModal/DarkModal';
-import S3FileDisplay from 'client/components/S3FileDisplay/S3FileDisplay';
+import Box from '#client/components/Box/Box.js';
+import Card from '#client/components/Card/Card.js';
+import DarkModal from '#client/components/DarkModal/DarkModal.js';
+import S3FileDisplay from '#client/components/S3FileDisplay/S3FileDisplay.js';
 import InitialsCircle, {
   INITIALS_CIRCLE_THEME_PURPLE,
   INITIALS_CIRCLE_THEME_YELLOW,
-} from 'client/components/InitialsCircle/InitialsCircle';
+} from '#client/components/InitialsCircle/InitialsCircle.js';
 import Button, {
   BUTTON_THEME_ADOBE_BLUE,
-} from 'client/components/Button/Button';
+} from '#client/components/Button/Button.js';
 
 import './ModalDocsSplitView.less';
 

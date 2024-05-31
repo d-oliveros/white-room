@@ -1,5 +1,5 @@
-import typeCheck from 'common/util/typeCheck';
-import knex from 'server/db/knex';
+import typeCheck from '#common/util/typeCheck.js';
+import knex from '#server/db/knex.js';
 
 export default async function getList({ where, fieldgroup } = {}) {
   typeCheck('where::Maybe NonEmptyObject', where);

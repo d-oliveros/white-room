@@ -1,19 +1,20 @@
-import typeCheck from 'common/util/typeCheck';
+import typeCheck from '#common/util/typeCheck.js';
 
-import { runCronTask } from 'cron/index';
-import cronTasks from 'cron/tasks';
+import logger from '#common/logger.js';
+import { runCronTask } from '#cron/cron.js';
+import cronTasks from '#cron/tasks/index.js';
 
 import {
   USER_ROLE_ADMIN,
-} from 'common/userRoles';
+} from '#common/userRoles.js';
 
 import {
   postSlackMessage,
-} from 'server/lib/slackClient';
+} from '#server/lib/slackClient.js';
 
 import {
   API_ACTION_ADMIN_RUN_CRON_TASK,
-} from 'api/actionTypes';
+} from '#api/actionTypes.js';
 
 const availableCronTasks = Object.keys(cronTasks);
 
@@ -33,7 +34,7 @@ export default {
     });
   },
   async handler({ payload: { cronTaskName } }) {
-    __log.info(`[cron:${cronTaskName}] Manually triggered.`);
+    logger.info(`[cron:${cronTaskName}] Manually triggered.`);
     await postSlackMessage({
       channel: 'cron',
       attachments: [

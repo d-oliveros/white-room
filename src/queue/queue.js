@@ -3,16 +3,18 @@ import { promisify } from 'util';
 import { serializeError } from 'serialize-error';
 import ms from 'ms';
 
-import typeCheck from 'common/util/typeCheck';
+import dbConfig from '#config/database.js';
+import logger from '#common/logger.js';
+import typeCheck from '#common/util/typeCheck.js';
 
 const KUE_DEFAULT_TTL_MS = 259200000; // 3 days in ms.
 
-const debug = __log.debug('queue');
+const debug = logger.createDebug('queue');
 const { QUEUE_DELETE_JOBS } = process.env;
 
 const queue = kue.createQueue({
   prefix: 'q',
-  redis: __config.database.redis,
+  redis: dbConfig.redis,
 });
 
 queue.watchStuckJobs(ms('5m'));
@@ -50,7 +52,7 @@ queue.on(('job error'), (id) => {
       jobId: id,
       jobData: job.data,
     };
-    __log.info(error);
+    logger.info(error);
   });
 });
 
@@ -73,7 +75,7 @@ queue.on('job failed', (id, kueJobError) => {
       jobData: job.data,
     };
 
-    __log.info(error);
+    logger.info(error);
 
     if (QUEUE_DELETE_JOBS === 'true') {
       // Job deletion
@@ -88,7 +90,7 @@ queue.on('job failed', (id, kueJobError) => {
             jobId: id,
           };
 
-          __log.info(error);
+          logger.info(error);
           return;
         }
 

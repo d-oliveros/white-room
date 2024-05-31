@@ -1,19 +1,22 @@
 import assert from 'assert';
 import request from 'superagent';
-import typeCheck from 'common/util/typeCheck';
+
+import * as cookiesConfig from '#config/cookies.js';
+import logger from '#common/logger.js';
+import typeCheck from '#common/util/typeCheck.js';
 
 import {
   RENDERER_INVALID_RESPONSE_TYPE,
-} from 'common/errorCodes';
+} from '#common/errorCodes.js';
 
 import {
   RENDERER_RESPONSE_TYPE_SUCCESS,
   RENDERER_RESPONSE_TYPE_REDIRECT,
   RENDERER_RESPONSE_TYPE_NOT_FOUND,
   RENDERER_RESPONSE_TYPE_ERROR,
-} from 'server/renderer/rendererResponseTypes';
+} from '#server/renderer/rendererResponseTypes.js';
 
-const debug = __log.debug('middleware:requestClient');
+const debug = logger.createDebug('middleware:requestClient');
 const rendererServerEndpoint = process.env.RENDERER_ENDPOINT;
 
 /**
@@ -27,7 +30,7 @@ export default function serveReactAppController(req, res, next) {
   const { url } = req;
   const rendererStartTimestamp = Date.now();
 
-  const sessionToken = req.cookies[__config.cookies.session.name];
+  const sessionToken = req.cookies[cookiesConfig.session.name];
 
   request
     .post(rendererServerEndpoint)

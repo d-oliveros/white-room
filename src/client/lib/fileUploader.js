@@ -1,9 +1,9 @@
 import assert from 'assert';
 import path from 'path';
 import superagent from 'superagent';
-import typeCheck from 'common/util/typeCheck';
-import parseS3Url from 'common/util/parseS3Url';
-import log from 'client/lib/log';
+import typeCheck from '#common/util/typeCheck.js';
+import parseS3Url from '#common/util/parseS3Url.js';
+import log from '#client/lib/log.js';
 
 const debug = log.debug('fileUploader');
 

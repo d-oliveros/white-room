@@ -1,9 +1,10 @@
 import AWS from 'aws-sdk';
 
-import typeCheck from 'common/util/typeCheck';
-import parseJSON from 'common/util/parseJSON';
+import logger from '#common/logger.js';
+import typeCheck from '#common/util/typeCheck.js';
+import parseJSON from '#common/util/parseJSON.js';
 
-const debug = __log.debug('awsLambdaClient');
+const debug = logger.createDebug('awsLambdaClient');
 const lambda = new AWS.Lambda();
 
 export const LAMBDA_FUNCTION_TBD = 'tbd';

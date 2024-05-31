@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 
-import { SCREEN_ID_NOT_FOUND } from 'client/constants/screenIds';
-import withTransitionHook from 'client/helpers/withTransitionHook';
-import withScreenId from 'client/helpers/withScreenId';
-import withScrollToTop from 'client/helpers/withScrollToTop';
+import { SCREEN_ID_NOT_FOUND } from '#client/constants/screenIds';
+import withTransitionHook from '#client/helpers/withTransitionHook.js';
+import withScreenId from '#client/helpers/withScreenId.js';
+import withScrollToTop from '#client/helpers/withScrollToTop.js';
 
 @withTransitionHook
 @withScreenId(SCREEN_ID_NOT_FOUND)

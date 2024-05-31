@@ -1,4 +1,4 @@
-import capitalize from 'common/util/capitalize';
+import capitalize from '#common/util/capitalize.js';
 
 export default function capitalizeAll(string) {
   if (typeof string !== 'string') {

@@ -1,17 +1,17 @@
 import React, { Component } from 'react';
 
-import { hasRoleAnonymous } from 'common/userRoles';
+import { hasRoleAnonymous } from '#common/userRoles.js';
 
-import branch from 'client/core/branch';
-import { SCREEN_ID_HOME } from 'client/constants/screenIds';
-import withTransitionHook from 'client/helpers/withTransitionHook';
-import withScreenId from 'client/helpers/withScreenId';
-import withScrollToTop from 'client/helpers/withScrollToTop';
+import branch from '#client/core/branch.js';
+import { SCREEN_ID_HOME } from '#client/constants/screenIds';
+import withTransitionHook from '#client/helpers/withTransitionHook.js';
+import withScreenId from '#client/helpers/withScreenId.js';
+import withScrollToTop from '#client/helpers/withScrollToTop.js';
 
-import Link from 'client/components/Link/Link';
-import Flex from 'client/components/Flex/Flex';
-import Text from 'client/components/Text/Text';
-import Box from 'client/components/Box/Box';
+import Link from '#client/components/Link/Link.js';
+import Flex from '#client/components/Flex/Flex.js';
+import Text from '#client/components/Text/Text.js';
+import Box from '#client/components/Box/Box.js';
 
 @withTransitionHook
 @withScreenId(SCREEN_ID_HOME)

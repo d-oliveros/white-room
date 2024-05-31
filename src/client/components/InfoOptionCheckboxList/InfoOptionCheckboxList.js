@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import InfoOptionCheckbox from 'client/components/InfoOptionCheckbox/InfoOptionCheckbox';
+import InfoOptionCheckbox from '#client/components/InfoOptionCheckbox/InfoOptionCheckbox.js';
 
 export const CHECKBOX_LIST_LAYOUT_NO_WRAP = 'noGridWrap';
 export const CHECKBOX_LIST_THEME_BULLET_GRID = 'bulletGrid';

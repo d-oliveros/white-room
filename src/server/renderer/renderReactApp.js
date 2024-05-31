@@ -1,6 +1,6 @@
 import { parse as parseUrl } from 'url';
 import { serializeError } from 'serialize-error';
-import defaults from 'lodash/fp/defaults';
+import defaults from 'lodash/fp/defaults.js';
 import handlebars from 'handlebars';
 
 import React from 'react';
@@ -8,28 +8,29 @@ import ReactDOMServer from 'react-dom/server';
 import { StaticRouter } from 'react-router';
 import { matchRoutes } from 'react-router-config';
 
-import typeCheck from 'common/util/typeCheck';
-import createApiClient from 'api/createApiClient';
+import logger from '#common/logger.js';
+import typeCheck from '#common/util/typeCheck.js';
+import createApiClient from '#api/createApiClient.js';
 
-import makeInitialState from 'client/makeInitialState';
-import createTree from 'client/lib/tree';
-import fetchPageData from 'client/core/fetchPageData';
-import Root from 'client/core/Root';
-import routes from 'client/routes';
+import makeInitialState from '#client/makeInitialState.js';
+import createTree from '#client/lib/tree.js';
+import fetchPageData from '#client/core/fetchPageData.js';
+import Root from '#client/core/Root.js';
+import routes from '#client/routes.js';
 
 import {
   getTemplateFile,
   assertIdleApiState,
   makeRendererResponse,
   serializeState,
-} from 'server/renderer/rendererHelpers';
+} from '#server/renderer/rendererHelpers.js';
 
 import {
   RENDERER_RESPONSE_TYPE_SUCCESS,
   RENDERER_RESPONSE_TYPE_REDIRECT,
   RENDERER_RESPONSE_TYPE_NOT_FOUND,
   RENDERER_RESPONSE_TYPE_ERROR,
-} from 'server/renderer/rendererResponseTypes';
+} from '#server/renderer/rendererResponseTypes.js';
 
 const {
   NODE_ENV,
@@ -47,7 +48,7 @@ const {
 const useBuild = USE_BUILD === 'true';
 const buildHtml = handlebars.compile(getTemplateFile());
 
-const debug = __log.debug('renderer:renderReactApp');
+const debug = logger.createDebug('renderer:renderReactApp');
 
 const defaultMetas = {
   pageTitle: APP_TITLE,

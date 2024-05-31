@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import Box from 'client/components/Box/Box';
-import Text from 'client/components/Text';
+import Box from '#client/components/Box/Box.js';
+import Text from '#client/components/Text.js';
 
 export const TOOLTIP_V2_DIRECTION_RIGHT = 'right';
 export const TOOLTIP_V2_DIRECTION_LEFT = 'left/Text';

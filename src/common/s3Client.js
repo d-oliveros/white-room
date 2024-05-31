@@ -2,7 +2,6 @@ import fs from 'fs';
 import path from 'path';
 import assert from 'assert';
 import superagent from 'superagent';
-import querystring from 'querystring';
 import mime from 'mime';
 
 import {
@@ -12,14 +11,17 @@ import {
   DeleteObjectCommand,
 } from '@aws-sdk/client-s3';
 
-import typeCheck from 'common/util/typeCheck';
+import logger from '#common/logger.js';
+import typeCheck from '#common/util/typeCheck.js';
+import parseQueryString from '#common/util/parseQueryString.js';
+
 import {
   getFiles,
   unlinkAsync,
   readFileAsync,
-} from 'common/fileHelpers';
+} from '#common/fileHelpers.js';
 
-const debug = __log.debug('s3Client');
+const debug = logger.createDebug('s3Client');
 
 const {
   AWS_ACCESS_KEY,
@@ -58,9 +60,9 @@ const plugin = {
           userId: args.input.userId,
         };
 
-        __log.info(`${context.commandName}: ${args.input.Key} starts`, metadata);
+        logger.info(`${context.commandName}: ${args.input.Key} starts`, metadata);
         const result = await next(args);
-        __log.info(`${context.commandName}: ${args.input.Key} in ${Date.now() - startTimestamp}m`, metadata);
+        logger.info(`${context.commandName}: ${args.input.Key} in ${Date.now() - startTimestamp}m`, metadata);
 
         return result;
       },
@@ -219,7 +221,7 @@ export async function uploadToSignedS3ObjectUrl({ s3PutObjectUrl, localFilePath 
   });
 
   const fileBuffer = await readFileAsync(localFilePath);
-  const headers = querystring.parse(s3PutObjectUrl.split('?')[1]);
+  const headers = parseQueryString(s3PutObjectUrl.split('?')[1]);
 
   const putImageRequest = superagent
     .put(s3PutObjectUrl);

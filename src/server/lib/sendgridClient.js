@@ -1,7 +1,14 @@
 import superagent from 'superagent';
 import { resolve as resolveUrl } from 'url';
 import { serializeError } from 'serialize-error';
-import typeCheck from 'common/util/typeCheck';
+
+import logger from '#common/logger.js';
+import typeCheck from '#common/util/typeCheck.js';
+
+import {
+  SENDGRID_ERROR_RESPONSE_NOT_OK,
+} from '#common/errorCodes.js';
+
 import {
   ANALYTICS_EVENT_EMAIL_DELIVERED,
   ANALYTICS_EVENT_EMAIL_OPENED,
@@ -12,15 +19,11 @@ import {
   ANALYTICS_EVENT_EMAIL_UNSUBSCRIBE,
   ANALYTICS_EVENT_EMAIL_GROUP_UNSUBSCRIBE,
   ANALYTICS_EVENT_EMAIL_GROUP_RESUBSCRIBE,
-} from 'client/analytics/eventList';
-
-import {
-  SENDGRID_ERROR_RESPONSE_NOT_OK,
-} from 'common/errorCodes';
+} from '#client/analytics/eventList.js';
 
 import {
   postSlackMessage,
-} from 'server/lib/slackClient';
+} from '#server/lib/slackClient.js';
 
 const {
   APP_URL,
@@ -32,7 +35,7 @@ const {
   SLACK_REDIRECT_MESSAGES_CHANNEL,
 } = process.env;
 
-const debug = __log.debug('sendgrid');
+const debug = logger.createDebug('sendgrid');
 
 export const sendgridIsEnabled = !!SENDGRID_API_KEY;
 
@@ -267,6 +270,6 @@ export async function sendMail(params) {
     }
   }
   catch (superAgentError) {
-    __log.error(superAgentError);
+    logger.error(superAgentError);
   }
 }

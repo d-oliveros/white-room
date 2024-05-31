@@ -1,5 +1,5 @@
 import { assert } from 'chai';
-import objectNormalize from 'common/util/objectNormalize';
+import objectNormalize from '#common/util/objectNormalize.js';
 
 describe('objectNormalize', () => {
   it('should serialize object paths', () => {

@@ -1,4 +1,4 @@
-import lodashSample from 'lodash/fp/sample';
+import lodashSample from 'lodash/fp/sample.js';
 
 /**
  * Gets a set of experiments,

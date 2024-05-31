@@ -1,4 +1,4 @@
-import getNullEmptyValue from 'common/util/getNullEmptyValue';
+import getNullEmptyValue from '#common/util/getNullEmptyValue.js';
 
 export default function setNullEmptyValues(values) {
   if (!values) {

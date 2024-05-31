@@ -1,5 +1,5 @@
 import requireIndex from 'es6-requireindex';
-import knex from 'server/db/knex';
+import knex from '#server/db/knex.js';
 
 const UserModel = new Proxy(requireIndex(), {
   get(target, name) {

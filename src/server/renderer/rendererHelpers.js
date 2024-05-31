@@ -3,7 +3,7 @@ import path from 'path';
 import jsesc from 'jsesc';
 import assert from 'assert';
 
-import typeCheck from 'common/util/typeCheck';
+import typeCheck from '#common/util/typeCheck.js';
 
 export function assertIdleApiState(apiState) {
   Object.keys(apiState).forEach((actionType) => {

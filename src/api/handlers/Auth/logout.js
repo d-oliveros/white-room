@@ -1,10 +1,11 @@
-import typeCheck from 'common/util/typeCheck';
+import * as cookiesConfig from '#config/cookies.js';
+import typeCheck from '#common/util/typeCheck.js';
 
 import {
   API_ACTION_LOGOUT,
-} from 'api/actionTypes';
+} from '#api/actionTypes';
 
-import updateDeviceRegistrationIdsApiAction from 'api/handlers/User/updateDeviceRegistrationIds';
+import updateDeviceRegistrationIdsApiAction from '#api/handlers/User/updateDeviceRegistrationIds.js';
 
 export default {
   type: API_ACTION_LOGOUT,
@@ -19,9 +20,9 @@ export default {
       });
     }
     setCookie(
-      __config.cookies.session.name,
+      cookiesConfig.session.name,
       null,
-      __config.cookies.session.settings
+      cookiesConfig.session.settings
     );
   },
 };

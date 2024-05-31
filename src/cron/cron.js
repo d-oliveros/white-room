@@ -1,14 +1,17 @@
-import createCronCluster from 'cron-cluster';
 import { serializeError } from 'serialize-error';
-import lodashMemoize from 'lodash/fp/memoize';
+import createCronCluster from 'cron-cluster';
+import lodashMemoize from 'lodash/fp/memoize.js';
+
+import logger from '#common/logger.js';
+import crontab from '#cron/crontab.json';
 
 import {
   postSlackMessage,
   SLACK_IDENTITY_CRON,
-} from 'server/lib/slackClient';
+} from '#server/lib/slackClient.js';
 
-import redis from 'server/db/redis';
-import tasks from 'cron/tasks';
+import redis from '#server/db/redis.js';
+import tasks from '#cron/tasks/index.js';
 
 const {
   ENABLE_CRON,
@@ -32,22 +35,22 @@ export function runCronTask({ task, taskName, onlyReportErrorsOverride }) {
   let cronErrorSlackChannel = null;
   let timeoutMs = null;
 
-  if (typeof __config.cron[taskName] === 'object') {
-    cronSlackChannel = __config.cron[taskName].slackChannel || cronSlackChannel;
-    if (typeof __config.cron[taskName].onlyReportErrors === 'boolean') {
+  if (typeof crontab[taskName] === 'object') {
+    cronSlackChannel = crontab[taskName].slackChannel || cronSlackChannel;
+    if (typeof crontab[taskName].onlyReportErrors === 'boolean') {
       onlyReportErrors = typeof onlyReportErrorsOverride === 'boolean'
         ? onlyReportErrorsOverride
-        : !!__config.cron[taskName].onlyReportErrors;
+        : !!crontab[taskName].onlyReportErrors;
     }
-    cronErrorSlackChannel = __config.cron[taskName].errorSlackChannel || null;
-    timeoutMs = (__config.cron[taskName].timeout * 1000) || null;
+    cronErrorSlackChannel = crontab[taskName].errorSlackChannel || null;
+    timeoutMs = (crontab[taskName].timeout * 1000) || null;
   }
 
   return async function runCronTaskAsync(...args) {
     let now;
     try {
       if (!onlyReportErrors) {
-        __log.info(`[cron:${taskName}] Running.`);
+        logger.info(`[cron:${taskName}] Running.`);
       }
       now = Date.now();
 
@@ -89,7 +92,7 @@ export function runCronTask({ task, taskName, onlyReportErrorsOverride }) {
       });
 
       if (!onlyReportErrors) {
-        __log.info(
+        logger.info(
           `[cron:${taskName}] Success after ${((Date.now() - now) / 1000).toFixed(2)} seconds.` +
           (result ? `\nMessage: ${JSON.stringify(result, null, 2)}` : '')
         );
@@ -102,7 +105,7 @@ export function runCronTask({ task, taskName, onlyReportErrorsOverride }) {
       cronError.details = {
         taskName,
       };
-      __log.error(cronError);
+      logger.error(cronError);
       const errorSlackMessageAttachments = [
         {
           fallback: `Failure: "${taskName}"`,
@@ -138,10 +141,10 @@ export function runCronTask({ task, taskName, onlyReportErrorsOverride }) {
  * @return {string}
  */
 const getCronExecutionInterval = (taskName) => {
-  if (typeof __config.cron[taskName] === 'object') {
-    return __config.cron[taskName].executionInterval;
+  if (typeof crontab[taskName] === 'object') {
+    return crontab[taskName].executionInterval;
   }
-  return __config.cron[taskName];
+  return crontab[taskName];
 };
 
 /**

@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import Box from 'client/components/Box/Box';
-import DarkModal from 'client/components/DarkModal/DarkModal';
+import Box from '#client/components/Box/Box.js';
+import DarkModal from '#client/components/DarkModal/DarkModal.js';
 import './ModalSplitView.less';
 
 const ModalSplitView = ({

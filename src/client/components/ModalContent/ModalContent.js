@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
-import Box from 'client/components/Box/Box';
-import Icon from 'client/components/Icon/Icon';
+import Box from '#client/components/Box/Box.js';
+import Icon from '#client/components/Icon/Icon.js';
 
 function _onModalContentClick(event) {
   event.stopPropagation();

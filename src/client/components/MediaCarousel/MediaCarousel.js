@@ -4,13 +4,13 @@ import PropTypes from 'prop-types';
 import {
   sanitizeMediaUrl,
   MEDIA_TYPE_3D_TOUR,
-} from 'common/mediaHelpers';
+} from '#common/mediaHelpers';
 
-import Box from 'client/components/Box/Box';
-import Flex from 'client/components/Flex/Flex';
-import Text from 'client/components/Text/Text';
-import DarkModal from 'client/components/DarkModal/DarkModal';
-import ModalContent from 'client/components/ModalContent/ModalContent';
+import Box from '#client/components/Box/Box.js';
+import Flex from '#client/components/Flex/Flex.js';
+import Text from '#client/components/Text/Text.js';
+import DarkModal from '#client/components/DarkModal/DarkModal.js';
+import ModalContent from '#client/components/ModalContent/ModalContent.js';
 
 class MediaCarousel extends Component {
   static propTypes = {

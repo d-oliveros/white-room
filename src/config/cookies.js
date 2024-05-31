@@ -1,36 +1,36 @@
-const parseUrl = require('url').parse;
+import { parse } from 'url';
 
 const { APP_URL } = process.env;
 
 const defaultSettings = {
   maxAge: 60 * 60 * 24 * 150 * 1000, // 150 days in seconds
-  host:   parseUrl(APP_URL).hostname,
-  safe:   true,
+  host: parse(APP_URL).hostname,
+  safe: true,
   httpOnly: true,
-  path:   '/',
+  path: '/',
 };
 
-exports.session = {
+export const session = {
   name: 'session-token',
   settings: defaultSettings,
 };
 
-exports.lastVisit = {
+export const lastVisit = {
   name: 'last-visit-timestamp',
   settings: defaultSettings,
 };
 
-exports.analyticsSessionId = {
+export const analyticsSessionId = {
   name: 'analytics-session-id',
   settings: defaultSettings,
 };
 
-exports.experimentActiveVariants = {
+export const experimentActiveVariants = {
   name: 'experiment-active-variants',
   settings: defaultSettings,
 };
 
-exports.utm = {
+export const utm = {
   name: 'utm',
   settings: defaultSettings,
 };

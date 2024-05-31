@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import Text from 'client/components/Text/Text';
+import Text from '#client/components/Text/Text.js';
 
 const NavbarTitle = ({ title }) => {
   return (
