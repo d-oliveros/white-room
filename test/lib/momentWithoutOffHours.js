@@ -2,7 +2,7 @@ import { assert } from 'chai';
 import momentWithAustinTimezone from '#common/util/momentWithAustinTimezone.js';
 import momentWithoutOffHours, {
   getReminderDateOffHours,
-} from 'common/util/momentWithoutOffHours';
+} from '#common/util/momentWithoutOffHours.js';
 
 describe('momentWithoutOffHours', () => {
   it('without cutoff and with start should return start', () => {

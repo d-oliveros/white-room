@@ -2,7 +2,7 @@ import {
   sendgridIsEnabled,
   SENDGRID_TEMPLATE_TESTING,
   sendMail,
-} from 'server/lib/sendgridClient';
+} from '#server/lib/sendgridClient.js';
 
 const {
   SENDGRID_REDIRECT_EMAILS_TO,

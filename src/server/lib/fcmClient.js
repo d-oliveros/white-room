@@ -8,9 +8,6 @@ import typeCheck from '#common/util/typeCheck.js';
 import {
   FIREBASE_CLOUD_MESSAGING_ERROR_RESPONSE_NOT_OK,
 } from '#common/errorCodes.js';
-import {
-  PUSH_NOTIFICATION_SOUND_DEFAULT,
-} from '#common/pushNotificationConstants';
 
 const debug = logger.createDebug('fcm');
 
@@ -98,10 +95,7 @@ export async function sendNotification(params) {
       path: '/send',
       body: {
         registration_ids: deviceRegistrationIds,
-        notification: {
-          sound: PUSH_NOTIFICATION_SOUND_DEFAULT,
-          ...notification,
-        },
+        notification,
         data: data,
       },
     });

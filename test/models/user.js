@@ -1,11 +1,11 @@
 import { assert } from 'chai';
 import { v4 as uuidv4 } from 'uuid';
 
-import User from '#server/models/User/index.js';
+import User from '#models/User/index.js';
 import usersFixture from '../../migrations/seeds/usersFixture.json';
 import {
   resetDbData,
-} from '../testHelpers';
+} from '../testHelpers.js';
 
 describe('User', () => {
   beforeEach(() => resetDbData());

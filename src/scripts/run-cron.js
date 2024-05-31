@@ -1,4 +1,4 @@
-import runCronTaskApiSpec from '@src/api/handlers/Admin/runCronTask.js';
+import runCronTaskApiSpec from '#api/handlers/Admin/runCronTask.js';
 
 export default async function runCronTask() {
   const cronTaskName = process.argv[process.argv.length - 1];

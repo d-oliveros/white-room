@@ -3,7 +3,6 @@ import { resolve as resolveUrl } from 'url';
 
 import logger from '#common/logger.js';
 import typeCheck from '#common/util/typeCheck.js';
-import parseQueryString from '#common/util/parseQueryString.js';
 
 import {
   AUTHY_ERROR_RESPONSE_NOT_OK,

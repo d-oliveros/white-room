@@ -4,7 +4,7 @@ import handlebars from 'handlebars';
 
 import React from 'react';
 import { renderToString } from 'react-dom/server';
-import { StaticRouter } from 'react-router-dom/server';
+import { StaticRouter } from 'react-router-dom/server.js';
 import { matchRoutes } from 'react-router-config';
 
 import logger from '#common/logger.js';
@@ -14,7 +14,7 @@ import createApiClient from '#api/createApiClient.js';
 import makeInitialState from '#client/makeInitialState.js';
 import createTree from '#client/lib/tree.js';
 import fetchPageData from '#client/core/fetchPageData.js';
-import Root from '#client/core/Root.js';
+import Root from '#client/core/Root.jsx';
 import routes from '#client/routes.js';
 
 import {
@@ -103,9 +103,11 @@ export default async function renderReactApp({ state, url, sessionToken }) {
     assertIdleApiState(tree.get('apiState'));
 
     const body = renderToString(
-      <StaticRouter location={url} context={context}>
-        <Root tree={tree} apiClient={apiClient} />
-      </StaticRouter>
+      React.createElement(
+        StaticRouter,
+        { location: url, context: context },
+        React.createElement(Root, { tree: tree, apiClient: apiClient })
+      )
     );
 
     if (context.url) {

@@ -7,8 +7,8 @@ import {
 } from '#client/analytics/eventList.js';
 
 import log from '#client/lib/log.js';
-import analytics from '#client/analytics.js';
-import { anonymousUser } from '#client/constants/index.js';
+import analytics from '#client/analytics/analytics.js';
+import anonymousUser from '#client/constants/anonymousUser.js';
 
 import sendDataToMobileApp, {
   MOBILE_APP_ACTION_TYPE_CURRENT_USER,

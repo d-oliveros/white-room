@@ -4,21 +4,17 @@ import { assert } from 'chai';
 
 import {
   USER_ROLE_ADMIN,
-} from 'common/userRoles';
+} from '#common/userRoles.js';
 
 import {
   createApiServer,
   actionSpecsList,
-} from 'api';
+} from '#api/index.js';
 
-import User from '#server/models/User/index.js';
-
-const SIGN_OTTER_WEBHOOKS_SERVER_API_KEY = '1234';
+import User from '#models/User/index.js';
 
 const createApp = (user) => {
   const app = express();
-
-  process.env.SIGN_OTTER_WEBHOOKS_SERVER_API_KEY = SIGN_OTTER_WEBHOOKS_SERVER_API_KEY;
 
   if (user) {
     app.use((req, res, next) => {

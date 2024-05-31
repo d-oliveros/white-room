@@ -1,4 +1,4 @@
-import analytics from '#client/analytics.js';
+import analytics from '#client/analytics/analytics.js';
 import { ANALYTICS_EVENT_LOGOUT } from '#client/analytics/eventList';
 import makeInitialState from '#client/makeInitialState.js';
 import { API_ACTION_LOGOUT } from '#api/actionTypes.js';

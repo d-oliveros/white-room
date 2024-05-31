@@ -1,4 +1,4 @@
-import analytics from '#client/analytics.js';
+import analytics from '#client/analytics/analytics.js';
 
 import {
   API_ACTION_RESET_PASSWORD,

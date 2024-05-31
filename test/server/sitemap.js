@@ -5,7 +5,7 @@ import request from 'supertest';
 import knex from '#server/db/knex.js';
 import sitemapController from '#server/lib/sitemapController.js';
 
-import { resetDbData } from '../testHelpers';
+import { resetDbData } from '../testHelpers.js';
 
 function createApp() {
   const app = express();

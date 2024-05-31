@@ -119,7 +119,7 @@ export async function downloadStream(args) {
  * @return {Promise} The buffer.
  */
 export function downloadAsBuffer(args) {
-  return new Promise(async (resolve, reject) => {
+  return new Promise((resolve, reject) => {
     try {
       typeCheck('args::NonEmptyObject', args);
       typeCheck('sourceFilePath::NonEmptyString', args.sourceFilePath);
@@ -139,13 +139,16 @@ export function downloadAsBuffer(args) {
 
       debug('Downloading file from S3 bucket ', { args });
 
-      const response = await client.send(command);
-      const stream = response.Body;
+      client.send(command)
+        .then((response) => {
+          const stream = response.Body;
+          const chunks = [];
 
-      const chunks = [];
-      stream.on('data', (chunk) => chunks.push(chunk));
-      stream.once('end', () => resolve(Buffer.concat(chunks)));
-      stream.once('error', reject);
+          stream.on('data', (chunk) => chunks.push(chunk));
+          stream.once('end', () => resolve(Buffer.concat(chunks)));
+          stream.once('error', reject);
+        })
+        .catch(reject);
     }
     catch (err) {
       reject(err);

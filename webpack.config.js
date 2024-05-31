@@ -21,7 +21,7 @@ const webpackConfig = {
   mode: isProd ? 'production' : 'development',
   devtool: isProd ? 'source-map' : 'cheap-module-source-map',
   entry: [
-    path.resolve(srcPath, 'client', 'initializeBrowser.js'),
+    path.resolve(srcPath, 'client', 'initializeBrowser.jsx'),
   ],
   output: {
     path: buildPath,

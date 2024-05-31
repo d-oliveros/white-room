@@ -33,7 +33,7 @@ const log = NODE_ENV === 'production'
     },
     error: (error) => {
       if (global.__log) {
-        global.logger.error(error);
+        logger.error(error);
       }
       if (process.browser) {
         console.error(error); // eslint-disable-line no-console
@@ -65,7 +65,7 @@ const log = NODE_ENV === 'production'
     _debuggers: {},
     info: (...args) => {
       if (global.__log) {
-        global.logger.info(...args);
+        logger.info(...args);
       }
       else {
         console.log(...args); // eslint-disable-line no-console
@@ -73,7 +73,7 @@ const log = NODE_ENV === 'production'
     },
     warn: (...args) => {
       if (global.__log) {
-        global.logger.warn(...args);
+        logger.warn(...args);
       }
       else {
         console.warn(...args); // eslint-disable-line no-console
@@ -81,7 +81,7 @@ const log = NODE_ENV === 'production'
     },
     error: (error) => {
       if (global.__log) {
-        global.logger.error(error);
+        logger.error(error);
       }
       else {
         console.error(error); // eslint-disable-line no-console

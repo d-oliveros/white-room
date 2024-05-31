@@ -12,7 +12,7 @@ import queue from '#queue';
 
 import redis from '#server/db/redis.js';
 import knex from '#server/db/knex.js';
-import User from '#server/models/User/index.js';
+import User from '#models/User/index.js';
 
 import usersFixture from '../migrations/seeds/usersFixture.json';
 
