@@ -1,6 +1,6 @@
 import logger from '#common/logger.js';
 import knex from '#server/db/knex.js';
-import makePasswordHash from './makePasswordHash';
+import makePasswordHash from '#models/User/makePasswordHash.js';
 
 const debug = logger.createDebug('models:User:updatePassword');
 

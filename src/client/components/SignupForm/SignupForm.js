@@ -6,10 +6,10 @@ import { useLocation } from 'react-router';
 import useBranch from '#client/hooks/useBranch.js';
 import {
   initialApiActionState,
-} from '#api/createApiClient';
+} from '#api/createApiClient.js';
 import {
   API_ACTION_SIGNUP,
-} from '#api/actionTypes';
+} from '#api/actionTypes.js';
 import {
   createFormValidationFn,
   createInitialValues,

@@ -3,7 +3,7 @@ import createCronCluster from 'cron-cluster';
 import lodashMemoize from 'lodash/fp/memoize.js';
 
 import logger from '#common/logger.js';
-import crontab from '#cron/crontab.json';
+import crontab from '#cron/crontab.js';
 
 import {
   postSlackMessage,

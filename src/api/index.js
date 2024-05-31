@@ -1,12 +1,13 @@
-import path from 'path';
+import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 import lodashValues from 'lodash/fp/values.js';
+import loadModules from '#common/util/loadModules.js';
 
-import { loadModules } from '#common/util/loadModules.js';
-
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 function getActionSpecsList(actionSpecs) {
+  console.log('a', actionSpecs);
   const actionSpecValues = lodashValues(actionSpecs);
   return actionSpecValues.reduce((memo, actionSpecValue) => {
     if (typeof actionSpecValue === 'object' && actionSpecValue) {
@@ -20,7 +21,7 @@ function getActionSpecsList(actionSpecs) {
   }, []);
 }
 
-export const actionSpecs = await loadModules(path.join(__dirname, 'handlers'));
+export const actionSpecs = await loadModules(join(__dirname, 'handlers'));
 export const actionSpecsList = getActionSpecsList(actionSpecs);
 
 export * as actionTypes from './actionTypes.js';

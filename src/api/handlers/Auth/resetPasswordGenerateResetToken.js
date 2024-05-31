@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 
 import typeCheck from '#common/util/typeCheck.js';
-import User from '#server/models/User/index.js';
+import User from '#models/User/index.js';
 
 import {
   API_ERROR_INVALID_CREDENTIALS,

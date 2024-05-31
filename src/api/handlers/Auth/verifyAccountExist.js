@@ -2,8 +2,8 @@ import typeCheck from '#common/util/typeCheck.js';
 
 import {
   API_ACTION_VERIFY_ACCOUNT_EXIST,
-} from '#api/actionTypes';
-import User from '#server/models/User/index.js';
+} from '#api/actionTypes.js';
+import User from '#models/User/index.js';
 
 export default {
   type: API_ACTION_VERIFY_ACCOUNT_EXIST,

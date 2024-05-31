@@ -1,15 +1,17 @@
-import analytics from '#client/analytics.js';
-import { ANALYTICS_EVENT_LOGGED_IN } from '#client/analytics/eventList';
-import { anonymousUser } from '#client/constants';
+import {
+  API_ACTION_LOGIN,
+} from '#api/actionTypes.js';
+
+import analytics from '#client/analytics/analytics.js';
+import { ANALYTICS_EVENT_LOGGED_IN } from '#client/analytics/eventList.js';
+
+import updateDeviceRegistrationIds from '#client/actions/MobileApp/updateDeviceRegistrationIds.js';
 import sendDataToMobileApp, {
   MOBILE_APP_ACTION_TYPE_CURRENT_USER,
 } from '#client/helpers/sendDataToMobileApp.js';
-import safeLocalStorage from '#client/lib/safeLocalStorage.js';
-import updateDeviceRegistrationIds from '#client/actions/MobileApp/updateDeviceRegistrationIds.js';
 
-import {
-  API_ACTION_LOGIN,
-} from '#api/actionTypes';
+import anonymousUser from '#client/constants/anonymousUser.js';
+import safeLocalStorage from '#client/lib/safeLocalStorage.js';
 
 export async function onLogicSuccess({ state, apiClient, user, experimentActiveVariants }) {
   const analyticsSessionId = state.get(['analytics', 'analyticsSessionId']);

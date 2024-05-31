@@ -6,7 +6,7 @@ import {
 
 import {
   API_ACTION_ADMIN_UPDATE_ITEM,
-} from '#api/actionTypes';
+} from '#api/actionTypes.js';
 
 import knex from '#server/db/knex.js';
 

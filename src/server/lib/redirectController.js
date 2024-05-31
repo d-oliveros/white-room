@@ -1,4 +1,4 @@
-import Redirection from '#server/models/Redirection.js';
+import Redirection from '#models/Redirection.js';
 
 export default async function redirectController(req, res, next) {
   try {

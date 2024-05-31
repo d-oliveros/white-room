@@ -1,19 +1,16 @@
 import moment from 'moment';
-import faker from 'faker';
+import { faker } from '@faker-js/faker';
 
 export function generateRandomFirstName() {
-  return faker.fake('{{name.firstName}}');
+  return faker.person.firstName();
 }
 
 export function generateRandomLastName() {
-  return faker.fake('{{name.lastName}}');
+  return faker.person.lastName();
 }
 
 export function generateRandomName() {
-  return [
-    generateRandomFirstName(),
-    generateRandomLastName(),
-  ].join(' ');
+  return faker.person.fullName();
 }
 
 export function generateRandomEmail() {

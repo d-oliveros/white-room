@@ -9,7 +9,7 @@ import {
   hasRoleAdmin,
 } from '#common/userRoles.js';
 
-import User from '#server/models/User/index.js';
+import User from '#models/User/index.js';
 
 import {
   API_ACTION_USER_GET_BY_ID,

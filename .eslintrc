@@ -1,122 +1,57 @@
 {
   "parser": "@babel/eslint-parser",
   "parserOptions": {
-    "ecmaVersion": 2021,
-    "sourceType": "module"
+    "ecmaVersion": 2024,
+    "sourceType": "module",
+    "requireConfigFile": false,
+    "babelOptions": {
+      "presets": ["@babel/preset-react"]
+    }
   },
-  "extends": ["airbnb", "airbnb/hooks"],
   "env": {
-    "mocha": true,
-    "cypress/globals": true,
+    "browser": true,
+    "es2024": true,
     "node": true,
-    "es2021": true
+    "mocha": true,
+    "cypress/globals": true
   },
+  "extends": [
+    "eslint:recommended",
+    "plugin:import/recommended",
+    "plugin:jsx-a11y/recommended",
+    "plugin:react/recommended",
+    "plugin:react-hooks/recommended"
+  ],
   "plugins": [
-    "cypress",
+    "import",
+    "jsx-a11y",
+    "react",
     "react-hooks",
+    "cypress",
     "chai-friendly"
   ],
-  "rules": {
-    "indent": [2, 2, {"SwitchCase": 1}],
-    "no-console": 1,
-    "comma-dangle": [
-        1,
-        {
-            "arrays": "always-multiline",
-            "objects": "always-multiline",
-            "imports": "always-multiline",
-            "exports": "always-multiline",
-            "functions": "only-multiline"
-        },
-    ],
-    "no-use-before-define": 0,
-    "no-loop-func": 0,
-    "consistent-return": 0,
-    "global-require": 0,
-    "padded-blocks": 0,
-    "func-names": 0,
-    "function-paren-newline": 0,
-    "no-shadow": 0,
-    "max-classes-per-file": 0,
-    "max-len": [1, {"ignoreComments": true, "code": 110, "ignorePattern": "^import"}],
-    "prefer-template": 0,
-    "prefer-destructuring": 0,
-    "prefer-const": 1,
-    "no-param-reassign": 0,
-    "no-restricted-syntax": 0,
-    "no-restricted-globals": ["error", "history"],
-    "no-underscore-dangle": 0,
-    "no-mixed-operators": 0,
-    "no-bitwise": 0,
-    "no-continue": 0,
-    "object-shorthand": 0,
-    "array-bracket-spacing": 0,
-    "arrow-body-style": 0,
-    "brace-style": [1, "stroustrup", { "allowSingleLine": true }],
-    "no-confusing-arrow": 0,
-    "arrow-parens": [1, "always"],
-    "key-spacing": 0,
-    "no-nested-ternary": 0,
-    "no-await-in-loop": 0,
-    "object-curly-newline": 0,
-    "default-case": 0,
-    "implicit-arrow-linebreak": 0,
-    "jsx-quotes": [1, "prefer-single"],
-    "react/jsx-curly-spacing": [2, "never"],
-    "react/jsx-filename-extension": 0,
-    "react/jsx-tag-spacing": 1,
-    "react/self-closing-comp": 1,
-    "react/prefer-stateless-function": 0,
-    "react/forbid-prop-types": 0,
-    "react/no-unescaped-entities": [1, { "forbid": [">", "}"] }],
-    "react/no-unknown-property": ["error", { ignore: ["styleName"] }],
-    "react/prop-types": 0,
-    "react/sort-comp": 0,
-    "react/jsx-boolean-value": [2, "never"],
-    "react/require-default-props": 0,
-    "react/static-property-placement": 0,
-    "react/jsx-one-expression-per-line": 0,
-    "react/jsx-curly-newline": 0,
-    "react-hooks/rules-of-hooks": "error",
-    "react-hooks/exhaustive-deps": "warn",
-    "react/jsx-props-no-spreading": 0,
-    "react/destructuring-assignment": 0,
-    "react/no-access-state-in-setstate": 0,
-    "react/jsx-wrap-multilines": 0,
-    "jsx-a11y/click-events-have-key-events": 0,
-    "jsx-a11y/no-static-element-interactions": 0,
-    "jsx-a11y/anchor-is-valid": 0,
-    "jsx-a11y/label-has-for": 0,
-    "jsx-a11y/control-has-associated-label": 0,
-    "import/no-unresolved": 0,
-    "import/no-named-as-default-member": 0,
-    "import/no-mutable-exports": 0,
-    "import/extensions": ["error", "ignorePackages", {
-      "js": "always",
-      "mjs": "always",
-      "jsx": "always"
-    }],
-    "newline-per-chained-call": 0,
-    "import/named": 2,
-    "import/prefer-default-export": 0,
-    "no-async-promise-executor": 0,
-    "import/no-extraneous-dependencies": [
-      2,
-      {
-        "devDependencies": true,
-        "optionalDependencies": true,
-        "peerDependencies": true
-      }
-    ],
-    "no-unused-expressions": 0,
-    "chai-friendly/no-unused-expressions": 2,
-    "jsx-a11y/no-noninteractive-element-interactions": 0,
-    "operator-linebreak": 0,
-    "camelcase": 0
-  },
   "settings": {
+    "react": {
+      "version": "detect"
+    },
     "import/resolver": {
-      "node": {}
+      "node": {
+        "extensions": [".js", ".jsx", ".mjs"]
+      },
+      "alias": {
+        "map": [
+          ["#api", "./src/api"],
+          ["#client", "./src/client"],
+          ["#common", "./src/common"],
+          ["#config", "./src/config"],
+          ["#cron", "./src/cron"],
+          ["#queue", "./src/queue"],
+          ["#models", "./src/models"],
+          ["#server", "./src/server"],
+          ["#util", "./src/util"]
+        ],
+        "extensions": [".js", ".jsx", ".mjs"]
+      }
     }
   }
 }

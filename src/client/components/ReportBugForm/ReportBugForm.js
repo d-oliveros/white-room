@@ -4,7 +4,7 @@ import { Formik, Form } from 'formik';
 
 import {
   API_ACTION_BUG_REPORT,
-} from '#api/actionTypes';
+} from '#api/actionTypes.js';
 
 import {
   createInitialValues,

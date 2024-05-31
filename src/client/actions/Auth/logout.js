@@ -1,7 +1,7 @@
 import analytics from '#client/analytics.js';
 import { ANALYTICS_EVENT_LOGOUT } from '#client/analytics/eventList';
 import makeInitialState from '#client/makeInitialState.js';
-import { API_ACTION_LOGOUT } from '#api/actionTypes';
+import { API_ACTION_LOGOUT } from '#api/actionTypes.js';
 import sendDataToMobileApp, {
   MOBILE_APP_ACTION_TYPE_LOGOUT,
 } from '#client/helpers/sendDataToMobileApp.js';

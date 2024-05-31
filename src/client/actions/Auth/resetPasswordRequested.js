@@ -2,7 +2,7 @@ import analytics from '#client/analytics.js';
 
 import {
   API_ACTION_RESET_PASSWORD,
-} from '#api/actionTypes';
+} from '#api/actionTypes.js';
 
 import login from '#client/actions/Auth/login.js';
 

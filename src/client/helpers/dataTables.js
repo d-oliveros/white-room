@@ -18,7 +18,7 @@ import log from '#client/lib/log.js';
 
 import {
   API_ACTION_DATATABLE_GET,
-} from '#api/actionTypes';
+} from '#api/actionTypes.js';
 
 import updateSettings from '#client/actions/User/updateSettings.js';
 

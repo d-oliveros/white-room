@@ -1,6 +1,6 @@
 import {
   API_ACTION_USER_UPDATE,
-} from '#api/actionTypes';
+} from '#api/actionTypes.js';
 
 export default async function update({ state, apiClient }, userUpdates) {
   await apiClient.postWithState({

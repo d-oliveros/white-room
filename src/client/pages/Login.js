@@ -4,7 +4,7 @@ import { Redirect } from 'react-router-dom';
 
 import {
   API_ACTION_LOGIN,
-} from '#api/actionTypes';
+} from '#api/actionTypes.js';
 import {
   USER_ROLE_ANONYMOUS,
 } from '#common/userRoles.js';

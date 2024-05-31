@@ -1,5 +1,5 @@
 import assert from 'assert';
-import faker from 'faker';
+import { faker } from '@faker-js/faker';
 import kue from 'kue';
 import { getIn } from 'formik';
 import lodashOmit from 'lodash/fp/omit.js';
@@ -46,7 +46,7 @@ export async function clearDbData() {
 }
 
 export function generateRandomName() {
-  return faker.name.findName();
+  return faker.person.fullName();
 }
 
 export function generateRandomEmail() {
@@ -71,12 +71,12 @@ export async function createUser(userConfig = {}) {
 }
 
 const tableDataTypeToFakerFunctionName = {
-  real: 'random.number',
+  real: 'number.int',
   'timestamp with time zone': 'date.recent',
   'character varying': 'lorem.word',
-  boolean: 'random.boolean',
-  integer: 'random.number',
-  numeric: 'random.number',
+  boolean: 'datatype.boolean',
+  integer: 'number.bigInt',
+  numeric: 'number.bigInt',
   text: 'lorem.sentence',
 };
 

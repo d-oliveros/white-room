@@ -10,7 +10,7 @@ import experimentsConfig from '#config/experiments.js';
 import * as cookiesConfig from '#config/cookies.js';
 import typeCheck from '#common/util/typeCheck.js';
 import { getExperimentActiveVariants } from '#server/lib/experiments.js';
-import User from '#server/models/User/index.js';
+import User from '#models/User/index.js';
 
 import {
   API_ACTION_LOGIN,

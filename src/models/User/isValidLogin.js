@@ -3,8 +3,9 @@ import bcrypt from 'bcrypt';
 import { promisify } from 'util';
 
 import knex from '#server/db/knex.js';
-
-import { loginFieldgroup } from './fieldgroups';
+import {
+  loginFieldgroup,
+} from '#models/User/fieldgroups.js';
 
 const compareAsync = promisify(bcrypt.compare);
 

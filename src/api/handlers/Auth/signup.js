@@ -6,7 +6,7 @@ import logger from '#common/logger.js';
 import { USER_ROLE_USER } from '#common/userRoles.js';
 import typeCheck from '#common/util/typeCheck.js';
 
-import User from '#server/models/User/index.js';
+import User from '#models/User/index.js';
 
 import {
   API_ACTION_SIGNUP,

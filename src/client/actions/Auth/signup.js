@@ -1,6 +1,6 @@
 import {
   API_ACTION_SIGNUP,
-} from '#api/actionTypes';
+} from '#api/actionTypes.js';
 
 import {
   ANALYTICS_EVENT_SIGNUP,
@@ -8,7 +8,7 @@ import {
 
 import log from '#client/lib/log.js';
 import analytics from '#client/analytics.js';
-import { anonymousUser } from '#client/constants';
+import { anonymousUser } from '#client/constants/index.js';
 
 import sendDataToMobileApp, {
   MOBILE_APP_ACTION_TYPE_CURRENT_USER,

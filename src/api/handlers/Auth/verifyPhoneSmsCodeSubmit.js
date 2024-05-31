@@ -2,10 +2,10 @@ import typeCheck from '#common/util/typeCheck.js';
 
 import {
   API_ACTION_VERIFY_PHONE_SMS_CODE_SUBMIT,
-} from '#api/actionTypes';
+} from '#api/actionTypes.js';
 
-import { checkVerificationCode } from '#server/lib/authyClient';
-import User from '#server/models/User/index.js';
+import { checkVerificationCode } from '#server/lib/authyClient.js';
+import User from '#models/User/index.js';
 
 const {
   PHONE_VERIFICATION_MAGIC_CODE,

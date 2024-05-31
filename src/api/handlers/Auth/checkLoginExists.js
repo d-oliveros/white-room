@@ -1,11 +1,11 @@
 import assert from 'assert';
 import lodashXor from 'lodash/fp/xor.js';
-import User from '#server/models/User/index.js';
+import User from '#models/User/index.js';
 import typeCheck from '#common/util/typeCheck.js';
 
 import {
   API_ACTION_CHECK_LOGIN_EXIST,
-} from '#api/actionTypes';
+} from '#api/actionTypes.js';
 
 export default {
   type: API_ACTION_CHECK_LOGIN_EXIST,

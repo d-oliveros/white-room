@@ -7,9 +7,9 @@ import {
 
 import {
   API_ACTION_USER_UPDATE,
-} from '#api/actionTypes';
+} from '#api/actionTypes.js';
 
-import User from '#server/models/User/index.js';
+import User from '#models/User/index.js';
 
 export default {
   type: API_ACTION_USER_UPDATE,

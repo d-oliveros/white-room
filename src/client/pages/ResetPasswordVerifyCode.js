@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import {
   API_ACTION_VERIFY_PHONE_SMS_CODE_REQUESTED,
-} from '#api/actionTypes';
+} from '#api/actionTypes.js';
 import { USER_ROLE_ANONYMOUS } from '#common/userRoles.js';
 import { SCREEN_ID_RESET_PASSWORD_VALIDATE_CODE } from '#client/constants/screenIds';
 

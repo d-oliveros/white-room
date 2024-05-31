@@ -3,7 +3,7 @@ import typeCheck from '#common/util/typeCheck.js';
 
 import {
   API_ACTION_LOGOUT,
-} from '#api/actionTypes';
+} from '#api/actionTypes.js';
 
 import updateDeviceRegistrationIdsApiAction from '#api/handlers/User/updateDeviceRegistrationIds.js';
 

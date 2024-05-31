@@ -1,5 +1,5 @@
 import typeCheck from '#common/util/typeCheck.js';
-import { summaryFieldgroup } from '#server/models/User/fieldgroups.js';
+import { summaryFieldgroup } from '#models/User/fieldgroups.js';
 import {
   API_ACTION_USER_GET_BY_ID,
 } from '#api/actionTypes.js';

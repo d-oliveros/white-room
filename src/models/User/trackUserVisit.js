@@ -1,6 +1,6 @@
 import typeCheck from '#common/util/typeCheck.js';
 import knex from '#server/db/knex.js';
-import { summaryFieldgroup } from '#server/models/User/fieldgroups';
+import { summaryFieldgroup } from '#models/User/fieldgroups.js';
 
 export default async function trackUserVisit({ id, increaseSessionCount }) {
   typeCheck('id::PositiveNumber', id);

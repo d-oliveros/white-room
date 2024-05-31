@@ -1,8 +1,12 @@
-let ctx;
+import { dirname, resolve } from 'path';
+import { fileURLToPath } from 'url';
 
-try {
-  ctx = require.context(__dirname, true, /^(.*\.js$)[^.]*$/im);
-}
-catch (err) {} // eslint-disable-line no-empty
+import loadModules from '#common/util/loadModules.js';
 
-module.exports = require('es6-requireindex')(ctx);
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+const modulesDirectory = resolve(__dirname);
+
+const modules = await loadModules(modulesDirectory, __filename);
+
+export default modules;

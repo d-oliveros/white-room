@@ -1,17 +1,27 @@
-const env = process.env;
+const {
+  POSTGRES_HOST,
+  POSTGRES_PORT,
+  POSTGRES_USER,
+  POSTGRES_PASSWORD,
+  POSTGRES_DATABASE,
+  NODE_ENV,
+  REDIS_DB,
+  REDIS_HOST,
+  REDIS_PORT,
+} = process.env;
 
 const config = {
   knex: {
     client: 'pg',
     connection: {
-      host: env.POSTGRES_HOST,
-      port: env.POSTGRES_PORT,
-      user: env.POSTGRES_USER,
-      password: env.POSTGRES_PASSWORD,
-      database: env.POSTGRES_DATABASE,
+      host: POSTGRES_HOST,
+      port: POSTGRES_PORT,
+      user: POSTGRES_USER,
+      password: POSTGRES_PASSWORD,
+      database: POSTGRES_DATABASE,
       charset: 'utf8',
     },
-    seeds: env.NODE_ENV === 'production' ? undefined : {
+    seeds: NODE_ENV === 'production' ? null : {
       directory: './migrations/seeds',
     },
     migrations: {
@@ -19,9 +29,9 @@ const config = {
     },
   },
   redis: {
-    db: env.REDIS_DB,
-    host: env.REDIS_HOST,
-    port: env.REDIS_PORT,
+    db: REDIS_DB,
+    host: REDIS_HOST,
+    port: REDIS_PORT,
   },
 };
 

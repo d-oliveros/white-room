@@ -1,11 +1,10 @@
 import { parse as parseUrl } from 'url';
 import { serializeError } from 'serialize-error';
-import defaults from 'lodash/fp/defaults.js';
 import handlebars from 'handlebars';
 
 import React from 'react';
-import ReactDOMServer from 'react-dom/server';
-import { StaticRouter } from 'react-router';
+import { renderToString } from 'react-dom/server';
+import { StaticRouter } from 'react-router-dom/server';
 import { matchRoutes } from 'react-router-config';
 
 import logger from '#common/logger.js';
@@ -58,17 +57,17 @@ const defaultMetas = {
 /**
  * Renders the client on server-side.
  *
- * Gets the initial state from req.body, makes the inital client render,
- * builds and returns the fully-rendered html.
+ * Gets the initial state from req.body, makes the initial client render,
+ * builds and returns the fully-rendered HTML.
  *
  * @param  {Object} options.state Initial client state.
  * @param  {String} options.url   Requested URL.
+ * @param  {String} options.sessionToken Session token.
  * @return {Object}               Object with { type, html, redirectUrl, error }.
  */
 export default async function renderReactApp({ state, url, sessionToken }) {
-  state = Object.assign(makeInitialState(), state || {});
+  state = { ...makeInitialState(), ...state };
 
-  // Instanciates the client's state tree.
   const tree = createTree(state, {
     asynchronous: false,
     autocommit: false,
@@ -76,13 +75,12 @@ export default async function renderReactApp({ state, url, sessionToken }) {
   });
 
   const now = Date.now();
-  debug(`Rendering client. Url: ${url}`);
+  debug(`Rendering client. URL: ${url}`);
 
   try {
     const context = {};
 
-    const urlWithoutQueryString = parseUrl(url).pathname;
-    const urlSearch = parseUrl(url).search || '';
+    const { pathname: urlWithoutQueryString, search: urlSearch = '' } = parseUrl(url);
     const branch = matchRoutes(routes, urlWithoutQueryString);
 
     typeCheck('branch::NonEmptyArray', branch);
@@ -95,27 +93,18 @@ export default async function renderReactApp({ state, url, sessionToken }) {
       apiPath: '/api/v1',
       sessionTokenName: 'X-Session-Token',
     });
+
     await fetchPageData(branch, {
       state: tree,
-      apiClient: apiClient,
-      location: {
-        search: urlSearch,
-      },
+      apiClient,
+      location: { search: urlSearch },
     });
 
-    // Ensure no API requests are still in progress.
     assertIdleApiState(tree.get('apiState'));
 
-    // Serializes the application to HTML.
-    const body = ReactDOMServer.renderToString(
-      <StaticRouter
-        location={url}
-        context={context}
-      >
-        <Root
-          tree={tree}
-          apiClient={apiClient}
-        />
+    const body = renderToString(
+      <StaticRouter location={url} context={context}>
+        <Root tree={tree} apiClient={apiClient} />
       </StaticRouter>
     );
 
@@ -128,24 +117,19 @@ export default async function renderReactApp({ state, url, sessionToken }) {
       });
     }
 
-    // Builds the full page's HTML.
     const html = buildHtml({
-      body: body,
-      useBuild: useBuild,
-      hostname: APP_URL.replace(/:[0-9]{1,4}.(.*)/, ''),
-      meta: defaults(defaultMetas, tree.get('pageMetadata') || {}),
+      body,
+      useBuild,
+      hostname: new URL(APP_URL).hostname,
+      meta: { ...defaultMetas, ...(tree.get('pageMetadata') || {}) },
       segmentKey: SEGMENT_KEY,
       webpackDevelopmentServerPort: WEBPACK_DEVELOPMENT_SERVER_PUBLIC_PORT || WEBPACK_DEVELOPMENT_SERVER_PORT,
       serializedState: serializeState(tree),
       bundleSrc: useBuild
-        ? AWS_BUNDLES_URL
-          ? `${AWS_BUNDLES_URL}/js/bundle${COMMIT_HASH ? '-' + COMMIT_HASH : ''}.js`
-          : `/dist/bundle${COMMIT_HASH ? '-' + COMMIT_HASH : ''}.js`
+        ? `${AWS_BUNDLES_URL || ''}/js/bundle${COMMIT_HASH ? `-${COMMIT_HASH}` : ''}.js`
         : null,
       bundleStyleSrc: useBuild && NODE_ENV === 'production'
-        ? AWS_BUNDLES_URL
-          ? `${AWS_BUNDLES_URL}/css/style${COMMIT_HASH ? '-' + COMMIT_HASH : ''}.css`
-          : `/dist/style${COMMIT_HASH ? '-' + COMMIT_HASH : ''}.css`
+        ? `${AWS_BUNDLES_URL || ''}/css/style${COMMIT_HASH ? `-${COMMIT_HASH}` : ''}.css`
         : null,
     });
 
@@ -157,11 +141,11 @@ export default async function renderReactApp({ state, url, sessionToken }) {
       type: isNotFoundRoute
         ? RENDERER_RESPONSE_TYPE_NOT_FOUND
         : RENDERER_RESPONSE_TYPE_SUCCESS,
-      html: html,
+      html,
     });
-  }
-  catch (error) {
+  } catch (error) {
     tree.release();
+    debug(`Rendering error: ${error.message}`);
     return makeRendererResponse({
       type: RENDERER_RESPONSE_TYPE_ERROR,
       error: serializeError(error),

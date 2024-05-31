@@ -1,7 +1,7 @@
 import { v1 as uuidv1 } from 'uuid';
 import UAParser from 'ua-parser-js';
 import MobileDetect from 'mobile-detect';
-import isBot from 'isbot';
+import { isbot } from 'isbot';
 import jwt from 'jsonwebtoken';
 import lodashOmit from 'lodash/fp/omit.js';
 import lodashXor from 'lodash/fp/xor.js';
@@ -16,7 +16,7 @@ import makeInitialState from '#client/makeInitialState.js';
 import {
   getExperimentActiveVariants,
 } from '#server/lib/experiments.js';
-import User from '#server/models/User/index.js';
+import User from '#models/User/index.js';
 
 const debug = logger.createDebug('middleware:makeInitialState');
 const env = process.env;
@@ -127,7 +127,7 @@ export default async function extractInitialStateMiddleware(req, res, next) {
       isMobile: !!mobileDetect.phone(),
       isTablet: !!mobileDetect.tablet(),
       isBrowser: !mobileDetect.mobile() && !mobileDetect.tablet(),
-      isCrawler: isBot(req.headers['user-agent']),
+      isCrawler: isbot(req.headers['user-agent']),
     };
 
     let user;

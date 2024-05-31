@@ -1,8 +1,6 @@
 import moment from 'moment';
 import { getIn, setIn } from 'formik';
-import faker from 'faker';
 
-import lodashSample from 'lodash/fp/sample.js';
 import lodashKeyBy from 'lodash/fp/keyBy.js';
 
 import log from '#client/lib/log.js';
@@ -13,12 +11,6 @@ import extractPhoneFromText from '#common/util/extractPhoneFromText.js';
 import momentWithAustinTimezone from '#common/util/momentWithAustinTimezone.js';
 import preventDefaultPropagation from '#client/helpers/preventDefaultPropagation.js';
 import { isChromeBrowser } from '#common/util/isUserAgentMobileApp.js';
-
-const {
-  NODE_ENV,
-} = process.env;
-
-const debug = log.debug('formikHelpers');
 
 export const validators = {
   required: (value) => {
@@ -758,70 +750,6 @@ export function getFormValueDisplay({ formField, value }) {
     formValueDisplay = moment(formValueDisplay).format(dateFormat);
   }
   return formValueDisplay || '--';
-}
-
-// Maps form field types to `faker` function names - https://www.npmjs.com/package/faker
-const formFieldTypeToFakerFunctionName = {
-  short_text: 'lorem.word',
-  long_text: 'lorem.sentence',
-  phone: 'phone.phoneNumberFormat',
-  number: 'random.number',
-  currency: 'random.number',
-  email: 'internet.email',
-  date_input: 'date.recent',
-  date_picker: 'date.recent',
-  yes_no: 'random.boolean',
-  file_single: 'random.image',
-  file_multi: 'random.image',
-};
-
-export function getFieldValueForPrePopulate(formField) {
-  if (NODE_ENV === 'production') {
-    throw new Error('prepopulateFormikFields can not be used on production.');
-  }
-  let prepopulatedValue = null;
-
-  if (formField.devPrepopulateWith) {
-    prepopulatedValue = formField.devPrepopulateWith;
-  }
-  else if ((formField.validations || []).includes('email')) {
-    prepopulatedValue = faker.internet.email();
-  }
-  else if (formField.type === 'checkbox') {
-    prepopulatedValue = true;
-  }
-  else if (formField.type === 'file_multi') {
-    prepopulatedValue = [faker.random.image(), faker.random.image()];
-  }
-  else if ((formField.properties || {}).choices) {
-    prepopulatedValue = lodashSample(formField.properties.choices).value;
-  }
-  else {
-    const fakerFunc = getIn(faker, formFieldTypeToFakerFunctionName[formField.type]);
-    if (typeof fakerFunc !== 'function') {
-      throw new Error(`No 'faker' function for form field type: ${formField.type}`);
-    }
-    prepopulatedValue = fakerFunc();
-    if (formField.type.includes('date')) {
-      prepopulatedValue = new Date(prepopulatedValue).toISOString();
-    }
-    if (formField.type === 'phone') {
-      prepopulatedValue = extractPhoneFromText(prepopulatedValue);
-    }
-  }
-
-  debug(`Prepopulated value for field "${formField.id}"`, prepopulatedValue);
-
-  return prepopulatedValue;
-}
-
-export function prepopulateFormFields({ values, setFieldValue, formFields }) {
-  formFields.forEach((formField) => {
-    const value = getIn(values, formField.id);
-    if (typeof value !== 'boolean' && typeof value !== 'number' && !value) {
-      setFieldValue(formField.id, getFieldValueForPrePopulate(formField));
-    }
-  });
 }
 
 export function withErrorReporter(func) {

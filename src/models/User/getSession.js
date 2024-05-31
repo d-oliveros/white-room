@@ -3,7 +3,7 @@ import knex from '#server/db/knex.js';
 
 import {
   summaryFieldgroup,
-} from '#server/models/User/fieldgroups.js';
+} from '#models/User/fieldgroups.js';
 
 export default async function getSession(userId) {
   typeCheck('userId::PositiveNumber', userId);

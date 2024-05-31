@@ -1,5 +1,5 @@
 import { USER_ROLE_ANONYMOUS } from '#common/userRoles.js';
-import { API_ACTION_USER_UPDATE_DEVICE_REGISTRATION_IDS } from '#api/actionTypes';
+import { API_ACTION_USER_UPDATE_DEVICE_REGISTRATION_IDS } from '#api/actionTypes.js';
 
 export default async function updateDeviceRegistrationIds(
   { state, apiClient },

@@ -1,9 +1,4 @@
-import './_initEnv.js';
 import { promisify } from 'util';
-
-console.log('init.js');
-
-// TODO: Check if module resolver works in this scope!
 
 const {
   APP_PORT,
@@ -14,6 +9,10 @@ const {
   ENABLE_CRON,
   CRON_WHITELIST,
 } = process.env;
+
+console.log('init.js');
+
+// TODO: Check if module resolver works in this scope!
 
 const moduleSourceDirectory = USE_BUILD === 'true' ? './lib' : './src';
 
@@ -33,7 +32,6 @@ const startServer = async () => {
 };
 
 const startRenderer = async () => {
-  return;
   logger.info('Starting renderer API.');
   const { default: rendererApi } = await import(`${moduleSourceDirectory}/server/renderer/rendererApi.js`);
 

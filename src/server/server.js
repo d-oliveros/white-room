@@ -2,6 +2,7 @@ import path from 'path';
 import express from 'express';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
+import { fileURLToPath } from 'url';
 
 import {
   createApiServer,
@@ -18,10 +19,14 @@ import pdfViewerController from '#server/lib/pdfViewerController.js';
 
 import middleware from '#server/middleware/index.js';
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 const {
   ENABLE_STORYBOOK,
   COOKIE_SECRET,
   COMMIT_HASH,
+  SEGMENT_LIB_PROXY_URL,
 } = process.env;
 
 const ROOT_DIR = path.resolve(__dirname, '..', '..');
@@ -49,7 +54,12 @@ app.use((req, res, next) => {
 
 app.get('/health', (req, res) => res.sendStatus(200));
 app.get('/sitemap.xml', sitemapController);
-app.get('/sgmnt/:segmentApiKey/sgmntlib.min.js', segmentLibProxy);
+
+if (SEGMENT_LIB_PROXY_URL) {
+  console.log(segmentLibProxy);
+  app.get('/sgmnt/:segmentApiKey/sgmntlib.min.js', segmentLibProxy);
+}
+
 app.get('/pdf-viewer', pdfViewerController);
 
 app.use(serveCdnAssets);

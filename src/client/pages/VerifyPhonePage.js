@@ -10,7 +10,7 @@ import {
 import {
   API_ACTION_VERIFY_PHONE_SMS_CODE_REQUESTED,
   API_ACTION_VERIFY_PHONE_SMS_CODE_SUBMIT,
-} from '#api/actionTypes';
+} from '#api/actionTypes.js';
 
 import {
   SCREEN_ID_VERIFY_PHONE,

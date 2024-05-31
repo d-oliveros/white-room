@@ -1,6 +1,8 @@
 import { parse } from 'url';
 
-const { APP_URL } = process.env;
+const {
+  APP_URL,
+} = process.env;
 
 const defaultSettings = {
   maxAge: 60 * 60 * 24 * 150 * 1000, // 150 days in seconds

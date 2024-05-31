@@ -1,4 +1,4 @@
-import queue from '#queue';
+import queue from '#queue/queue.js';
 import typeCheck from '#common/util/typeCheck.js';
 
 import {

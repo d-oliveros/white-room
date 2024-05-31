@@ -1,6 +1,7 @@
+throw new Error('error');
 module.exports = {
   presets: [
-    ['@babel/preset-env', {
+    ['@basdabel/preset-env', {
       loose: true,
       useBuiltIns: 'usage',
       corejs: 3,
