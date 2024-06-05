@@ -21,13 +21,10 @@ const logger = (await import(`${moduleSourceDirectory}/common/logger.js`)).defau
 
 const startServer = async () => {
   logger.info('Starting server.');
-  console.log('1111');
   const { default: server } = await import(`${moduleSourceDirectory}/server/server.js`);
-  console.log('2222');
 
   const listen = promisify(server.listen).bind(server);
   await listen(APP_PORT);
-  console.log('aaa');
   logger.info(`Server listening on port: ${APP_PORT}`);
 };
 

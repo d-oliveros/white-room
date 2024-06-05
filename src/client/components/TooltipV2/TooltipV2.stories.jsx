@@ -1,6 +1,6 @@
 import React from 'react';
 
-import TooltipV2 from './TooltipV2';
+import TooltipV2 from './TooltipV2.jsx';
 
 export default {
   title: 'TooltipV2',

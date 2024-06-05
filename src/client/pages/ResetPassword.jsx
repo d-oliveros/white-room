@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
 import {
@@ -9,11 +9,11 @@ import { SCREEN_ID_RESET_PASSWORD } from '#client/constants/screenIds';
 import { USER_ROLE_ANONYMOUS } from '#common/userRoles.js';
 
 import log from '#client/lib/log.js';
-import withTransitionHook from '#client/helpers/withTransitionHook.js';
-import withScreenId from '#client/helpers/withScreenId.js';
-import withScrollToTop from '#client/helpers/withScrollToTop.js';
-import allowedRoles from '#client/helpers/allowedRoles.js';
-import withApiState from '#client/helpers/withApiState.js';
+import useTransitionHook from '#client/helpers/useTransitionHook.js';
+import useScreenId from '#client/helpers/useScreenId.js';
+import useScrollToTop from '#client/helpers/useScrollToTop.js';
+import useAllowedRoles from '#client/helpers/useAllowedRoles.js';
+import useApiState from '#client/helpers/useApiState.js';
 import postWithState from '#client/actions/postWithState.js';
 
 import AuthActions from '#client/actions/Auth.js';
@@ -24,55 +24,33 @@ import Navbar from '#client/components/Navbar/Navbar.jsx';
 import Link from '#client/components/Link/Link.jsx';
 import ErrorMessage from '#client/components/ErrorMessage/ErrorMessage.jsx';
 
-@withTransitionHook
-@allowedRoles({
-  roles: [
-    USER_ROLE_ANONYMOUS,
-  ],
-  redirectUrl: '/',
-})
-@withApiState({
-  verifyPhoneApiState: {
-    action: API_ACTION_VERIFY_PHONE_SMS_CODE_REQUESTED,
-  },
-})
-@withScreenId(SCREEN_ID_RESET_PASSWORD)
-@withScrollToTop
-class ResetPasswordPage extends Component {
-  static getPageMetadata = () => ({
-    keywords: 'reset password',
-    description: 'Reset your password.',
-  })
+const ResetPasswordPage = ({ dispatch, history, verifyPhoneApiState, location }) => {
+  useTransitionHook();
+  useAllowedRoles({
+    roles: [
+      USER_ROLE_ANONYMOUS,
+    ],
+    redirectUrl: '/',
+  });
+  useApiState({
+    verifyPhoneApiState: {
+      action: API_ACTION_VERIFY_PHONE_SMS_CODE_REQUESTED,
+    },
+  });
+  useScreenId(SCREEN_ID_RESET_PASSWORD);
+  useScrollToTop();
 
-  static propTypes = {
-    dispatch: PropTypes.func.isRequired,
-    history: PropTypes.object.isRequired,
-    verifyPhoneApiState: PropTypes.object.isRequired,
-  }
+  const [state, setState] = useState({
+    showSmsSending: false,
+    phoneNumberDoesNotExist: false,
+    phone: '',
+  });
+  const { showSmsSending, phoneNumberDoesNotExist, phone } = state;
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      showSmsSending: false,
-      phoneNumberDoesNotExist: false,
-      phone: '',
-    };
-    this._unmounting = false;
-    this._onRequestVerificationCode = this._onRequestVerificationCode.bind(this);
-  }
+  let _unmounting = false;
 
-  componentWillUnmount() {
-    this._unmounting = true;
-  }
-
-  async _onRequestVerificationCode({ phone }) {
-    const {
-      dispatch,
-      history,
-      location,
-    } = this.props;
-
-    this.setState({
+  const _onRequestVerificationCode = async ({ phone }) => {
+    setState({
       showSmsSending: false,
       phoneNumberDoesNotExist: false,
       phone,
@@ -91,81 +69,81 @@ class ResetPasswordPage extends Component {
           phone: phone,
         });
 
-        this.setState({
+        setState((prevState) => ({
+          ...prevState,
           showSmsSending: true,
-        });
+        }));
 
         setTimeout(() => {
-          if (!this._unmounting) {
-            this.setState({
-              showSmsSending: false,
-            });
-          }
+          setState((prevState) => ({
+            ...prevState,
+            showSmsSending: false,
+          }));
           history.push(`/reset-password-verify-code${location.search}`);
         }, 3000);
-      }
-      else {
-        this.setState({
+      } else {
+        setState((prevState) => ({
+          ...prevState,
           showSmsSending: false,
           phoneNumberDoesNotExist: true,
-        });
+        }));
       }
-    }
-    catch (error) {
+    } catch (error) {
       log.error(error);
     }
-  }
+  };
 
-  render() {
-    const {
-      verifyPhoneApiState,
-    } = this.props;
-    const {
-      showSmsSending,
-      phoneNumberDoesNotExist,
-      phone,
-    } = this.state;
-
-    return (
-      <div className='page-reset-password'>
-        <Navbar
-          redirectLogoTo='/'
-          leftButton={
-            <Link
-              className='link back'
-              redirectToLastLocation
-              restoreScrollPosition
-              to='/login'
-            >
-              Back
-            </Link>
-          }
-        />
-        <div className='resetContainer'>
-          <div className='resetFormContainer'>
-            {phoneNumberDoesNotExist && (
-              <ErrorMessage>
-                Sorry, there is no account with that phone number
-              </ErrorMessage>
-            )}
-            {!verifyPhoneApiState.inProgress
-              && !showSmsSending
-              && (
-                <PasswordResetSmsForm
-                  onSubmit={this._onRequestVerificationCode}
-                />
-              )
-            }
-            {showSmsSending && (
-              <SmsSendingIndicator
-                phone={phone}
+  return (
+    <div className='page-reset-password'>
+      <Navbar
+        redirectLogoTo='/'
+        leftButton={
+          <Link
+            className='link back'
+            redirectToLastLocation
+            restoreScrollPosition
+            to='/login'
+          >
+            Back
+          </Link>
+        }
+      />
+      <div className='resetContainer'>
+        <div className='resetFormContainer'>
+          {phoneNumberDoesNotExist && (
+            <ErrorMessage>
+              Sorry, there is no account with that phone number
+            </ErrorMessage>
+          )}
+          {!verifyPhoneApiState.inProgress
+            && !showSmsSending
+            && (
+              <PasswordResetSmsForm
+                onSubmit={_onRequestVerificationCode}
               />
-            )}
-          </div>
+            )
+          }
+          {showSmsSending && (
+            <SmsSendingIndicator
+              phone={phone}
+            />
+          )}
         </div>
       </div>
-    );
-  }
-}
+    </div>
+  );
+};
+
+ResetPasswordPage.getPageMetadata = () => ({
+  keywords: 'reset password',
+  description: 'Reset your password.',
+});
+
+ResetPasswordPage.propTypes = {
+  dispatch: PropTypes.func.isRequired,
+  history: PropTypes.object.isRequired,
+  verifyPhoneApiState: PropTypes.object.isRequired,
+  location: PropTypes.object.isRequired,
+};
 
 export default ResetPasswordPage;

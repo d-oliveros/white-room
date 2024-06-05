@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   presets: [
     ['@babel/preset-env', {
       loose: true,
@@ -17,7 +17,7 @@ module.exports = {
     '@babel/plugin-transform-export-namespace-from',
     '@babel/plugin-transform-optional-chaining',
     [
-      'react-css-modules',
+      '@dr.pogodin/react-css-modules',
       {
         removeImport: false,
         webpackHotModuleReloading: true,

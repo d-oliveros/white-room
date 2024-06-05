@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { initialApiActionState } from '#api/createApiClient';
 import typeCheck from '#common/util/typeCheck.js';
 
-import branch from '#client/core/branch.js';
+import branch from '#client/core/branch.jsx';
 import configureDecoratedComponent from '#client/helpers/configureDecoratedComponent.js';
 
 export default function withApiState(getBindingsRaw, opts = {}) {

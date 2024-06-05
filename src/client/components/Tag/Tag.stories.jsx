@@ -8,7 +8,7 @@ import Tag, {
   TAG_THEME_GREEN_ADOBE,
   TAG_THEME_ORANGE_WHITE,
   TAG_THEME_GREY_OUTLINE,
-} from './Tag';
+} from './Tag.jsx';
 
 export default {
   title: 'Tag',

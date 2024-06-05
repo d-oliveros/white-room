@@ -1,6 +1,6 @@
 import React from 'react';
 
-import NavigationButton from './NavigationButton';
+import NavigationButton from './NavigationButton.jsx';
 
 export default {
   title: 'NavigationButton',

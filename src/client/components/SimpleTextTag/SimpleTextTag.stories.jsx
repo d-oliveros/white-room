@@ -1,6 +1,6 @@
 import React from 'react';
 
-import SimpleTextTag from './SimpleTextTag';
+import SimpleTextTag from './SimpleTextTag.jsx';
 
 export default {
   title: 'SimpleTextTag',

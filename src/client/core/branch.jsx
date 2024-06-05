@@ -47,7 +47,7 @@ const wrappedBranchDecorator = (cursors = {}) => (ComponentToDecorate) => {
         return fn({
           state: this.context.tree,
           apiClient: this.context.apiClient,
-          history: this.context.history,
+          navigate: this.context.navigate,
         }, ...args);
       };
 

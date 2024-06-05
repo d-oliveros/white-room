@@ -1,7 +1,7 @@
 import React from 'react';
 
 import Box from '#client/components/Box/Box.jsx';
-import ModalSplitView from './ModalSplitView';
+import ModalSplitView from './ModalSplitView.jsx';
 
 export default {
   title: 'ModalSplitView',

@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import { Link as ReactRouterDomLink } from 'react-router-dom';
 import classnames from 'classnames';
 
-import branch from '#client/core/branch.js';
-import Navigator from '#client/actions/Navigator.js';
+import branch from '#client/core/branch.jsx';
+import Navigator from '#client/actions/Navigator/index.js';
 
 import './Link.less';
 

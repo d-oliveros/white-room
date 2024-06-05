@@ -1,6 +1,6 @@
 import React from 'react';
 
-import ModalDocsSplitView from './ModalDocsSplitView';
+import ModalDocsSplitView from './ModalDocsSplitView.jsx';
 
 export default {
   title: 'ModalDocsSplitView',

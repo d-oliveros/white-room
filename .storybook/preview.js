@@ -1,6 +1,6 @@
 import React from 'react';
-import { MemoryRouter } from "react-router";
-import ReactAppContext from '../src/client/core/ReactAppContext';
+import { MemoryRouter } from 'react-router';
+import ReactAppContext from '../src/client/core/ReactAppContext.js';
 import '../src/client/style/style.less';
 
 import {

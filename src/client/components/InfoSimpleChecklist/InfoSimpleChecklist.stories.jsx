@@ -1,6 +1,6 @@
 import React from 'react';
 
-import InfoSimpleChecklist from './InfoSimpleChecklist';
+import InfoSimpleChecklist from './InfoSimpleChecklist.jsx';
 
 export default {
   title: 'InfoSimpleChecklist',

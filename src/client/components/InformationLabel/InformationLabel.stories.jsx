@@ -1,6 +1,6 @@
 import React from 'react';
 
-import InformationLabel from './InformationLabel';
+import InformationLabel from './InformationLabel.jsx';
 
 export default {
   title: 'InformationLabel',

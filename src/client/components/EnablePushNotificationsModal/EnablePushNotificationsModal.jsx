@@ -13,7 +13,7 @@ import ButtonDeprecated, {
   BUTTON_THEME_BLUE,
 } from '#client/components/ButtonDeprecated/ButtonDeprecated.jsx';
 
-import branch from '#client/core/branch.js';
+import branch from '#client/core/branch.jsx';
 
 @branch({
   currentUser: ['currentUser'],

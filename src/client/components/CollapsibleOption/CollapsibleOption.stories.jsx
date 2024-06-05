@@ -2,7 +2,7 @@ import React from 'react';
 import Box from '#client/components/Box/Box.jsx';
 import Text from '#client/components/Text/Text.jsx';
 
-import CollapsibleOption from './CollapsibleOption';
+import CollapsibleOption from './CollapsibleOption.jsx';
 
 export default {
   title: 'CollapsibleOption',

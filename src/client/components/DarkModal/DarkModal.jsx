@@ -5,7 +5,7 @@ import classnames from 'classnames';
 
 import emptyFunction from '#common/util/emptyFunction.js';
 import isUserAgentMobileApp from '#common/util/isUserAgentMobileApp.js';
-import branch from '#client/core/branch.js';
+import branch from '#client/core/branch.jsx';
 
 @branch({
   userAgent: ['analytics', 'userAgent'],

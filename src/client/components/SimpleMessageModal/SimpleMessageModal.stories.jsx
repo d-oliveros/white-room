@@ -5,7 +5,7 @@ import {
   BUTTON_THEME_GREY_ADOBE,
   BUTTON_THEME_RED_ADOBE,
 } from '#client/components/ButtonDeprecated/ButtonDeprecated.jsx';
-import SimpleMessageModal, { SIMPLE_MESSAGE_MODAL_THEME_SLIDE_UP } from './SimpleMessageModal';
+import SimpleMessageModal, { SIMPLE_MESSAGE_MODAL_THEME_SLIDE_UP } from './SimpleMessageModal.jsx';
 
 export default {
   title: 'SimpleMessageModal',

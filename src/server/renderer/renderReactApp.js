@@ -45,7 +45,7 @@ const {
 } = process.env;
 
 const useBuild = USE_BUILD === 'true';
-const buildHtml = handlebars.compile(getTemplateFile());
+let buildHtml;
 
 const debug = logger.createDebug('renderer:renderReactApp');
 
@@ -66,6 +66,10 @@ const defaultMetas = {
  * @return {Object}               Object with { type, html, redirectUrl, error }.
  */
 export default async function renderReactApp({ state, url, sessionToken }) {
+  if (!buildHtml) {
+    const templateFile = await getTemplateFile();
+    buildHtml = await handlebars.compile(templateFile);
+  }
   state = { ...makeInitialState(), ...state };
 
   const tree = createTree(state, {

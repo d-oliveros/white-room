@@ -4,7 +4,7 @@ import { Formik, Form } from 'formik';
 
 import client from '@${module}/helpers/formikHelpers';
 import common from '@${module}/formatters';
-import client from '@${module}/core/branch.js';
+import client from '@${module}/core/branch.jsx';
 
 import ButtonDeprecated, {
   BUTTON_THEME_YELLOW,

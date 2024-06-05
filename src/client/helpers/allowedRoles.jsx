@@ -10,7 +10,7 @@ import {
   hasRoleAdmin,
 } from '#common/userRoles.js';
 
-import branch from '#client/core/branch.js';
+import branch from '#client/core/branch.jsx';
 import log from '#client/lib/log.js';
 import configureDecoratedComponent from '#client/helpers/configureDecoratedComponent.js';
 

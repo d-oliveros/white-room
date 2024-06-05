@@ -10,7 +10,7 @@ import { setIn } from 'formik';
 import typeCheck from '#common/util/typeCheck.js';
 import objectDiff from '#common/util/objectDiff.js';
 
-import branch from '#client/core/branch.js';
+import branch from '#client/core/branch.jsx';
 import configureDecoratedComponent from '#client/helpers/configureDecoratedComponent.js';
 import withApiState from '#client/helpers/withApiState.js';
 import withInfiniteScroll from '#client/helpers/withInfiniteScroll.js';

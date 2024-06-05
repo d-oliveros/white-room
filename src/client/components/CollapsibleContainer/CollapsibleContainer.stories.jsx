@@ -8,7 +8,7 @@ import CollapsibleContainer, {
   COLLAPSIBLE_CONTAINER_STATUS_ERROR,
   COLLAPSIBLE_CONTAINER_BORDER_TYPE_ROUNDED,
   COLLAPSIBLE_CONTAINER_BORDER_TYPE_BOTTOM_GRAY,
-} from './CollapsibleContainer';
+} from './CollapsibleContainer.jsx';
 
 export default {
   title: 'CollapsibleContainer',

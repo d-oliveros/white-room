@@ -7,7 +7,6 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 function getActionSpecsList(actionSpecs) {
-  console.log('a', actionSpecs);
   const actionSpecValues = lodashValues(actionSpecs);
   return actionSpecValues.reduce((memo, actionSpecValue) => {
     if (typeof actionSpecValue === 'object' && actionSpecValue) {

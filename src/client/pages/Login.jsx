@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Redirect } from 'react-router-dom';
 
@@ -10,11 +10,11 @@ import {
 } from '#common/userRoles.js';
 import { SCREEN_ID_LOGIN } from '#client/constants/screenIds';
 
-import withTransitionHook from '#client/helpers/withTransitionHook.js';
-import withScreenId from '#client/helpers/withScreenId.js';
-import withScrollToTop from '#client/helpers/withScrollToTop.js';
-import withApiState from '#client/helpers/withApiState.js';
-import branch from '#client/core/branch.js';
+import useTransitionHook from '#client/helpers/useTransitionHook.js';
+import useScreenId from '#client/helpers/useScreenId.js';
+import useScrollToTop from '#client/helpers/useScrollToTop.js';
+import useApiState from '#client/helpers/useApiState.js';
+import useBranch from '#client/core/useBranch';
 import { getUserLandingPage } from '#client/helpers/allowedRoles';
 
 import Box from '#client/components/Box/Box.jsx';
@@ -24,91 +24,64 @@ import Logo from '#client/components/Logo/Logo.jsx';
 
 import AuthActions from '#client/actions/Auth.js';
 
-@withTransitionHook
-@withApiState({
-  loginApiState: {
-    action: API_ACTION_LOGIN,
-  },
-})
-@withScreenId(SCREEN_ID_LOGIN)
-@withScrollToTop
-@branch({
-  currentUser: ['currentUser'],
-})
-class LoginPage extends Component {
-  static getPageMetadata = () => ({
-    pageTitle: 'Login',
+const LoginPage = () => {
+  useTransitionHook();
+  useScreenId(SCREEN_ID_LOGIN);
+  useScrollToTop();
+
+  const { currentUser } = useBranch({
+    currentUser: ['currentUser'],
   });
 
-  static propTypes = {
-    currentUser: PropTypes.object.isRequired,
-    loginApiState: PropTypes.object.isRequired,
-  }
+  const loginApiState = useApiState({
+    action: API_ACTION_LOGIN,
+  });
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      isSubmitting: false,
-    };
-    this.onFormSubmit = this.onFormSubmit.bind(this);
-  }
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  async onFormSubmit(formValues) {
-    const { dispatch } = this.props;
+  const onFormSubmit = async (formValues) => {
+    setIsSubmitting(true);
 
-    this.setState({
-      isSubmitting: true,
-    });
-
-    await dispatch(AuthActions.login, {
+    await loginApiState.dispatch(AuthActions.login, {
       phone: formValues.phone,
       password: formValues.password,
     });
 
-    this.setState({
-      isSubmitting: false,
+    setIsSubmitting(false);
+  };
+
+  if (!isSubmitting && !currentUser.roles.includes(USER_ROLE_ANONYMOUS)) {
+    const userLandingPage = getUserLandingPage({
+      userRoles: currentUser.roles,
     });
+    return <Redirect to={userLandingPage} />;
   }
 
-  render() {
-    const {
-      currentUser,
-      loginApiState,
-    } = this.props;
+  return (
+    <Box>
+      <Logo redirectTo='/' />
+      <div className='loginFormContainer'>
+        <h1>Log In</h1>
+        <LoginForm
+          submitError={loginApiState.error}
+          isSubmitting={loginApiState.inProgress || isSubmitting}
+          onSubmit={onFormSubmit}
+        />
+        <Link to='/signup'>create new account</Link>
+        <Link to='/reset-password'>Forgot Password?</Link>
+      </div>
+    </Box>
+  );
+};
 
-    const {
-      isSubmitting,
-    } = this.state;
+LoginPage.getPageMetadata = () => ({
+  pageTitle: 'Login',
+});
 
-    if (!isSubmitting && !currentUser.roles.includes(USER_ROLE_ANONYMOUS)) {
-      const userLandingPage = getUserLandingPage({
-        userRoles: currentUser.roles,
-      });
-      return (
-        <Redirect to={userLandingPage} />
-      );
-    }
-
-    return (
-      <Box>
-        <Logo redirectTo='/' />
-        <div className='loginFormContainer'>
-          <h1>Log In</h1>
-          <LoginForm
-            submitError={loginApiState.error}
-            isSubmitting={loginApiState.inProgress || isSubmitting}
-            onSubmit={this.onFormSubmit}
-          />
-          <Link to='/signup'>
-            create new account
-          </Link>
-          <Link to='/reset-password'>
-            Forgot Password?
-          </Link>
-        </div>
-      </Box>
-    );
-  }
-}
+LoginPage.propTypes = {
+  currentUser: PropTypes.object.isRequired,
+  loginApiState: PropTypes.object.isRequired,
+  dispatch: PropTypes.func.isRequired,
+};
 
 export default LoginPage;

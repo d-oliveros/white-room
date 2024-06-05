@@ -10,7 +10,7 @@ import {
 } from '#common/geolocationHelpers';
 import isUserAgentMobileApp from '#common/util/isUserAgentMobileApp.js';
 
-import branch from '#client/core/branch.js';
+import branch from '#client/core/branch.jsx';
 import configureDecoratedComponent from '#client/helpers/configureDecoratedComponent.js';
 
 export const GEOLOCATION_STATE_INIT = 'GEOLOCATION_STATE_INIT'; // Initial state.

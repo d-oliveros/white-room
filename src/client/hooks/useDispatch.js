@@ -14,7 +14,7 @@ export default function useDispatch() {
     return fn({
       state: reactAppContext.tree,
       apiClient: reactAppContext.apiClient,
-      history: reactAppContext.history,
+      navigate: reactAppContext.navigate,
     }, ...args);
   };
 }

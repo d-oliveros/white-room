@@ -1,6 +1,6 @@
 import React from 'react';
 
-import InfoTile, { INFO_TILE_THEME_ADMIN_GREY } from './InfoTile';
+import InfoTile, { INFO_TILE_THEME_ADMIN_GREY } from './InfoTile.jsx';
 
 export default {
   title: 'InfoTile',

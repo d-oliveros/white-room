@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
 import {
@@ -8,12 +8,12 @@ import { USER_ROLE_ANONYMOUS } from '#common/userRoles.js';
 import { SCREEN_ID_RESET_PASSWORD_VALIDATE_CODE } from '#client/constants/screenIds';
 
 import log from '#client/lib/log.js';
-import branch from '#client/core/branch.js';
-import withTransitionHook from '#client/helpers/withTransitionHook.js';
-import withScreenId from '#client/helpers/withScreenId.js';
-import withScrollToTop from '#client/helpers/withScrollToTop.js';
-import allowedRoles from '#client/helpers/allowedRoles.js';
-import withApiState from '#client/helpers/withApiState.js';
+import useBranch from '#client/core/useBranch.js';
+import useTransitionHook from '#client/helpers/useTransitionHook.js';
+import useScreenId from '#client/helpers/useScreenId.js';
+import useScrollToTop from '#client/helpers/useScrollToTop.js';
+import useAllowedRoles from '#client/helpers/useAllowedRoles.js';
+import useApiState from '#client/helpers/useApiState.js';
 import AuthActions from '#client/actions/Auth.js';
 
 import PasswordResetSmsVerifyCode from '#client/components/PasswordResetSmsVerifyCode/PasswordResetSmsVerifyCode.jsx';
@@ -21,54 +21,34 @@ import SmsSendingIndicator from '#client/components/SmsSendingIndicator/SmsSendi
 import Navbar from '#client/components/Navbar/Navbar.jsx';
 import Link from '#client/components/Link/Link.jsx';
 
-@withTransitionHook
-@allowedRoles({
-  roles: [
-    USER_ROLE_ANONYMOUS,
-  ],
-  redirectUrl: '/',
-})
-@withApiState({
-  verifyPhoneApiState: {
-    action: API_ACTION_VERIFY_PHONE_SMS_CODE_REQUESTED,
-  },
-})
-@branch({
-  phone: ['resetPasswordForm', 'phone'],
-})
-@withScreenId(SCREEN_ID_RESET_PASSWORD_VALIDATE_CODE)
-@withScrollToTop
-class ResetPasswordVerifyCodePage extends Component {
-  static getPageMetadata = (state) => ({
-    pageTitle: state.get(['env', 'APP_TITLE']),
-    section: SCREEN_ID_RESET_PASSWORD_VALIDATE_CODE,
-    keywords: `${state.get(['env', 'APP_ID'])}, reset password, code`,
-    description: 'Reset your password.',
-  })
+const ResetPasswordVerifyCodePage = ({ dispatch, history, phone, verifyPhoneApiState }) => {
+  useTransitionHook();
+  useAllowedRoles({
+    roles: [
+      USER_ROLE_ANONYMOUS,
+    ],
+    redirectUrl: '/',
+  });
+  useApiState({
+    verifyPhoneApiState: {
+      action: API_ACTION_VERIFY_PHONE_SMS_CODE_REQUESTED,
+    },
+  });
+  useBranch({
+    phone: ['resetPasswordForm', 'phone'],
+  });
+  useScreenId(SCREEN_ID_RESET_PASSWORD_VALIDATE_CODE);
+  useScrollToTop();
 
-  static propTypes = {
-    dispatch: PropTypes.func.isRequired,
-    history: PropTypes.object.isRequired,
-    phone: PropTypes.string.isRequired,
-    verifyPhoneApiState: PropTypes.object.isRequired,
-  }
+  const [state, setState] = useState({
+    showSmsSending: false,
+    incorrectCodeSubmitted: false,
+  });
+  const { showSmsSending, incorrectCodeSubmitted } = state;
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      showSmsSending: false,
-      incorrectCodeSubmitted: false,
-    };
-    this._unmounting = false;
-    this._onRequestVerificationCode = this._onRequestVerificationCode.bind(this);
-  }
+  let _unmounting = false;
 
-  async _validateVerificationCode(phone, code) {
-    const {
-      dispatch,
-      history,
-      location,
-    } = this.props;
+  const _validateVerificationCode = async (phone, code) => {
     try {
       const isValidCode = await dispatch(AuthActions.verifyPhoneSmsCodeSubmit, {
         phone,
@@ -81,97 +61,96 @@ class ResetPasswordVerifyCodePage extends Component {
         });
         const url = `/reset-password-confirm?token=${encodeURIComponent(token)}`;
         history.push(url);
+      } else {
+        setState((prevState) => ({ ...prevState, incorrectCodeSubmitted: true }));
       }
-      else {
-        this.setState({ incorrectCodeSubmitted: true });
-      }
-    }
-    catch (error) {
+    } catch (error) {
       log.error(error);
     }
-  }
+  };
 
-  _onRequestVerificationCode(phone) {
-    const {
-      dispatch,
-    } = this.props;
-
-    this.setState({
-      showSmsSending: true,
-    });
+  const _onRequestVerificationCode = (phone) => {
+    setState((prevState) => ({ ...prevState, showSmsSending: true }));
 
     setTimeout(() => {
-      if (!this._unmounting) {
-        this.setState({
-          showSmsSending: false,
-        });
+      if (!_unmounting) {
+        setState((prevState) => ({ ...prevState, showSmsSending: false }));
       }
     }, 3000);
 
     dispatch(AuthActions.resetPasswordSmsCodeRequested, {
       phone,
     });
-  }
+  };
 
-  render() {
-    const {
-      verifyPhoneApiState,
-      phone,
-    } = this.props;
-    const {
-      showSmsSending,
-      incorrectCodeSubmitted,
-    } = this.state;
+  useEffect(() => {
+    return () => {
+      _unmounting = true;
+    };
+  }, []);
 
-    return (
-      <div className='page-reset-password'>
-        <Navbar
-          redirectLogoTo='/'
-          leftButton={(
-            <Link
-              className='link back'
-              redirectToLastLocation
-              restoreScrollPosition
-              to='/reset-password'
-            >
-              Back
-            </Link>
+  return (
+    <div className='page-reset-password'>
+      <Navbar
+        redirectLogoTo='/'
+        leftButton={(
+          <Link
+            className='link back'
+            redirectToLastLocation
+            restoreScrollPosition
+            to='/reset-password'
+          >
+            Back
+          </Link>
+        )}
+      />
+      <div className='resetContainer'>
+        <div className='resetFormContainer'>
+          {incorrectCodeSubmitted && (
+            <div className='formMessage error'>
+              <span>
+                Uh oh, that's not the right code!
+              </span>
+            </div>
           )}
-        />
-        <div className='resetContainer'>
-          <div className='resetFormContainer'>
-            {incorrectCodeSubmitted && (
-              <div className='formMessage error'>
-                <span>
-                  Uh oh, that's not the right code!
-                </span>
-              </div>
-            )}
-            {!verifyPhoneApiState.inProgress
-              && !showSmsSending
-              && (
-                <PasswordResetSmsVerifyCode
-                  onSubmit={({ code }) => this._validateVerificationCode(phone, code)}
-                />
-              )
-            }
-            {showSmsSending && (
-              <SmsSendingIndicator
-                phone={phone}
+          {!verifyPhoneApiState.inProgress
+            && !showSmsSending
+            && (
+              <PasswordResetSmsVerifyCode
+                onSubmit={({ code }) => _validateVerificationCode(phone, code)}
               />
-            )}
-            {!showSmsSending && (
-              <div className='action-link-container'>
-                <a onClick={() => this._onRequestVerificationCode(phone)}>
-                  Didn't get the code? Click to send another.
-                </a>
-              </div>
-            )}
-          </div>
+            )
+          }
+          {showSmsSending && (
+            <SmsSendingIndicator
+              phone={phone}
+            />
+          )}
+          {!showSmsSending && (
+            <div className='action-link-container'>
+              <a onClick={() => _onRequestVerificationCode(phone)}>
+                Didn't get the code? Click to send another.
+              </a>
+            </div>
+          )}
         </div>
       </div>
-    );
-  }
-}
+    </div>
+  );
+};
+
+ResetPasswordVerifyCodePage.getPageMetadata = (state) => ({
+  pageTitle: state.get(['env', 'APP_TITLE']),
+  section: SCREEN_ID_RESET_PASSWORD_VALIDATE_CODE,
+  keywords: `${state.get(['env', 'APP_ID'])}, reset password, code`,
+  description: 'Reset your password.',
+});
+
+ResetPasswordVerifyCodePage.propTypes = {
+  dispatch: PropTypes.func.isRequired,
+  history: PropTypes.object.isRequired,
+  phone: PropTypes.string.isRequired,
+  verifyPhoneApiState: PropTypes.object.isRequired,
+};
 
 export default ResetPasswordVerifyCodePage;

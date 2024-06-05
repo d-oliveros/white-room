@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-import branch from '#client/core/branch.js';
+import branch from '#client/core/branch.jsx';
 import isUserAgentMobileApp from '#common/util/isUserAgentMobileApp.js';
 import sendDataToMobileApp, { MOBILE_APP_ACTION_TYPE_OPEN_URL } from '#client/helpers/sendDataToMobileApp';
 

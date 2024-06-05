@@ -1,7 +1,7 @@
 import lodashEach from 'lodash/fp/each.js';
 
-import jobs from './jobs';
-import queue from './queue';
+import jobs from './jobs/index.js';
+import queue from './queue.js';
 
 queue.setMaxListeners(Object.keys(jobs).length);
 

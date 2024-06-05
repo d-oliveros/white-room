@@ -17,11 +17,9 @@ export default async function loadModules(directory, ignoreFile) {
     const moduleName = file.replace('.js', '');
 
     if (filePath === ignoreFile) {
-      console.log('IGNORING:', filePath);
       continue;
     }
     const fileStat = await stat(filePath);
-    console.log(filePath);
 
     if (extname(file) === '.js') {
       modules[moduleName] = await import(filePath);

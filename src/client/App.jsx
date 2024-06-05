@@ -1,17 +1,13 @@
-import React, { Component } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
-import { withRouter } from 'react-router';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { renderRoutes } from 'react-router-config';
 
 import parseQueryString from '#common/util/parseQueryString.js';
-import isUserAgentMobileApp, {
-  isUserAgentIphoneApp,
-} from '#common/util/isUserAgentMobileApp.js';
+import isUserAgentMobileApp, { isUserAgentIphoneApp } from '#common/util/isUserAgentMobileApp.js';
 
-import {
-  hasRoleAnonymous,
-} from '#common/userRoles.js';
+import { hasRoleAnonymous } from '#common/userRoles.js';
 
 import sendDataToMobileApp, {
   MOBILE_APP_ACTION_TYPE_ROUTE_CHANGED,
@@ -20,58 +16,45 @@ import sendDataToMobileApp, {
 
 import { API_ACTION_GET_APP_COMMIT_HASH } from '#api/actionTypes.js';
 
-import branch from '#client/core/branch.js';
+import useBranch from '#client/core/branch.jsx';
 import MobileAppEventListener from '#client/components/MobileAppEventListener/MobileAppEventListener.jsx';
 import EnablePushNotificationsModal from '#client/components/EnablePushNotificationsModal/EnablePushNotificationsModal.jsx';
 
 // Interval for checking the app commit hash vs the server commit hash to reload the page when a new version is available.
 const CHECK_APP_VERSION_INTERVAL_MS = 1800000; // 30 minutes.
 
-@withRouter
-@branch({
-  currentUser: ['currentUser'],
-  tours: ['tours'],
-  userAgent: ['analytics', 'userAgent'],
-  askPushNotifications: ['mobileApp', 'askPushNotifications'],
-})
-class App extends Component {
-  static propTypes = {
-    apiClient: PropTypes.object,
-    userAgent: PropTypes.object.isRequired,
-    currentUser: PropTypes.object.isRequired,
-    routes: PropTypes.array.isRequired,
-  };
+const App = ({ routes, apiClient }) => {
+  const [checkAppVersionInterval, setCheckAppVersionInterval] = useState(null);
+  const [checkAppVersionLastRunTimestamp, setCheckAppVersionLastRunTimestamp] = useState(Date.now());
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  constructor(props) {
-    super(props);
-    this._checkAppVersionInterval = null;
-    this._checkAppVersionLastRunTimestamp = Date.now();
-    this.historyUnlisten = null;
-  }
+  const { userAgent, currentUser, askPushNotifications } = useBranch({
+    userAgent: ['userAgent'],
+    currentUser: ['currentUser'],
+    askPushNotifications: ['askPushNotifications'],
+  });
 
-  componentDidMount() {
-    global.document.addEventListener('wheel', () => {
+  useEffect(() => {
+    const handleWheel = () => {
       if (global.document.activeElement.type === 'number') {
         global.document.activeElement.blur();
       }
-    });
-    if (!this._checkAppVersionInterval) {
-      this._checkAppVersionInterval = global.setInterval(() => {
-        // Avoid doing unnecesary API calls if the app is not focused (not visible).
-        if (global.document && global.document.hidden) {
-          return;
-        }
-        const now = Date.now();
-        if (now - this._checkAppVersionLastRunTimestamp > CHECK_APP_VERSION_INTERVAL_MS) {
-          this._checkAppVersionLastRunTimestamp = now;
-          // The API client automatically compares the commit hash returned by the server in res.header['x-app-commit-hash'],
-          // and refresh the browser if the commit hash the app was loaded from does not match the server's commit hash.
-          this.props.apiClient.post(API_ACTION_GET_APP_COMMIT_HASH);
-        }
-      }, 1000);
-    }
+    };
+    global.document.addEventListener('wheel', handleWheel);
 
-    const { currentUser, history, userAgent } = this.props;
+    const interval = global.setInterval(() => {
+      if (global.document && global.document.hidden) {
+        return;
+      }
+      const now = Date.now();
+      if (now - checkAppVersionLastRunTimestamp > CHECK_APP_VERSION_INTERVAL_MS) {
+        setCheckAppVersionLastRunTimestamp(now);
+        apiClient.post(API_ACTION_GET_APP_COMMIT_HASH);
+      }
+    }, 1000);
+    setCheckAppVersionInterval(interval);
+
     const isMobileApp = isUserAgentMobileApp(userAgent);
 
     if (isMobileApp) {
@@ -82,54 +65,53 @@ class App extends Component {
         });
       }
 
-      this.historyUnlisten = history.listen((location) => {
-        sendDataToMobileApp({
-          actionType: MOBILE_APP_ACTION_TYPE_ROUTE_CHANGED,
-          routePath: location.pathname,
-          routeQuery: parseQueryString(location.search || ''),
-          currentUser: currentUser,
-        });
+      sendDataToMobileApp({
+        actionType: MOBILE_APP_ACTION_TYPE_ROUTE_CHANGED,
+        routePath: location.pathname,
+        routeQuery: parseQueryString(location.search || ''),
+        currentUser: currentUser,
       });
+
+      return () => {
+        global.document.removeEventListener('wheel', handleWheel);
+        global.clearInterval(interval);
+        setCheckAppVersionInterval(null);
+      };
     }
-  }
 
-  componentWillUnmount() {
-    global.clearInterval(this._checkAppVersionInterval);
-    this._checkAppVersionInterval = null;
-    if (this.historyUnlisten) {
-      this.historyUnlisten();
-    }
-  }
+    return () => {
+      global.document.removeEventListener('wheel', handleWheel);
+      global.clearInterval(interval);
+      setCheckAppVersionInterval(null);
+    };
+  }, [checkAppVersionLastRunTimestamp, apiClient, currentUser, userAgent, location]);
 
-  render() {
-    const {
-      userAgent,
-      routes,
-      askPushNotifications,
-    } = this.props;
+  const isMobileApp = isUserAgentMobileApp(userAgent);
 
-    const isMobileApp = isUserAgentMobileApp(userAgent);
+  return (
+    <div
+      className={classnames(
+        'app-container',
+        {
+          webview: isMobileApp,
+          ios: isUserAgentIphoneApp(userAgent),
+        },
+      )}
+    >
+      {renderRoutes(routes)}
+      <MobileAppEventListener />
+      {askPushNotifications && (
+        <EnablePushNotificationsModal
+          onClose={() => {}}
+        />
+      )}
+    </div>
+  );
+};
 
-    return (
-      <div
-        className={classnames(
-          'app-container',
-          {
-            webview: isMobileApp,
-            ios: isUserAgentIphoneApp(userAgent),
-          },
-        )}
-      >
-        {renderRoutes(routes)}
-        <MobileAppEventListener />
-        {askPushNotifications && (
-          <EnablePushNotificationsModal
-            onClose={() => {}}
-          />
-        )}
-      </div>
-    );
-  }
-}
+App.propTypes = {
+  apiClient: PropTypes.object.isRequired,
+  routes: PropTypes.array.isRequired,
+};
 
 export default App;

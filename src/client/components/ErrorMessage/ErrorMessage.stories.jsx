@@ -3,7 +3,7 @@ import React from 'react';
 import ErrorMessage, {
   ERROR_MESSAGE_THEME_ORANGE,
   ERROR_MESSAGE_THEME_RED,
-} from './ErrorMessage';
+} from './ErrorMessage.jsx';
 
 export default {
   title: 'ErrorMessage',

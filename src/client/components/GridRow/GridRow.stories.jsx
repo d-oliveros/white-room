@@ -1,7 +1,7 @@
 import React from 'react';
 
 import FormikField from '#client/components/FormikField/FormikField.jsx';
-import GridRow from './GridRow';
+import GridRow from './GridRow.jsx';
 
 export default {
   title: 'GridRow',

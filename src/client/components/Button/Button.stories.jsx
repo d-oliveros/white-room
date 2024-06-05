@@ -14,7 +14,7 @@ import Button, {
   BUTTON_HEIGHT_TALL,
   BUTTON_FONT_SIZE_SMALL,
   BUTTON_FONT_SIZE_MEDIUM,
-} from './Button';
+} from './Button.jsx';
 
 export default {
   title: 'Button',

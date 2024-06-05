@@ -9,7 +9,7 @@ import ModalV2, {
   MODAL_THEME_FIXED_FOOTER_BUTTON_PREVIEW_DOCS,
   MODAL_THEME_FIXED_FOOTER_BUTTON_SLIDE_UP,
   MODAL_THEME_STACK,
-} from './ModalV2';
+} from './ModalV2.jsx';
 
 export default {
   title: 'ModalV2',

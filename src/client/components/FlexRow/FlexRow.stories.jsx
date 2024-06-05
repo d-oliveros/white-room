@@ -1,7 +1,7 @@
 import React from 'react';
 
 import FormikField from '#client/components/FormikField/FormikField.jsx';
-import FlexRow from './FlexRow';
+import FlexRow from './FlexRow.jsx';
 
 export default {
   title: 'FlexRow',

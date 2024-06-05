@@ -1,56 +1,34 @@
-import React from 'react';
+import React, { createContext, useContext } from 'react';
 import PropTypes from 'prop-types';
-import { withRouter } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 
-import ReactAppContext from '#client/core/ReactAppContext';
+import ReactAppContext from '#client/core/ReactAppContext.js';
 import App from '#client/App.jsx';
 import routes from '#client/routes.js';
 
-/**
- * Root component.
- * This component provides the application's state in its child context,
- * and renders the main router component.
- */
-@withRouter
-class Root extends React.Component {
-  static childContextTypes = {
-    userAgent: PropTypes.object,
-  };
+const UserAgentContext = createContext();
 
-  static propTypes = {
-    apiClient: PropTypes.object.isRequired,
-    tree: PropTypes.object.isRequired,
-    history: PropTypes.object.isRequired,
-  }
+const Root = ({ apiClient, tree }) => {
+  const navigate = useNavigate();
 
-  getChildContext() {
-    return {
-      userAgent: this.props.tree.get(['analytics', 'userAgent']),
-    };
-  }
+  return (
+    <ReactAppContext.Provider
+      value={{
+        tree,
+        apiClient,
+        navigate: navigate,
+      }}
+    >
+      <UserAgentContext.Provider value={tree.get(['analytics', 'userAgent'])}>
+        <App routes={routes} apiClient={apiClient} />
+      </UserAgentContext.Provider>
+    </ReactAppContext.Provider>
+  );
+};
 
-  render() {
-    const {
-      apiClient,
-      tree,
-      history,
-    } = this.props;
-
-    return (
-      <ReactAppContext.Provider
-        value={{
-          tree,
-          apiClient,
-          history,
-        }}
-      >
-        <App
-          routes={routes}
-          apiClient={apiClient}
-        />
-      </ReactAppContext.Provider>
-    );
-  }
-}
+Root.propTypes = {
+  apiClient: PropTypes.object.isRequired,
+  tree: PropTypes.object.isRequired,
+};
 
 export default Root;
