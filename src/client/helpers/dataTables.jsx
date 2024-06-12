@@ -704,6 +704,11 @@ export function dataTableUIControls(dataTableParamsOrGetter) {
         viewSettings: PropTypes.object,
         initialViewSettings: PropTypes.object.isRequired,
         resetOnUnmount: PropTypes.bool,
+        onInfiniteScrollCallbackReady: PropTypes.func,
+        items: PropTypes.array,
+        dataTableApiState: PropTypes.object,
+        sortUserSettingsFieldId: PropTypes.string,
+        currentUser: PropTypes.object,
       }
 
       static defaultProps = {
@@ -712,7 +717,9 @@ export function dataTableUIControls(dataTableParamsOrGetter) {
 
       constructor(props) {
         super(props);
-        props.onInfiniteScrollCallbackReady(this._loadNextPage);
+        if (props.onInfiniteScrollCallbackReady) {
+          props.onInfiniteScrollCallbackReady(this._loadNextPage);
+        }
       }
 
       componentDidMount() {

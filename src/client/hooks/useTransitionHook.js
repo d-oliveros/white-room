@@ -1,12 +1,10 @@
-import React, { useContext, useState, useEffect } from 'react';
+import { useContext, useState, useEffect, startTransition } from 'react';
 import { useParams, useLocation } from 'react-router-dom';
 import lodashCompact from 'lodash/fp/compact.js';
 
 import analytics from '#client/analytics/analytics.js';
 import log from '#client/lib/log.js';
 import ReactAppContext from '#client/core/ReactAppContext.js';
-import configureDecoratedComponent from '#client/helpers/configureDecoratedComponent.js';
-
 import useIsMounted from '#client/hooks/useIsMounted.js';
 
 /**
@@ -15,22 +13,25 @@ import useIsMounted from '#client/hooks/useIsMounted.js';
  * @param {string} title The new title to set.
  */
 function setPageTitle(title) {
-  global.document.querySelector('head title').innerHTML = title;
+  const headTitleEl = global.document?.querySelector('head title');
+  if (headTitleEl) {
+    headTitleEl.innerHTML = title;
+  }
 }
 
-export default function withTransitionHook(ComponentToDecorate) {
-  function DecoratedComponent(props) {
-    const reactAppContext = useContext(ReactAppContext);
-    const { tree, apiClient } = reactAppContext;
-    const isMounted = useIsMounted();
-    const [isTransitioning, setIsTransitioning] = useState(true);
-    const params = useParams();
-    const location = useLocation();
+function useTransitionHook(ComponentToDecorate) {
+  const reactAppContext = useContext(ReactAppContext);
+  const { tree, apiClient } = reactAppContext;
+  const isMounted = useIsMounted();
+  const [isTransitioning, setIsTransitioning] = useState(true);
+  const params = useParams();
+  const location = useLocation();
 
-    useEffect(() => {
-      setIsTransitioning(true);
-      tree.set('isTransitioning', true);
+  useEffect(() => {
+    setIsTransitioning(true);
+    tree.set('isTransitioning', true);
 
+    startTransition(() => {
       Promise.resolve()
         .then(() => {
           if (ComponentToDecorate.fetchData) {
@@ -84,25 +85,15 @@ export default function withTransitionHook(ComponentToDecorate) {
           tree.commit();
           setIsTransitioning(false);
         });
+    });
 
-      return () => {
-        setIsTransitioning(false);
-      };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [location.pathname]);
+    return () => {
+      setIsTransitioning(false);
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.pathname]);
 
-    return (
-      <ComponentToDecorate
-        {...props}
-        isTransitioning={isTransitioning}
-      />
-    );
-  }
-
-  configureDecoratedComponent({
-    DecoratedComponent: DecoratedComponent,
-    OriginalComponent: ComponentToDecorate,
-  });
-
-  return DecoratedComponent;
+  return isTransitioning;
 }
+
+export default useTransitionHook;

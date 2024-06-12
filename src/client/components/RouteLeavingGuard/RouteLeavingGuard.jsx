@@ -14,7 +14,7 @@ import SimpleMessageModal, {
 const RouteLeavingGuard = ({
   when,
   dispatch,
-  headline,
+  headline = 'You will lose your work if you navigate away, are you sure you want to leave?',
 }) => {
   const [shoudShowConfirmModal, setShoudShowConfirmModal] = useState(false);
   const [blockedPath, setBlockedPath] = useState(null);
@@ -84,10 +84,6 @@ RouteLeavingGuard.propTypes = {
   when: PropTypes.bool.isRequired,
   dispatch: PropTypes.func.isRequired,
   headline: PropTypes.string,
-};
-
-RouteLeavingGuard.defaultProps = {
-  headline: 'You will lose your work if you navigate away, are you sure you want to leave?',
 };
 
 export default RouteLeavingGuard;

@@ -1,5 +1,7 @@
 import createDebug from 'debug';
 import winston from 'winston';
+import PrettyError from 'pretty-error';
+import moment from 'moment';
 
 const {
   APP_ID,
@@ -10,14 +12,23 @@ const {
 const { Console } = winston.transports;
 const isProduction = NODE_ENV === 'production';
 const transports = [];
+const pe = new PrettyError();
+
+const customFormat = winston.format.printf(({ level, message, timestamp, ...metadata }) => {
+  let msg = `${moment(timestamp).format('HH:mm:ss.SSS')} [${level}]: ${message}`;
+  if (metadata && Object.keys(metadata).length) {
+    msg += ` ${JSON.stringify(metadata)}`;
+  }
+  return msg;
+});
 
 transports.push(
   new Console({
     level: 'silly',
     format: winston.format.combine(
-      isProduction ? winston.format.uncolorize() : winston.format.colorize(),
       winston.format.timestamp(),
-      isProduction ? winston.format.json() : winston.format.simple(), // Format the Cloudwatch logs as JSON.
+      isProduction ? winston.format.uncolorize() : winston.format.colorize(),
+      isProduction ? winston.format.json() : customFormat,
     ),
   })
 );
@@ -44,12 +55,15 @@ logger.createDebug = function createDebugWrapped(debugNamespace) {
 };
 
 logger.error = (error) => {
-  logger.log({
-    level: 'error',
-    message: error.message,
-    stack: error.stack,
-    ...error,
-  });
+  // TODO(@d-oliveros): How to keep actual log written in the logfile?
+  // logger.log({
+  //   level: 'error',
+  //   message: error.message,
+  //   stack: error.stack,
+  //   ...error,
+  // });
+  // eslint-disable-next-line no-console
+  console.log(pe.render(error));
 };
 
 logger._info = logger.info;

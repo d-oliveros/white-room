@@ -2,20 +2,20 @@ import pages from '#client/pages/index.js';
 
 /* eslint-disable max-len */
 const routes = [
-  { path: '/', exact: true, component: pages.Home },
-  { path: '/signup', exact: true, component: pages.SignUp },
-  { path: '/login', component: pages.Login },
-  { path: '/logout', component: pages.Logout },
+  { path: '/', exact: true, component: pages.HomePage },
+  { path: '/signup', exact: true, component: pages.SignUpPage },
+  { path: '/login', component: pages.LoginPage },
+  { path: '/logout', component: pages.LogoutPage },
   { path: '/profile/:userId', exact: true, component: pages.ProfilePage },
-  { path: '/reset-password', component: pages.ResetPassword },
-  { path: '/reset-password-verify-code', component: pages.ResetPasswordVerifyCode },
-  { path: '/reset-password-confirm', component: pages.ResetPasswordConfirm },
+  { path: '/reset-password', component: pages.ResetPasswordPage },
+  { path: '/reset-password-verify-code', component: pages.ResetPasswordVerifyCodePage },
+  { path: '/reset-password-confirm', component: pages.ResetPasswordConfirmPage },
 
-  { path: '/admin/edit-user', component: pages.AdminUserEditPage },
-  { path: '/pdf-generator/:pdfComponentId', exact: true, component: pages.PdfGenerator },
+  // Renders a react component as a PDF file.
+  { path: '/pdf-generator/:pdfComponentId', exact: true, component: pages.PdfGeneratorPage },
 
   // The "Not found" route has to be the last route in the array. Routes below this route will not be matched.
-  { component: pages.NotFound },
+  { component: pages.NotFoundPage },
 ];
 
 export default routes;

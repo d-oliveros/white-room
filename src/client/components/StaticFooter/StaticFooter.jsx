@@ -25,6 +25,4 @@ StaticFooter.propTypes = {
   size: PropTypes.oneOf(Object.keys(STATIC_FOOTER_SIZE_TO_CLASSNAME_MAPPING)),
 };
 
-StaticFooter.displayName = 'StaticFooter';
-
 export default StaticFooter;

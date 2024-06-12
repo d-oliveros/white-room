@@ -1,4 +1,4 @@
-import lodashPadStart from 'lodash/padStart';
+import lodashPadStart from 'lodash/padStart.js';
 import momentWithAustinTimezone from '#common/util/momentWithAustinTimezone.js';
 
 /**

@@ -2,13 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 
-import ButtonDeprecated from '#client/components/ButtonDeprecated/ButtonDeprecated.jsx';
 import Button from '#client/components/Button/Button.jsx';
 import DarkModal from '#client/components/DarkModal/DarkModal.jsx';
 import ModalContent from '#client/components/ModalContent/ModalContent.jsx';
 import Box from '#client/components/Box/Box.jsx';
 import Text from '#client/components/Text/Text.jsx';
-import SafariToolbarSpace from '#client/components/SafariToolbarSpace/SafariToolbarSpace.jsx';
 
 import './SimpleMessageModal.less';
 
@@ -27,7 +25,6 @@ const SimpleMessageModal = ({
   message,
   buttonText,
   buttonTheme,
-  buttonHref,
   subLabelText,
   sublabelClassName,
   showSubLabelDecoration,
@@ -39,11 +36,9 @@ const SimpleMessageModal = ({
   maxIconWidth,
   maxIconHeight,
   multiButtons,
-  srMultiButtons,
   customCtas,
   theme,
   innerStyle,
-  useSafariToolbarSpace,
 }) => (
   <DarkModal
     className={classnames('SimpleMessageModal', className)}
@@ -104,21 +99,6 @@ const SimpleMessageModal = ({
                 key={index} // eslint-disable-line react/no-array-index-key
                 marginTop={index === 0 ? '0px' : '18px'}
               >
-                <ButtonDeprecated
-                  type='button'
-                  theme={button.buttonTheme}
-                  onClick={button.onButtonClick || button.onClose}
-                  disabled={button.buttonDisabled}
-                >
-                  {button.buttonText}
-                </ButtonDeprecated>
-              </Box>
-            ))}
-            {srMultiButtons && srMultiButtons.map((button, index) => (
-              <Box
-                key={index} // eslint-disable-line react/no-array-index-key
-                marginTop={index === 0 ? '0px' : '18px'}
-              >
                 <Button
                   type='button'
                   theme={button.buttonTheme}
@@ -132,14 +112,13 @@ const SimpleMessageModal = ({
               </Box>
             ))}
             {buttonText &&
-              <ButtonDeprecated
+              <Button
                 type='button'
                 theme={buttonTheme}
                 onClick={onButtonClick || onClose}
-                href={buttonHref}
               >
                 {buttonText}
-              </ButtonDeprecated>}
+              </Button>}
             {subLabelText && (
               <div styleName={classnames('subLabelText', sublabelClassName)}>
                 <Text
@@ -154,9 +133,6 @@ const SimpleMessageModal = ({
             {(customCtas || []).map((node) => node)}
           </div>
         </div>
-        {useSafariToolbarSpace && (
-          <SafariToolbarSpace />
-        )}
       </ModalContent>
     </span>
   </DarkModal>
@@ -177,7 +153,6 @@ SimpleMessageModal.propTypes = {
   ]),
   buttonText: PropTypes.string,
   buttonTheme: PropTypes.string,
-  buttonHref: PropTypes.string,
   subLabelText: PropTypes.string,
   onButtonClick: PropTypes.func,
   sublabelClassName: PropTypes.string,
@@ -188,10 +163,8 @@ SimpleMessageModal.propTypes = {
   minWidth: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
   maxIconWidth: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
   multiButtons: PropTypes.array,
-  srMultiButtons: PropTypes.array,
   theme: PropTypes.oneOf(SIMPLE_MESSAGE_MODAL_THEMES),
   innerStyle: PropTypes.object,
-  useSafariToolbarSpace: PropTypes.bool,
 };
 
 SimpleMessageModal.defaultProps = {

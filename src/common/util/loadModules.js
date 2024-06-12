@@ -1,6 +1,8 @@
 import { readdir, stat } from 'fs/promises';
 import { extname, resolve } from 'path';
 
+const EXTENSION_REGEX = /\.jsx?$/;
+
 /**
  * Dynamically imports all .js modules in the specified directory.
  * If a directory is found, it checks for an index.js file.
@@ -14,14 +16,14 @@ export default async function loadModules(directory, ignoreFile) {
 
   for (const file of files) {
     const filePath = resolve(directory, file);
-    const moduleName = file.replace('.js', '');
+    const moduleName = file.replace(EXTENSION_REGEX, '');
 
     if (filePath === ignoreFile) {
       continue;
     }
     const fileStat = await stat(filePath);
 
-    if (extname(file) === '.js') {
+    if (EXTENSION_REGEX.test(extname(file))) {
       modules[moduleName] = await import(filePath);
       modules[moduleName] = modules[moduleName].default || modules[moduleName];
     }

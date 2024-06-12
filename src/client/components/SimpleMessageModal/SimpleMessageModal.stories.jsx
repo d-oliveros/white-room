@@ -1,11 +1,14 @@
 import React from 'react';
 
 import {
-  BUTTON_THEME_GREEN_ADOBE,
-  BUTTON_THEME_GREY_ADOBE,
-  BUTTON_THEME_RED_ADOBE,
-} from '#client/components/ButtonDeprecated/ButtonDeprecated.jsx';
-import SimpleMessageModal, { SIMPLE_MESSAGE_MODAL_THEME_SLIDE_UP } from './SimpleMessageModal.jsx';
+  BUTTON_THEME_ADOBE_GREEN,
+  BUTTON_THEME_ADOBE_GREY,
+  BUTTON_THEME_ADOBE_RED,
+} from '#client/components/Button/Button.jsx';
+
+import SimpleMessageModal, {
+  SIMPLE_MESSAGE_MODAL_THEME_SLIDE_UP,
+} from './SimpleMessageModal.jsx';
 
 export default {
   title: 'SimpleMessageModal',
@@ -26,11 +29,11 @@ Success.args = {
   multiButtons: [
     {
       buttonText: 'Undo',
-      buttonTheme: BUTTON_THEME_GREY_ADOBE,
+      buttonTheme: BUTTON_THEME_ADOBE_GREY,
     },
     {
       buttonText: 'Ok, thanks!',
-      buttonTheme: BUTTON_THEME_GREEN_ADOBE,
+      buttonTheme: BUTTON_THEME_ADOBE_GREEN,
     },
   ],
   maxWidth: 375,
@@ -43,11 +46,11 @@ Cancel.args = {
   multiButtons: [
     {
       buttonText: 'Leave',
-      buttonTheme: BUTTON_THEME_RED_ADOBE,
+      buttonTheme: BUTTON_THEME_ADOBE_RED,
     },
     {
       buttonText: 'Stay',
-      buttonTheme: BUTTON_THEME_GREEN_ADOBE,
+      buttonTheme: BUTTON_THEME_ADOBE_GREEN,
     },
   ],
   maxWidth: 375,

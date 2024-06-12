@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
 
 import parseQueryString from '#common/util/parseQueryString.js';
@@ -10,11 +9,11 @@ import { SCREEN_ID_LOGOUT } from '#client/constants/screenIds.js';
 import Logo from '#client/components/Logo/Logo.jsx';
 
 import log from '#client/lib/log.js';
-import AuthActions from '#client/actions/Auth.js';
-import useBranch from '#client/core/useBranch';
-import useTransitionHook from '#client/helpers/useTransitionHook.js';
-import useScreenId from '#client/helpers/useScreenId.js';
-import useScrollToTop from '#client/helpers/useScrollToTop.js';
+import AuthActions from '#client/actions/Auth/index.js';
+import useBranch from '#client/hooks/useBranch.js';
+import useTransitionHook from '#client/hooks/useTransitionHook.js';
+import useScreenId from '#client/hooks/useScreenId.jsx';
+import useScrollToTop from '#client/hooks/useScrollToTop.jsx';
 import useDispatch from '#client/hooks/useDispatch.js';
 
 const LogoutPage = () => {
@@ -35,7 +34,9 @@ const LogoutPage = () => {
     if (!hasRoleAnonymous(currentUserRoles)) {
       dispatch(AuthActions.logout)
         .then(() => {
-          global.location?.href = redirectUrl;
+          if (global.location?.href) {
+            global.location.href = redirectUrl;
+          }
         })
         .catch((error) => log.error(error));
     }

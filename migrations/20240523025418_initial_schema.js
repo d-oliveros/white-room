@@ -1,4 +1,4 @@
-exports.up = async (knex) => {
+export const up = async (knex) => {
   // user table
   await knex.schema.createTable('users', (t) => {
     t.increments('id').unsigned().primary();
@@ -32,6 +32,6 @@ exports.up = async (knex) => {
   });
 };
 
-exports.down = async (knex) => {
+export const down = async (knex) => {
   await knex.schema.dropTable('users');
 };

@@ -13,9 +13,9 @@ const TOOLTIP_V2_DIRECTIONS = [
 ];
 
 const TooltipV2 = ({
-  color,
+  color = '#007AFF',
   text,
-  direction,
+  direction = TOOLTIP_V2_DIRECTION_LEFT,
 }) => (
   <>
     <Box
@@ -52,11 +52,6 @@ TooltipV2.propTypes = {
   color: PropTypes.string,
   text: PropTypes.string.isRequired,
   direction: PropTypes.oneOf(TOOLTIP_V2_DIRECTIONS),
-};
-
-TooltipV2.defaultProps = {
-  color: '#007AFF',
-  direction: TOOLTIP_V2_DIRECTION_LEFT,
 };
 
 export default TooltipV2;

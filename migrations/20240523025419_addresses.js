@@ -1,4 +1,4 @@
-exports.up = async (knex) => {
+export const up = async (knex) => {
   // enables postgis extension
   await knex.raw('CREATE EXTENSION IF NOT EXISTS postgis;');
 
@@ -28,10 +28,9 @@ exports.up = async (knex) => {
     t.index('googlePlaceId');
     t.index('locationPoint');
   });
-
 };
 
-exports.down = async (knex) => {
+export const down = async (knex) => {
   await knex.schema.dropTable('addresses');
   await knex.raw('DROP EXTENSION IF EXISTS postgis;');
 };

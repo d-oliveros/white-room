@@ -7,9 +7,9 @@ import {
   validatePasswordConfirm,
 } from '#client/helpers/formikHelpers.js';
 
-import ButtonDeprecated, {
-  BUTTON_THEME_YELLOW,
-} from '#client/components/ButtonDeprecated/ButtonDeprecated.jsx';
+import Button, {
+  BUTTON_THEME_ADOBE_YELLOW,
+} from '#client/components/Button/Button.jsx';
 import FormikField from '#client/components/FormikField/FormikField.jsx';
 
 const formFields = [
@@ -69,12 +69,12 @@ class PasswordResetConfirmForm extends Component {
                   formikBag={formikBag}
                 />
               ))}
-              <ButtonDeprecated
+              <Button
                 type='submit'
                 theme={BUTTON_THEME_YELLOW}
               >
                 {locationQuery.userName && locationQuery.listingAddress ? 'see my tour' : 'log back in'}
-              </ButtonDeprecated>
+              </Button>
             </Form>
           );
         }}
@@ -82,7 +82,5 @@ class PasswordResetConfirmForm extends Component {
     );
   }
 }
-
-PasswordResetConfirmForm.displayName = 'PasswordResetConfirmForm';
 
 export default PasswordResetConfirmForm;

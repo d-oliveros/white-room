@@ -5,15 +5,15 @@ import knexPostgis from 'knex-postgis';
 import pg from 'pg';
 import { v4 as uuidv4 } from 'uuid';
 
-// import logger from '#common/logger.js';
+import logger from '#common/logger.js';
 import slugify from '#common/util/slugify.js';
-import databaseConfig from '#config/database.js';
+import dbConfig from '#config/database.js';
 
 pg.types.setTypeParser(pg.types.builtins.DATE, (val) => {
   return val === null ? null : moment(val).format('YYYY-MM-DD');
 });
 
-const knex = createKnex(databaseConfig.knex);
+const knex = createKnex(dbConfig.knex);
 
 // Install postgis functions in knex.postgis.
 // https://github.com/jfgodoy/knex-postgis
@@ -24,8 +24,10 @@ export const st = knexPostgis(knex);
  *
  * @return {Promise}
  */
-export function postgresMigrateToLatestSchema() {
-  return knex.migrate.latest([databaseConfig.knex]);
+export async function postgresMigrateToLatestSchema() {
+  logger.info('Checking if schema migration is needed.');
+  const result = await knex.migrate.latest([dbConfig.knex]);
+  logger.info(`Migration needed? ${result}`);
 }
 
 /**
@@ -90,7 +92,7 @@ export async function getAvailableSlug({ table, field, value, iteration = 0 }) {
     : slugify(`${value}-${iteration}`);
 
   if (iteration >= 100) {
-    // logger.warn(`[knex:getAvailableSlug] Maximum iterations reached for: ${table}:${field}-${value}`);
+    logger.warn(`[knex:getAvailableSlug] Maximum iterations reached for: ${table}:${field}-${value}`);
     return slugify(`${value}-${uuidv4()}`);
   }
 

@@ -3,7 +3,10 @@ import PropTypes from 'prop-types';
 
 import './LoadingSpinner.less';
 
-const LoadingSpinner = ({ width, height }) => (
+const LoadingSpinner = ({
+  width = 'auto',
+  height = 'auto',
+}) => (
   <img
     styleName='LoadingSpinner'
     alt='loading spinner'
@@ -16,11 +19,6 @@ const LoadingSpinner = ({ width, height }) => (
 LoadingSpinner.propTypes = {
   width: PropTypes.string,
   height: PropTypes.string,
-};
-
-LoadingSpinner.defaultProps = {
-  width: 'auto',
-  height: 'auto',
 };
 
 export default LoadingSpinner;

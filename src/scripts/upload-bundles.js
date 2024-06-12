@@ -87,7 +87,7 @@ export default async function uploadBundles() {
     }
 
     await client.send(new PutObjectCommand({
-      Bucket: 'sr-bundles',
+      Bucket: 'bundles',
       Key: s3FilePath,
       ACL: 'public-read',
       Body: fs.readFileSync(filePath),
@@ -105,7 +105,7 @@ export default async function uploadBundles() {
     for (const filePath of files) {
       const s3FilePath = filePath.replace(`${path.resolve(__dirname, '../public')}/`, '');
       await client.send(new PutObjectCommand({
-        Bucket: 'sr-bundles',
+        Bucket: 'bundles',
         Key: s3FilePath,
         ACL: 'public-read',
         Body: fs.readFileSync(filePath),

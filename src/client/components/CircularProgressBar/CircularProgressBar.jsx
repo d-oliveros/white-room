@@ -5,10 +5,10 @@ import Box from '#client/components/Box/Box.jsx';
 import './CircularProgressBar.less';
 
 const CircularProgressBar = ({
-  width,
-  strokeWidth,
-  strokeColor,
-  progress,
+  width = 180,
+  strokeWidth = 5,
+  strokeColor = 'green',
+  progress = 0,
   iconUrl,
 }) => {
 
@@ -85,13 +85,6 @@ CircularProgressBar.propTypes = {
   strokeColor: PropTypes.string,
   progress: PropTypes.number,
   iconUrl: PropTypes.string,
-};
-
-CircularProgressBar.defaultProps = {
-  width: 180,
-  strokeWidth: 5,
-  strokeColor: 'green',
-  progress: 0,
 };
 
 export default CircularProgressBar;

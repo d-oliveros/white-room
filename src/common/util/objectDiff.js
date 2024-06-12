@@ -1,4 +1,4 @@
-import _objectDiff from 'objectdiff';
+import objectDiffModule from 'objectdiff';
 
 function sanitizeDiff(diff) {
   if (!diff || diff.changed === 'equal') return diff;
@@ -25,5 +25,5 @@ function sanitizeDiff(diff) {
 }
 
 export default function objectDiff(obj1, obj2) {
-  return sanitizeDiff(_objectDiff.diff(obj1, obj2));
+  return sanitizeDiff(objectDiffModule.diff(obj1, obj2));
 }

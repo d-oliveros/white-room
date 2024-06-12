@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 
-import { ANALYTICS_EVENT_LOGO_CLICK } from '#client/analytics/eventList';
+import { ANALYTICS_EVENT_LOGO_CLICK } from '#client/analytics/eventList.js';
 import analytics from '#client/analytics/analytics.js';
 import Link from '#client/components/Link/Link.jsx';
 
@@ -22,7 +22,12 @@ const LOGO_THEME_TO_CLASSNAME_MAPPING = {
   [LOGO_THEME_REDESIGN]: 'theme-redesign',
 };
 
-const Logo = ({ align, theme, redirectTo, disableRedirect }) => {
+const Logo = ({
+  align = 'center',
+  theme = 'default',
+  redirectTo = '/',
+  disableRedirect = false,
+}) => {
   const srLogoClassnames = classnames(
     'Logo logo',
     LOGO_ALIGN_TO_CLASSNAME_MAPPING[align],
@@ -51,12 +56,7 @@ Logo.propTypes = {
   redirectTo: PropTypes.string,
   align: PropTypes.string,
   theme: PropTypes.string,
-};
-
-Logo.defaultProps = {
-  redirectTo: '/',
-  align: 'center',
-  theme: 'default',
+  disableRedirect: PropTypes.bool,
 };
 
 export default Logo;

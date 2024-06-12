@@ -1,12 +1,10 @@
-import React, { createContext, useContext } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
 
 import ReactAppContext from '#client/core/ReactAppContext.js';
 import App from '#client/App.jsx';
 import routes from '#client/routes.js';
-
-const UserAgentContext = createContext();
 
 const Root = ({ apiClient, tree }) => {
   const navigate = useNavigate();
@@ -19,9 +17,7 @@ const Root = ({ apiClient, tree }) => {
         navigate: navigate,
       }}
     >
-      <UserAgentContext.Provider value={tree.get(['analytics', 'userAgent'])}>
-        <App routes={routes} apiClient={apiClient} />
-      </UserAgentContext.Provider>
+      <App routes={routes} apiClient={apiClient} />
     </ReactAppContext.Provider>
   );
 };

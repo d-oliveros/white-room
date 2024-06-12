@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { renderRoutes } from 'react-router-config';
+import { useLocation, Routes, Route } from 'react-router-dom';
 
 import parseQueryString from '#common/util/parseQueryString.js';
 import isUserAgentMobileApp, { isUserAgentIphoneApp } from '#common/util/isUserAgentMobileApp.js';
@@ -16,17 +15,33 @@ import sendDataToMobileApp, {
 
 import { API_ACTION_GET_APP_COMMIT_HASH } from '#api/actionTypes.js';
 
-import useBranch from '#client/core/branch.jsx';
+import useBranch from '#client/hooks/useBranch.js';
 import MobileAppEventListener from '#client/components/MobileAppEventListener/MobileAppEventListener.jsx';
 import EnablePushNotificationsModal from '#client/components/EnablePushNotificationsModal/EnablePushNotificationsModal.jsx';
+
+const AppRouter = ({ routes }) => (
+  <Routes>
+    {routes.map((route, index) => (
+      <Route
+        key={index}
+        path={route.path || '*'}
+        element={<route.component />}
+        exact={route.exact}
+      />
+    ))}
+  </Routes>
+);
+
+AppRouter.propTypes = {
+  routes: PropTypes.array.isRequired,
+};
 
 // Interval for checking the app commit hash vs the server commit hash to reload the page when a new version is available.
 const CHECK_APP_VERSION_INTERVAL_MS = 1800000; // 30 minutes.
 
 const App = ({ routes, apiClient }) => {
-  const [checkAppVersionInterval, setCheckAppVersionInterval] = useState(null);
+  const [, setCheckAppVersionInterval] = useState(null);
   const [checkAppVersionLastRunTimestamp, setCheckAppVersionLastRunTimestamp] = useState(Date.now());
-  const navigate = useNavigate();
   const location = useLocation();
 
   const { userAgent, currentUser, askPushNotifications } = useBranch({
@@ -98,7 +113,7 @@ const App = ({ routes, apiClient }) => {
         },
       )}
     >
-      {renderRoutes(routes)}
+      <AppRouter routes={routes} />
       <MobileAppEventListener />
       {askPushNotifications && (
         <EnablePushNotificationsModal

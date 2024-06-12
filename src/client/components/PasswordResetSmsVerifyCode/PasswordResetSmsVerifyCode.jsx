@@ -1,82 +1,80 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { Formik, Form } from 'formik';
 
-import client from '@${module}/helpers/formikHelpers';
-import common from '@${module}/formatters';
-import client from '@${module}/core/branch.jsx';
+import {
+formatPhoneNumber,
+} from '#common/formatters.js';
 
-import ButtonDeprecated, {
-  BUTTON_THEME_YELLOW,
-} from '#client/components/ButtonDeprecated/ButtonDeprecated.jsx';
+import {
+  createInitialValues,
+  createFormValidationFn,
+} from '#client/helpers/formikHelpers.js';
 
-import client from '@${module}/components/FormikField/FormikField.js';
+import useBranch from '#client/hooks/useBranch.js';
 
-function getFormFields({
-  phone,
-}) {
-  return [
-    {
-      id: 'code',
-      type: 'verification_code',
-      title: 'Enter your 4-digit code',
-      label: `We just texted you the code to ${formatPhoneNumber(phone)}`,
-      properties: {
-        placeholder: '1234',
-      },
-      validations: ['required'],
+import Button, {
+  BUTTON_THEME_ADOBE_YELLOW,
+} from '#client/components/Button/Button.jsx';
+
+import FormikField from '#client/components/FormikField/FormikField.jsx';
+
+const getFormFields = ({ phone })  => [
+  {
+    id: 'code',
+    type: 'verification_code',
+    title: 'Enter your 4-digit code',
+    label: `We just texted you the code to ${formatPhoneNumber(phone)}`,
+    properties: {
+      placeholder: '1234',
     },
-  ];
-}
+    validations: ['required'],
+  },
+];
 
-@branch({
-  phone: ['resetPasswordForm', 'phone'],
-})
-class PasswordResetSmsVerifyCode extends Component {
-  static propTypes = {
-    onSubmit: PropTypes.func.isRequired,
-    phone: PropTypes.string.isRequired,
-  };
+const PasswordResetSmsVerifyCode = ({ onSubmit, phone }) => {
+  const { phone: branchPhone } = useBranch({
+    phone: ['resetPasswordForm', 'phone'],
+  });
 
-  render() {
-    const {
-      onSubmit,
-      phone,
-    } = this.props;
-    const formFields = getFormFields({
-      phone,
-    });
-    return (
-      <Formik
-        enableReinitialize
-        initialValues={createInitialValues({
-          formFields: formFields,
-        })}
-        validateOnChange={false}
-        validate={createFormValidationFn(formFields)}
-        onSubmit={onSubmit}
-        render={(formikBag) => {
-          return (
-            <Form>
-              {formFields.map((formField) => (
-                <FormikField
-                  key={formField.id}
-                  formField={formField}
-                  formikBag={formikBag}
-                />
-              ))}
-              <ButtonDeprecated
-                type='submit'
-                theme={BUTTON_THEME_YELLOW}
-              >
-                next: reset password
-              </ButtonDeprecated>
-            </Form>
-          );
-        }}
-      />
-    );
-  }
-}
+  const formFields = getFormFields({
+    phone: branchPhone || phone,
+  });
+
+  return (
+    <Formik
+      enableReinitialize
+      initialValues={createInitialValues({
+        formFields: formFields,
+      })}
+      validateOnChange={false}
+      validate={createFormValidationFn(formFields)}
+      onSubmit={onSubmit}
+    >
+      {(formikBag) => (
+        <Form>
+          {formFields.map((formField) => (
+            <FormikField
+              key={formField.id}
+              formField={formField}
+              formikBag={formikBag}
+            />
+          ))}
+          <Button
+            type='submit'
+            theme={BUTTON_THEME_ADOBE_YELLOW}
+          >
+            next: reset password
+          </Button>
+        </Form>
+      )}
+    </Formik>
+  );
+};
+
+PasswordResetSmsVerifyCode.propTypes = {
+  onSubmit: PropTypes.func.isRequired,
+  phone: PropTypes.string.isRequired,
+};
 
 export default PasswordResetSmsVerifyCode;

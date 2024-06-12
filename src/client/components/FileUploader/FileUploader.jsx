@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-import { isImageFileUrl } from '#common/util/imageExtensions';
+import { isImageFileUrl } from '#common/util/imageExtensions.js';
 import log from '#client/lib/log.js';
 import {
   isPDFFile,
@@ -11,9 +11,9 @@ import {
   getFileValidationError,
 } from '#client/lib/fileUploader.js';
 
-import ButtonDeprecated, {
-  BUTTON_THEME_WHITE_ADOBE_SMALL,
-} from '#client/components/ButtonDeprecated/ButtonDeprecated.jsx';
+import Button, {
+  BUTTON_THEME_ADOBE_WHITE,
+} from '#client/components/Button/Button.jsx';
 import S3FileDisplay from '#client/components/S3FileDisplay/S3FileDisplay.jsx';
 import Checkbox from '#client/components/Checkbox/Checkbox.jsx';
 import Box from '#client/components/Box/Box.jsx';
@@ -232,13 +232,13 @@ class FileUploader extends Component {
             </span>
             {downloadButtonLabel && (
               <Box marginTop='14px'>
-                <ButtonDeprecated
-                  theme={BUTTON_THEME_WHITE_ADOBE_SMALL}
+                <Button
+                  theme={BUTTON_THEME_ADOBE_WHITE}
                   href={s3FileUrl}
                   download
                 >
                   {downloadButtonLabel}
-                </ButtonDeprecated>
+                </Button>
               </Box>
             )}
           </>

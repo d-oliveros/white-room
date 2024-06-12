@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { useMediaQuery } from 'react-responsive';
 
-import { MEDIA_QUERY_SMALL_SCREEN } from '#client/constants/mediaQueries';
+import { MEDIA_QUERY_SMALL_SCREEN } from '#client/constants/mediaQueries.js';
 
 import Tag, {
   TAG_THEMES,
@@ -26,7 +26,7 @@ export const INFO_OPTION_CHECKBOX_THEMES = Object.keys(INFO_OPTION_CHECKBOX_THEM
 
 const InfoOptionCheckbox = ({
   isActive,
-  theme,
+  theme = INFO_OPTION_CHECKBOX_THEME_ADOBE_BOLD,
   tagTheme,
   title,
   tagContents,
@@ -109,11 +109,5 @@ InfoOptionCheckbox.propTypes = {
   collapseUnselected: PropTypes.bool,
   footer: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
 };
-
-InfoOptionCheckbox.defaultProps = {
-  theme: INFO_OPTION_CHECKBOX_THEME_ADOBE_BOLD,
-};
-
-InfoOptionCheckbox.displayName = 'InfoOptionCheckbox';
 
 export default InfoOptionCheckbox;

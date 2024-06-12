@@ -5,7 +5,9 @@ import Text from '#client/components/Text/Text.jsx';
 import Box from '#client/components/Box/Box.jsx';
 import Flex from '#client/components/Flex/Flex.jsx';
 
-const TextSeparator = ({ text }) => {
+const TextSeparator = ({
+  text = 'or',
+}) => {
   return (
     <Box margin='18px 0 0 0'>
       <Flex align='center' justify='center'>
@@ -32,10 +34,6 @@ const TextSeparator = ({ text }) => {
 
 TextSeparator.propTypes = {
   text: PropTypes.string,
-};
-
-TextSeparator.defaultProps = {
-  text: 'or',
 };
 
 export default TextSeparator;

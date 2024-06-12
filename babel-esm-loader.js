@@ -1,9 +1,6 @@
 import path from 'path'
-import {fileURLToPath, pathToFileURL} from 'url'
+import { fileURLToPath, pathToFileURL } from 'url'
 import babel from '@babel/core'
-import createDebug from 'debug';
-
-const debug = createDebug('babel-register-esm');
 
 const SUPPORTED_EXTENSIONS = {
   '.jsx': true,
@@ -32,7 +29,8 @@ export async function resolve(specifier, context, nextResolve) {
     }
 
     return await nextResolve(specifier, context)
-  } catch (/**@type {any} */ error) {
+  }
+  catch (/**@type {any} */ error) {
     if (!specifier.startsWith('.') && !specifier.startsWith('file:')) throw error
 
     const resolvedPath = fileURLToPath(new URL(specifier, context.parentURL));
@@ -53,7 +51,8 @@ export async function resolve(specifier, context, nextResolve) {
       if (resolvedTsx) return resolvedTsx
 
       throw error
-    } else {
+    }
+    else {
       throw error
     }
   }
@@ -131,8 +130,8 @@ export async function transformSource(source, context, defaultTransformSource) {
     typeof source === 'string'
       ? source
       : Buffer.isBuffer(source)
-      ? source.toString('utf-8')
-      : Buffer.from(source).toString('utf-8')
+        ? source.toString('utf-8')
+        : Buffer.from(source).toString('utf-8')
 
   // Skip transforming Babel config files to avoid recursion
   if (url.endsWith('babel.config.js')) {
@@ -147,9 +146,7 @@ export async function transformSource(source, context, defaultTransformSource) {
   )?.code
 
   return sourceCode
-    ? {
-        source: sourceCode,
-      }
+    ? { source: sourceCode }
     : defaultTransformSource?.(source, context, defaultTransformSource)
 }
 
@@ -162,12 +159,11 @@ export async function transformSource(source, context, defaultTransformSource) {
  * @returns {Promise<{ source: !(string | SharedArrayBuffer | Uint8Array), format: string}>}
  */
 export async function load(url, context, nextLoad) {
-  debug('Loading...', url);
-
   const {format, source} = await nextLoad(url, context).catch(async (/** @type {any} */ error) => {
     if (error.code === 'ERR_UNKNOWN_FILE_EXTENSION') {
       return await nextLoad(url, {...context, format: 'module'})
-    } else {
+    }
+    else {
       throw error
     }
   })
@@ -175,11 +171,22 @@ export async function load(url, context, nextLoad) {
   if (source) {
     const transformed = await transformSource(source, {format, url}, undefined)
     if (transformed) {
-      return {source: transformed.source, format}
-    } else {
-      return {format, source}
+      return {
+        source: transformed.source,
+        format,
+      };
     }
-  } else {
-    return {format, source}
+    else {
+      return {
+        format,
+        source,
+      };
+    }
+  }
+  else {
+    return {
+      format,
+      source,
+    };
   }
 }

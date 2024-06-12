@@ -1,3 +1,2 @@
-const knexConfig = require('./config/database').knex;
-
-module.exports = knexConfig;
+import dbConfig from './src/config/database.js';
+export default dbConfig.knex;

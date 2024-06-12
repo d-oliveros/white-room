@@ -3,6 +3,7 @@ export const SCREEN_ID_HOME = 'Home';
 export const SCREEN_ID_LOGIN = 'Log In';
 export const SCREEN_ID_LOGOUT = 'Log Out';
 export const SCREEN_ID_SIGNUP = 'Sign Up';
+export const SCREEN_ID_PROFILE = 'Profile';
 export const SCREEN_ID_NOT_FOUND = 'Not Found';
 export const SCREEN_ID_ADMIN_EDIT_USER = 'Admin - Edit User';
 export const SCREEN_ID_VERIFY_PHONE = 'Verify Phone';

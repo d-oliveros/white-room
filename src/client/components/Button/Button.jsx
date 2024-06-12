@@ -82,16 +82,16 @@ const Button = ({
   children,
   disabled,
   onClick,
-  type,
-  minWidth,
+  type = 'button',
+  minWidth = '100%',
   width,
-  heightType,
+  heightType = BUTTON_HEIGHT_MEDIUM,
   hasBoxShadow,
   theme,
   flexGrow,
   iconUrl,
-  iconHeight,
-  fontSizeType,
+  iconHeight = '18px',
+  fontSizeType = BUTTON_FONT_SIZE_MEDIUM,
   wrapText,
   padding,
   margin,
@@ -147,14 +147,6 @@ Button.propTypes = {
   iconHeight: PropTypes.string,
   iconUrl: PropTypes.string,
   fontSizeType: PropTypes.oneOf(Object.keys(BUTTON_FONT_SIZE_TO_CLASSNAME_MAPPING)),
-};
-
-Button.defaultProps = {
-  type: 'button',
-  minWidth: '100%',
-  iconHeight: '18px',
-  heightType: BUTTON_HEIGHT_MEDIUM,
-  fontSizeType: BUTTON_FONT_SIZE_MEDIUM,
 };
 
 export default Button;

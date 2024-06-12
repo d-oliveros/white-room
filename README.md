@@ -10,12 +10,11 @@
 
 #### Install Dependencies
 
-##### Install Node v16.10.0 & npm v6.14.4:
+##### Install Node v22.2.0
 ```
 > curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.8/install.sh | bash
-> nvm install 16.10.0
-> nvm alias default 16.10.0
-> npm install -g npm@7.24.0
+> nvm install 22.2.0
+> nvm alias default 22.2.0
 ```
 
 ##### Start PostgreSQL and Redis with Docker Compose:
@@ -65,24 +64,17 @@ Copy the file `/environments/.env.local` from the engineering Google Drive folde
 #### Run tests
 `npm run test`
 
-All tests should pass. If they don't, please let the engineering team know.
-
 
 #### Run E2E tests
 If you haven't installed cypress yet, you can install it via `npm run cypress:install`.
 
-Then you can run `npm run cypress:open` to open the E2E test runner. Make sure you are running the app in another terminal with `npm run dev`. All E2E tests should pass.
+Run `npm run cypress:open` to open the E2E test runner. Make sure you are running the app in another terminal with `npm run dev`. All E2E tests should pass.
 
 
 #### Start the app
 `npm run dev`
 
-Then go to `http://localhost:3000`. These users are created initially (on `npm run knex-load-seeds`):
-
-| User Type            | Roles              | Phone #    | Password   |
-| -------------------- | ------------------ | ---------- | ---------- |
-| Admin                | [admin]            | 1111111111 | 1111111111 |
-
+Then go to `http://localhost:3000`. These users are created initially on `npm run knex-load-seeds`.
 
 
 ## Configuration

@@ -1,14 +1,7 @@
-import { dirname, resolve } from 'path';
-import { fileURLToPath } from 'url';
-
+import loadModuleIndex from '#common/util/loadModuleIndex.js';
 import knex from '#server/db/knex.js';
-import loadModules from '#common/util/loadModules.js';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-const modulesDirectory = resolve(__dirname);
-
-const modules = await loadModules(modulesDirectory, __filename);
+const modules = loadModuleIndex(import.meta.url);
 
 const UserModel = new Proxy(modules, {
   get(target, name) {

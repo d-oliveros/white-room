@@ -138,6 +138,4 @@ ReportBugForm.propTypes = {
   onSubmit: PropTypes.func.isRequired,
 };
 
-ReportBugForm.displayName = 'ReportBugForm';
-
 export default ReportBugForm;

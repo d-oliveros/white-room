@@ -5,7 +5,7 @@ import './FlexRow.less';
 
 const FlexRow = ({
   children,
-  width,
+  width = '100%',
   marginTop,
   className,
 }) => {
@@ -24,10 +24,6 @@ FlexRow.propTypes = {
   children: PropTypes.node,
   width: PropTypes.string,
   className: PropTypes.string,
-};
-
-FlexRow.defaultProps = {
-  width: '100%',
 };
 
 export default FlexRow;

@@ -4,7 +4,7 @@ import classnames from 'classnames';
 import copyToClipboard from 'copy-to-clipboard';
 
 const LinkUrlButton = ({
-  buttonText,
+  buttonText = 'Copy Link',
   href,
   className,
 }) => {
@@ -33,10 +33,6 @@ LinkUrlButton.propTypes = {
   buttonText: PropTypes.string,
   href: PropTypes.string.isRequired,
   className: PropTypes.string,
-};
-
-LinkUrlButton.defaultProps = {
-  buttonText: 'Copy Link',
 };
 
 export default LinkUrlButton;

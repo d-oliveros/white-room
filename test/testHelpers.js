@@ -1,6 +1,5 @@
 import assert from 'assert';
 import { faker } from '@faker-js/faker';
-import kue from 'kue';
 import { getIn } from 'formik';
 import lodashOmit from 'lodash/fp/omit.js';
 
@@ -104,25 +103,25 @@ export async function makeTableColumnFakeValues({
     }), {});
 }
 
-export function waitForJobEvents({ count: maxCount, filter, event = 'job complete' }) {
+export function waitForJobEvents({ count: maxCount, filter, event = 'completed' }) {
   return new Promise((resolve, reject) => {
     const jobs = [];
-    function onJobEvent(id) {
-      kue.Job.get(id, (err, job) => {
-        if (err) {
-          queue.removeListener(event, onJobEvent);
-          reject(err);
-          return;
-        }
+
+    async function onJobEvent(jobId) {
+      try {
+        const job = await queue.getJob(jobId);
 
         if (!filter || filter(job)) {
           jobs.push(job);
           if (jobs.length >= maxCount) {
-            queue.removeListener(event, onJobEvent);
+            queue.off(event, onJobEvent);
             resolve(jobs);
           }
         }
-      });
+      } catch (err) {
+        queue.off(event, onJobEvent);
+        reject(err);
+      }
     }
 
     // Attach the event listener

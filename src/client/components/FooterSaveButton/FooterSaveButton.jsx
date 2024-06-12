@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { useMediaQuery } from 'react-responsive';
 
-import { MEDIA_QUERY_SMALL_SCREEN } from '#client/constants/mediaQueries';
+import { MEDIA_QUERY_SMALL_SCREEN } from '#client/constants/mediaQueries.js';
 
 import Button, {
   BUTTON_THEME_ADOBE_GREEN,
@@ -13,7 +13,7 @@ const FooterSaveButton = ({
   isSubmitting,
   buttonText,
   onClick,
-  type,
+  type = 'submit',
 }) => {
   const isSmallScreen = useMediaQuery({
     query: MEDIA_QUERY_SMALL_SCREEN,
@@ -39,10 +39,6 @@ FooterSaveButton.propTypes = {
   type: PropTypes.string,
   isSubmitting: PropTypes.bool,
   buttonText: PropTypes.string,
-};
-
-FooterSaveButton.defaultProps = {
-  type: 'submit',
 };
 
 export default FooterSaveButton;

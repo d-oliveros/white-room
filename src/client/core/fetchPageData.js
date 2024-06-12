@@ -18,7 +18,7 @@ export default async function fetchPageData(branch, inject) {
  */
 function fetchComponentsData(branch, inject) {
   return branch
-    .filter(({ route }) => route.component.fetchData)
+    .filter(({ route }) => route.component?.fetchData)
     .map(({ route, match }) => route.component.fetchData(match, inject));
 }
 
@@ -30,7 +30,7 @@ function fetchComponentsData(branch, inject) {
  */
 function setComponentsMeta(branch, inject) {
   return branch
-    .filter(({ route }) => route.component.getPageMetadata)
+    .filter(({ route }) => route.component?.getPageMetadata)
     .forEach(({ route, match }) => {
       let pageMetadata;
       try {

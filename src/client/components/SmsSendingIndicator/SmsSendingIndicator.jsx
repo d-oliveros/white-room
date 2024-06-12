@@ -1,62 +1,50 @@
-import React, { Component } from 'react';
-import { formatPhoneNumber } from '#common/formatters';
+import React, { useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
 
-class SmsSendingIndicator extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      showSmsSent: false,
-    };
-    this._unmounting = false;
-  }
+import { formatPhoneNumber } from '#common/formatters.js';
 
-  componentDidMount() {
-    this.renderSmsSent();
-  }
+const SmsSendingIndicator = ({ phone }) => {
+  const [showSmsSent, setShowSmsSent] = useState(false);
 
-  renderSmsSent() {
-    setTimeout(() => {
-      if (!this._unmounting) {
-        this.setState({
-          showSmsSent: true,
-        });
-      }
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowSmsSent(true);
     }, 2000);
-  }
 
-  render() {
-    const { phone } = this.props;
-    const { showSmsSent } = this.state;
+    return () => clearTimeout(timer);
+  }, []);
 
-    return (
-      <div className='stepContainer'>
-        <div className='modal success'>
-          {showSmsSent
-            ? (
-              <div className='contentContainer'>
-                <div className='smsSent' />
-                <div className='textContainer'>
-                  <span className='headline'>
-                    Sent you the code!
-                  </span>
-                </div>
-              </div>
-            ) : (
-              <div className='contentContainer'>
-                <div className='smsSending' />
-                <div className='textContainer'>
-                  <span className='headline'>
-                    Sending SMS to
-                    <br />
-                    {formatPhoneNumber(phone)}
-                  </span>
-                </div>
-              </div>
-            )}
-        </div>
+  return (
+    <div className='stepContainer'>
+      <div className='modal success'>
+        {showSmsSent ? (
+          <div className='contentContainer'>
+            <div className='smsSent' />
+            <div className='textContainer'>
+              <span className='headline'>
+                Sent you the code!
+              </span>
+            </div>
+          </div>
+        ) : (
+          <div className='contentContainer'>
+            <div className='smsSending' />
+            <div className='textContainer'>
+              <span className='headline'>
+                Sending SMS to
+                <br />
+                {formatPhoneNumber(phone)}
+              </span>
+            </div>
+          </div>
+        )}
       </div>
-    );
-  }
+    </div>
+  );
+};
+
+SmsSendingIndicator.propTypes = {
+  phone: PropTypes.string.isRequired,
 }
 
 export default SmsSendingIndicator;

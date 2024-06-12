@@ -1,25 +1,28 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 import parseQueryString from '#common/util/parseQueryString.js';
-import { SCREEN_ID_RESET_PASSWORD_CONFIRM } from '#client/constants/screenIds';
+import { SCREEN_ID_RESET_PASSWORD_CONFIRM } from '#client/constants/screenIds.js';
 
-import { getUserLandingPage } from '#client/helpers/allowedRoles';
+import { getUserLandingPage } from '#client/helpers/allowedRoles.jsx';
 
-import useTransitionHook from '#client/helpers/useTransitionHook.js';
-import useScreenId from '#client/helpers/useScreenId.js';
-import useScrollToTop from '#client/helpers/useScrollToTop.js';
-import useBranch from '#client/core/useBranch.js';
+import useTransitionHook from '#client/hooks/useTransitionHook.js';
+import useScreenId from '#client/hooks/useScreenId.jsx';
+import useScrollToTop from '#client/hooks/useScrollToTop.jsx';
+import useBranch from '#client/hooks/useBranch.js';
 
 import PasswordResetConfirmForm from '#client/components/PasswordResetConfirmForm/PasswordResetConfirmForm.jsx';
 import Navbar from '#client/components/Navbar/Navbar.jsx';
 import Link from '#client/components/Link/Link.jsx';
 
-import AuthActions from '#client/actions/Auth.js';
+import AuthActions from '#client/actions/Auth/index.js';
 
-const ResetPasswordConfirmPage = ({ dispatch, history, isMobileApp, location }) => {
+const ResetPasswordConfirmPage = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   useTransitionHook();
-  useBranch({
+  const { isMobileApp } = useBranch({
     isMobileApp: ['mobileApp', 'isMobileApp'],
   });
   useScreenId(SCREEN_ID_RESET_PASSWORD_CONFIRM);
@@ -30,13 +33,13 @@ const ResetPasswordConfirmPage = ({ dispatch, history, isMobileApp, location }) 
       userRoles: user.roles,
       isMobileApp: isMobileApp,
     });
-    history.push(userLandingPage);
+    navigate(userLandingPage);
   };
 
   const onPasswordResetConfirmFormSubmit = (formValues) => {
     const { token } = parseQueryString(location.search);
 
-    dispatch(AuthActions.resetPasswordRequested, {
+    AuthActions.resetPasswordRequested({
       token: token,
       password: formValues.password,
     })
@@ -75,12 +78,5 @@ ResetPasswordConfirmPage.getPageMetadata = (state) => ({
   keywords: `${state.get(['env', 'APP_ID'])}, reset password`,
   description: 'Reset your password.',
 });
-
-ResetPasswordConfirmPage.propTypes = {
-  dispatch: PropTypes.func.isRequired,
-  history: PropTypes.object.isRequired,
-  isMobileApp: PropTypes.bool.isRequired,
-  location: PropTypes.object.isRequired,
-};
 
 export default ResetPasswordConfirmPage;

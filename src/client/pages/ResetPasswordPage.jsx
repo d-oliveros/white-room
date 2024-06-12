@@ -1,22 +1,22 @@
-import React, { useState, useEffect } from 'react';
-import PropTypes from 'prop-types';
+import React, { useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import {
   API_ACTION_VERIFY_PHONE_SMS_CODE_REQUESTED,
   API_ACTION_VERIFY_ACCOUNT_EXIST,
 } from '#api/actionTypes.js';
-import { SCREEN_ID_RESET_PASSWORD } from '#client/constants/screenIds';
+import { SCREEN_ID_RESET_PASSWORD } from '#client/constants/screenIds.js';
 import { USER_ROLE_ANONYMOUS } from '#common/userRoles.js';
 
 import log from '#client/lib/log.js';
-import useTransitionHook from '#client/helpers/useTransitionHook.js';
-import useScreenId from '#client/helpers/useScreenId.js';
-import useScrollToTop from '#client/helpers/useScrollToTop.js';
-import useAllowedRoles from '#client/helpers/useAllowedRoles.js';
-import useApiState from '#client/helpers/useApiState.js';
+import useTransitionHook from '#client/hooks/useTransitionHook.js';
+import useScreenId from '#client/hooks/useScreenId.jsx';
+import useScrollToTop from '#client/hooks/useScrollToTop.jsx';
+import useAllowedRoles from '#client/hooks/useAllowedRoles.jsx';
+import useApiState from '#client/hooks/useApiState.jsx';
 import postWithState from '#client/actions/postWithState.js';
 
-import AuthActions from '#client/actions/Auth.js';
+import AuthActions from '#client/actions/Auth/index.js';
 
 import PasswordResetSmsForm from '#client/components/PasswordResetSmsForm/PasswordResetSmsForm.jsx';
 import SmsSendingIndicator from '#client/components/SmsSendingIndicator/SmsSendingIndicator.jsx';
@@ -24,7 +24,9 @@ import Navbar from '#client/components/Navbar/Navbar.jsx';
 import Link from '#client/components/Link/Link.jsx';
 import ErrorMessage from '#client/components/ErrorMessage/ErrorMessage.jsx';
 
-const ResetPasswordPage = ({ dispatch, history, verifyPhoneApiState, location }) => {
+const ResetPasswordPage = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
   useTransitionHook();
   useAllowedRoles({
     roles: [
@@ -32,7 +34,7 @@ const ResetPasswordPage = ({ dispatch, history, verifyPhoneApiState, location })
     ],
     redirectUrl: '/',
   });
-  useApiState({
+  const { verifyPhoneApiState } = useApiState({
     verifyPhoneApiState: {
       action: API_ACTION_VERIFY_PHONE_SMS_CODE_REQUESTED,
     },
@@ -47,8 +49,6 @@ const ResetPasswordPage = ({ dispatch, history, verifyPhoneApiState, location })
   });
   const { showSmsSending, phoneNumberDoesNotExist, phone } = state;
 
-  let _unmounting = false;
-
   const _onRequestVerificationCode = async ({ phone }) => {
     setState({
       showSmsSending: false,
@@ -57,7 +57,7 @@ const ResetPasswordPage = ({ dispatch, history, verifyPhoneApiState, location })
     });
 
     try {
-      const userExist = await dispatch(postWithState, {
+      const userExist = await postWithState({
         action: API_ACTION_VERIFY_ACCOUNT_EXIST,
         payload: {
           phone: phone,
@@ -65,7 +65,7 @@ const ResetPasswordPage = ({ dispatch, history, verifyPhoneApiState, location })
       });
 
       if (userExist) {
-        await dispatch(AuthActions.resetPasswordSmsCodeRequested, {
+        await AuthActions.resetPasswordSmsCodeRequested({
           phone: phone,
         });
 
@@ -79,7 +79,7 @@ const ResetPasswordPage = ({ dispatch, history, verifyPhoneApiState, location })
             ...prevState,
             showSmsSending: false,
           }));
-          history.push(`/reset-password-verify-code${location.search}`);
+          navigate(`/reset-password-verify-code${location.search}`);
         }, 3000);
       } else {
         setState((prevState) => ({
@@ -138,12 +138,5 @@ ResetPasswordPage.getPageMetadata = () => ({
   keywords: 'reset password',
   description: 'Reset your password.',
 });
-
-ResetPasswordPage.propTypes = {
-  dispatch: PropTypes.func.isRequired,
-  history: PropTypes.object.isRequired,
-  verifyPhoneApiState: PropTypes.object.isRequired,
-  location: PropTypes.object.isRequired,
-};
 
 export default ResetPasswordPage;

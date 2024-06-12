@@ -1,27 +1,28 @@
-import React, { useState, useEffect } from 'react';
-import PropTypes from 'prop-types';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import {
   API_ACTION_VERIFY_PHONE_SMS_CODE_REQUESTED,
 } from '#api/actionTypes.js';
 import { USER_ROLE_ANONYMOUS } from '#common/userRoles.js';
-import { SCREEN_ID_RESET_PASSWORD_VALIDATE_CODE } from '#client/constants/screenIds';
+import { SCREEN_ID_RESET_PASSWORD_VALIDATE_CODE } from '#client/constants/screenIds.js';
 
 import log from '#client/lib/log.js';
-import useBranch from '#client/core/useBranch.js';
-import useTransitionHook from '#client/helpers/useTransitionHook.js';
-import useScreenId from '#client/helpers/useScreenId.js';
-import useScrollToTop from '#client/helpers/useScrollToTop.js';
-import useAllowedRoles from '#client/helpers/useAllowedRoles.js';
-import useApiState from '#client/helpers/useApiState.js';
-import AuthActions from '#client/actions/Auth.js';
+import useBranch from '#client/hooks/useBranch.js';
+import useTransitionHook from '#client/hooks/useTransitionHook.js';
+import useScreenId from '#client/hooks/useScreenId.jsx';
+import useScrollToTop from '#client/hooks/useScrollToTop.jsx';
+import useAllowedRoles from '#client/hooks/useAllowedRoles.jsx';
+import useApiState from '#client/hooks/useApiState.jsx';
+import AuthActions from '#client/actions/Auth/index.js';
 
 import PasswordResetSmsVerifyCode from '#client/components/PasswordResetSmsVerifyCode/PasswordResetSmsVerifyCode.jsx';
 import SmsSendingIndicator from '#client/components/SmsSendingIndicator/SmsSendingIndicator.jsx';
 import Navbar from '#client/components/Navbar/Navbar.jsx';
 import Link from '#client/components/Link/Link.jsx';
 
-const ResetPasswordVerifyCodePage = ({ dispatch, history, phone, verifyPhoneApiState }) => {
+const ResetPasswordVerifyCodePage = () => {
+  const navigate = useNavigate();
   useTransitionHook();
   useAllowedRoles({
     roles: [
@@ -29,12 +30,12 @@ const ResetPasswordVerifyCodePage = ({ dispatch, history, phone, verifyPhoneApiS
     ],
     redirectUrl: '/',
   });
-  useApiState({
+  const { verifyPhoneApiState } = useApiState({
     verifyPhoneApiState: {
       action: API_ACTION_VERIFY_PHONE_SMS_CODE_REQUESTED,
     },
   });
-  useBranch({
+  const { phone } = useBranch({
     phone: ['resetPasswordForm', 'phone'],
   });
   useScreenId(SCREEN_ID_RESET_PASSWORD_VALIDATE_CODE);
@@ -46,21 +47,19 @@ const ResetPasswordVerifyCodePage = ({ dispatch, history, phone, verifyPhoneApiS
   });
   const { showSmsSending, incorrectCodeSubmitted } = state;
 
-  let _unmounting = false;
-
   const _validateVerificationCode = async (phone, code) => {
     try {
-      const isValidCode = await dispatch(AuthActions.verifyPhoneSmsCodeSubmit, {
+      const isValidCode = await AuthActions.verifyPhoneSmsCodeSubmit({
         phone,
         code: code.toString(),
       });
 
       if (isValidCode) {
-        const token = await dispatch(AuthActions.resetPasswordGenerateToken, {
+        const token = await AuthActions.resetPasswordGenerateToken({
           phone,
         });
         const url = `/reset-password-confirm?token=${encodeURIComponent(token)}`;
-        history.push(url);
+        navigate(url);
       } else {
         setState((prevState) => ({ ...prevState, incorrectCodeSubmitted: true }));
       }
@@ -73,21 +72,13 @@ const ResetPasswordVerifyCodePage = ({ dispatch, history, phone, verifyPhoneApiS
     setState((prevState) => ({ ...prevState, showSmsSending: true }));
 
     setTimeout(() => {
-      if (!_unmounting) {
-        setState((prevState) => ({ ...prevState, showSmsSending: false }));
-      }
+      setState((prevState) => ({ ...prevState, showSmsSending: false }));
     }, 3000);
 
-    dispatch(AuthActions.resetPasswordSmsCodeRequested, {
+    AuthActions.resetPasswordSmsCodeRequested({
       phone,
     });
   };
-
-  useEffect(() => {
-    return () => {
-      _unmounting = true;
-    };
-  }, []);
 
   return (
     <div className='page-reset-password'>
@@ -145,12 +136,5 @@ ResetPasswordVerifyCodePage.getPageMetadata = (state) => ({
   keywords: `${state.get(['env', 'APP_ID'])}, reset password, code`,
   description: 'Reset your password.',
 });
-
-ResetPasswordVerifyCodePage.propTypes = {
-  dispatch: PropTypes.func.isRequired,
-  history: PropTypes.object.isRequired,
-  phone: PropTypes.string.isRequired,
-  verifyPhoneApiState: PropTypes.object.isRequired,
-};
 
 export default ResetPasswordVerifyCodePage;

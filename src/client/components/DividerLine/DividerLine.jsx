@@ -7,9 +7,14 @@ import Box from '#client/components/Box/Box.jsx';
 
 const DividerLine = ({
   text,
-  textProps,
-  alignItems,
-  height,
+  textProps = {
+    size: '16',
+    color: 'greyMonochrome',
+    font: 'whitney',
+    weight: '500',
+  },
+  alignItems = 'baseline',
+  height = '1px',
 }) => (
   <Flex
     justifyContent='center'
@@ -34,17 +39,6 @@ DividerLine.propTypes = {
   textProps: PropTypes.object,
   alignItems: PropTypes.string,
   height: PropTypes.string,
-};
-
-DividerLine.defaultProps = {
-  textProps: {
-    size: '16',
-    color: 'greyMonochrome',
-    font: 'whitney',
-    weight: '500',
-  },
-  alignItems: 'baseline',
-  height: '1px',
 };
 
 export default DividerLine;

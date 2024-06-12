@@ -15,7 +15,7 @@ import {
   createInitialValues,
 } from '#client/helpers/formikHelpers.js';
 
-import AuthActions from '#client/actions/Auth.js';
+import AuthActions from '#client/actions/Auth/index.js';
 
 import Box from '#client/components/Box/Box.jsx';
 import Card from '#client/components/Card/Card.jsx';
@@ -152,7 +152,5 @@ SignupForm.propTypes = {
   referrer: PropTypes.object,
   dispatch: PropTypes.func.isRequired,
 };
-
-SignupForm.displayName = 'SignupForm';
 
 export default SignupForm;

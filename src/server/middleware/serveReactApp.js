@@ -16,12 +16,12 @@ import {
   RENDERER_RESPONSE_TYPE_ERROR,
 } from '#server/renderer/rendererResponseTypes.js';
 
-const debug = logger.createDebug('middleware:requestClient');
+const debug = logger.createDebug('renderer:serverReactApp');
 const rendererServerEndpoint = process.env.RENDERER_ENDPOINT;
 
 /**
  * Serves the fully rendered react app's HTML by requesting the HTML to the renderer server.
- * The initial client state is generated using data in 'res.locals.initialState', which is populated in middleware steps.
+ * The initial client state is generated using data in 'res.locals.initialState', which is populated in renderer steps.
  */
 export default function serveReactAppController(req, res, next) {
   const state = res.locals.initialState;
@@ -85,7 +85,7 @@ export default function serveReactAppController(req, res, next) {
           error.name = result.error.name;
           error.stack = result.error.stack;
           error.source = 'Renderer';
-          error.reporter = 'server:middleware:requestClient';
+          error.reporter = 'server:renderer:serverReactApp';
           if (result.error.inner) {
             error.inner = result.error.inner;
           }

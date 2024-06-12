@@ -35,15 +35,15 @@ const CARD_BULLET_COLOR_CLASSNAME_MAPPING = {
 const CARD_BULLET_COLORS = Object.keys(CARD_BULLET_COLOR_CLASSNAME_MAPPING);
 
 const Card = forwardRef(({
-  color,
+  color = CARD_BULLET_COLOR_GREEN,
   padding,
-  noContentPadding,
+  noContentPadding = false,
   header,
   contentType,
-  headerSizeType,
+  headerSizeType = CARD_FONT_SIZE_REGULAR,
   subheader,
   iconUrl,
-  maxWidth,
+  maxWidth = '900px',
   className,
   overflow,
   children,
@@ -116,13 +116,6 @@ Card.propTypes = {
   margin: PropTypes.string,
   borderRadius: PropTypes.string,
   isHighlighted: PropTypes.bool,
-};
-
-Card.defaultProps = {
-  color: CARD_BULLET_COLOR_GREEN,
-  noContentPadding: false,
-  headerSizeType: CARD_FONT_SIZE_REGULAR,
-  maxWidth: '900px',
 };
 
 export default Card;

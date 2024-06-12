@@ -1,12 +1,12 @@
-import url from 'url';
+import { URL } from 'url';
 
 export default function parseS3Url(s3Url) {
   if (!s3Url) {
     return false;
   }
   try {
-    const parsedUrl = url.parse(s3Url);
-    if (parsedUrl.host !== 's3.amazonaws.com') {
+    const parsedUrl = new URL(s3Url);
+    if (parsedUrl.hostname !== 's3.amazonaws.com') {
       return false;
     }
 
@@ -21,8 +21,7 @@ export default function parseS3Url(s3Url) {
       bucket: bucket,
       key: decodeURIComponent(key),
     };
-  }
-  catch (error) {
+  } catch (error) {
     return false;
   }
 }

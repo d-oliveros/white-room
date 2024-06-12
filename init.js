@@ -7,10 +7,9 @@ const {
   ENABLE_SERVER,
   ENABLE_RENDERER,
   ENABLE_CRON,
+  ENABLE_KNEX_MIGRATIONS,
   CRON_WHITELIST,
 } = process.env;
-
-console.log('init.js');
 
 // TODO: Check if module resolver works in this scope!
 
@@ -29,7 +28,7 @@ const startServer = async () => {
 };
 
 const startRenderer = async () => {
-  logger.info('Starting renderer API.');
+  logger.info('Starting renderer service.');
   const { default: rendererApi } = await import(`${moduleSourceDirectory}/server/renderer/rendererApi.js`);
 
   const listen = promisify(rendererApi.listen).bind(rendererApi);
@@ -38,7 +37,6 @@ const startRenderer = async () => {
 };
 
 const startCron = async () => {
-  return;
   const startLogMessage = ENABLE_CRON === 'whitelist_only'
     ? 'Starting cron service in whitelist only mode.'
     : 'Starting cron service.';
@@ -64,10 +62,12 @@ const startCron = async () => {
  */
 const init = async () => {
   try {
-    logger.info('Checking if schema migration is needed.');
-    await knex.postgresMigrateToLatestSchema();
-
     const promises = [];
+
+    // Run the latest Knex migrations on startup
+    if (ENABLE_KNEX_MIGRATIONS === 'true') {
+      promises.push(knex.postgresMigrateToLatestSchema());
+    }
 
     // Start the API server
     if (ENABLE_SERVER === 'true') {
@@ -80,7 +80,7 @@ const init = async () => {
     }
 
     // Starts the cron service
-    if (ENABLE_CRON === 'true' || ENABLE_CRON === 'whitelist_only') {
+    if (ENABLE_CRON === 'true') {
       promises.push(startCron());
     }
 

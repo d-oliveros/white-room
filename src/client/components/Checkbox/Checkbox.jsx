@@ -10,15 +10,14 @@ export const CHECKBOX_LIST_THEME_ICON_BOX = 'adobeIconBox';
 const Checkbox = ({
   className,
   children,
-  isActive,
-  disabled,
+  isActive = false,
+  disabled = false,
   onClick,
   icons,
   checkboxIconType,
-  type,
+  type = CHECKBOX_THEME_INLINE,
   noBackgroundImage,
 }) => {
-
   return (
     <div
       className={classNames('choice', className, type, checkboxIconType, {
@@ -51,12 +50,6 @@ Checkbox.propTypes = {
   checkboxIconType: PropTypes.string,
   type: PropTypes.string,
   noBackgroundImage: PropTypes.bool,
-};
-
-Checkbox.defaultProps = {
-  isActive: false,
-  disabled: false,
-  type: CHECKBOX_THEME_INLINE,
 };
 
 export default Checkbox;

@@ -8,10 +8,10 @@ import sendDataToMobileApp, {
 } from '#client/helpers/sendDataToMobileApp.js';
 
 import Box from '#client/components/Box/Box.jsx';
-import ButtonDeprecated, {
-  BUTTON_THEME_WHITE,
-  BUTTON_THEME_BLUE,
-} from '#client/components/ButtonDeprecated/ButtonDeprecated.jsx';
+import Button, {
+  BUTTON_THEME_ADOBE_WHITE,
+  BUTTON_THEME_ADOBE_BLUE,
+} from '#client/components/Button/Button.jsx';
 
 import branch from '#client/core/branch.jsx';
 
@@ -57,13 +57,13 @@ class EnablePushNotificationsModal extends Component {
             </div>
 
             <Box className='actionsContainer' margin='0 auto'>
-              <ButtonDeprecated theme={BUTTON_THEME_WHITE} onClick={onClose}>
+              <Button theme={BUTTON_THEME_ADOBE_WHITE} onClick={onClose}>
                 not now
-              </ButtonDeprecated>
+              </Button>
               <Box width='15px' />
-              <ButtonDeprecated theme={BUTTON_THEME_BLUE} onClick={this._onEnablePushNoficationsClick}>
+              <Button theme={BUTTON_THEME_ADOBE_BLUE} onClick={this._onEnablePushNoficationsClick}>
                 ok
-              </ButtonDeprecated>
+              </Button>
             </Box>
           </div>
         </div>

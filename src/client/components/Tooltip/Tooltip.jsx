@@ -31,10 +31,10 @@ export const TOOLTIP_BG_COLOR_TO_CLASSNAME_MAPPING = {
 
 const Tooltip = ({
   label,
-  iconName,
+  iconName = TOOLTIP_ICON_QUESTION_MARK,
   icon,
   children,
-  position,
+  position = TOOLTIP_POSITION_CENTER,
   bgColor,
   className,
   tooltipContentStyle,
@@ -67,11 +67,6 @@ Tooltip.propTypes = {
   position: PropTypes.oneOf(TOOLTIP_POSITIONS),
   bgColor: PropTypes.oneOf(Object.keys(TOOLTIP_BG_COLOR_TO_CLASSNAME_MAPPING)),
   tooltipContentStyle: PropTypes.object,
-};
-
-Tooltip.defaultProps = {
-  iconName: TOOLTIP_ICON_QUESTION_MARK,
-  position: TOOLTIP_POSITION_CENTER,
 };
 
 export default Tooltip;

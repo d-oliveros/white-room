@@ -6,7 +6,12 @@ import ReactMarkdown from 'react-markdown';
 export const MARKDOWN_THEME_LEGAL = 'legal';
 export const MARKDOWN_THEME_GREYCLIFF = 'greycliff';
 
-const Markdown = ({ source, theme, escapeHtml, onRef }) => {
+const Markdown = ({
+  source,
+  theme = MARKDOWN_THEME_LEGAL,
+  escapeHtml,
+  onRef,
+}) => {
   return (
     <div ref={onRef} className={classnames('Markdown', theme)}>
       <ReactMarkdown source={source} escapeHtml={escapeHtml} />
@@ -22,10 +27,6 @@ Markdown.propTypes = {
   ]),
   escapeHtml: PropTypes.bool,
   onRef: PropTypes.func,
-};
-
-Markdown.defaultProps = {
-  theme: MARKDOWN_THEME_LEGAL,
 };
 
 export default Markdown;

@@ -12,11 +12,11 @@ import Button, {
 } from '#client/components/Button/Button.jsx';
 
 const FooterButton = ({
-  hasBoxShadow,
-  disabled,
-  onClick,
+  hasBoxShadow = false,
+  disabled = false,
+  onClick = null,
   children,
-  type,
+  type = 'submit',
 }) => {
   const isSmallScreen = useMediaQuery({
     query: MEDIA_QUERY_SMALL_SCREEN,
@@ -38,12 +38,11 @@ const FooterButton = ({
 };
 
 FooterButton.propTypes = {
+  hasBoxShadow: PropTypes.bool,
+  disabled: PropTypes.bool,
   onClick: PropTypes.func,
   type: PropTypes.string,
-};
-
-FooterButton.defaultProps = {
-  type: 'submit',
+  children: PropTypes.node.isRequired,
 };
 
 export default FooterButton;

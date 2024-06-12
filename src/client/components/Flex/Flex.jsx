@@ -35,7 +35,7 @@ const FLEX_WRAP_TO_CLASSNAME_MAPPING = {
 
 function Flex({
   children,
-  direction,
+  direction = 'row',
   justify,
   align,
   wrap,
@@ -63,10 +63,6 @@ Flex.propTypes = {
   justify: PropTypes.oneOf(Object.keys(FLEX_JUSTIFY_TO_CLASSNAME_MAPPING)),
   align: PropTypes.oneOf(Object.keys(FLEX_ALIGN_TO_CLASSNAME_MAPPING)),
   wrap: PropTypes.oneOf(Object.keys(FLEX_WRAP_TO_CLASSNAME_MAPPING)),
-};
-
-Flex.defaultProps = {
-  direction: 'row',
 };
 
 export default Flex;

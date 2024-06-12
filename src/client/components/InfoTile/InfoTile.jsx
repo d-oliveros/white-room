@@ -44,9 +44,9 @@ export const InfoTileTextValue = ({
 const InfoTile = ({
   label,
   value,
-  valueColor,
+  valueColor = '#132630',
   photoUrls,
-  editButtonLabel,
+  editButtonLabel = 'Edit',
   onEditClick,
   theme,
   className,
@@ -133,11 +133,6 @@ InfoTile.propTypes = {
   onEditClick: PropTypes.func,
   className: PropTypes.string,
   photoUrls: PropTypes.array,
-};
-
-InfoTile.defaultProps = {
-  editButtonLabel: 'Edit',
-  valueColor: '#132630',
 };
 
 export default InfoTile;

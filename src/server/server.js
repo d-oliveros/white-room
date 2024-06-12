@@ -44,6 +44,7 @@ const {
 
 const app = express();
 
+// Server-level middleware
 app.enable('trust proxy');
 
 app.use((req, res, next) => {
@@ -56,7 +57,6 @@ app.get('/health', (req, res) => res.sendStatus(200));
 app.get('/sitemap.xml', sitemapController);
 
 if (SEGMENT_LIB_PROXY_URL) {
-  console.log(segmentLibProxy);
   app.get('/sgmnt/:segmentApiKey/sgmntlib.min.js', segmentLibProxy);
 }
 
@@ -69,21 +69,20 @@ if (ENABLE_STORYBOOK === 'true') {
   app.use('/storybook', express.static(path.join(ROOT_DIR, '.storybook', 'dist')));
 }
 
+// Application-level middleware
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-// External service webhooks.
 app.use('/sendgrid/webhooks', sendgridWebhookApi);
 
 // API server & misc server services.
-const adminRoles = [
-  USER_ROLE_ADMIN,
-];
 app.use(cookieParser(COOKIE_SECRET, cookiesConfig.session));
 app.use(unwrapSessionToken);
 app.use('/api/v1', createApiServer(actionSpecsList, {
   sessionName: 'session',
-  adminRoles,
+  adminRoles: [
+    USER_ROLE_ADMIN,
+  ],
 }));
 app.post('/upload-file', fileUploadsController);
 

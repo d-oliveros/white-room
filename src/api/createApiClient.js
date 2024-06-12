@@ -1,4 +1,3 @@
-import shortid from 'shortid';
 import superagent from 'superagent';
 import { v4 as uuidv4 } from 'uuid';
 import { serializeError } from 'serialize-error';
@@ -293,7 +292,7 @@ export default function createApiClient(params = {}) {
       }
     }
     catch (apiClientError) {
-      const errorShortId = apiClientError.details?.shortId || shortid.generate();
+      const errorShortId = apiClientError.details?.shortId || uuidv4();
       const error = new Error(`[API:${action}] ${apiClientError.message}`);
       error.name = apiClientError.name || API_ERROR_REQUEST_NOT_HANDLED_OK;
       error.inner = serializeError(apiClientError);

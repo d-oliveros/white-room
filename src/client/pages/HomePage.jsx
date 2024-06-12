@@ -2,11 +2,11 @@ import React from 'react';
 
 import { hasRoleAnonymous } from '#common/userRoles.js';
 
-import useBranch from '#client/core/useBranch';
-import { SCREEN_ID_HOME } from '#client/constants/screenIds';
-import useTransitionHook from '#client/helpers/useTransitionHook.js';
-import useScreenId from '#client/helpers/useScreenId.js';
-import useScrollToTop from '#client/helpers/useScrollToTop.js';
+import useBranch from '#client/hooks/useBranch.js';
+import { SCREEN_ID_HOME } from '#client/constants/screenIds.js';
+import useTransitionHook from '#client/hooks/useTransitionHook.js';
+import useScreenId from '#client/hooks/useScreenId.jsx';
+import useScrollToTop from '#client/hooks/useScrollToTop.jsx';
 
 import Link from '#client/components/Link/Link.jsx';
 import Flex from '#client/components/Flex/Flex.jsx';
@@ -50,7 +50,7 @@ const HomePage = () => {
       </div>
 
       <Flex>
-        <Text font='greycliff' weight='18' size='800' color='green'>
+        <Text font='greycliff' size='18' weight='800' color='green'>
           Hello! Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque gravida sem ac
           tellus auctor, eget interdum erat sagittis. Sed rutrum erat et tortor venenatis
           ullamcorper ut in augue. Sed sed metus erat. Sed mauris enim, condimentum ac pulvinar

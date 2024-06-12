@@ -2,11 +2,15 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Formik, Form } from 'formik';
 
-import { createFormValidationFn, createInitialValues } from '#client/helpers/formikHelpers';
+import {
+  createFormValidationFn,
+  createInitialValues,
+} from '#client/helpers/formikHelpers.js';
 
-import ButtonDeprecated, {
-  BUTTON_THEME_YELLOW,
-} from '#client/components/ButtonDeprecated/ButtonDeprecated.jsx';
+import Button, {
+  BUTTON_THEME_ADOBE_YELLOW,
+} from '#client/components/Button/Button.jsx';
+
 import FormikField from '#client/components/FormikField/FormikField.jsx';
 
 const getFormFields = ({ activatingAccount }) => {
@@ -63,12 +67,12 @@ class PasswordResetSmsForm extends Component {
                   formikBag={formikBag}
                 />
               ))}
-              <ButtonDeprecated
+              <Button
                 type='submit'
-                theme={BUTTON_THEME_YELLOW}
+                theme={BUTTON_THEME_ADOBE_YELLOW}
               >
                 next: enter code
-              </ButtonDeprecated>
+              </Button>
             </Form>
           );
         }}
@@ -76,7 +80,5 @@ class PasswordResetSmsForm extends Component {
     );
   }
 }
-
-PasswordResetSmsForm.displayName = 'PasswordResetSmsForm';
 
 export default PasswordResetSmsForm;

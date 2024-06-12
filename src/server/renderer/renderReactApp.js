@@ -1,11 +1,9 @@
 import { parse as parseUrl } from 'url';
 import { serializeError } from 'serialize-error';
-import handlebars from 'handlebars';
 
 import React from 'react';
 import { renderToString } from 'react-dom/server';
 import { StaticRouter } from 'react-router-dom/server.js';
-import { matchRoutes } from 'react-router-config';
 
 import logger from '#common/logger.js';
 import typeCheck from '#common/util/typeCheck.js';
@@ -16,9 +14,9 @@ import createTree from '#client/lib/tree.js';
 import fetchPageData from '#client/core/fetchPageData.js';
 import Root from '#client/core/Root.jsx';
 import routes from '#client/routes.js';
+import renderLayout from '#client/renderLayout.js';
 
 import {
-  getTemplateFile,
   assertIdleApiState,
   makeRendererResponse,
   serializeState,
@@ -45,8 +43,6 @@ const {
 } = process.env;
 
 const useBuild = USE_BUILD === 'true';
-let buildHtml;
-
 const debug = logger.createDebug('renderer:renderReactApp');
 
 const defaultMetas = {
@@ -66,10 +62,6 @@ const defaultMetas = {
  * @return {Object}               Object with { type, html, redirectUrl, error }.
  */
 export default async function renderReactApp({ state, url, sessionToken }) {
-  if (!buildHtml) {
-    const templateFile = await getTemplateFile();
-    buildHtml = await handlebars.compile(templateFile);
-  }
   state = { ...makeInitialState(), ...state };
 
   const tree = createTree(state, {
@@ -85,7 +77,8 @@ export default async function renderReactApp({ state, url, sessionToken }) {
     const context = {};
 
     const { pathname: urlWithoutQueryString, search: urlSearch = '' } = parseUrl(url);
-    const branch = matchRoutes(routes, urlWithoutQueryString);
+
+    const branch = matchRoute(routes, urlWithoutQueryString);
 
     typeCheck('branch::NonEmptyArray', branch);
 
@@ -123,10 +116,12 @@ export default async function renderReactApp({ state, url, sessionToken }) {
       });
     }
 
-    const html = buildHtml({
+    const appUrl = new URL(APP_URL);
+
+    const html = renderLayout({
       body,
       useBuild,
-      hostname: new URL(APP_URL).hostname,
+      devScriptBaseUrl: `${appUrl.protocol}//${appUrl.hostname}`,
       meta: { ...defaultMetas, ...(tree.get('pageMetadata') || {}) },
       segmentKey: SEGMENT_KEY,
       webpackDevelopmentServerPort: WEBPACK_DEVELOPMENT_SERVER_PUBLIC_PORT || WEBPACK_DEVELOPMENT_SERVER_PORT,
@@ -157,4 +152,34 @@ export default async function renderReactApp({ state, url, sessionToken }) {
       error: serializeError(error),
     });
   }
+}
+
+/**
+ * Match the route against the routes array, including dynamic segments.
+ * @param {Array} routes Array of route objects.
+ * @param {String} pathname URL pathname to match.
+ * @return {Array} Array containing the matched route and params.
+ */
+function matchRoute(routes, pathname) {
+  for (const route of routes) {
+    const { path } = route;
+    const paramNames = [];
+    const regexPath = path.replace(/:([^/]+)/g, (_, paramName) => {
+      paramNames.push(paramName);
+      return '([^/]+)';
+    });
+
+    const regex = new RegExp(`^${regexPath}$`);
+    const match = pathname.match(regex);
+
+    if (match) {
+      const params = match.slice(1).reduce((acc, value, index) => {
+        acc[paramNames[index]] = value;
+        return acc;
+      }, {});
+
+      return [{ route, params }];
+    }
+  }
+  return [];
 }

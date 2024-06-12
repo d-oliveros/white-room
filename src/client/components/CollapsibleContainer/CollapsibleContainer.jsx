@@ -36,15 +36,15 @@ const CollapsibleContainer = ({
   children,
   title,
   subtitle,
-  titleColor,
-  status,
+  titleColor = 'blueGreycliff',
+  status = COLLAPSIBLE_CONTAINER_STATUS_COMPLETE,
   borderType,
-  isExpanded,
+  isExpanded = false,
   editLinkUrl,
   onEditClick,
-  editButtonTheme,
+  editButtonTheme = COLLAPSIBLE_CONTAINER_EDIT_BUTTON_THEME_TEXT,
   onClick,
-  hideIcon,
+  hideIcon = false,
 }) => {
   return (
     <Box
@@ -154,14 +154,6 @@ CollapsibleContainer.propTypes = {
     COLLAPSIBLE_CONTAINER_EDIT_BUTTON_THEME_BLUE,
   ]),
   hideIcon: PropTypes.bool,
-};
-
-CollapsibleContainer.defaultProps = {
-  status: COLLAPSIBLE_CONTAINER_STATUS_COMPLETE,
-  isExpanded: false,
-  titleColor: 'blueGreycliff',
-  editButtonTheme: COLLAPSIBLE_CONTAINER_EDIT_BUTTON_THEME_TEXT,
-  hideIcon: false,
 };
 
 export default CollapsibleContainer;

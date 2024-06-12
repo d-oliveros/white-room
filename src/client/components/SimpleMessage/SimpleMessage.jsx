@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import classnames from 'classnames';
 
 import Text from '#client/components/Text/Text.jsx';
-import ButtonDeprecated from '#client/components/ButtonDeprecated/ButtonDeprecated.jsx';
+import Button from '#client/components/Button/Button.jsx';
 
 class SimpleMessage extends Component {
   static propTypes = {
@@ -41,9 +41,9 @@ class SimpleMessage extends Component {
           {message}
         </Text>
         {buttonText && (
-          <ButtonDeprecated onClick={onClickButton}>
+          <Button onClick={onClickButton}>
             {buttonText}
-          </ButtonDeprecated>
+          </Button>
         )}
       </div>
     );

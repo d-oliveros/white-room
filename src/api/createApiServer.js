@@ -1,7 +1,7 @@
 import assert from 'assert';
-import shortid from 'shortid';
 import { Router } from 'express';
 import bodyParser from 'body-parser';
+import { v4 as uuidv4 } from 'uuid';
 import { serializeError } from 'serialize-error';
 import lodashKeyBy from 'lodash/fp/keyBy.js';
 
@@ -212,7 +212,7 @@ function handleActionRequest(actionSpecs) {
       }
     }
     catch (error) {
-      const errorShortId = shortid.generate();
+      const errorShortId = uuidv4();
       error.details = {
         ...(error.details || {}),
         actionType: actionType,

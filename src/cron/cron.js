@@ -1,25 +1,23 @@
 import { serializeError } from 'serialize-error';
-import createCronCluster from 'cron-cluster';
+import cron from 'node-cron';
 import lodashMemoize from 'lodash/fp/memoize.js';
 
 import logger from '#common/logger.js';
-import crontab from '#cron/crontab.js';
+import redis from '#server/db/redis.js';
 
 import {
   postSlackMessage,
   SLACK_IDENTITY_CRON,
 } from '#server/lib/slackClient.js';
 
-import redis from '#server/db/redis.js';
+import crontab from '#cron/crontab.js';
 import tasks from '#cron/tasks/index.js';
 
 const {
   ENABLE_CRON,
   CRON_WHITELIST,
+  TZ,
 } = process.env;
-
-const cronCluster = createCronCluster(redis);
-const cronJobs = {};
 
 /**
  * Wrapper for a cron task's handler. Runs the cron task and posts success/failure notifications.
@@ -27,7 +25,7 @@ const cronJobs = {};
  * @param  {Function} options.task                   Cron function to call.
  * @param  {string} options.taskName                 Cron task name.
  * @param  {string} options.onlyReportErrorsOverride Overrides the onlyReportErrors config param.
- * @return {Promise<undefined, Error>}
+ * @return {Function}
  */
 export function runCronTask({ task, taskName, onlyReportErrorsOverride }) {
   let onlyReportErrors = onlyReportErrorsOverride || false;
@@ -46,15 +44,21 @@ export function runCronTask({ task, taskName, onlyReportErrorsOverride }) {
     timeoutMs = (crontab[taskName].timeout * 1000) || null;
   }
 
-  return async function runCronTaskAsync(...args) {
+  return async function processJob() {
+    const args = []; // Adjust if there are arguments needed
     let now;
+
+    if (!redis?.isLeader) {
+      // Not the leader, skip execution
+      return;
+    }
+
     try {
       if (!onlyReportErrors) {
         logger.info(`[cron:${taskName}] Running.`);
       }
       now = Date.now();
 
-      // Runs the cron job, but throw an error if the execution time exceeds the timeout setting.
       const result = await new Promise((resolve, reject) => {
         let isResolved = false;
 
@@ -64,19 +68,14 @@ export function runCronTask({ task, taskName, onlyReportErrorsOverride }) {
               isResolved = true;
               const error = new Error(`Cron task timeout after ${timeoutMs} ms: ${taskName}`);
               error.name = 'CronTaskTimeoutError';
-              error.details = {
-                taskName,
-                timeoutMs,
-              };
+              error.details = { taskName, timeoutMs };
               reject(error);
             }
           }, timeoutMs);
         }
 
         Promise.resolve()
-          .then(() => {
-            return task(...args);
-          })
+          .then(() => task(...args))
           .then((result) => {
             if (!isResolved) {
               isResolved = true;
@@ -97,14 +96,11 @@ export function runCronTask({ task, taskName, onlyReportErrorsOverride }) {
           (result ? `\nMessage: ${JSON.stringify(result, null, 2)}` : '')
         );
       }
-    }
-    catch (error) {
+    } catch (error) {
       const cronError = new Error(`[cron:${taskName}] Error: ${error.message}`);
       cronError.stack = error.stack;
       cronError.inner = error;
-      cronError.details = {
-        taskName,
-      };
+      cronError.details = { taskName };
       logger.error(cronError);
       const errorSlackMessageAttachments = [
         {
@@ -154,10 +150,10 @@ const getCronExecutionInterval = (taskName) => {
  */
 const isCronJobWhitelisted = (taskName) => {
   if (ENABLE_CRON === 'true') {
+    if (CRON_WHITELIST) {
+      return (CRON_WHITELIST || '').split(',').includes(taskName);
+    }
     return true;
-  }
-  if (ENABLE_CRON === 'whitelist_only') {
-    return (CRON_WHITELIST || '').split(',').includes(taskName);
   }
   return false;
 };
@@ -165,19 +161,19 @@ const isCronJobWhitelisted = (taskName) => {
 /**
  * Starts the cron jobs.
  */
-export const initCronJobs = lodashMemoize(() => {
+export const initCronJobs = lodashMemoize(async () => {
   Object.keys(tasks).forEach((taskName) => {
     const task = tasks[taskName];
     const executionInterval = getCronExecutionInterval(taskName);
 
     if (executionInterval && isCronJobWhitelisted(taskName)) {
-      cronJobs[taskName] = new cronCluster.CronJob(executionInterval, runCronTask({
+      cron.schedule(executionInterval, runCronTask({
         task,
         taskName,
-      }));
-      cronJobs[taskName].start();
+      }), {
+        scheduled: true,
+        timezone: TZ,
+      });
     }
   });
-
-  return cronJobs;
 });

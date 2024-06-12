@@ -1,5 +1,4 @@
-import kue from 'kue';
-import { promisify } from 'util';
+import Bull from 'bull';
 import { serializeError } from 'serialize-error';
 import ms from 'ms';
 
@@ -7,103 +6,98 @@ import dbConfig from '#config/database.js';
 import logger from '#common/logger.js';
 import typeCheck from '#common/util/typeCheck.js';
 
-const KUE_DEFAULT_TTL_MS = 259200000; // 3 days in ms.
+const KUE_DEFAULT_TTL_MS = ms('3d');
 
 const debug = logger.createDebug('queue');
 const { QUEUE_DELETE_JOBS } = process.env;
 
-const queue = kue.createQueue({
-  prefix: 'q',
+const queue = new Bull('q', {
   redis: dbConfig.redis,
 });
 
-queue.watchStuckJobs(ms('5m'));
-
-queue.on('job enqueue', (id, type) => {
-  debug(`Job #${id} got queued of type ${type}`);
+queue.on('waiting', (jobId) => {
+  debug(`Job #${jobId} got queued`);
 });
 
-queue.on('job start', (id) => {
-  debug(`Job #${id} started being processed`);
+queue.on('active', (job) => {
+  debug(`Job #${job.id} started being processed`);
 });
 
-queue.on('job promotion', (id) => {
-  debug(`Job #${id} is being promoted from delayed state to queued`);
+queue.on('stalled', (job) => {
+  debug(`Job #${job.id} is stalled and will be reprocessed`);
 });
 
-queue.on('job failed attempt', (id, doneAttempts) => {
-  debug(`Job #${id} failed. Done attempts: ${doneAttempts}`);
+queue.on('failed', (job, err) => {
+  const error = new Error(`Job #${job.id} failed: ${err}`);
+  error.name = 'QueueJobFailed';
+  error.inner = serializeError(err);
+  error.details = {
+    queueError: true,
+    jobId: job.id,
+    jobType: job.name,
+    jobData: job.data,
+  };
+
+  logger.info(error);
+
+  if (QUEUE_DELETE_JOBS === 'true') {
+    job.remove().then(() => {
+      debug(`Successfully removed failed job ${job.id}`);
+    }).catch((removeError) => {
+      const error = new Error(`Job #${job.id} failed and could not be deleted: ${removeError}`);
+      error.name = 'QueueJobFailedNotRemoved';
+      error.inner = serializeError(removeError);
+      error.details = {
+        queueError: true,
+        jobId: job.id,
+      };
+
+      logger.info(error);
+    });
+  }
 });
 
-queue.on('job remove', (id) => {
-  debug(`Job #${id} sucessfully removed.`);
-});
+queue.on('completed', (job, result) => {
+  debug(`Job #${job.id} completed with result ${result}`);
+  if (QUEUE_DELETE_JOBS === 'true') {
+    job.remove().then(() => {
+      debug(`Successfully removed completed job ${job.id}`);
+    }).catch((err) => {
+      const error = new Error(`Completed job #${job.id} could not be deleted: ${err}`);
+      error.name = 'QueueJobCompletedNotRemoved';
+      error.inner = serializeError(err);
+      error.details = {
+        queueError: true,
+        jobId: job.id,
+      };
 
-queue.on(('job error'), (id) => {
-  kue.Job.get(id, (kueJobGetError, job) => {
-    if (kueJobGetError) {
-      // Return since there is no job to log.
-      return;
-    }
-    const error = new Error(`Job #${id} had errors`);
-    error.name = 'QueueJobError';
-    error.details = {
-      queueError: true,
-      jobId: id,
-      jobData: job.data,
-    };
-    logger.info(error);
-  });
-});
-
-// Job failed and has no remaining attempts.
-queue.on('job failed', (id, kueJobError) => {
-  kue.Job.get(id, (kueJobGetError, job) => {
-    // Kue failed to get the job
-    if (kueJobGetError) {
-      // Return since there is no job to delete.
-      return;
-    }
-
-    const error = new Error(`Job #${id} failed: ${kueJobError}`);
-    error.name = 'QueueJobFailed';
-    error.inner = serializeError(kueJobError);
-    error.details = {
-      queueError: true,
-      jobId: id,
-      jobType: job.type,
-      jobData: job.data,
-    };
-
-    logger.info(error);
-
-    if (QUEUE_DELETE_JOBS === 'true') {
-      // Job deletion
-      job.remove((kueRemoveError) => {
-        // Kue failed to remove error
-        if (kueRemoveError) {
-          const error = new Error(`Job #${id} failed and could not be deleted: ${kueRemoveError}`);
-          error.name = 'QueueJobFailedNotRemoved';
-          error.inner = serializeError(kueRemoveError);
-          error.details = {
-            queueError: true,
-            jobId: id,
-          };
-
-          logger.info(error);
-          return;
-        }
-
-        debug(`Successfully removed failed job ${id} `);
-      });
-    }
-  });
+      logger.info(error);
+    });
+  }
 });
 
 queue.getItemsByStateAsync = async (state, count) => {
   typeCheck('state::NonEmptyString', state);
-  const rangeByStateAsync = promisify(kue.Job.rangeByState.bind(queue.Job));
-  const jobs = await rangeByStateAsync(state, 0, count || 500000, 'asc');
+  let jobs;
+  switch (state) {
+    case 'waiting':
+      jobs = await queue.getWaiting(count || 500000);
+      break;
+    case 'active':
+      jobs = await queue.getActive(count || 500000);
+      break;
+    case 'completed':
+      jobs = await queue.getCompleted(count || 500000);
+      break;
+    case 'failed':
+      jobs = await queue.getFailed(count || 500000);
+      break;
+    case 'delayed':
+      jobs = await queue.getDelayed(count || 500000);
+      break;
+    default:
+      throw new Error('Invalid state');
+  }
   return jobs;
 };
 
@@ -117,26 +111,18 @@ queue.createAsync = ({ type, data, delay = 0, backoff, attempts = 0 }) => {
       backoff,
     });
 
-    let queueCreateChain = queue.create(type, data);
-    if (attempts > 0) {
-      queueCreateChain = queueCreateChain.attempts(attempts);
-    }
-    if (delay) {
-      queueCreateChain = queueCreateChain.delay(delay);
-    }
-    if (backoff) {
-      queueCreateChain = queueCreateChain.backoff(attempts);
-    }
+    const options = {
+      attempts,
+      backoff,
+      delay,
+      removeOnComplete: QUEUE_DELETE_JOBS === 'true',
+      ttl: delay + KUE_DEFAULT_TTL_MS,
+    };
 
-    queueCreateChain = queueCreateChain.removeOnComplete(QUEUE_DELETE_JOBS === 'true');
-    queueCreateChain = queueCreateChain.ttl(delay + KUE_DEFAULT_TTL_MS);
-
-    const job = queueCreateChain.save((error) => {
-      if (error) {
-        reject(error);
-        return;
-      }
+    queue.add(type, data, options).then((job) => {
       resolve(job);
+    }).catch((error) => {
+      reject(error);
     });
   });
 };
@@ -151,23 +137,22 @@ queue.createAsync = ({ type, data, delay = 0, backoff, attempts = 0 }) => {
 queue.deleteByType = async (jobType, params = {}) => {
   typeCheck('filter::Maybe Function', params.filter);
 
-  // Get pending jobs.
-  const rangeByTypeAsync = promisify(kue.Job.rangeByType.bind(queue.Job));
-
+  // Get jobs by type.
   const [inactiveJobs, delayedJobs] = await Promise.all([
-    rangeByTypeAsync(jobType, 'inactive', 0, 1000000, 'asc'),
-    rangeByTypeAsync(jobType, 'delayed', 0, 1000000, 'asc'),
+    queue.getJobs(['waiting', 'paused'], { start: 0, end: 1000000 }),
+    queue.getJobs(['delayed'], { start: 0, end: 1000000 }),
   ]);
+
   const allJobs = [
-    ...inactiveJobs,
-    ...delayedJobs,
+    ...inactiveJobs.filter(job => job.name === jobType),
+    ...delayedJobs.filter(job => job.name === jobType),
   ];
   typeCheck('allJobs::Array', allJobs);
   const jobs = params.filter ? allJobs.filter(params.filter) : allJobs;
 
   // Delete the jobs.
   if (jobs.length > 0) {
-    await Promise.all(jobs.map((job) => promisify(job.remove.bind(job))()));
+    await Promise.all(jobs.map((job) => job.remove()));
     debug(`Deleted "${jobType}" jobs: ${jobs.length}`);
   }
 

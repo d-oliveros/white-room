@@ -6,9 +6,9 @@ import './NavigationButton.less';
 import Link from '#client/components/Link/Link.jsx';
 
 const NavigationButton = ({
-  color,
-  iconUrl,
-  iconSize,
+  color = '#00A238',
+  iconUrl = '/images/house-icon-white.svg',
+  iconSize = 17,
   to,
   onClick,
   title,
@@ -62,12 +62,6 @@ NavigationButton.propTypes = {
   title: PropTypes.string.isRequired,
   subtitle: PropTypes.string.isRequired,
   className: PropTypes.string,
-};
-
-NavigationButton.defaultProps = {
-  iconUrl: '/images/house-icon-white.svg',
-  iconSize: 17,
-  color: '#00A238',
 };
 
 export default NavigationButton;

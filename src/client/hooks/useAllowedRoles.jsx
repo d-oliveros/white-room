@@ -13,7 +13,7 @@ import useBranch from '#client/core/branch.jsx';
 import log from '#client/lib/log.js';
 import configureDecoratedComponent from '#client/helpers/configureDecoratedComponent.js';
 
-const debug = log.debug('decorators:allowedRoles');
+const debug = log.debug('hooks:useAllowedRoles');
 
 export function getUserLandingPage({ userRoles }) {
   const afterSignupLink = '/';

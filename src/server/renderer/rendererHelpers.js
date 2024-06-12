@@ -1,5 +1,3 @@
-import fs from 'fs';
-import path from 'path';
 import jsesc from 'jsesc';
 import assert from 'assert';
 
@@ -34,13 +32,6 @@ export function makeRendererResponse({ type, html, redirectUrl, error }) {
     redirectUrl: redirectUrl || null,
     error: error || null,
   };
-}
-
-// Reads the React app HTML container layout file.
-export function getTemplateFile() {
-  const CLIENT_ROOT = path.resolve(__dirname, '..', '..', '..', 'src', 'client');
-  const source = path.resolve(CLIENT_ROOT, 'layout.hbs');
-  return fs.readFileSync(source, { encoding: 'utf-8' });
 }
 
 // Serializes the state.

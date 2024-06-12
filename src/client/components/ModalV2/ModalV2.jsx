@@ -30,9 +30,9 @@ const ModalV2 = ({
   className,
   children,
   onClose,
-  showCloseButton,
-  closeOnBackgroundClick,
-  contentMaxWidth,
+  showCloseButton = true,
+  closeOnBackgroundClick = false,
+  contentMaxWidth = '895px',
   contentMaxHeight,
   contentHeight,
   contentPadding,
@@ -40,15 +40,15 @@ const ModalV2 = ({
   contentStyle,
   centerContent,
   theme,
-  buttonTheme,
-  buttonText,
+  buttonTheme = BUTTON_THEME_BLUR,
+  buttonText = 'Close',
   buttonProps,
-  buttonContainerProps,
-  disableAnimation,
-  contentOverflow,
-  overflow,
-  padding,
-  margin,
+  buttonContainerProps = { gap: '10px' },
+  disableAnimation = false,
+  contentOverflow = 'auto',
+  overflow = 'auto',
+  padding = '8vh 0 0 0',
+  margin = '5vh auto 0 auto',
   zIndex,
 }) => {
   const isSmallScreen = useMediaQuery({
@@ -164,22 +164,6 @@ ModalV2.propTypes = {
   padding: PropTypes.string,
   margin: PropTypes.string,
   onClose: PropTypes.func,
-};
-
-ModalV2.defaultProps = {
-  closeOnBackgroundClick: false,
-  contentMaxWidth: '895px',
-  showCloseButton: true,
-  disableAnimation: false,
-  buttonTheme: BUTTON_THEME_BLUR,
-  buttonText: 'Close',
-  buttonContainerProps: {
-    gap: '10px',
-  },
-  contentOverflow: 'auto',
-  padding: '8vh 0 0 0',
-  margin: '5vh auto 0 auto',
-  overflow: 'auto',
 };
 
 export default ModalV2;

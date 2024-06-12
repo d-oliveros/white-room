@@ -9,5 +9,5 @@ npm run knex-migrate-latest
 npm run knex-load-seeds
 
 # Lint, test, run Cypress tests
-npm run lint-strict
+npm run lint
 npm run test

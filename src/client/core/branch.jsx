@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import deepEqual from 'deep-equal';
+import lodashIsEqual from 'lodash/fp/isEqual.js';
 
 import log from '#client/lib/log.js';
 import configureDecoratedComponent from '#client/helpers/configureDecoratedComponent.js';
@@ -90,7 +90,7 @@ const wrappedBranchDecorator = (cursors = {}) => (ComponentToDecorate) => {
         invalidMapping(name, newMapping);
       }
 
-      if (deepEqual(mapping, newMapping)) {
+      if (lodashIsEqual(mapping, newMapping)) {
         return;
       }
 

@@ -56,7 +56,7 @@ const TableHeaderCell = ({
   colSpan,
   theme,
   sort,
-  sortPosition,
+  sortPosition = 'left',
   style,
 }) => {
 
@@ -86,10 +86,6 @@ const TableHeaderCell = ({
       {sortPosition === 'right' && sortDOM}
     </th>
   );
-};
-
-TableHeaderCell.defaultProps = {
-  sortPosition: 'left',
 };
 
 TableHeaderCell.propTypes = {
@@ -149,7 +145,7 @@ const TableContentRow = ({
   theme,
   sidePadding,
   rowIndex,
-  hideRow,
+  hideRow = false,
   dataset,
 }) => {
   const isZebra = (rowIndex % 2 === 1);
@@ -204,10 +200,6 @@ TableContentRow.propTypes = {
   dataset: PropTypes.object,
 };
 
-TableContentRow.defaultProps = {
-  hideRow: false,
-};
-
 const getColgroup = (headers) => {
   return (
     (headers.length > 0)
@@ -230,10 +222,10 @@ const getColgroup = (headers) => {
 };
 
 const Table = ({
-  headers,
-  rows,
+  headers = [],
+  rows = [],
   className,
-  theme,
+  theme = TABLE_THEME_DEFAULT,
   sidePadding,
   minWidth,
   sticky,
@@ -312,12 +304,6 @@ Table.propTypes = {
   className: PropTypes.string,
   minWidth: PropTypes.string,
   sticky: PropTypes.bool,
-};
-
-Table.defaultProps = {
-  headers: [],
-  rows: [],
-  theme: TABLE_THEME_DEFAULT,
 };
 
 export default Table;

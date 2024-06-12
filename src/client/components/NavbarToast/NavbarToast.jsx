@@ -14,8 +14,8 @@ const NAVBAR_TOAST_THEMES = Object.keys(NAVBAR_TOAST_THEME_TO_CLASSNAME_MAPPING)
 
 const NavbarToast = ({
   toastContent,
-  theme,
-  disappear,
+  theme = NAVBAR_TOAST_THEME_GREEN,
+  disappear = true,
 }) => (
   <div
     className={classnames('navbar-toast', NAVBAR_TOAST_THEME_TO_CLASSNAME_MAPPING[theme], {
@@ -31,11 +31,6 @@ const NavbarToast = ({
 NavbarToast.propTypes = {
   theme: PropTypes.oneOf(NAVBAR_TOAST_THEMES),
   disappear: PropTypes.bool,
-};
-
-NavbarToast.defaultProps = {
-  theme: NAVBAR_TOAST_THEME_GREEN,
-  disappear: true,
 };
 
 export default NavbarToast;

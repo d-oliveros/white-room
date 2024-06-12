@@ -19,8 +19,6 @@ class OpenStreetMap extends Component {
     initialZoom: 12,
   };
 
-  static displayName = 'OpenStreetMap';
-
   render() {
     if (!process.browser) {
       return null;

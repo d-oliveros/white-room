@@ -8,7 +8,7 @@ import Link from '#client/components/Link/Link.jsx';
 const LinkCard = ({
   title,
   label,
-  linkLabel,
+  linkLabel = 'View',
   linkTo,
   backgroundImageUrl,
 }) => (
@@ -44,10 +44,6 @@ LinkCard.propTypes = {
   backgroundImageUrl: PropTypes.string,
   linkLabel: PropTypes.string,
   linkTo: PropTypes.string,
-};
-
-LinkCard.defaultProps = {
-  linkLabel: 'View',
 };
 
 export default LinkCard;

@@ -8,7 +8,14 @@ import Text from '#client/components/Text.jsx';
 export const FORM_FIELD_GROUP_THEME_RENTAL_APPLICATION_LIST = 'rentalApplicationList';
 export const FORM_FIELD_GROUP_THEME_RENTAL_APPLICATION_GROUP = 'rentalApplicationGroup';
 
-const FormFieldGroup = ({ title, label, subtitle, formFields, formikBag, theme }) => {
+const FormFieldGroup = ({
+  title,
+  label,
+  subtitle,
+  formFields,
+  formikBag,
+  theme = FORM_FIELD_GROUP_THEME_RENTAL_APPLICATION_LIST,
+}) => {
   if (formFields.length === 0) {
     return null;
   }
@@ -50,10 +57,6 @@ FormFieldGroup.propTypes = {
     FORM_FIELD_GROUP_THEME_RENTAL_APPLICATION_LIST,
     FORM_FIELD_GROUP_THEME_RENTAL_APPLICATION_GROUP,
   ]),
-};
-
-FormFieldGroup.defaultProps = {
-  theme: FORM_FIELD_GROUP_THEME_RENTAL_APPLICATION_LIST,
 };
 
 export default FormFieldGroup;
