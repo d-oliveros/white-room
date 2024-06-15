@@ -15,7 +15,7 @@ import PasswordResetConfirmForm from '#client/components/PasswordResetConfirmFor
 import Navbar from '#client/components/Navbar/Navbar.jsx';
 import Link from '#client/components/Link/Link.jsx';
 
-import AuthActions from '#client/actions/Auth/index.js';
+import AuthActions from '#client/actions/Auth/index.jsx';
 
 const ResetPasswordConfirmPage = () => {
   const navigate = useNavigate();

@@ -9,7 +9,7 @@ import { SCREEN_ID_LOGOUT } from '#client/constants/screenIds.js';
 import Logo from '#client/components/Logo/Logo.jsx';
 
 import log from '#client/lib/log.js';
-import AuthActions from '#client/actions/Auth/index.js';
+import AuthActions from '#client/actions/Auth/index.jsx';
 import useBranch from '#client/hooks/useBranch.js';
 import useTransitionHook from '#client/hooks/useTransitionHook.js';
 import useScreenId from '#client/hooks/useScreenId.jsx';

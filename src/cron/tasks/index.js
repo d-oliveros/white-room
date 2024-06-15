@@ -1,3 +1,3 @@
-import loadModuleIndex from '#common/util/loadModuleIndex.js';
+import loadModulesNode from '#common/util/loadModulesNode.js';
 
-export default loadModuleIndex(import.meta.url);
+export default await loadModulesNode(import.meta.url);

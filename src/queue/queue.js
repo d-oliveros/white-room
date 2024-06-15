@@ -16,7 +16,7 @@ const queue = new Bull('q', {
 });
 
 queue.on('waiting', (jobId) => {
-  debug(`Job #${jobId} got queued`);
+  debug(`Jobs #${jobId} got queued`);
 });
 
 queue.on('active', (job) => {

@@ -6,8 +6,11 @@ import ReactAppContext from '#client/core/ReactAppContext.js';
 import App from '#client/App.jsx';
 import routes from '#client/routes.js';
 
+console.log('DEFINING ROOT');
+
 const Root = ({ apiClient, tree }) => {
   const navigate = useNavigate();
+  console.log('MOUNTING');
 
   return (
     <ReactAppContext.Provider
@@ -17,7 +20,10 @@ const Root = ({ apiClient, tree }) => {
         navigate: navigate,
       }}
     >
-      <App routes={routes} apiClient={apiClient} />
+      <App
+        routes={routes}
+        apiClient={apiClient}
+      />
     </ReactAppContext.Provider>
   );
 };

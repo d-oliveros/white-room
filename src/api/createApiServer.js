@@ -46,7 +46,7 @@ function rejectApiRequest({ res, error, actionType }) {
 }
 
 function authenticateAction(actionSpecs, options) {
-  typeCheck('actionSpecs::NonEmptyObject', actionSpecs);
+  typeCheck('actionSpescs::NonEmptyObject', actionSpecs);
   return function authenticateActionMiddleware(req, res, next) {
     const session = res.locals && res.locals[options?.sessionName || 'session'] || null;
     const actionType = req.params.actionType;

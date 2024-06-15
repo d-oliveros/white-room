@@ -5,6 +5,7 @@ import log from '../src/client/lib/log';
 
 const {
   COMMIT_HASH,
+  APP_URL,
 } = process.env;
 
 export const createLoggerFunc = (funcName) => {
@@ -33,6 +34,7 @@ export const loggedOutTree = createTree(
 export const dummyApiClient = createApiClient({
   commitHash: COMMIT_HASH,
   apiPath: '/api/v1',
+  appUrl: APP_URL,
   sessionTokenName: 'X-Session-Token',
 });
 

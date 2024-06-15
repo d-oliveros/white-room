@@ -1,3 +1,5 @@
+const { generateScopedNameFactory } = require('@dr.pogodin/babel-plugin-react-css-modules/utils');
+
 module.exports = {
   // Apply these settings only to React files.
   overrides: [
@@ -7,6 +9,7 @@ module.exports = {
         '@babel/preset-react',
       ],
       plugins: [
+        './babel-plugin-transform-glob-imports',
         // 'react-refresh/babel',
         // ['@babel/plugin-transform-runtime', { corejs: 3 }],
         // ['@babel/plugin-proposal-decorators', { legacy: true }],
@@ -25,7 +28,9 @@ module.exports = {
                 syntax: 'postcss-less',
               },
             },
-            generateScopedName: '[name]--[local]--[hash:base64:6]',
+            generateScopedName: (
+              generateScopedNameFactory('[name]--[local]--[hash:base64:6]')
+            ),
           },
         ],
       ],

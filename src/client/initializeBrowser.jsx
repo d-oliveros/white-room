@@ -9,6 +9,10 @@
  * - Ensures proper initialization in the browser environment
  * - Configured as the entry point in Webpack
  */
+import './style/normalize.less';
+import './style/fonts.less';
+import './style/global.less';
+
 import React from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { hydrateRoot } from 'react-dom/client';
@@ -17,13 +21,12 @@ import createApiClient from '#api/createApiClient.js';
 import getStoreFromBrowser from '#client/core/getStoreFromBrowser.js';
 import initDevelopmentEnv from '#client/core/developmentEnv.js';
 import log from '#client/lib/log.js';
+import Root from '#client/core/Root.jsx';
 
 import { ANALYTICS_EVENT_USER_SESSION } from '#client/analytics/eventList.js';
 import analytics from '#client/analytics/analytics.js';
 
-import './style/style.less';
-
-// Ensure the code runs only in the browser environment
+console.log('ROOT IS', Root);
 if (process.browser) {
   log.info('Initializing browser client.');
 
@@ -34,6 +37,14 @@ if (process.browser) {
   if (process.env.NODE_ENV !== 'production') {
     initDevelopmentEnv(store);
   }
+
+  // Create API client
+  const apiClient = createApiClient({
+    commitHash: store.get(['env', 'COMMIT_HASH']),
+    apiPath: '/api/v1',
+    appUrl: store.get(['env', 'APP_URL']),
+    sessionTokenName: 'X-Session-Token',
+  });
 
   // Configure the analytics library
   analytics.configure({
@@ -52,28 +63,23 @@ if (process.browser) {
   // Get the container node where the app will be mounted
   const containerNode = global.document.getElementById('react-container');
 
-  const renderAppInDOM = () => {
-    const Root = require('./core/Root.jsx').default;
+  console.log('Hydrating');
+  const root = hydrateRoot(containerNode, (
+    <BrowserRouter>
+      <Root tree={store} apiClient={apiClient} />
+    </BrowserRouter>
+  ));
 
-    // Inject API client
-    const apiClient = createApiClient({
-      commitHash: store.get(['env', 'COMMIT_HASH']),
-      apiPath: '/api/v1',
-      sessionTokenName: 'X-Session-Token',
+  console.log('FINISH');
+  if (false && import.meta.hot) {
+    module.meta.hot.accept('./core/Root.jsx', async () => {
+      console.log('DOING');
+      const { default: Root } = await import('./core/Root.jsx');
+      root.render((
+        <BrowserRouter>
+          <Root tree={store} apiClient={apiClient} />
+        </BrowserRouter>
+      ));
     });
-
-    const rootedApp = (
-      <BrowserRouter>
-        <Root tree={store} apiClient={apiClient} />
-      </BrowserRouter>
-    );
-
-    hydrateRoot(containerNode, rootedApp);
-  };
-
-  if (module.hot) {
-    module.hot.accept('./core/Root.jsx', renderAppInDOM);
   }
-
-  renderAppInDOM();
 }

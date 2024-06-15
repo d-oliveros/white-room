@@ -4,7 +4,7 @@ import { Link as ReactRouterDomLink } from 'react-router-dom';
 import classnames from 'classnames';
 
 import branch from '#client/core/branch.jsx';
-import Navigator from '#client/actions/Navigator/index.js';
+import Navigator from '#client/actions/Navigator/index.jsx';
 
 import './Link.less';
 

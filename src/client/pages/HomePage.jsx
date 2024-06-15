@@ -45,7 +45,8 @@ const HomePage = () => {
       }
 
       <div>
-        <h3>Users</h3>
+        <button onClick={() => console.log('click')}>Button</button>
+        <h3 onClick={() => global.alert('hola')}>Users</h3>
         <Link to='/user/1'>User 1</Link>
       </div>
 

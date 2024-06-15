@@ -21,7 +21,7 @@ import Link from '#client/components/Link/Link.jsx';
 import LoginForm from '#client/components/LoginForm/LoginForm.jsx';
 import Logo from '#client/components/Logo/Logo.jsx';
 
-import AuthActions from '#client/actions/Auth/index.js';
+import AuthActions from '#client/actions/Auth/index.jsx';
 
 const LoginPage = () => {
   useTransitionHook();

@@ -8,7 +8,7 @@ import makeInitialState from '#client/makeInitialState.js';
 
 const debug = log.debug('state');
 
-const { NODE_ENV } = process.env;
+const NODE_ENV = process.env.NODE_ENV;
 
 /**
  * Loads the client's initial state.

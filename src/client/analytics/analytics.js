@@ -12,7 +12,7 @@ import {
   ANALYTICS_EVENT_PAGE_VIEWED,
 } from '#client/analytics/eventList.js';
 
-const { NODE_ENV } = process.env;
+const NODE_ENV = process.env.NODE_ENV;
 const debug = log.debug('analytics');
 
 function makeUserId(state) {

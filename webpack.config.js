@@ -4,38 +4,43 @@ import webpack from 'webpack';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import CssMinimizerPlugin from 'css-minimizer-webpack-plugin';
 import TerserPlugin from 'terser-webpack-plugin';
-import compact from 'lodash/fp/compact.js';
+import NodePolyfillPlugin from 'node-polyfill-webpack-plugin';
 
-const { NODE_ENV, COMMIT_HASH } = process.env;
+const {
+  NODE_ENV,
+  COMMIT_HASH,
+  WEBPACK_DEVELOPMENT_SERVER_PORT,
+} = process.env;
+
 const isProd = NODE_ENV === 'production';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const nodeModulesPath = path.resolve(__dirname, 'node_modules');
-const buildPath = path.resolve(__dirname, 'public', 'dist');
+const buildPath = path.resolve(__dirname, 'public', isProd ? 'dist' : 'build');
 const srcPath = path.resolve(__dirname, 'src');
-
-// Read src folder to get list of folder names
-// then, build an object { [foldername]: path.resolve(srcPath, foldername)}
+const devServerPort = parseInt(WEBPACK_DEVELOPMENT_SERVER_PORT, 10) || 8001;
 
 const webpackConfig = {
+  cache: false, // TODO: Set to true
   mode: isProd ? 'production' : 'development',
   devtool: isProd ? 'source-map' : 'cheap-module-source-map',
+  target: 'web',
   entry: [
+    // !isProd && `webpack-dev-server/client?http://localhost:${devServerPort}`,
+    // !isProd && 'webpack/hot/only-dev-server',
     path.resolve(srcPath, 'client', 'initializeBrowser.jsx'),
-  ],
+  ].filter(Boolean),
   output: {
     path: buildPath,
     filename: `bundle${COMMIT_HASH ? '-' + COMMIT_HASH : ''}.js`,
-    publicPath: isProd ? '/' : '/dist/',
+    publicPath: isProd ? '/' : `http://localhost:${devServerPort}/build`,
+    // publicPath: isProd ? '/' : '/build',
   },
   resolve: {
     modules: [srcPath, 'node_modules'],
     alias: {
       '@src': srcPath,
     },
-    // fallback: {
-    //   path: require.resolve('path-browserify'),
-    // },
   },
   optimization: {
     minimize: isProd,
@@ -68,13 +73,12 @@ const webpackConfig = {
         use: {
           loader: 'babel-loader',
           options: {
-            configFile: path.resolve(__dirname, 'babel.client.config.js'),
+            configFile: path.resolve(__dirname, 'babel.webpack.config.cjs'),
           },
         },
       },
       {
         test: /\.less$/,
-        exclude: [path.resolve(srcPath, 'client/style')],
         use: [
           isProd ? MiniCssExtractPlugin.loader : 'style-loader',
           {
@@ -87,32 +91,14 @@ const webpackConfig = {
             },
           },
           'postcss-loader',
-          'less-loader',
           {
-            loader: 'text-transform-loader',
+            loader: 'less-loader',
             options: {
-              prependText: (
-                `@import "${srcPath}/client/style/fonts.less";\n` +
+              additionalData: (
                 `@import "${srcPath}/client/style/variables.less";\n`
               ),
             },
           },
-        ],
-      },
-      {
-        test: /\.less$/,
-        include: [path.resolve(srcPath, 'client/style')],
-        use: [
-          isProd ? MiniCssExtractPlugin.loader : 'style-loader',
-          {
-            loader: 'css-loader',
-            options: {
-              modules: false,
-              importLoaders: 1,
-            },
-          },
-          'postcss-loader',
-          'less-loader',
         ],
       },
       {
@@ -128,22 +114,49 @@ const webpackConfig = {
       },
     ],
   },
-  plugins: compact([
+  plugins: [
+    new NodePolyfillPlugin({
+      onlyAliases: ['path', 'url', 'fs'],
+    }),
     isProd && new MiniCssExtractPlugin({
       filename: `style${COMMIT_HASH ? '-' + COMMIT_HASH : ''}.css`,
       chunkFilename: '[id].css',
     }),
-    !isProd && new webpack.NoEmitOnErrorsPlugin(),
     new webpack.DefinePlugin({
-      'process.browser': true,
-      'process.env': {
-        NODE_ENV: JSON.stringify(NODE_ENV),
+      'process.browser': JSON.stringify(true),
+      'process.env': JSON.stringify({}),
+      'process.env.NODE_ENV': JSON.stringify(NODE_ENV),
+      'global': 'window',
+    }),
+    // isProd && new webpack.optimize.LimitChunkCountPlugin({
+    //   maxChunks: 1,
+    // }),
+  ].filter(Boolean),
+  devServer: isProd ? null : {
+    host: '0.0.0.0',
+    port: devServerPort,
+    static: {
+      directory: buildPath,
+      publicPath: '/build/',
+    },
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+    },
+    compress: true,
+    // hot: true,
+    hot: false,
+    client: {
+      webSocketTransport: 'ws',
+      progress: true,
+      overlay: true,
+      webSocketURL: {
+        hostname: 'localhost',
+        pathname: '/ws',
+        port: devServerPort,
+        protocol: 'ws',
       },
-    }),
-    isProd && new webpack.optimize.LimitChunkCountPlugin({
-      maxChunks: 1,
-    }),
-  ]),
+    },
+  },
 };
 
 export default webpackConfig;

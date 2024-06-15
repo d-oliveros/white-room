@@ -1,7 +1,7 @@
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 import lodashValues from 'lodash/fp/values.js';
-import loadModules from '#common/util/loadModules.js';
+import loadModulesNode from '#common/util/loadModulesNode.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -20,7 +20,7 @@ function getActionSpecsList(actionSpecs) {
   }, []);
 }
 
-export const actionSpecs = await loadModules(join(__dirname, 'handlers'));
+export const actionSpecs = await loadModulesNode(join(__dirname, 'handlers'));
 export const actionSpecsList = getActionSpecsList(actionSpecs);
 
 export * as actionTypes from './actionTypes.js';

@@ -1,6 +1,6 @@
 import debug from 'debug';
-import log from '../lib/log';
-import safeLocalStorage from '../lib/safeLocalStorage';
+import log from '../lib/log.js';
+import safeLocalStorage from '../lib/safeLocalStorage.js';
 
 export default function developmentEnvironment(state) {
 

@@ -1,4 +1,5 @@
 import { promisify } from 'util';
+// import open from 'open';
 
 const {
   APP_PORT,
@@ -9,6 +10,7 @@ const {
   ENABLE_CRON,
   ENABLE_KNEX_MIGRATIONS,
   CRON_WHITELIST,
+  NODE_ENV
 } = process.env;
 
 // TODO: Check if module resolver works in this scope!
@@ -92,6 +94,9 @@ const init = async () => {
 
     await Promise.all(promises);
 
+    if (NODE_ENV === 'development' && ENABLE_SERVER === 'true') {
+      // open(`http://localhost:${APP_PORT}`);
+    }
   } catch (error) {
     logger.error(error);
     process.exit(1);

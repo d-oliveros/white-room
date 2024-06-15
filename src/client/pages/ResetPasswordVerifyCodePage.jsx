@@ -14,7 +14,7 @@ import useScreenId from '#client/hooks/useScreenId.jsx';
 import useScrollToTop from '#client/hooks/useScrollToTop.jsx';
 import useAllowedRoles from '#client/hooks/useAllowedRoles.jsx';
 import useApiState from '#client/hooks/useApiState.jsx';
-import AuthActions from '#client/actions/Auth/index.js';
+import AuthActions from '#client/actions/Auth/index.jsx';
 
 import PasswordResetSmsVerifyCode from '#client/components/PasswordResetSmsVerifyCode/PasswordResetSmsVerifyCode.jsx';
 import SmsSendingIndicator from '#client/components/SmsSendingIndicator/SmsSendingIndicator.jsx';

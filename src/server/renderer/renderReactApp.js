@@ -38,7 +38,6 @@ const {
   SEGMENT_KEY,
   COMMIT_HASH,
   WEBPACK_DEVELOPMENT_SERVER_PORT,
-  WEBPACK_DEVELOPMENT_SERVER_PUBLIC_PORT,
   HTML_ROBOTS_TAG,
 } = process.env;
 
@@ -88,6 +87,7 @@ export default async function renderReactApp({ state, url, sessionToken }) {
       commitHash: COMMIT_HASH,
       getSessionToken: () => sessionToken,
       apiPath: '/api/v1',
+      appUrl: APP_URL,
       sessionTokenName: 'X-Session-Token',
     });
 
@@ -124,7 +124,7 @@ export default async function renderReactApp({ state, url, sessionToken }) {
       devScriptBaseUrl: `${appUrl.protocol}//${appUrl.hostname}`,
       meta: { ...defaultMetas, ...(tree.get('pageMetadata') || {}) },
       segmentKey: SEGMENT_KEY,
-      webpackDevelopmentServerPort: WEBPACK_DEVELOPMENT_SERVER_PUBLIC_PORT || WEBPACK_DEVELOPMENT_SERVER_PORT,
+      webpackDevelopmentServerPort: WEBPACK_DEVELOPMENT_SERVER_PORT || 8001,
       serializedState: serializeState(tree),
       bundleSrc: useBuild
         ? `${AWS_BUNDLES_URL || ''}/js/bundle${COMMIT_HASH ? `-${COMMIT_HASH}` : ''}.js`
@@ -161,8 +161,14 @@ export default async function renderReactApp({ state, url, sessionToken }) {
  * @return {Array} Array containing the matched route and params.
  */
 function matchRoute(routes, pathname) {
+  let notFoundRoute = null;
+
   for (const route of routes) {
     const { path } = route;
+    if (!path) {
+      notFoundRoute = route;
+      continue;
+    }
     const paramNames = [];
     const regexPath = path.replace(/:([^/]+)/g, (_, paramName) => {
       paramNames.push(paramName);
@@ -181,5 +187,12 @@ function matchRoute(routes, pathname) {
       return [{ route, params }];
     }
   }
+  if (notFoundRoute) {
+    return [{
+      route: notFoundRoute,
+      params: {},
+    }];
+  }
+
   return [];
 }

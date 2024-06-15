@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 
-import AnalyticsActions from '#client/actions/Analytics/index.js';
+import AnalyticsActions from '#client/actions/Analytics/index.jsx';
 
 import useDispatch from '#client/hooks/useDispatch.js';
 

@@ -14,18 +14,12 @@ import {
 import log from '#client/lib/log.js';
 import * as actionTypes from '#api/actionTypes.js';
 
-const {
-  APP_PORT,
-} = process.env;
-
 const debug = log.debug('api:client');
 
 const actionTypesList = Object.keys(actionTypes);
 
-// The URL has to be an absolute URL when run on serverside.
-const requestPathUrlPrefix = process.browser ? '' : `http://localhost:${APP_PORT}`;
-
-export function makeApiRequestUrl({ actionType, actionPayload, apiPath }) {
+export function makeApiRequestUrl({ actionType, actionPayload, apiPath, appUrl }) {
+  typeCheck('appUrl::NonEmptyString', appUrl);
   typeCheck('actionType::ValidActionType', actionType, {
     customTypes: {
       ValidActionType: {
@@ -40,7 +34,7 @@ export function makeApiRequestUrl({ actionType, actionPayload, apiPath }) {
     ? `?${new URLSearchParams(actionPayload)}`
     : '';
 
-  return `${requestPathUrlPrefix}${apiPath}/${actionType}${query}`;
+  return `${appUrl}${apiPath}/${actionType}${query}`;
 }
 
 function makeApiRequestMethod({
@@ -49,6 +43,7 @@ function makeApiRequestMethod({
   getSessionToken,
   onCommitHashChange,
   apiPath,
+  appUrl,
   sessionTokenName,
 }) {
   return async function apiRequest(actionType, actionPayload, actionOptions = {}) {
@@ -66,7 +61,7 @@ function makeApiRequestMethod({
 
     debug(`Requesting ${apiPath}/${actionType}`, actionPayload);
 
-    let requestChain = superagent[method](`${requestPathUrlPrefix}${apiPath}/${actionType}`);
+    let requestChain = superagent[method](`${appUrl}${apiPath}/${actionType}`);
 
     const sessionToken = getSessionToken ? getSessionToken() : null;
 
@@ -209,6 +204,7 @@ export default function createApiClient(params = {}) {
       commitHash: params.commitHash,
       getSessionToken: params.getSessionToken,
       apiPath: params.apiPath,
+      appUrl: params.appUrl,
       sessionTokenName: params.sessionTokenName,
       onCommitHashChange: () => {
         apiClient.commitHashChangedTimestamp = (
@@ -221,6 +217,7 @@ export default function createApiClient(params = {}) {
       commitHash: params.commitHash,
       getSessionToken: params.getSessionToken,
       apiPath: params.apiPath,
+      appUrl: params.appUrl,
       sessionTokenName: params.sessionTokenName,
       onCommitHashChange: () => {
         apiClient.commitHashChangedTimestamp = (

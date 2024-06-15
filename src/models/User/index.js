@@ -1,7 +1,7 @@
-import loadModuleIndex from '#common/util/loadModuleIndex.js';
+import loadModulesNode from '#common/util/loadModulesNode.js';
 import knex from '#server/db/knex.js';
 
-const modules = loadModuleIndex(import.meta.url);
+const modules = await loadModulesNode(import.meta.url);
 
 const UserModel = new Proxy(modules, {
   get(target, name) {

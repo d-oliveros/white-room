@@ -15,7 +15,7 @@ import {
   createInitialValues,
 } from '#client/helpers/formikHelpers.js';
 
-import AuthActions from '#client/actions/Auth/index.js';
+import AuthActions from '#client/actions/Auth/index.jsx';
 
 import Box from '#client/components/Box/Box.jsx';
 import Card from '#client/components/Card/Card.jsx';

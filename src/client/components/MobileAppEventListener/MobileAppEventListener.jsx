@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import log from '#client/lib/log.js';
 
-import MobileAppActions from '#client/actions/MobileApp/index.js';
+import MobileAppActions from '#client/actions/MobileApp/index.jsx';
 import useDispatch from '#client/hooks/useDispatch.js';
 
 export const WEB_APP_ACTION_TYPE_UPDATE_DEVICE_REGISTRATION_IDS = 'WEB_APP_ACTION_TYPE_UPDATE_DEVICE_REGISTRATION_IDS'; // eslint-disable-line max-len

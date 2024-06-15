@@ -1,5 +1,3 @@
-import { URL } from 'url';
-
 export default function parseS3Url(s3Url) {
   if (!s3Url) {
     return false;

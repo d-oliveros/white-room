@@ -16,7 +16,7 @@ import useAllowedRoles from '#client/hooks/useAllowedRoles.jsx';
 import useApiState from '#client/hooks/useApiState.jsx';
 import postWithState from '#client/actions/postWithState.js';
 
-import AuthActions from '#client/actions/Auth/index.js';
+import AuthActions from '#client/actions/Auth/index.jsx';
 
 import PasswordResetSmsForm from '#client/components/PasswordResetSmsForm/PasswordResetSmsForm.jsx';
 import SmsSendingIndicator from '#client/components/SmsSendingIndicator/SmsSendingIndicator.jsx';
