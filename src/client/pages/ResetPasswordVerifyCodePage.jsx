@@ -5,13 +5,10 @@ import {
   API_ACTION_VERIFY_PHONE_SMS_CODE_REQUESTED,
 } from '#api/actionTypes.js';
 import { USER_ROLE_ANONYMOUS } from '#common/userRoles.js';
-import { SCREEN_ID_RESET_PASSWORD_VALIDATE_CODE } from '#client/constants/screenIds.js';
 
 import log from '#client/lib/log.js';
 import useBranch from '#client/hooks/useBranch.js';
 import useTransitionHook from '#client/hooks/useTransitionHook.js';
-import useScreenId from '#client/hooks/useScreenId.jsx';
-import useScrollToTop from '#client/hooks/useScrollToTop.jsx';
 import useAllowedRoles from '#client/hooks/useAllowedRoles.jsx';
 import useApiState from '#client/hooks/useApiState.jsx';
 import AuthActions from '#client/actions/Auth/index.jsx';
@@ -22,24 +19,24 @@ import Navbar from '#client/components/Navbar/Navbar.jsx';
 import Link from '#client/components/Link/Link.jsx';
 
 const ResetPasswordVerifyCodePage = () => {
-  const navigate = useNavigate();
-  useTransitionHook();
   useAllowedRoles({
     roles: [
       USER_ROLE_ANONYMOUS,
     ],
     redirectUrl: '/',
   });
+  useTransitionHook();
+  const navigate = useNavigate();
+
   const { verifyPhoneApiState } = useApiState({
     verifyPhoneApiState: {
       action: API_ACTION_VERIFY_PHONE_SMS_CODE_REQUESTED,
     },
   });
+
   const { phone } = useBranch({
     phone: ['resetPasswordForm', 'phone'],
   });
-  useScreenId(SCREEN_ID_RESET_PASSWORD_VALIDATE_CODE);
-  useScrollToTop();
 
   const [state, setState] = useState({
     showSmsSending: false,

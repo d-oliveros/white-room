@@ -1,23 +1,31 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
 
 import ReactAppContext from '#client/core/ReactAppContext.js';
+import makeDispatchFn from '#client/core/makeDispatchFn.js';
+
 import App from '#client/App.jsx';
 import routes from '#client/routes.js';
 
-console.log('DEFINING ROOT');
-
-const Root = ({ apiClient, tree }) => {
+const Root = ({ state, apiClient }) => {
   const navigate = useNavigate();
-  console.log('MOUNTING');
+
+  const dispatch = useMemo(() => {
+    return makeDispatchFn({
+      state,
+      apiClient,
+      navigate,
+    });
+  }, [state, apiClient, navigate]);
 
   return (
     <ReactAppContext.Provider
       value={{
-        tree,
+        state,
         apiClient,
-        navigate: navigate,
+        navigate,
+        dispatch,
       }}
     >
       <App
@@ -30,7 +38,7 @@ const Root = ({ apiClient, tree }) => {
 
 Root.propTypes = {
   apiClient: PropTypes.object.isRequired,
-  tree: PropTypes.object.isRequired,
+  state: PropTypes.object.isRequired,
 };
 
 export default Root;

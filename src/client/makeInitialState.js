@@ -13,6 +13,18 @@ export default function makeInitialState() {
       byId: {},
     },
 
+    // Environmental variables
+    // Every property in this object will be passed to the initial frontend state
+    // from the server's environment automatically. Add more environmental variables here
+    // to expose them in the frontend. Careful - these will be public!
+    env: {
+      APP_ID: null,
+      APP_URL: null,
+      APP_TITLE: null,
+      NODE_ENV: null,
+      COMMIT_HASH: null,
+    },
+
     // System
     isTransitioning: false,
     pendingCommit: false,
@@ -30,12 +42,21 @@ export default function makeInitialState() {
       askForReview: false,
       askPushNotifications: false,
     },
-
-    // Analytics
-    pageMetadata: {},
+    pageMetadata: {
+      pageTitle: null,
+      robots: null,
+      keywords: null,
+      description: null,
+      image: null,
+    },
+    pageMetadataDefault: {
+      pageTitle: null,
+      robots: null,
+      keywords: null,
+      description: null,
+      image: null,
+    },
     analytics: {
-      screenId: null,
-      screenIdHistory: [],
       pathHistory: [],
       analyticsSessionId: null,
       shouldTrackNewSession: false,
@@ -77,18 +98,6 @@ export default function makeInitialState() {
         isBrowser: null,
         isCrawler: null,
       },
-    },
-
-    // Environmental variables
-    // Every property in this object will be passed to the initial frontend state
-    // from the server's environment automatically. Add more environmental variables here
-    // to expose them in the frontend. Careful - these will be public!
-    env: {
-      APP_ID: null,
-      APP_URL: null,
-      APP_TITLE: null,
-      NODE_ENV: null,
-      COMMIT_HASH: null,
     },
   };
 }

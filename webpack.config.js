@@ -5,6 +5,8 @@ import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import CssMinimizerPlugin from 'css-minimizer-webpack-plugin';
 import TerserPlugin from 'terser-webpack-plugin';
 import NodePolyfillPlugin from 'node-polyfill-webpack-plugin';
+import { WebpackManifestPlugin } from 'webpack-manifest-plugin';
+import ReactRefreshWebpackPlugin from '@pmmmwh/react-refresh-webpack-plugin';
 
 const {
   NODE_ENV,
@@ -15,26 +17,31 @@ const {
 const isProd = NODE_ENV === 'production';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const nodeModulesPath = path.resolve(__dirname, 'node_modules');
 const buildPath = path.resolve(__dirname, 'public', isProd ? 'dist' : 'build');
 const srcPath = path.resolve(__dirname, 'src');
-const devServerPort = parseInt(WEBPACK_DEVELOPMENT_SERVER_PORT, 10) || 8001;
+const webpackDevServerPort = parseInt(WEBPACK_DEVELOPMENT_SERVER_PORT, 10) || 8001;
 
 const webpackConfig = {
-  cache: false, // TODO: Set to true
+  cache: {
+    type: 'filesystem',
+  },
   mode: isProd ? 'production' : 'development',
   devtool: isProd ? 'source-map' : 'cheap-module-source-map',
   target: 'web',
   entry: [
-    // !isProd && `webpack-dev-server/client?http://localhost:${devServerPort}`,
-    // !isProd && 'webpack/hot/only-dev-server',
     path.resolve(srcPath, 'client', 'initializeBrowser.jsx'),
   ].filter(Boolean),
   output: {
     path: buildPath,
     filename: `bundle${COMMIT_HASH ? '-' + COMMIT_HASH : ''}.js`,
-    publicPath: isProd ? '/' : `http://localhost:${devServerPort}/build`,
-    // publicPath: isProd ? '/' : '/build',
+    // filename: isProd ? '[name].[contenthash].js' : '[name].bundle.js',
+    // chunkFilename: isProd ? '[name].[contenthash].js' : '[name].bundle.js',
+
+    // filename: isProd
+    //   ? '[name].[contenthash].js'
+    //   : '[name].bundle.js',
+    publicPath: isProd ? '/' : '/build',
+    clean: true,
   },
   resolve: {
     modules: [srcPath, 'node_modules'],
@@ -54,26 +61,77 @@ const webpackConfig = {
       }),
       new CssMinimizerPlugin(),
     ],
-    splitChunks: {
-      cacheGroups: {
-        styles: {
-          name: 'styles',
-          test: /\.css$/,
-          chunks: 'all',
-          enforce: true,
-        },
-      },
-    },
+    splitChunks: false,
+
+    // splitChunks: {
+    //   chunks: 'all',
+    //   minSize: 20000,
+    //   maxSize: 70000,
+    //   minChunks: 1,
+    //   automaticNameDelimiter: '~',
+    //   cacheGroups: {
+    //     defaultVendors: {
+    //       test: /[\\/]node_modules[\\/]/,
+    //       name: 'vendors',
+    //       chunks: 'all',
+    //       priority: -10,
+    //       reuseExistingChunk: true,
+    //     },
+    //     default: {
+    //       minChunks: 2,
+    //       priority: -20,
+    //       reuseExistingChunk: true,
+    //     },
+    //   },
+    // },
+    // runtimeChunk: 'single',
+
+    // splitChunks: {
+    //   chunks: 'all',
+    //   minSize: 20000,
+    //   maxSize: 70000,
+    //   minChunks: 1,
+    //   automaticNameDelimiter: '~',
+    //   cacheGroups: {
+    //     styles: {
+    //       name: 'styles',
+    //       test: /\.css$/,
+    //       chunks: 'all',
+    //       enforce: true,
+    //       priority: 20,
+    //     },
+    //     scripts: {
+    //       name: 'scripts',
+    //       test: /\.jsx?$/,
+    //       chunks: 'all',
+    //       enforce: true,
+    //       priority: 10,
+    //     },
+    //     vendors: {
+    //       test: /[\\/]node_modules[\\/]/,
+    //       name: 'vendors',
+    //       chunks: 'all',
+    //       priority: -10,
+    //       reuseExistingChunk: true,
+    //     },
+    //     default: {
+    //       minChunks: 2,
+    //       priority: -20,
+    //       reuseExistingChunk: true,
+    //     },
+    //   },
+    // },
   },
   module: {
     rules: [
       {
         test: /\.jsx?$/,
-        exclude: [nodeModulesPath],
+        exclude: /node_modules/,
         use: {
           loader: 'babel-loader',
           options: {
-            configFile: path.resolve(__dirname, 'babel.webpack.config.cjs'),
+            configFile: path.resolve(__dirname, 'babel.web.config.cjs'),
+            plugins: [!isProd && 'react-refresh/babel'].filter(Boolean),
           },
         },
       },
@@ -118,6 +176,9 @@ const webpackConfig = {
     new NodePolyfillPlugin({
       onlyAliases: ['path', 'url', 'fs'],
     }),
+    !isProd && new ReactRefreshWebpackPlugin({
+      exclude: /node_modules/,
+    }),
     isProd && new MiniCssExtractPlugin({
       filename: `style${COMMIT_HASH ? '-' + COMMIT_HASH : ''}.css`,
       chunkFilename: '[id].css',
@@ -128,13 +189,14 @@ const webpackConfig = {
       'process.env.NODE_ENV': JSON.stringify(NODE_ENV),
       'global': 'window',
     }),
-    // isProd && new webpack.optimize.LimitChunkCountPlugin({
-    //   maxChunks: 1,
-    // }),
+    new WebpackManifestPlugin({
+      fileName: 'manifest.json',
+      publicPath: '/build/',
+    }),
   ].filter(Boolean),
   devServer: isProd ? null : {
-    host: '0.0.0.0',
-    port: devServerPort,
+    host: 'localhost',
+    port: webpackDevServerPort,
     static: {
       directory: buildPath,
       publicPath: '/build/',
@@ -143,18 +205,9 @@ const webpackConfig = {
       'Access-Control-Allow-Origin': '*',
     },
     compress: true,
-    // hot: true,
-    hot: false,
+    hot: true,
     client: {
-      webSocketTransport: 'ws',
-      progress: true,
-      overlay: true,
-      webSocketURL: {
-        hostname: 'localhost',
-        pathname: '/ws',
-        port: devServerPort,
-        protocol: 'ws',
-      },
+      webSocketURL: `ws://0.0.0.0:${webpackDevServerPort}/ws`,
     },
   },
 };

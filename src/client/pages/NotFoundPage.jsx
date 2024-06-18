@@ -1,15 +1,9 @@
 import React from 'react';
 
-// import { SCREEN_ID_NOT_FOUND } from '#client/constants/screenIds.js';
-// import useTransitionHook from '#client/hooks/useTransitionHook.js';
-// import useScreenId from '#client/hooks/useScreenId.jsx';
-// import useScrollToTop from '#client/hooks/useScrollToTop.jsx';
+import useTransitionHook from '#client/hooks/useTransitionHook.js';
 
 const NotFoundPage = () => {
-  // useTransitionHook();
-  // useScreenId(SCREEN_ID_NOT_FOUND);
-  // useScrollToTop();
-  console.log('HERE');
+  useTransitionHook();
 
   return (
     <div onClick={()=>console.log('CLICK')}>

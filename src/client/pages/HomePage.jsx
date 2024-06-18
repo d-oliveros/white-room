@@ -3,10 +3,8 @@ import React from 'react';
 import { hasRoleAnonymous } from '#common/userRoles.js';
 
 import useBranch from '#client/hooks/useBranch.js';
-import { SCREEN_ID_HOME } from '#client/constants/screenIds.js';
+import useDispatch from '#client/hooks/useDispatch.js';
 import useTransitionHook from '#client/hooks/useTransitionHook.js';
-import useScreenId from '#client/hooks/useScreenId.jsx';
-import useScrollToTop from '#client/hooks/useScrollToTop.jsx';
 
 import Link from '#client/components/Link/Link.jsx';
 import Flex from '#client/components/Flex/Flex.jsx';
@@ -14,19 +12,18 @@ import Text from '#client/components/Text/Text.jsx';
 import Box from '#client/components/Box/Box.jsx';
 
 const HomePage = () => {
-  useTransitionHook();
-  useScreenId(SCREEN_ID_HOME);
-  useScrollToTop();
+  const isTransitioning = useTransitionHook(HomePage);
+  const dispatch = useDispatch();
 
   const { currentUser } = useBranch({
     currentUser: ['currentUser'],
   });
 
-  const getPageMetadata = () => ({
-    keywords: 'whiteroom, keyword',
-    description: 'whiteroom home page.',
-    image: 'https://whiteroom.com/images/metadata/og-house.jpg',
-  });
+  if (isTransitioning) {
+    return (
+      <div className='loading-gif' />
+    );
+  }
 
   return (
     <Box width='80%' margin='0 auto'>
@@ -41,12 +38,18 @@ const HomePage = () => {
       }
 
       {hasRoleAnonymous(currentUser.roles) &&
-        <Link to='/login'>Log In</Link>
+        <>
+          <Link to='/login'>Log In</Link>
+
+          <span onClick={() => dispatch(({ navigate }) => navigate('/login'))}>
+            Redirect to Login
+          </span>
+        </>
       }
 
       <div>
         <button onClick={() => console.log('click')}>Button</button>
-        <h3 onClick={() => global.alert('hola')}>Users</h3>
+        <h3>Users</h3>
         <Link to='/user/1'>User 1</Link>
       </div>
 
@@ -63,6 +66,24 @@ const HomePage = () => {
       </Flex>
     </Box>
   );
+};
+
+HomePage.getMetadata = ({ state, params }) => ({
+  pageTitle: 'Homepage | White Room',
+});
+
+HomePage.fetchPageData = async ({ dispatch, params }) => {
+  // Example of setting state.
+  await dispatch(({ state }) => { state.set(['anew'], true); });
+
+  // Example of a redirection.
+  // await dispatch(({ navigate }) => navigate('/login'));
+
+  // Example of loading data
+  // Mounts automatically to params?
+  // dispatch(UserActions.loadById, { id: params.id });
+
+  // fetchPageData redirections
 };
 
 export default HomePage;

@@ -22,7 +22,7 @@ export const dummyHistory = {
 
 export const defaultTreeOptions = {
   asynchronous: true,
-  autocommit: false,
+  autoCommit: false,
   immutable: true,
 };
 

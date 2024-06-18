@@ -1,23 +1,26 @@
 import useBranch from '#client/hooks/useBranch.js';
-import isBoolean from '#common/util/isBoolean.js';
+import useDispatch from '#client/hooks/useDispatch.js';
 
-export default function useCard({ id, defaultExpandedValue }) {
+export default function useCard({ id, defaultExpandedValue = false }) {
   const cardId = `card:${id}`;
   const cardStatePathExpanded = ['cardState', `${cardId}:expanded`];
 
+  const dispatch = useDispatch();
   const branch = useBranch({
     expanded: cardStatePathExpanded,
   });
 
   const setExpanded = (newExpandedValue) => {
-    branch.dispatch(({ state }) => {
+    dispatch(({ state }) => {
       state.set(cardStatePathExpanded, newExpandedValue);
       state.commit();
     });
   };
 
   return {
-    expanded: isBoolean(branch.expanded) ? branch.expanded : (defaultExpandedValue || false),
+    expanded: typeof branch.expanded === 'boolean'
+      ? branch.expanded
+      : defaultExpandedValue,
     setExpanded: setExpanded,
   };
 }

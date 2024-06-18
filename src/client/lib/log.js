@@ -91,7 +91,9 @@ const log = NODE_ENV === 'production'
     debug(key) {
       let debug = this._debuggers[key];
       if (!debug) {
-        debug = createDebugger(key);
+        // TODO: Expose APP_ID here
+        // debug = createDebugger(`${APP_ID}:${key}`);
+        debug = createDebugger(`whiteroom:${key}`);
         this._debuggers[key] = debug;
       }
       return (...args) => {

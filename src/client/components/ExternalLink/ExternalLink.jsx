@@ -1,23 +1,16 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 
-import branch from '#client/core/branch.jsx';
+import useBranch from '#client/hooks/useBranch.js';
 import isUserAgentMobileApp from '#common/util/isUserAgentMobileApp.js';
 import sendDataToMobileApp, { MOBILE_APP_ACTION_TYPE_OPEN_URL } from '#client/helpers/sendDataToMobileApp';
 
-@branch({
-  userAgent: ['analytics', 'userAgent'],
-})
-class ExternalLink extends Component {
-  static propTypes = {
-    link: PropTypes.string.isRequired,
-    className: PropTypes.string,
-    onClick: PropTypes.func,
-    children: PropTypes.node,
-  }
+const ExternalLink = ({ link, className, onClick, children, style }) => {
+  const { userAgent } = useBranch({
+    userAgent: ['analytics', 'userAgent'],
+  });
 
-  onClickLink = (event) => {
-    const { link, onClick, userAgent } = this.props;
+  const onClickLink = (event) => {
     const isMobileApp = isUserAgentMobileApp(userAgent);
 
     event.preventDefault();
@@ -27,29 +20,32 @@ class ExternalLink extends Component {
         actionType: MOBILE_APP_ACTION_TYPE_OPEN_URL,
         url: link,
       });
-    }
-    else {
+    } else {
       global.open(link, '_blank');
     }
 
     if (onClick) {
       onClick();
     }
-  }
+  };
 
-  render() {
-    const { className, children, style } = this.props;
+  return (
+    <span
+      onClick={onClickLink}
+      className={className}
+      style={style}
+    >
+      {children}
+    </span>
+  );
+};
 
-    return (
-      <span
-        onClick={this.onClickLink}
-        className={className}
-        style={style}
-      >
-        {children}
-      </span>
-    );
-  }
-}
+ExternalLink.propTypes = {
+  link: PropTypes.string.isRequired,
+  className: PropTypes.string,
+  onClick: PropTypes.func,
+  children: PropTypes.node,
+  style: PropTypes.object,
+};
 
 export default ExternalLink;

@@ -10,8 +10,8 @@ import typeCheck from '#common/util/typeCheck.js';
 import createApiClient from '#api/createApiClient.js';
 
 import makeInitialState from '#client/makeInitialState.js';
-import createTree from '#client/lib/tree.js';
-import fetchPageData from '#client/core/fetchPageData.js';
+import makeDispatchFn from '#client/core/makeDispatchFn.js';
+import createTree from '#client/core/createTree.js';
 import Root from '#client/core/Root.jsx';
 import routes from '#client/routes.js';
 import renderLayout from '#client/renderLayout.js';
@@ -31,23 +31,95 @@ import {
 
 const {
   NODE_ENV,
-  APP_URL,
+  APP_ID,
   APP_TITLE,
+  APP_URL,
   USE_BUILD,
   AWS_BUNDLES_URL,
   SEGMENT_KEY,
   COMMIT_HASH,
   WEBPACK_DEVELOPMENT_SERVER_PORT,
-  HTML_ROBOTS_TAG,
 } = process.env;
 
 const useBuild = USE_BUILD === 'true';
 const debug = logger.createDebug('renderer:renderReactApp');
 
-const defaultMetas = {
+const DEFAULT_PAGE_METADATA = {
   pageTitle: APP_TITLE,
-  robots: HTML_ROBOTS_TAG,
+  robots: 'index,follow',
+  keywords: [APP_TITLE, APP_ID].filter(Boolean).join(', '),
+  description:  `${APP_TITLE}.`,
+  image: null,
 };
+
+/**
+ * Runs the data fetching functions defined in the router state's component tree.
+ */
+const fetchPageData = async ({ branch, state, apiClient, navigate }) => {
+  await Promise.all(branch
+    .filter(({ route }) => route.component?.fetchPageData)
+    .map(({ route, match }) => route.component.fetchPageData({
+      dispatch: makeDispatchFn({
+        state,
+        apiClient,
+        navigate,
+      }),
+      // TODO: Enable
+      // params: match.params,
+      params: null,
+    }))
+  );
+
+  return {
+    pageMetadata: setComponentsMetadata(branch, {
+      state,
+      apiClient,
+      navigate,
+    }),
+  };
+}
+
+
+/**
+ * Changes the state's metadata object
+ *
+ * @param  {Array}  branch An array of components to be rendered.
+ * @param  {Object} inject The application's state.
+ */
+function setComponentsMetadata(branch, inject) {
+  const [getMetadata] = branch
+    .filter(({ route }) => route.component?.getMetadata)
+    .map(({ route }) => route.component.getMetadata);
+
+  try {
+    const componentMetadata = !getMetadata ? null : getMetadata({
+      state: inject.state,
+      // TODO: Enable
+      // params: match.params,
+      params: null,
+    });
+
+    const pageMetadata = {
+      ...DEFAULT_PAGE_METADATA,
+      ...(componentMetadata || {}),
+    };
+    inject.state.set('pageMetadata', pageMetadata);
+    inject.state.set('pageMetadataDefault', DEFAULT_PAGE_METADATA);
+
+    return pageMetadata;
+  }
+  catch (metadataGetterError) {
+    const error = new Error(`Error while generating page metatags: ${metadataGetterError.message}`);
+    error.name = 'PageMetadataGenerationError';
+    error.details = {
+      state: inject.state.get(),
+      stringifiedMetadataGetterFunction: !getMetadata ? null : getMetadata.toString(),
+    };
+    error.inner = serializeError(metadataGetterError);
+    logger.error(error);
+  }
+  return null;
+}
 
 /**
  * Renders the client on server-side.
@@ -60,13 +132,13 @@ const defaultMetas = {
  * @param  {String} options.sessionToken Session token.
  * @return {Object}               Object with { type, html, redirectUrl, error }.
  */
-export default async function renderReactApp({ state, url, sessionToken }) {
-  state = { ...makeInitialState(), ...state };
+export default async function renderReactApp({ state: _state, url, sessionToken }) {
+  const initialState = { ...makeInitialState(), ..._state };
 
-  const tree = createTree(state, {
+  const state = createTree(initialState, {
     asynchronous: false,
-    autocommit: false,
-    immutable: false,
+    autoCommit: false,
+    immutable: NODE_ENV !== 'production',
   });
 
   const now = Date.now();
@@ -75,7 +147,10 @@ export default async function renderReactApp({ state, url, sessionToken }) {
   try {
     const context = {};
 
-    const { pathname: urlWithoutQueryString, search: urlSearch = '' } = parseUrl(url);
+    const {
+      pathname: urlWithoutQueryString,
+      search: urlSearch = '',
+    } = parseUrl(url);
 
     const branch = matchRoute(routes, urlWithoutQueryString);
 
@@ -91,25 +166,38 @@ export default async function renderReactApp({ state, url, sessionToken }) {
       sessionTokenName: 'X-Session-Token',
     });
 
-    await fetchPageData(branch, {
-      state: tree,
+    let redirectUrl = null;
+    const { pageMetadata } = await fetchPageData({
+      branch,
+      state,
       apiClient,
-      location: { search: urlSearch },
+      navigate: (url) => {
+        redirectUrl = url;
+      },
     });
 
-    assertIdleApiState(tree.get('apiState'));
+    if (redirectUrl) {
+      debug(`\`navigate\` called with: ${redirectUrl}`);
+      state.release();
+      return makeRendererResponse({
+        type: RENDERER_RESPONSE_TYPE_REDIRECT,
+        redirectUrl,
+      });
+    }
+
+    assertIdleApiState(state.get('apiState'));
 
     const body = renderToString(
       React.createElement(
         StaticRouter,
         { location: url, context: context },
-        React.createElement(Root, { tree: tree, apiClient: apiClient })
+        React.createElement(Root, { state, apiClient })
       )
     );
 
     if (context.url) {
       debug(`Redirect to ${context.url}`);
-      tree.release();
+      state.release();
       return makeRendererResponse({
         type: RENDERER_RESPONSE_TYPE_REDIRECT,
         redirectUrl: `${context.url}${urlSearch}`,
@@ -122,10 +210,10 @@ export default async function renderReactApp({ state, url, sessionToken }) {
       body,
       useBuild,
       devScriptBaseUrl: `${appUrl.protocol}//${appUrl.hostname}`,
-      meta: { ...defaultMetas, ...(tree.get('pageMetadata') || {}) },
+      metaData: pageMetadata,
       segmentKey: SEGMENT_KEY,
       webpackDevelopmentServerPort: WEBPACK_DEVELOPMENT_SERVER_PORT || 8001,
-      serializedState: serializeState(tree),
+      serializedState: serializeState(state),
       bundleSrc: useBuild
         ? `${AWS_BUNDLES_URL || ''}/js/bundle${COMMIT_HASH ? `-${COMMIT_HASH}` : ''}.js`
         : null,
@@ -134,7 +222,7 @@ export default async function renderReactApp({ state, url, sessionToken }) {
         : null,
     });
 
-    tree.release();
+    state.release();
 
     debug(`Rendered in ${Date.now() - now}ms - HTML length: ${html.length}`);
 
@@ -145,7 +233,7 @@ export default async function renderReactApp({ state, url, sessionToken }) {
       html,
     });
   } catch (error) {
-    tree.release();
+    state.release();
     debug(`Rendering error: ${error.message}`);
     return makeRendererResponse({
       type: RENDERER_RESPONSE_TYPE_ERROR,

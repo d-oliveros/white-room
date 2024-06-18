@@ -2,13 +2,10 @@ import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 import parseQueryString from '#common/util/parseQueryString.js';
-import { SCREEN_ID_RESET_PASSWORD_CONFIRM } from '#client/constants/screenIds.js';
 
 import { getUserLandingPage } from '#client/helpers/allowedRoles.jsx';
 
 import useTransitionHook from '#client/hooks/useTransitionHook.js';
-import useScreenId from '#client/hooks/useScreenId.jsx';
-import useScrollToTop from '#client/hooks/useScrollToTop.jsx';
 import useBranch from '#client/hooks/useBranch.js';
 
 import PasswordResetConfirmForm from '#client/components/PasswordResetConfirmForm/PasswordResetConfirmForm.jsx';
@@ -18,15 +15,13 @@ import Link from '#client/components/Link/Link.jsx';
 import AuthActions from '#client/actions/Auth/index.jsx';
 
 const ResetPasswordConfirmPage = () => {
+  useTransitionHook();
   const navigate = useNavigate();
   const location = useLocation();
 
-  useTransitionHook();
   const { isMobileApp } = useBranch({
     isMobileApp: ['mobileApp', 'isMobileApp'],
   });
-  useScreenId(SCREEN_ID_RESET_PASSWORD_CONFIRM);
-  useScrollToTop();
 
   const redirectUser = async (user) => {
     const userLandingPage = getUserLandingPage({

@@ -85,7 +85,7 @@ export default function makeApplicationContext({ state, navigationContext, pageV
   applicationContext.locationCountry = (location || {}).country;
   applicationContext.locationRegion = (location || {}).region;
   applicationContext.locationCity = (location || {}).city;
-  applicationContext.locationZip = String((location || {}).zip);
+  applicationContext.locationZip = (location || {}).zip ? String(location.zip) : undefined;
   applicationContext.locationLatitude = (location || {}).latitude;
   applicationContext.locationLongitude = (location || {}).longitude;
 

@@ -12,7 +12,7 @@ const encodeURIComponentIfPresent = (value) => value
   : '';
 
 const renderLayout = ({
-  meta = {},
+  metaData = {},
   bundleStyleSrc,
   segmentKey,
   serializedState,
@@ -34,34 +34,34 @@ const renderLayout = ({
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
 
     <!-- Metatags -->
-    ${meta.pageTitle ? `<title>${escapeHtml(meta.pageTitle)}</title>` : ''}
+    ${metaData.pageTitle ? `<title>${escapeHtml(metaData.pageTitle)}</title>` : ''}
 
     <!-- Apple -->
     <meta name="apple-mobile-web-app-capable" content="yes"/>
     <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
 
     <!-- Open Graphs -->
-    ${meta.image ? `<meta property="og:image" content="${escapeHtml(meta.image)}" itemprop="image primaryImageOfPage"/>` : ''}
+    ${metaData.image ? `<meta property="og:image" content="${escapeHtml(metaData.image)}" itemprop="image primaryImageOfPage"/>` : ''}
     <meta property="og:type" content="website"/>
-    ${meta.pageTitle ? `<meta property="og:title" content="${escapeHtml(meta.pageTitle)}" name="title" itemprop="title name"/>` : ''}
+    ${metaData.pageTitle ? `<meta property="og:title" content="${escapeHtml(metaData.pageTitle)}" name="title" itemprop="title name"/>` : ''}
 
     <!-- Twitter metas -->
     <meta name="twitter:domain" content="whiteroom.com"/>
     <meta name="twitter:card" content="summary"/>
 
-    ${meta.description ? `
-      <meta name='description' content='${escapeHtml(meta.description)}'/>
-      <meta property="og:description" content="${escapeHtml(meta.description)}" name="description" itemprop="description"/>
+    ${metaData.description ? `
+      <meta name='description' content='${escapeHtml(metaData.description)}'/>
+      <meta property="og:description" content="${escapeHtml(metaData.description)}" name="description" itemprop="description"/>
     ` : ''}
 
-    ${meta.keywords ? `<meta name='keywords' content='${escapeHtml(meta.keywords)}'/>` : ''}
+    ${metaData.keywords ? `<meta name='keywords' content='${escapeHtml(metaData.keywords)}'/>` : ''}
 
-    ${meta.canonical ? `
-      <link rel='canonical' href='${encodeURIComponentIfPresent(meta.canonical)}'/>
-      <meta property="og:url" content="${encodeURIComponentIfPresent(meta.canonical)}"/>
+    ${metaData.canonical ? `
+      <link rel='canonical' href='${encodeURIComponentIfPresent(metaData.canonical)}'/>
+      <meta property="og:url" content="${encodeURIComponentIfPresent(metaData.canonical)}"/>
     ` : ''}
 
-    ${meta.robots ? `<meta name='robots' content='${escapeHtml(meta.robots)}'/>` : ''}
+    ${metaData.robots ? `<meta name='robots' content='${escapeHtml(metaData.robots)}'/>` : ''}
 
     <!-- Bundle Stylesheets -->
     ${bundleStyleSrc ? `<link rel='stylesheet' href='${encodeURIComponentIfPresent(bundleStyleSrc)}'/>` : ''}

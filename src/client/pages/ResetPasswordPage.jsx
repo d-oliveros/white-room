@@ -5,13 +5,10 @@ import {
   API_ACTION_VERIFY_PHONE_SMS_CODE_REQUESTED,
   API_ACTION_VERIFY_ACCOUNT_EXIST,
 } from '#api/actionTypes.js';
-import { SCREEN_ID_RESET_PASSWORD } from '#client/constants/screenIds.js';
 import { USER_ROLE_ANONYMOUS } from '#common/userRoles.js';
 
 import log from '#client/lib/log.js';
 import useTransitionHook from '#client/hooks/useTransitionHook.js';
-import useScreenId from '#client/hooks/useScreenId.jsx';
-import useScrollToTop from '#client/hooks/useScrollToTop.jsx';
 import useAllowedRoles from '#client/hooks/useAllowedRoles.jsx';
 import useApiState from '#client/hooks/useApiState.jsx';
 import postWithState from '#client/actions/postWithState.js';
@@ -25,22 +22,22 @@ import Link from '#client/components/Link/Link.jsx';
 import ErrorMessage from '#client/components/ErrorMessage/ErrorMessage.jsx';
 
 const ResetPasswordPage = () => {
-  const navigate = useNavigate();
-  const location = useLocation();
-  useTransitionHook();
   useAllowedRoles({
     roles: [
       USER_ROLE_ANONYMOUS,
     ],
     redirectUrl: '/',
   });
+  useTransitionHook();
+
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const { verifyPhoneApiState } = useApiState({
     verifyPhoneApiState: {
       action: API_ACTION_VERIFY_PHONE_SMS_CODE_REQUESTED,
     },
   });
-  useScreenId(SCREEN_ID_RESET_PASSWORD);
-  useScrollToTop();
 
   const [state, setState] = useState({
     showSmsSending: false,

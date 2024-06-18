@@ -40,17 +40,17 @@ const logger = winston.createLogger({
 
 const _debugInstances = {};
 
-logger.createDebug = function createDebugWrapped(debugNamespace) {
-  debugNamespace = `${APP_ID}:${debugNamespace}`;
+logger.createDebug = function createDebugWrapped(debugNameSpace) {
+  debugNameSpace = `${APP_ID}:${debugNameSpace}`;
 
-  if (!_debugInstances[debugNamespace]) {
-    _debugInstances[debugNamespace] = NODE_ENV === 'production' || NO_LOG_MODE
+  if (!_debugInstances[debugNameSpace]) {
+    _debugInstances[debugNameSpace] = NODE_ENV === 'production' || NO_LOG_MODE
       ? () => {}
-      : createDebug(debugNamespace);
+      : createDebug(debugNameSpace);
   }
 
   return (...args) => {
-    _debugInstances[debugNamespace](...args);
+    _debugInstances[debugNameSpace](...args);
   };
 };
 

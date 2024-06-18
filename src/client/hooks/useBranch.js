@@ -1,31 +1,22 @@
 import { useContext, useState, useEffect } from 'react';
-
 import ReactAppContext from '#client/core/ReactAppContext.js';
-import useDispatch from '#client/hooks/useDispatch.js';
 
-export default function useBranch(cursors) {
-  const reactAppContext = useContext(ReactAppContext);
-  const dispatch = useDispatch();
+export default function useBranch(mapping) {
+  const { state } = useContext(ReactAppContext);
 
-  const [state, setState] = useState(() => {
-    const mapping = typeof cursors === 'function' ? cursors(reactAppContext) : cursors;
-    return reactAppContext.tree.project(mapping);
+  const [cursorState, setCursorState] = useState(() => {
+    return state.project(mapping);
   });
 
   useEffect(() => {
-    const mapping = typeof cursors === 'function' ? cursors(reactAppContext) : cursors;
-    const watcher = reactAppContext.tree.watch(mapping);
+    const watcher = state.watch(mapping);
 
     watcher.on('update', () => {
-      setState(watcher.get());
+      setCursorState(watcher.get());
     });
 
     return () => watcher.release();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [cursors]);
+  }, [mapping, state]);
 
-  return {
-    ...state,
-    dispatch,
-  };
+  return cursorState;
 }

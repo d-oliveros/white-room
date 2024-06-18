@@ -27,7 +27,7 @@ const regexIndex = /index\.jsx$/;
  * import NotFoundPage from "./NotFoundPage.jsx";
  * import somethingElse from './somethingElse.jsx';
  *
- * export { HomePage }, PageTwo, NotFoundPage };
+ * export { HomePage, PageTwo, NotFoundPage };
  * const modules = {
  *   HomePage,
  *   PageTwo,
@@ -38,7 +38,7 @@ const regexIndex = /index\.jsx$/;
  *
  * Author: David Oliveros (d-oliveros github handle)
  */
-export default function ({ types: t }) {
+export default function babelPluginTransformGlobImports({ types: t }) {
   return {
     visitor: {
       Program(path, state) {
@@ -51,7 +51,7 @@ export default function ({ types: t }) {
         let importDeclarations = [];
         let variableDeclarations = [];
         let namedExports = [];
-        let lastImportIndex = -1;
+        let hasDefaultExport = true;  // Assuming you always want a default export.
 
         // Track original glob import declarations and replace them with new imports
         body.forEach((node, index) => {
@@ -80,23 +80,25 @@ export default function ({ types: t }) {
               ]);
 
               variableDeclarations.push(variableDeclaration);
-
-              // Replace the original glob import with the new imports
-              path.get(`body.${index}`).replaceWithMultiple(importDeclarations);
-
-              // Keep track of where to insert the variable declaration
-              lastImportIndex = index + importDeclarations.length - 1;
             } else {
               throw path.buildCodeFrameError(`No files found for glob pattern: ${source}`);
             }
-          } else if (node.type === 'ImportDeclaration') {
-            lastImportIndex = index;
+            // Remove the original glob import
+            path.get(`body.${index}`).remove();
           }
         });
 
-        // Insert the variable declaration and named exports after the last import
-        if (variableDeclarations.length > 0) {
-          body.splice(lastImportIndex + 1, 0, ...variableDeclarations, ...namedExports);
+        // Reconstruct the program body
+        path.node.body = [
+          ...importDeclarations,
+          ...variableDeclarations,
+          ...namedExports
+        ];
+
+        // Append the default export if needed
+        if (hasDefaultExport) {
+          const defaultExport = t.exportDefaultDeclaration(t.identifier('modules'));
+          path.node.body.push(defaultExport);
         }
       }
     }

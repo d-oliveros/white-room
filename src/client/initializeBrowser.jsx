@@ -26,9 +26,12 @@ import Root from '#client/core/Root.jsx';
 import { ANALYTICS_EVENT_USER_SESSION } from '#client/analytics/eventList.js';
 import analytics from '#client/analytics/analytics.js';
 
-console.log('ROOT IS', Root);
+const debug = log.debug('initializeBrowser');
+
+debug(`Has root component? ${!!Root}`);
+
 if (process.browser) {
-  log.info('Initializing browser client.');
+  debug('Initializing browser client.');
 
   // Get the serialized state injected by the server
   const store = getStoreFromBrowser();
@@ -63,21 +66,22 @@ if (process.browser) {
   // Get the container node where the app will be mounted
   const containerNode = global.document.getElementById('react-container');
 
-  console.log('Hydrating');
+  debug('Hydrating');
   const root = hydrateRoot(containerNode, (
     <BrowserRouter>
-      <Root tree={store} apiClient={apiClient} />
+      <Root state={store} apiClient={apiClient} />
     </BrowserRouter>
   ));
 
-  console.log('FINISH');
-  if (false && import.meta.hot) {
+  debug('Root mounted.');
+
+  if (import.meta.hot) {
     module.meta.hot.accept('./core/Root.jsx', async () => {
-      console.log('DOING');
+      debug('Refreshing ./core/Root.jsx');
       const { default: Root } = await import('./core/Root.jsx');
       root.render((
         <BrowserRouter>
-          <Root tree={store} apiClient={apiClient} />
+          <Root state={store} apiClient={apiClient} />
         </BrowserRouter>
       ));
     });

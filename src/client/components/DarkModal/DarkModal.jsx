@@ -1,56 +1,47 @@
-import React, { Component } from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Portal } from 'react-portal';
 import classnames from 'classnames';
 
 import emptyFunction from '#common/util/emptyFunction.js';
 import isUserAgentMobileApp from '#common/util/isUserAgentMobileApp.js';
-import branch from '#client/core/branch.jsx';
+import useBranch from '#client/hooks/useBranch.js';
 
-@branch({
-  userAgent: ['analytics', 'userAgent'],
-})
-class DarkModal extends Component {
-  static propTypes = {
-    children: PropTypes.node.isRequired,
-    onClose: PropTypes.func,
-    userAgent: PropTypes.object.isRequired,
-    className: PropTypes.string,
-  }
+const DarkModal = ({ children, onClose, className }) => {
+  const { userAgent } = useBranch({
+    userAgent: ['analytics', 'userAgent'],
+  });
 
-  componentDidMount() {
+  useEffect(() => {
     global.document.body.classList.add('overflow-hidden');
-  }
+    return () => {
+      global.document.body.classList.remove('overflow-hidden');
+    };
+  }, []);
 
-  componentWillUnmount() {
-    global.document.body.classList.remove('overflow-hidden');
-  }
+  const isMobileApp = isUserAgentMobileApp(userAgent);
 
-  render() {
-    const {
-      children,
-      onClose,
-      userAgent,
-      className,
-    } = this.props;
+  return (
+    <Portal>
+      <div
+        onClick={onClose || emptyFunction}
+        className={classnames(
+          'darkModal',
+          { webview: isMobileApp },
+          className,
+        )}
+      >
+        {children}
+      </div>
+    </Portal>
+  );
+};
 
-    const isMobileApp = isUserAgentMobileApp(userAgent);
-
-    return (
-      <Portal>
-        <div
-          onClick={onClose || emptyFunction}
-          className={classnames(
-            'darkModal',
-            { webview: isMobileApp },
-            className,
-          )}
-        >
-          {children}
-        </div>
-      </Portal>
-    );
-  }
-}
+DarkModal.propTypes = {
+  children: PropTypes.node.isRequired,
+  onClose: PropTypes.func,
+  userAgent: PropTypes.object.isRequired,
+  className: PropTypes.string,
+};
 
 export default DarkModal;

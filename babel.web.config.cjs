@@ -11,13 +11,9 @@ module.exports = {
     '@babel/preset-react',
   ],
   plugins: [
-    // 'react-refresh/babel',
+    'react-refresh/babel',
     './babel-plugin-transform-glob-imports',
     ['@babel/plugin-transform-runtime', { corejs: 3 }],
-    // '@babel/plugin-transform-class-properties',
-    // '@babel/plugin-syntax-import-meta',
-    // '@babel/plugin-transform-export-namespace-from',
-    // '@babel/plugin-transform-optional-chaining',
     ['@babel/plugin-proposal-decorators', { legacy: true }],
     [
       '@dr.pogodin/react-css-modules',

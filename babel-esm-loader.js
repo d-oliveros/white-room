@@ -3,7 +3,9 @@ import { fileURLToPath, pathToFileURL } from 'url'
 import babel from '@babel/core'
 
 const SUPPORTED_EXTENSIONS = {
+  '.js': false,
   '.jsx': true,
+  '.ts': false,
   '.tsx': true,
 };
 

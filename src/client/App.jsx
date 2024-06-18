@@ -19,23 +19,6 @@ import useBranch from '#client/hooks/useBranch.js';
 import MobileAppEventListener from '#client/components/MobileAppEventListener/MobileAppEventListener.jsx';
 import EnablePushNotificationsModal from '#client/components/EnablePushNotificationsModal/EnablePushNotificationsModal.jsx';
 
-const AppRouter = ({ routes }) => (
-  <Routes>
-    {routes.map((route, index) => (
-      <Route
-        key={index}
-        path={route.path || '*'}
-        element={<route.component />}
-        exact={route.exact}
-      />
-    ))}
-  </Routes>
-);
-
-AppRouter.propTypes = {
-  routes: PropTypes.array.isRequired,
-};
-
 // Interval for checking the app commit hash vs the server commit hash to reload the page when a new version is available.
 const CHECK_APP_VERSION_INTERVAL_MS = 1800000; // 30 minutes.
 
@@ -113,7 +96,17 @@ const App = ({ routes, apiClient }) => {
         },
       )}
     >
-      <AppRouter routes={routes} />
+      <Routes>
+        {routes.map((route, index) => (
+          <Route
+            key={index}
+            path={route.path || '*'}
+            element={<route.component />}
+            exact={route.exact}
+          />
+        ))}
+      </Routes>
+
       <MobileAppEventListener />
       {askPushNotifications && (
         <EnablePushNotificationsModal

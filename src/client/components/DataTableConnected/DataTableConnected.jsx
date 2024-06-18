@@ -24,7 +24,7 @@ class DataTableConnected extends Component {
     children: PropTypes.func.isRequired,
     dataTableApiState: PropTypes.object.isRequired,
   }
-
+s
   static defaultProps = {
     itemsPropName: 'items',
   }

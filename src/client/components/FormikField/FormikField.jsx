@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { Field, getIn } from 'formik';
 import Autosuggest from 'react-autosuggest';
-import NumberFormat from 'react-number-format';
+import { NumericFormat } from 'react-number-format';
 import moment from 'moment';
 import lodashCompact from 'lodash/fp/compact.js';
 
