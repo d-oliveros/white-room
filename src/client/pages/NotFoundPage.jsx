@@ -3,7 +3,7 @@ import React from 'react';
 import useTransitionHook from '#client/hooks/useTransitionHook.js';
 
 const NotFoundPage = () => {
-  useTransitionHook();
+  useTransitionHook(NotFoundPage);
 
   return (
     <div onClick={()=>console.log('CLICK')}>

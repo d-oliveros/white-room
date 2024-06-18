@@ -28,7 +28,7 @@ const ResetPasswordPage = () => {
     ],
     redirectUrl: '/',
   });
-  useTransitionHook();
+  useTransitionHook(ResetPasswordPage);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -131,7 +131,7 @@ const ResetPasswordPage = () => {
   );
 };
 
-ResetPasswordPage.getPageMetadata = () => ({
+ResetPasswordPage.getMetadata = () => ({
   keywords: 'reset password',
   description: 'Reset your password.',
 });

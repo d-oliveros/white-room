@@ -50,7 +50,7 @@ const HomePage = () => {
       <div>
         <button onClick={() => console.log('click')}>Button</button>
         <h3>Users</h3>
-        <Link to='/user/1'>User 1</Link>
+        <Link to='/profile/1'>User 1</Link>
       </div>
 
       <Flex>

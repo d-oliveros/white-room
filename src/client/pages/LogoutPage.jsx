@@ -13,7 +13,7 @@ import useTransitionHook from '#client/hooks/useTransitionHook.js';
 import useDispatch from '#client/hooks/useDispatch.js';
 
 const LogoutPage = () => {
-  useTransitionHook();
+  useTransitionHook(LogoutPage);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -49,8 +49,8 @@ const LogoutPage = () => {
   );
 };
 
-LogoutPage.getPageMetadata = () => ({
-  pageTitle: 'Logout',
+LogoutPage.getMetadata = () => ({
+  title: 'Logout',
 });
 
 export default LogoutPage;

@@ -9,9 +9,6 @@ Cypress.Commands.add('getFormField', (formFieldId, formFieldType) => {
           return cy.wrap($input);
         });
     }
-    case 'long_text': {
-      return cy.get(`#field-${formFieldId} > .value > .sr-textarea`);
-    }
     default: {
       return cy.get(`#field-${formFieldId} > .value > input`);
     }

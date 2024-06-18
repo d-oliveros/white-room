@@ -15,7 +15,7 @@ import Link from '#client/components/Link/Link.jsx';
 import AuthActions from '#client/actions/Auth/index.jsx';
 
 const ResetPasswordConfirmPage = () => {
-  useTransitionHook();
+  useTransitionHook(ResetPasswordConfirmPage);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -68,8 +68,8 @@ const ResetPasswordConfirmPage = () => {
   );
 };
 
-ResetPasswordConfirmPage.getPageMetadata = (state) => ({
-  pageTitle: state.get(['env', 'APP_TITLE']),
+ResetPasswordConfirmPage.getMetadata = ({ state }) => ({
+  title: state.get(['env', 'APP_TITLE']),
   keywords: `${state.get(['env', 'APP_ID'])}, reset password`,
   description: 'Reset your password.',
 });

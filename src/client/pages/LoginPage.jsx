@@ -63,7 +63,7 @@ const LoginPage = () => {
   );
 };
 
-LoginPage.getPageMetadata = ({ props, params }) => ({
+LoginPage.getMetadata = ({ props, params }) => ({
   title: 'Login - Whiteroom',
   keywords: 'whiteroom, keyword',
   description: 'whiteroom login page.',

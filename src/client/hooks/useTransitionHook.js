@@ -54,9 +54,10 @@ const useTransitionHook = ({ fetchPageData, getMetadata } = {}) => {
     state.set('isTransitioning', true);
 
     // Fetch page data if fetchPageData function is provided, otherwise resolve immediately
-    const fetchPageDataPromise = !fetchPageData
-      ? Promise.resolve()
-      : fetchPageData({ dispatch, params });
+    const fetchPageDataPromise = Promise.resolve(!fetchPageData
+      ? null
+      : fetchPageData({ dispatch, params })
+    );
 
     fetchPageDataPromise.then(() => {
       if (!isMounted()) {

@@ -58,15 +58,13 @@ const DEFAULT_PAGE_METADATA = {
 const fetchPageData = async ({ branch, state, apiClient, navigate }) => {
   await Promise.all(branch
     .filter(({ route }) => route.component?.fetchPageData)
-    .map(({ route, match }) => route.component.fetchPageData({
+    .map(({ route, params }) => route.component.fetchPageData({
       dispatch: makeDispatchFn({
         state,
         apiClient,
         navigate,
       }),
-      // TODO: Enable
-      // params: match.params,
-      params: null,
+      params: params || {},
     }))
   );
 
@@ -87,16 +85,12 @@ const fetchPageData = async ({ branch, state, apiClient, navigate }) => {
  * @param  {Object} inject The application's state.
  */
 function setComponentsMetadata(branch, inject) {
-  const [getMetadata] = branch
-    .filter(({ route }) => route.component?.getMetadata)
-    .map(({ route }) => route.component.getMetadata);
+  const [match] = branch.filter(({ route }) => route.component?.getMetadata);
 
   try {
-    const componentMetadata = !getMetadata ? null : getMetadata({
+    const componentMetadata = !match ? null : match.route.component.getMetadata({
       state: inject.state,
-      // TODO: Enable
-      // params: match.params,
-      params: null,
+      params: match.params || {},
     });
 
     const pageMetadata = {
@@ -113,7 +107,7 @@ function setComponentsMetadata(branch, inject) {
     error.name = 'PageMetadataGenerationError';
     error.details = {
       state: inject.state.get(),
-      stringifiedMetadataGetterFunction: !getMetadata ? null : getMetadata.toString(),
+      stringifiedMetadataGetterFunction: !match ? null : match.route.component.getMetadata.toString(),
     };
     error.inner = serializeError(metadataGetterError);
     logger.error(error);

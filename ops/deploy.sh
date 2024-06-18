@@ -7,7 +7,7 @@ function print_usage {
   echo "usage: deploy.sh target_env docker_repo docker_tag [env_file]"
   echo -e "\ttarget_env:\tenvironment to deploy to ('development', 'staging', 'production')"
   echo -e "\tdocker_repo:\tdocker repository to deploy from ('dev-ecr', 'prod-ecr')"
-  echo -e "\tcommit_hash:\tcommit hash to deploy (e.g. 'c0b4ef6d4a198132ace4aee158be956e1af1fb02')"
+  echo -e "\tcommit_hash:\tcommit hash to deploy (e.g. 'c0b4ef6d4a198132ace4aee158be956e1af1fb81')"
   exit 1
 }
 
@@ -72,7 +72,7 @@ fi
 start_time="$(date -u +%s)"
 
 # Post a Slack notification that the deployment has started.
-aws lambda invoke --function-name post-slack-message --payload "{\"channel\": \"$SLACK_DEPLOYMENTS_CHANNEL\", \"attachments\": [{\"fallback\":\"*Deployment Started*\",\"title\":\"*Deployment Started*\",\"color\":\"#9999ff\",\"fields\":[{\"title\":\"ECS Cluster\",\"value\":\"$ECS_CLUSTER\", \"short\": true},{\"title\":\"ECS Service\",\"value\":\"$ECS_SERVICE\", \"short\": true},{\"title\":\"Branch\",\"value\":\"$CIRCLE_BRANCH\", \"short\": true},{\"title\":\"CircleCI Link\",\"value\":\"$CIRCLE_BUILD_URL\"},{\"title\":\"Commit Hash\",\"value\":\"$COMMIT_HASH\"}]}]}" aws-post-slack-message-deployment-started-lambda-invocation.log
+# aws lambda invoke --function-name post-slack-message --payload "{\"channel\": \"$SLACK_DEPLOYMENTS_CHANNEL\", \"attachments\": [{\"fallback\":\"*Deployment Started*\",\"title\":\"*Deployment Started*\",\"color\":\"#9999ff\",\"fields\":[{\"title\":\"ECS Cluster\",\"value\":\"$ECS_CLUSTER\", \"short\": true},{\"title\":\"ECS Service\",\"value\":\"$ECS_SERVICE\", \"short\": true},{\"title\":\"Branch\",\"value\":\"$CIRCLE_BRANCH\", \"short\": true},{\"title\":\"CircleCI Link\",\"value\":\"$CIRCLE_BUILD_URL\"},{\"title\":\"Commit Hash\",\"value\":\"$COMMIT_HASH\"}]}]}" aws-post-slack-message-deployment-started-lambda-invocation.log
 
 # Update the ECS service to use the new task definition.
 aws ecs update-service --cluster $ECS_CLUSTER --service $ECS_SERVICE --task-definition $TASK_DEF_FAMILY:$TASK_DEF_REVISION
@@ -84,4 +84,4 @@ end_time="$(date -u +%s)"
 elapsed="$(($end_time-$start_time))"
 
 # Post a Slack notification that the deployment has finished.
-aws lambda invoke --function-name post-slack-message --payload "{\"channel\": \"$SLACK_DEPLOYMENTS_CHANNEL\", \"attachments\": [{\"fallback\":\"*Deployment Finished*\",\"title\":\"*Deployment Finished*\",\"color\":\"#9999ff\",\"fields\":[{\"title\":\"ECS Cluster\",\"value\":\"$ECS_CLUSTER\", \"short\": true},{\"title\":\"ECS Service\",\"value\":\"$ECS_SERVICE\", \"short\": true},{\"title\":\"Branch\",\"value\":\"$CIRCLE_BRANCH\", \"short\": true},{\"title\":\"CircleCI Link\",\"value\":\"$CIRCLE_BUILD_URL\"},{\"title\":\"Commit Hash\",\"value\":\"$COMMIT_HASH\"},{\"title\":\"Time Elapsed\",\"value\":\"${elapsed} seconds.\"}]}]}" aws-post-slack-message-deployment-finished-lambda-invocation.log
+# aws lambda invoke --function-name post-slack-message --payload "{\"channel\": \"$SLACK_DEPLOYMENTS_CHANNEL\", \"attachments\": [{\"fallback\":\"*Deployment Finished*\",\"title\":\"*Deployment Finished*\",\"color\":\"#9999ff\",\"fields\":[{\"title\":\"ECS Cluster\",\"value\":\"$ECS_CLUSTER\", \"short\": true},{\"title\":\"ECS Service\",\"value\":\"$ECS_SERVICE\", \"short\": true},{\"title\":\"Branch\",\"value\":\"$CIRCLE_BRANCH\", \"short\": true},{\"title\":\"CircleCI Link\",\"value\":\"$CIRCLE_BUILD_URL\"},{\"title\":\"Commit Hash\",\"value\":\"$COMMIT_HASH\"},{\"title\":\"Time Elapsed\",\"value\":\"${elapsed} seconds.\"}]}]}" aws-post-slack-message-deployment-finished-lambda-invocation.log

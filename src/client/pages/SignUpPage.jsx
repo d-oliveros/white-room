@@ -10,7 +10,7 @@ import SignupForm from '#client/components/SignupForm/SignupForm.jsx';
 import { getUserLandingPage } from '#client/helpers/allowedRoles.jsx';
 
 const SignUpPage = () => {
-  useTransitionHook();
+  useTransitionHook(SignUpPage);
   const dispatch = useDispatch();
   const { currentUser } = useBranch({
     currentUser: ['currentUser'],
@@ -29,7 +29,7 @@ const SignUpPage = () => {
   );
 };
 
-SignUpPage.getPageMetadata = () => ({
+SignUpPage.getMetadata = () => ({
   pageTitle: 'Sign Up',
 });
 

@@ -25,7 +25,7 @@ const ResetPasswordVerifyCodePage = () => {
     ],
     redirectUrl: '/',
   });
-  useTransitionHook();
+  useTransitionHook(ResetPasswordVerifyCodePage);
   const navigate = useNavigate();
 
   const { verifyPhoneApiState } = useApiState({
@@ -127,7 +127,7 @@ const ResetPasswordVerifyCodePage = () => {
   );
 };
 
-ResetPasswordVerifyCodePage.getPageMetadata = (state) => ({
+ResetPasswordVerifyCodePage.getMetadata = (state) => ({
   pageTitle: state.get(['env', 'APP_TITLE']),
   section: SCREEN_ID_RESET_PASSWORD_VALIDATE_CODE,
   keywords: `${state.get(['env', 'APP_ID'])}, reset password, code`,

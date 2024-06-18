@@ -16,7 +16,7 @@ const getPdfComponentFromComponentId = (componentId) => {
 };
 
 const PdfGeneratorPage = () => {
-  useTransitionHook();
+  useTransitionHook(PdfGeneratorPage);
 
   const { pdfComponentId } = useParams();
   const PdfComponent = getPdfComponentFromComponentId(pdfComponentId);
@@ -31,8 +31,8 @@ const PdfGeneratorPage = () => {
   return <PdfComponent {...(props || {})} />;
 };
 
-PdfGeneratorPage.getPageMetadata = () => ({
-  pageTitle: 'PDF Generator',
+PdfGeneratorPage.getMetadata = () => ({
+  title: 'PDF Generator',
 });
 
 export default PdfGeneratorPage;
