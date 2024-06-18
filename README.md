@@ -1,5 +1,29 @@
 # White Room
 
+Modern, SSR-first, isomorphic React/Express full-stack application starter kit.
+
+
+## Features
+
+* React + [Baobab](http://christianalfoni.github.io/javascript/2015/02/06/plant-a-baobab-tree-in-your-flux-application.html) frontend. A minimal, zero-boilerplate flux variant. [Read more here.](http://christianalfoni.github.io/javascript/2015/02/06/plant-a-baobab-tree-in-your-flux-application.html)
+* RPC-Based API server.
+* ESM-first, async/await native, SSR/HMR native.
+* Websockets with Socket.io.
+* Auth layer
+* Postgres backend with [Prisma](https://www.prisma.io/).
+* User Model with auth included.
+* Server-side, cron-like periodic tasks.
+* A priority job Worker Queue, powered by [Bull](https://github.com/taskforcesh/bullmq) + [Redis](http://redis.io/).
+* AWS S3 integration for uploads.
+* Unit Tests with Chai, Mocha
+* E2E Tests with Chai, Mocha
+* Integrations
+  * Segment
+  * Slack
+  * Sendgrid
+  * ...(TBD: fill)
+
+
 ## Dependencies
 
 * Node.js v22.2.0
@@ -19,14 +43,14 @@
 
 ##### Start PostgreSQL and Redis with Docker Compose:
 ```bash
-$ docker-compose up [-d] # -d will start the containers in background mode
+$ docker compose up -d
 ```
 
 ##### You can stop/restart the services using docker-compose as well
 
 ```bash
-$ docker-compose stop
-$ docker-compose restart
+$ docker compose stop
+$ docker compose restart
 ```
 
 #### Install the application's modules
