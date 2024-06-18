@@ -1,3 +1,0 @@
---require test/testGlobals.js
---ui bdd
---recursive

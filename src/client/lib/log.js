@@ -1,62 +1,108 @@
 import createDebugger from 'debug';
-import objectDiff from 'objectdiff';
-import { emptyFunction } from 'cd-common';
-import { isObject, isArray } from 'lodash';
+import { stringify } from 'flatted';
 
-let log = {
-  _debuggers: [],
-  info: ::console.info,
-  warn: ::console.warn,
-  error: (err, tags = []) => {
-    console.log(err);
-    const stack = err.stack || 'No error message';
-    const args = isArray(tags) && tags.length ? [stack, tags] : [stack];
-    console.error.apply(console, args);
-  },
-  diff: (obj1, obj2) => sanitizeDiff(objectDiff.diff(obj1, obj2)),
-  debug(key) {
-    let debug = this._debuggers[key];
-    if (!debug) {
-      debug = createDebugger(key);
-      this._debuggers.push({ key, debug });
-    }
-    return debug;
+import objectDiff from '#common/util/objectDiff.js';
+import checkLocalStorage from '#common/util/checkLocalStorage.js';
+
+const NODE_ENV = process.env.NODE_ENV;
+
+const hasLocalStorage = checkLocalStorage();
+
+const stringifyArgs = (args) => args.map((arg) => {
+  if (typeof arg === 'object' && arg) {
+    return stringify(arg, null, 2);
   }
-};
+  return arg;
+});
 
-if (process.env.NODE_ENV === 'production') {
-  log = {
-    _debuggers: [],
-    info: emptyFunction,
-    error: emptyFunction,
-    warn: emptyFunction,
+const log = NODE_ENV === 'production'
+  ? {
+    _debuggers: {},
+    info: (args) => {
+      if (process.browser) {
+        console.log(args); // eslint-disable-line no-console
+      }
+    },
+    warn: (args) => {
+      if (process.browser) {
+        console.warn(args); // eslint-disable-line no-console
+      }
+    },
+    error: (error) => {
+      if (global.__log) {
+        console.error(error);
+      }
+      if (process.browser) {
+        console.error(error); // eslint-disable-line no-console
+      }
+    },
     diff() { return {}; },
-    debug: () => emptyFunction
-  };
-}
-
-function sanitizeDiff(diff) {
-  if (!diff || diff.changed === 'equal') return diff;
-
-  const value = diff.value;
-
-  if (isObject(value)) {
-    for (const key in value) {
-      if (value.hasOwnProperty(key)) {
-        if (!value[key]) continue;
-        if (value[key].changed === 'equal') {
-          delete value[key];
-        } else if (isObject(value[key].value)) {
-          sanitizeDiff(value[key]);
-          if (value[key].changed === 'object change') {
-            value[key] = value[key].value;
+    debug(key) {
+      let debug = this._debuggers[key];
+      if (!debug) {
+        debug = (...args) => {
+          if (hasLocalStorage) {
+            try {
+              const enableDebug = global.localStorage.getItem('enableDebug');
+              if (enableDebug === 'true') {
+                console.log(...stringifyArgs(args)); // eslint-disable-line no-console
+              }
+            }
+            catch (error) {
+              log.error(error);
+            }
           }
+        };
+        this._debuggers[key] = debug;
+      }
+      return debug;
+    },
+  }
+  : {
+    _debuggers: {},
+    info: (...args) => {
+      if (global.__log) {
+        console.info(...args);
+      }
+      else {
+        console.log(...args); // eslint-disable-line no-console
+      }
+    },
+    warn: (...args) => {
+      if (global.__log) {
+        console.warn(...args);
+      }
+      else {
+        console.warn(...args); // eslint-disable-line no-console
+      }
+    },
+    error: (error) => {
+      if (global.__log) {
+        console.error(error);
+      }
+      else {
+        console.error(error); // eslint-disable-line no-console
+        if (process.browser) {
+          console.error(error); // eslint-disable-line no-console
         }
       }
-    }
-  }
-
-  return diff;
-}
+    },
+    diff: (obj1, obj2) => objectDiff(obj1, obj2),
+    debug(key) {
+      let debug = this._debuggers[key];
+      if (!debug) {
+        // TODO: Expose APP_ID here
+        // debug = createDebugger(`${APP_ID}:${key}`);
+        debug = createDebugger(`whiteroom:${key}`);
+        this._debuggers[key] = debug;
+      }
+      return (...args) => {
+        if (hasLocalStorage && global.localStorage.getItem('enableDebug') === 'true') {
+          log.info(...args);
+        }
+        debug(...args);
+      };
+    },
+  };
 
 export default log;

@@ -1,87 +1,215 @@
-require('./util/loadenv');
+import { fileURLToPath } from 'url';
+import path from 'path';
+import webpack from 'webpack';
+import MiniCssExtractPlugin from 'mini-css-extract-plugin';
+import CssMinimizerPlugin from 'css-minimizer-webpack-plugin';
+import TerserPlugin from 'terser-webpack-plugin';
+import NodePolyfillPlugin from 'node-polyfill-webpack-plugin';
+import { WebpackManifestPlugin } from 'webpack-manifest-plugin';
+import ReactRefreshWebpackPlugin from '@pmmmwh/react-refresh-webpack-plugin';
 
-const webpack = require('webpack');
-const path = require('path');
-const fs = require('fs');
-const auth = require('./config/auth');
+const {
+  NODE_ENV,
+  COMMIT_HASH,
+  WEBPACK_DEVELOPMENT_SERVER_PORT,
+} = process.env;
 
-const env = process.env;
-const nodeModulesPath = path.resolve(__dirname, 'node_modules');
-const buildPath = path.resolve(__dirname, 'build');
+const isProd = NODE_ENV === 'production';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const buildPath = path.resolve(__dirname, 'public', isProd ? 'dist' : 'build');
 const srcPath = path.resolve(__dirname, 'src');
-const babelConfig = JSON.parse(fs.readFileSync(path.resolve('./.babelrc')));
+const webpackDevServerPort = parseInt(WEBPACK_DEVELOPMENT_SERVER_PORT, 10) || 8001;
 
-module.exports = {
-  devtool: 'cheap-module-source-map',
+const webpackConfig = {
+  cache: {
+    type: 'filesystem',
+  },
+  mode: isProd ? 'production' : 'development',
+  devtool: isProd ? 'source-map' : 'cheap-module-source-map',
+  target: 'web',
   entry: [
-    'babel-polyfill',
-    'react-hot-loader/patch',
-    'webpack-dev-server/client?http://localhost:8001',
-    'webpack/hot/only-dev-server',
-    path.resolve(__dirname, 'src', 'client', 'initializeBrowser.js')
-  ],
+    path.resolve(srcPath, 'client', 'initializeBrowser.jsx'),
+  ].filter(Boolean),
   output: {
     path: buildPath,
-    filename: 'bundle.js',
-    publicPath: 'http://localhost:8001/build'
+    filename: `bundle${COMMIT_HASH ? '-' + COMMIT_HASH : ''}.js`,
+    // filename: isProd ? '[name].[contenthash].js' : '[name].bundle.js',
+    // chunkFilename: isProd ? '[name].[contenthash].js' : '[name].bundle.js',
+
+    // filename: isProd
+    //   ? '[name].[contenthash].js'
+    //   : '[name].bundle.js',
+    publicPath: isProd ? '/' : '/build',
+    clean: true,
   },
   resolve: {
-    extensions: ['', '.js', '.jsx'],
+    modules: [srcPath, 'node_modules'],
     alias: {
-      src: srcPath
-    }
+      '@src': srcPath,
+    },
+  },
+  optimization: {
+    minimize: isProd,
+    minimizer: [
+      new TerserPlugin({
+        parallel: true,
+        terserOptions: {
+          compress: true,
+          mangle: true,
+        },
+      }),
+      new CssMinimizerPlugin(),
+    ],
+    splitChunks: false,
+
+    // splitChunks: {
+    //   chunks: 'all',
+    //   minSize: 20000,
+    //   maxSize: 70000,
+    //   minChunks: 1,
+    //   automaticNameDelimiter: '~',
+    //   cacheGroups: {
+    //     defaultVendors: {
+    //       test: /[\\/]node_modules[\\/]/,
+    //       name: 'vendors',
+    //       chunks: 'all',
+    //       priority: -10,
+    //       reuseExistingChunk: true,
+    //     },
+    //     default: {
+    //       minChunks: 2,
+    //       priority: -20,
+    //       reuseExistingChunk: true,
+    //     },
+    //   },
+    // },
+    // runtimeChunk: 'single',
+
+    // splitChunks: {
+    //   chunks: 'all',
+    //   minSize: 20000,
+    //   maxSize: 70000,
+    //   minChunks: 1,
+    //   automaticNameDelimiter: '~',
+    //   cacheGroups: {
+    //     styles: {
+    //       name: 'styles',
+    //       test: /\.css$/,
+    //       chunks: 'all',
+    //       enforce: true,
+    //       priority: 20,
+    //     },
+    //     scripts: {
+    //       name: 'scripts',
+    //       test: /\.jsx?$/,
+    //       chunks: 'all',
+    //       enforce: true,
+    //       priority: 10,
+    //     },
+    //     vendors: {
+    //       test: /[\\/]node_modules[\\/]/,
+    //       name: 'vendors',
+    //       chunks: 'all',
+    //       priority: -10,
+    //       reuseExistingChunk: true,
+    //     },
+    //     default: {
+    //       minChunks: 2,
+    //       priority: -20,
+    //       reuseExistingChunk: true,
+    //     },
+    //   },
+    // },
   },
   module: {
-    preLoaders: [
+    rules: [
       {
-        test: /\.js$/,
-        loaders: ['isomorphine'],
-        exclude: [nodeModulesPath]
-      }
-    ],
-    loaders: [
-      {
-        loader: 'babel',
         test: /\.jsx?$/,
-        exclude: [nodeModulesPath],
-        query: babelConfig
+        exclude: /node_modules/,
+        use: {
+          loader: 'babel-loader',
+          options: {
+            configFile: path.resolve(__dirname, 'babel.web.config.cjs'),
+            plugins: [!isProd && 'react-refresh/babel'].filter(Boolean),
+          },
+        },
       },
       {
-        loader: 'json',
-        test: /\.json$/
-      }
-    ]
+        test: /\.less$/,
+        use: [
+          isProd ? MiniCssExtractPlugin.loader : 'style-loader',
+          {
+            loader: 'css-loader',
+            options: {
+              modules: {
+                localIdentName: '[name]--[local]--[hash:base64:5]',
+              },
+              importLoaders: 1,
+            },
+          },
+          'postcss-loader',
+          {
+            loader: 'less-loader',
+            options: {
+              additionalData: (
+                `@import "${srcPath}/client/style/variables.less";\n`
+              ),
+            },
+          },
+        ],
+      },
+      {
+        test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
+        use: {
+          loader: 'url-loader',
+          options: {
+            limit: 8192,
+            mimetype: 'application/font-woff',
+            name: 'fonts/[name].[ext]',
+          },
+        },
+      },
+    ],
   },
-  devServer: {
-    host: 'localhost',
-    port: 8001,
-    publicPath: 'http://localhost:8001/build',
-    hot: true,
-    contentBase: buildPath
-  },
-  node: {
-    fs: 'empty',
-    __filename: true
-  },
-  debug: true,
   plugins: [
-    new webpack.optimize.OccurenceOrderPlugin(),
-    new webpack.HotModuleReplacementPlugin(),
-    new webpack.NoErrorsPlugin(),
+    new NodePolyfillPlugin({
+      onlyAliases: ['path', 'url', 'fs'],
+    }),
+    !isProd && new ReactRefreshWebpackPlugin({
+      exclude: /node_modules/,
+    }),
+    isProd && new MiniCssExtractPlugin({
+      filename: `style${COMMIT_HASH ? '-' + COMMIT_HASH : ''}.css`,
+      chunkFilename: '[id].css',
+    }),
     new webpack.DefinePlugin({
-      'process.env': {
-        NODE_ENV:                `"${env.NODE_ENV}"`,
-        APP_HOST:                `"${env.APP_HOST}"`,
-        IMAGE_HOST:              `"${env.IMAGE_HOST}"`,
-        OAUTH_GOOGLE_ID:         `"${auth.google.client_id}"`,
-        OAUTH_GOOGLE_SCOPE:      `"${auth.google.scope}"`,
-        OAUTH_GOOGLE_REDIRECT:   `"${auth.google.redirect_uri}"`,
-        OAUTH_FACEBOOK_ID:       `"${auth.facebook.client_id}"`,
-        OAUTH_FACEBOOK_REDIRECT: `"${auth.facebook.redirect_uri}"`,
-        OAUTH_FACEBOOK_SCOPE:    `"${auth.facebook.scope}"`,
-        OAUTH_LINKEDIN_ID:       `"${env.OAUTH_LINKEDIN_ID}"`,
-        OAUTH_LINKEDIN_REDIRECT: `"${auth.linkedin.redirect_uri}"`
-      }
-    })
-  ]
+      'process.browser': JSON.stringify(true),
+      'process.env': JSON.stringify({}),
+      'process.env.NODE_ENV': JSON.stringify(NODE_ENV),
+      'global': 'window',
+    }),
+    new WebpackManifestPlugin({
+      fileName: 'manifest.json',
+      publicPath: '/build/',
+    }),
+  ].filter(Boolean),
+  devServer: isProd ? null : {
+    host: 'localhost',
+    port: webpackDevServerPort,
+    static: {
+      directory: buildPath,
+      publicPath: '/build/',
+    },
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+    },
+    compress: true,
+    hot: true,
+    client: {
+      webSocketURL: `ws://0.0.0.0:${webpackDevServerPort}/ws`,
+    },
+  },
 };
+
+export default webpackConfig;

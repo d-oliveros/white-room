@@ -1,21 +1,31 @@
-import { browserHistory } from 'react-router';
-import { Auth as AuthAPI } from 'src/server/api';
-import { http, analytics } from 'src/client/lib';
-import { anonymousUser } from 'src/client/constants';
-import socketClient from 'src/client/websockets/client';
+import analytics from '#client/analytics/analytics.js';
+import { ANALYTICS_EVENT_LOGOUT } from '#client/analytics/eventList.js';
+import makeInitialState from '#client/makeInitialState.js';
+import { API_ACTION_LOGOUT } from '#api/actionTypes.js';
+import sendDataToMobileApp, {
+  MOBILE_APP_ACTION_TYPE_LOGOUT,
+} from '#client/helpers/sendDataToMobileApp.js';
 
-export default async function logout(state) {
-  http.setToken(null);
-  socketClient.socket.emit('userLogout');
+export default async function logout({ state, apiClient }) {
+  return apiClient.postWithState({
+    action: API_ACTION_LOGOUT,
+    state: state,
+    payload: {
+      deviceRegistrationId: state.get(['mobileApp', 'deviceRegistrationId']),
+    },
+    async onSuccess() {
+      analytics.track(ANALYTICS_EVENT_LOGOUT);
 
-  analytics.track('Logout');
-  analytics.logout();
+      const initialState = makeInitialState();
+      for (const key of Object.keys(initialState)) {
+        state.set(key, initialState[key]);
+      }
 
-  await AuthAPI.logout();
+      analytics.logout();
 
-  state.set('currentUser', anonymousUser);
-  state.commit();
-
-  global.scroll(0, 0);
-  browserHistory.push('/');
+      sendDataToMobileApp({
+        actionType: MOBILE_APP_ACTION_TYPE_LOGOUT,
+      });
+    },
+  });
 }

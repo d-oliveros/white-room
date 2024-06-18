@@ -1,0 +1,21 @@
+.GridRow {
+  box-sizing: border-box;
+  display: grid;
+  width: 100%;
+  max-width: 900px;
+  align-items: start;
+}
+
+.columnWrapTablet {
+  @media screen and (max-width: 1000px) {
+    grid-template-columns: 1fr 1fr !important;
+    column-gap: 10px;
+  }
+}
+
+.columnWrapMobile {
+  @media screen and (max-width: 500px) {
+    grid-template-columns: 1fr !important;
+    column-gap: 10px;
+  }
+}

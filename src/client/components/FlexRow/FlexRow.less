@@ -1,0 +1,19 @@
+.FlexRow {
+  box-sizing: border-box;
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.FlexRow > div {
+  margin-right: 35px;
+
+  @media screen and (max-width: 500px) {
+    margin-right: 0;
+    width: 100%;
+  }
+
+  &:last-child {
+    margin-right: 0;
+  }
+}

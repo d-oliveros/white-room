@@ -1,0 +1,148 @@
+.ModalV2 {
+  box-sizing: border-box;
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  top: 0;
+  left: 0;
+  overflow: hidden;
+  background-color: rgba(25, 51, 64, 0.96);
+  backdrop-filter: blur(1px);
+  -webkit-backdrop-filter: blur(1px);
+  z-index: 1000;
+}
+
+.centerContent {
+  display: flex;
+  align-items: center;
+}
+
+.contentContainer {
+  box-sizing: border-box;
+  width: 100%;
+  margin: 0 auto;
+  z-index: 2;
+  position: relative;
+  animation: translateUp 0.2s;
+
+  &.disableAnimation {
+    animation: none;
+  }
+}
+
+.closeButton {
+  min-width: 82px;
+  position: fixed;
+  bottom: 87px;
+  left: calc((100vw - 82px) / 2);
+  z-index: 2;
+
+  @media screen and (max-height: 500px) {
+    bottom: 40px;
+  }
+}
+
+.slideUp {
+  backdrop-filter: unset;
+  -webkit-backdrop-filter: unset;
+  background-color: rgba(25, 51, 64, 0.86);
+
+  .contentContainer {
+    overflow: hidden;
+    border-radius: 24px 24px 0px 0px;
+    background: @white;
+  }
+}
+
+.fixedFooterButton, .fixedFooterButtonSlideUp, .fixedFooterButtonAssemblyLineEdit, .fixedFooterButtonPreviewDocs {
+  background-color: rgba(25, 51, 64, 0.86);
+
+  .contentContainer {
+    overflow: hidden;
+    border-radius: 24px 24px 0px 0px;
+    background: @white;
+    padding: 28px 10px 90px 10px;
+    position: unset;
+    overflow: auto;
+    height: 100%;
+
+    @media screen and (min-width: 895px) {
+      border-radius: 14px;
+      height: 80vh;
+    }
+  }
+
+  .closeButton {
+    width: 100%;
+    box-sizing: border-box;
+    left: unset;
+    bottom: 0px;
+    margin: 0 auto;
+    background-color: white;
+    box-shadow: 0px -6px 17px rgba(219, 176, 0, 0.14);
+    padding: 10px 10px 30px;
+    animation: translateUp 0.2s;
+
+    @media screen and (min-width: 895px) {
+      left: calc((100vw - 895px) / 2);
+      bottom: 10vh;
+      border-radius: 0 0 14px 14px;
+      padding: 10px 10px 20px;
+    }
+  }
+}
+
+.fixedFooterButtonPreviewDocs {
+  .closeButton {
+    @media screen and (min-width: 895px) {
+      bottom: 7vh;
+      left: calc((100vw - 1030px) / 2) !important;
+      width: 100%;
+      max-width: 1030px;
+    }
+  }
+}
+
+.fixedFooterButtonSlideUp {
+  .contentContainer {
+    position: absolute;
+    height: unset;
+    bottom: 0;
+    padding-bottom: 250px;
+  }
+}
+
+.stack {
+  background-color: rgba(19, 38, 48, 0.5);
+  backdrop-filter: blur(10px);
+
+  .contentContainer {
+    position: fixed !important;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: 0 auto;
+    background-color: @white;
+    border-radius: 24px 24px 0px 0px;
+  }
+
+  @media (min-width: 576px) {
+    display: flex;
+    align-items: center;
+
+    .contentContainer {
+      position: relative !important;
+      border-radius: 24px;
+    }
+  }
+}
+
+@keyframes translateUp {
+  0% {
+    transform: translateY(200px);
+  }
+
+  100% {
+    transform: translateY(0px);
+  }
+}
