@@ -24,7 +24,7 @@
     "test-build": "npm run build && USE_BUILD=true node init",
     "test": "cross-env NODE_ENV=test mocha --require _registerBabel.js --ui bdd --recursive --exit",
     "test-watch": "npm run test -- --watch",
-    "script": "node util/load",
+    "script": "node src/scripts/load",
     "cron-task": "cross-env DEBUG=whiteroom* dotenv -e .env -e .env.default node util/load run-cron",
     "knex-create-migration": "knex migrate:make $1 -x js",
     "knex-create-seed": "knex seed:make",

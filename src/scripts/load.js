@@ -9,7 +9,7 @@ if (!scriptName) {
   process.exit(0);
 }
 
-import(`./${process.argv[2]}`).then((mod) => {
+import(`./${process.argv[2]}.js`).then((mod) => {
   if (typeof mod === 'object' && typeof mod.default === 'function') {
     mod = mod.default;
   }

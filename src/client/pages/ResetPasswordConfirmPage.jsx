@@ -3,9 +3,6 @@ import { useNavigate, useLocation } from 'react-router-dom';
 
 import parseQueryString from '#common/util/parseQueryString.js';
 
-import { getUserLandingPage } from '#client/helpers/allowedRoles.jsx';
-
-import useTransitionHook from '#client/hooks/useTransitionHook.js';
 import useBranch from '#client/hooks/useBranch.js';
 
 import PasswordResetConfirmForm from '#client/components/PasswordResetConfirmForm/PasswordResetConfirmForm.jsx';
@@ -15,21 +12,12 @@ import Link from '#client/components/Link/Link.jsx';
 import AuthActions from '#client/actions/Auth/index.jsx';
 
 const ResetPasswordConfirmPage = () => {
-  useTransitionHook(ResetPasswordConfirmPage);
   const navigate = useNavigate();
   const location = useLocation();
 
   const { isMobileApp } = useBranch({
     isMobileApp: ['mobileApp', 'isMobileApp'],
   });
-
-  const redirectUser = async (user) => {
-    const userLandingPage = getUserLandingPage({
-      userRoles: user.roles,
-      isMobileApp: isMobileApp,
-    });
-    navigate(userLandingPage);
-  };
 
   const onPasswordResetConfirmFormSubmit = (formValues) => {
     const { token } = parseQueryString(location.search);
@@ -38,7 +26,7 @@ const ResetPasswordConfirmPage = () => {
       token: token,
       password: formValues.password,
     })
-      .then(({ user }) => redirectUser(user));
+      .then(({ user }) => navigate('/'));
   };
 
   return (

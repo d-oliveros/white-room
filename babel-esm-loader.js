@@ -135,11 +135,6 @@ export async function transformSource(source, context, defaultTransformSource) {
         ? source.toString('utf-8')
         : Buffer.from(source).toString('utf-8')
 
-  // Skip transforming Babel config files to avoid recursion
-  if (url.endsWith('babel.config.js')) {
-    return { source: stringSource }
-  }
-
   const sourceCode = (
     await babel.transformAsync(stringSource, {
       sourceType: 'module',

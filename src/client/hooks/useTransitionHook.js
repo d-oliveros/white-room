@@ -1,5 +1,5 @@
 import { useContext, useEffect } from 'react';
-import { useParams, useLocation } from 'react-router-dom';
+import { useParams, useLocation, useBlocker } from 'react-router-dom';
 
 import analytics from '#client/analytics/analytics.js';
 import log from '#client/lib/log.js';
@@ -29,7 +29,7 @@ const setPageTitle = (title) => {
  * @param {function} options.getMetadata Function to get page metadata.
  * @returns {boolean} Whether a transition is in progress.
  */
-const useTransitionHook = ({ fetchPageData, getMetadata } = {}) => {
+const useTransitionHook = ({ fetchPageData, allowedRoles, getMetadata } = {}) => {
   useScrollToTop();
   const { state } = useContext(ReactAppContext);
   const isMounted = useIsMounted();
@@ -37,63 +37,98 @@ const useTransitionHook = ({ fetchPageData, getMetadata } = {}) => {
   const location = useLocation();
   const dispatch = useDispatch();
 
-  const { pathHistory, isTransitioning } = useBranch({
-    pathHistory: ['analytics', 'pathHistory'],
-    isTransitioning: 'isTransitioning',
+  // Block navigating elsewhere when data has been entered into the input
+  let blocker = useBlocker(
+    ({ currentLocation, nextLocation }) =>
+      currentLocation.pathname !== nextLocation.pathname
+  );
+
+  const { isTransitioning, isNotFound, pageData } = useBranch({
+    isTransitioning: ['isTransitioning'],
+    isNotFound: ['isNotFound'],
+    pageData: ['pageData'],
   });
 
   useEffect(() => {
+    console.log('useEffect entry');
     state.push(['analytics', 'pathHistory'], location.pathname);
 
     // Skip the effect on the first render
-    if (pathHistory.length === 0) {
-      analytics.pageview();
-      return;
-    }
+    if (state.get('analytics', 'pathHistory').length !== 1) {
+      console.log('TRANSITIONING START');
+      state.set('isTransitioning', true);
+      state.set('pageData', null);
+      state.set('isNotFound', null);
 
-    state.set('isTransitioning', true);
-
-    // Fetch page data if fetchPageData function is provided, otherwise resolve immediately
-    const fetchPageDataPromise = Promise.resolve(!fetchPageData
-      ? null
-      : fetchPageData({ dispatch, params })
-    );
-
-    fetchPageDataPromise.then(() => {
-      if (!isMounted()) {
-        return;
+      const isNotFound = () => {
+        state.set('isNotFound', true);
       }
 
-      const pageMetadata = {
-        ...(state.get('pageMetadataDefault') || {}),
-        ...(!getMetadata ? {} : getMetadata({
-          state: state,
-          params,
-        })),
-      };
+      // Fetch page data if fetchPageData function is provided, otherwise resolve immediately
+      const fetchPageDataPromise = Promise.resolve(!fetchPageData
+        ? null
+        : fetchPageData({ dispatch, params, isNotFound })
+      );
 
-      state.set('pageMetadata', pageMetadata);
-      setPageTitle(pageMetadata.pageTitle);
+      if (fetchPageData) {
+        state.commit({ force: true });
+      }
 
-      state.set('isTransitioning', false);
-      state.set('pendingCommit', false);
+      fetchPageDataPromise.then((newPageData) => {
+        if (!isMounted()) {
+          return;
+        }
+        state.set('pageData', newPageData || null);
 
-      // Commit the changes to the state
-      state.commit();
-    })
-    .catch((error) => {
-      log.error(error);
+        const pageMetadata = {
+          ...(state.get('pageMetadataDefault') || {}),
+          ...(!getMetadata ? {} : getMetadata({
+            state: state,
+            params,
+          })),
+        };
 
-      if (isMounted()) {
+        setPageTitle(pageMetadata.pageTitle);
+
+        state.set('pageMetadata', pageMetadata);
         state.set('isTransitioning', false);
         state.set('pendingCommit', false);
+        state.set('isNotFound', false);
+
         state.commit();
-      }
-    });
+      })
+      .catch((error) => {
+        log.error(error);
+
+        if (isMounted()) {
+          state.set('isTransitioning', false);
+          state.set('pendingCommit', false);
+          analytics.pageview();
+          state.commit();
+        }
+      });
+    }
+    else {
+      analytics.pageview();
+    }
+
+    return () => {
+      console.log('TRANSITIONING START RETURN');
+      state.set('isTransitioning', true);
+      state.set('pageData', null);
+      state.set('isNotFound', null);
+      state.commit({ force: true });
+    }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.pathname]);
 
-  return isTransitioning;
+  console.log(isTransitioning);
+
+  return {
+    pageData,
+    isTransitioning,
+    isNotFound,
+  };
 }
 
 export default useTransitionHook;

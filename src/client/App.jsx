@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
+import React, { useEffect, useState, useContext } from 'react';
+import { Outlet } from 'react-router-dom';
 import classnames from 'classnames';
 import { useLocation, Routes, Route } from 'react-router-dom';
 
@@ -8,24 +8,49 @@ import isUserAgentMobileApp, { isUserAgentIphoneApp } from '#common/util/isUserA
 
 import { hasRoleAnonymous } from '#common/userRoles.js';
 
+import {
+  API_ACTION_GET_APP_COMMIT_HASH,
+} from '#api/actionTypes.js';
+
 import sendDataToMobileApp, {
   MOBILE_APP_ACTION_TYPE_ROUTE_CHANGED,
   MOBILE_APP_ACTION_TYPE_CURRENT_USER,
 } from '#client/helpers/sendDataToMobileApp.js';
 
-import { API_ACTION_GET_APP_COMMIT_HASH } from '#api/actionTypes.js';
-
 import useBranch from '#client/hooks/useBranch.js';
+import useApiClient from '#client/hooks/useApiClient.js';
+import useTransitionHook from '#client/hooks/useTransitionHook.js';
 import MobileAppEventListener from '#client/components/MobileAppEventListener/MobileAppEventListener.jsx';
 import EnablePushNotificationsModal from '#client/components/EnablePushNotificationsModal/EnablePushNotificationsModal.jsx';
 
 // Interval for checking the app commit hash vs the server commit hash to reload the page when a new version is available.
 const CHECK_APP_VERSION_INTERVAL_MS = 1800000; // 30 minutes.
 
-const App = ({ routes, apiClient }) => {
+const RouteTransitionWrapper = ({ route, notFoundRoute }) => {
+  const { isTransitioning, isNotFound, pageData } = useTransitionHook(route.component);
+
+  if (isNotFound && notFoundRoute.Component) {
+    return (
+      <notFoundRoute.Component />
+    );
+  }
+
+  return (
+    <route.component
+      {...pageData || {}}
+      isTransitioning={isTransitioning}
+    />
+  );
+}
+
+const App = () => {
+  console.log('LOADING APP');
+  const apiClient = useApiClient();
+  const location = useLocation();
   const [, setCheckAppVersionInterval] = useState(null);
   const [checkAppVersionLastRunTimestamp, setCheckAppVersionLastRunTimestamp] = useState(Date.now());
-  const location = useLocation();
+
+  // TODO: GET NOT FOUND ROUTE COMPONENT
 
   const { userAgent, currentUser, askPushNotifications } = useBranch({
     userAgent: ['userAgent'],
@@ -96,18 +121,19 @@ const App = ({ routes, apiClient }) => {
         },
       )}
     >
-      <Routes>
-        {routes.map((route, index) => (
-          <Route
-            key={index}
-            path={route.path || '*'}
-            element={<route.component />}
-            exact={route.exact}
-          />
-        ))}
-      </Routes>
-
       <MobileAppEventListener />
+      <header>
+        <nav>
+          <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/signup">Sign Up</a></li>
+            <li><a href="/login">Login</a></li>
+          </ul>
+        </nav>
+      </header>
+      <main>
+        <Outlet />
+      </main>
       {askPushNotifications && (
         <EnablePushNotificationsModal
           onClose={() => {}}
@@ -115,11 +141,6 @@ const App = ({ routes, apiClient }) => {
       )}
     </div>
   );
-};
-
-App.propTypes = {
-  apiClient: PropTypes.object.isRequired,
-  routes: PropTypes.array.isRequired,
 };
 
 export default App;

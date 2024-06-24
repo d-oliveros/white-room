@@ -3,7 +3,11 @@ import { serializeError } from 'serialize-error';
 
 import React from 'react';
 import { renderToString } from 'react-dom/server';
-import { StaticRouter } from 'react-router-dom/server.js';
+import {
+  createStaticHandler,
+  createStaticRouter,
+  StaticRouterProvider,
+} from 'react-router-dom/server.js';
 
 import logger from '#common/logger.js';
 import typeCheck from '#common/util/typeCheck.js';
@@ -12,8 +16,8 @@ import createApiClient from '#api/createApiClient.js';
 import makeInitialState from '#client/makeInitialState.js';
 import makeDispatchFn from '#client/core/makeDispatchFn.js';
 import createTree from '#client/core/createTree.js';
-import Root from '#client/core/Root.jsx';
-import routes from '#client/routes.js';
+import AppContextProvider from '#client/contexts/AppContextProvider.jsx';
+import routes, { router } from '#client/routes.jsx';
 import renderLayout from '#client/renderLayout.js';
 
 import {
@@ -55,199 +59,92 @@ const DEFAULT_PAGE_METADATA = {
 /**
  * Runs the data fetching functions defined in the router state's component tree.
  */
-const fetchPageData = async ({ branch, state, apiClient, navigate }) => {
-  await Promise.all(branch
-    .filter(({ route }) => route.component?.fetchPageData)
-    .map(({ route, params }) => route.component.fetchPageData({
+const fetchPageData = async ({ route, params, state, apiClient, navigate, onNotFound }) => {
+  let pageData = null;
+  let pageMetadata = null;
+
+  const routeComponent = route.Component
+    ? (await route.Component).default
+    : null;
+
+  console.log('routeComponent');
+  console.log(routeComponent);
+
+  if (routeComponent?.fetchPageData) {
+    pageData = await routeComponent.fetchPageData({
       dispatch: makeDispatchFn({
         state,
         apiClient,
         navigate,
       }),
+      onNotFound,
       params: params || {},
-    }))
-  );
+    });
+  }
+
+  if (routeComponent?.getMetadata) {
+    pageMetadata = routeComponent.getMetadata({
+      state,
+      params: params || {},
+    });
+  }
 
   return {
-    pageMetadata: setComponentsMetadata(branch, {
-      state,
-      apiClient,
-      navigate,
-    }),
+    pageData,
+    pageMetadata,
   };
 }
 
+const createFetchRequest = (req, res) => {
+  console.log('req.headers');
+  console.log(req.headers);
+  // Note: This had to take originalUrl into account for presumably vite's proxying
+  const url = new URL(req.originalUrl || req.url, APP_URL);
 
-/**
- * Changes the state's metadata object
- *
- * @param  {Array}  branch An array of components to be rendered.
- * @param  {Object} inject The application's state.
- */
-function setComponentsMetadata(branch, inject) {
-  const [match] = branch.filter(({ route }) => route.component?.getMetadata);
+  const controller = new AbortController();
+  res.on('close', () => controller.abort());
 
-  try {
-    const componentMetadata = !match ? null : match.route.component.getMetadata({
-      state: inject.state,
-      params: match.params || {},
-    });
+  const headers = new Headers();
 
-    const pageMetadata = {
-      ...DEFAULT_PAGE_METADATA,
-      ...(componentMetadata || {}),
-    };
-    inject.state.set('pageMetadata', pageMetadata);
-    inject.state.set('pageMetadataDefault', DEFAULT_PAGE_METADATA);
-
-    return pageMetadata;
-  }
-  catch (metadataGetterError) {
-    const error = new Error(`Error while generating page metatags: ${metadataGetterError.message}`);
-    error.name = 'PageMetadataGenerationError';
-    error.details = {
-      state: inject.state.get(),
-      stringifiedMetadataGetterFunction: !match ? null : match.route.component.getMetadata.toString(),
-    };
-    error.inner = serializeError(metadataGetterError);
-    logger.error(error);
-  }
-  return null;
-}
-
-/**
- * Renders the client on server-side.
- *
- * Gets the initial state from req.body, makes the initial client render,
- * builds and returns the fully-rendered HTML.
- *
- * @param  {Object} options.state Initial client state.
- * @param  {String} options.url   Requested URL.
- * @param  {String} options.sessionToken Session token.
- * @return {Object}               Object with { type, html, redirectUrl, error }.
- */
-export default async function renderReactApp({ state: _state, url, sessionToken }) {
-  const initialState = { ...makeInitialState(), ..._state };
-
-  const state = createTree(initialState, {
-    asynchronous: false,
-    autoCommit: false,
-    immutable: NODE_ENV !== 'production',
-  });
-
-  const now = Date.now();
-  debug(`Rendering client. URL: ${url}`);
-
-  try {
-    const context = {};
-
-    const {
-      pathname: urlWithoutQueryString,
-      search: urlSearch = '',
-    } = parseUrl(url);
-
-    const branch = matchRoute(routes, urlWithoutQueryString);
-
-    typeCheck('branch::NonEmptyArray', branch);
-
-    const isNotFoundRoute = !branch[0].route.path;
-
-    const apiClient = createApiClient({
-      commitHash: COMMIT_HASH,
-      getSessionToken: () => sessionToken,
-      apiPath: '/api/v1',
-      appUrl: APP_URL,
-      sessionTokenName: 'X-Session-Token',
-    });
-
-    let redirectUrl = null;
-    const { pageMetadata } = await fetchPageData({
-      branch,
-      state,
-      apiClient,
-      navigate: (url) => {
-        redirectUrl = url;
-      },
-    });
-
-    if (redirectUrl) {
-      debug(`\`navigate\` called with: ${redirectUrl}`);
-      state.release();
-      return makeRendererResponse({
-        type: RENDERER_RESPONSE_TYPE_REDIRECT,
-        redirectUrl,
-      });
+  for (const [key, values] of Object.entries(req.headers)) {
+    if (values) {
+      if (Array.isArray(values)) {
+        for (const value of values) {
+          headers.append(key, value);
+        }
+      } else {
+        headers.set(key, values);
+      }
     }
-
-    assertIdleApiState(state.get('apiState'));
-
-    const body = renderToString(
-      React.createElement(
-        StaticRouter,
-        { location: url, context: context },
-        React.createElement(Root, { state, apiClient })
-      )
-    );
-
-    if (context.url) {
-      debug(`Redirect to ${context.url}`);
-      state.release();
-      return makeRendererResponse({
-        type: RENDERER_RESPONSE_TYPE_REDIRECT,
-        redirectUrl: `${context.url}${urlSearch}`,
-      });
-    }
-
-    const appUrl = new URL(APP_URL);
-
-    const html = renderLayout({
-      body,
-      useBuild,
-      devScriptBaseUrl: `${appUrl.protocol}//${appUrl.hostname}`,
-      metaData: pageMetadata,
-      segmentKey: SEGMENT_KEY,
-      webpackDevelopmentServerPort: WEBPACK_DEVELOPMENT_SERVER_PORT || 8001,
-      serializedState: serializeState(state),
-      bundleSrc: useBuild
-        ? `${AWS_BUNDLES_URL || ''}/js/bundle${COMMIT_HASH ? `-${COMMIT_HASH}` : ''}.js`
-        : null,
-      bundleStyleSrc: useBuild && NODE_ENV === 'production'
-        ? `${AWS_BUNDLES_URL || ''}/css/style${COMMIT_HASH ? `-${COMMIT_HASH}` : ''}.css`
-        : null,
-    });
-
-    state.release();
-
-    debug(`Rendered in ${Date.now() - now}ms - HTML length: ${html.length}`);
-
-    return makeRendererResponse({
-      type: isNotFoundRoute
-        ? RENDERER_RESPONSE_TYPE_NOT_FOUND
-        : RENDERER_RESPONSE_TYPE_SUCCESS,
-      html,
-    });
-  } catch (error) {
-    state.release();
-    debug(`Rendering error: ${error.message}`);
-    return makeRendererResponse({
-      type: RENDERER_RESPONSE_TYPE_ERROR,
-      error: serializeError(error),
-    });
   }
+
+  const init = {
+    method: req.method,
+    headers,
+    signal: controller.signal,
+  };
+
+  if (req.method !== 'GET' && req.method !== 'HEAD') {
+    init.body = req.body;
+  }
+
+  return new Request(url.href, init);
 }
 
 /**
  * Match the route against the routes array, including dynamic segments.
+ *
  * @param {Array} routes Array of route objects.
  * @param {String} pathname URL pathname to match.
- * @return {Array} Array containing the matched route and params.
+ *
+ * @return {Object} The matched route and params.
  */
-function matchRoute(routes, pathname) {
+const matchRoute = (routes, pathname) => {
   let notFoundRoute = null;
 
   for (const route of routes) {
     const { path } = route;
-    if (!path) {
+    if (path === '*') {
       notFoundRoute = route;
       continue;
     }
@@ -266,15 +163,182 @@ function matchRoute(routes, pathname) {
         return acc;
       }, {});
 
-      return [{ route, params }];
+      return {
+        route,
+        params,
+        isNotFound: false,
+      };
     }
   }
   if (notFoundRoute) {
-    return [{
+    return {
       route: notFoundRoute,
       params: {},
-    }];
+      isNotFound: true,
+    };
   }
 
-  return [];
+  return null;
+};
+
+// TODO: Is it OK to leave this here?
+console.log('router');
+console.log(router);
+let handler = createStaticHandler(router);
+
+// const routesLoaded = await Promise.all(router.map(async (route) => ({
+//   ...route,
+//   component: route.component instanceof Promise
+//     ? (await route.component).default
+//     : route.component,
+// })));
+
+// console.log('routesLoaded');
+// console.log(routesLoaded);
+
+// let handler = createStaticHandler(routesLoaded);
+
+/**
+ * Renders the client on server-side.
+ *
+ * Gets the initial state from req.body, makes the initial client render,
+ * builds and returns the fully-rendered HTML.
+ *
+ * @param  {Object} options.state Initial client state.
+ * @param  {String} options.url   Requested URL.
+ * @param  {String} options.sessionToken Session token.
+ * @return {Object}               Object with { type, html, redirectUrl, error }.
+ */
+export default async function renderReactApp({ state: _state, req, res, sessionToken }) {
+  const initialState = { ...makeInitialState(), ..._state };
+  const url = req.originalUrl;
+
+  const state = createTree(initialState, {
+    asynchronous: false,
+    autoCommit: false,
+    immutable: NODE_ENV !== 'production',
+  });
+
+  const now = Date.now();
+  debug(`Rendering client. URL: ${url}`);
+
+  try {
+    const { pathname, search: urlSearch = '' } = parseUrl(url);
+    const { route, params, isNotFound } = matchRoute(routes, pathname);
+
+    typeCheck('route::NonEmptyObject', route, {
+      errorMessage: `No default route configured.`,
+    });
+
+    const apiClient = createApiClient({
+      commitHash: COMMIT_HASH,
+      getSessionToken: () => sessionToken,
+      apiPath: '/api/v1',
+      appUrl: APP_URL,
+      sessionTokenName: 'X-Session-Token',
+    });
+
+    let redirectUrl = null;
+
+    console.log('DOING', url);
+    console.log('route');
+    console.log(route);
+
+    const { pageData, pageMetadata } = await fetchPageData({
+      route,
+      params,
+      state,
+      apiClient,
+      navigate: (url) => {
+        redirectUrl = url;
+      },
+      onNotFound: () => {
+        state.state('isNotFound', true);
+        isNotFound = true;
+      },
+    });
+
+    const pageMetadataWithDefaults = {
+      ...DEFAULT_PAGE_METADATA,
+      ...(pageMetadata || {}),
+    };
+
+    state.set('pageData', pageData || {});
+    state.set('pageMetadata', pageMetadataWithDefaults);
+    state.set('pageMetadataDefault', DEFAULT_PAGE_METADATA);
+    console.log('AAAs')
+
+    if (redirectUrl) {
+      debug(`\`navigate\` called with: ${redirectUrl}`);
+      state.release();
+      return makeRendererResponse({
+        type: RENDERER_RESPONSE_TYPE_REDIRECT,
+        redirectUrl,
+      });
+    }
+
+    assertIdleApiState(state.get('apiState'));
+
+    let fetchRequest = createFetchRequest(req, res);
+    let context = await handler.query(fetchRequest);
+
+    console.log('er');
+    console.log(handler.dataRoutes);
+    const staticRouter = createStaticRouter(handler.dataRoutes, context);
+    console.log('Or');
+
+    const body = renderToString(
+      React.createElement(AppContextProvider, { state, apiClient },
+        React.createElement(StaticRouterProvider, { router: staticRouter, context })
+      )
+    );
+
+    console.log('Ur');
+    if (context.url) {
+      debug(`Redirect to ${context.url}`);
+      state.release();
+      return makeRendererResponse({
+        type: RENDERER_RESPONSE_TYPE_REDIRECT,
+        redirectUrl: `${context.url}${urlSearch}`,
+      });
+    }
+
+    console.log('A')
+    const appUrl = new URL(APP_URL);
+    console.log('bB')
+
+    const html = renderLayout({
+      body,
+      useBuild,
+      devScriptBaseUrl: `${appUrl.protocol}//${appUrl.hostname}`,
+      metaData: pageMetadataWithDefaults,
+      segmentKey: SEGMENT_KEY,
+      webpackDevelopmentServerPort: WEBPACK_DEVELOPMENT_SERVER_PORT || 8001,
+      serializedState: serializeState(state),
+      bundleSrc: useBuild
+        ? `${AWS_BUNDLES_URL || ''}/js/bundle${COMMIT_HASH ? `-${COMMIT_HASH}` : ''}.js`
+        : null,
+      bundleStyleSrc: useBuild && NODE_ENV === 'production'
+        ? `${AWS_BUNDLES_URL || ''}/css/style${COMMIT_HASH ? `-${COMMIT_HASH}` : ''}.css`
+        : null,
+    });
+
+    state.release();
+
+    debug(`Rendered in ${Date.now() - now}ms - HTML length: ${html.length}`);
+
+    return makeRendererResponse({
+      type: isNotFound
+        ? RENDERER_RESPONSE_TYPE_NOT_FOUND
+        : RENDERER_RESPONSE_TYPE_SUCCESS,
+      html,
+    });
+  } catch (error) {
+    state.release();
+    debug(`Rendering error: ${error.message}`);
+    return makeRendererResponse({
+      type: RENDERER_RESPONSE_TYPE_ERROR,
+      error: serializeError(error),
+    });
+  }
 }

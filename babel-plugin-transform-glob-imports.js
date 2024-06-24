@@ -22,14 +22,14 @@ const regexIndex = /index\.jsx$/;
  * import somethingElse from './somethingElse.jsx';
  *
  * Output:
- * import HomePage from "./HomePage.jsx";
+ * import Homepage from "./Homepage.jsx";
  * import PageTwo from "./PageTwo.jsx";
  * import NotFoundPage from "./NotFoundPage.jsx";
  * import somethingElse from './somethingElse.jsx';
  *
- * export { HomePage, PageTwo, NotFoundPage };
+ * export { Homepage, PageTwo, NotFoundPage };
  * const modules = {
- *   HomePage,
+ *   Homepage,
  *   PageTwo,
  *   NotFoundPage,
  * };

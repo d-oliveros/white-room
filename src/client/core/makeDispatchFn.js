@@ -3,10 +3,9 @@ import log from '#client/lib/log.js';
 
 const debugActions = log.debug('client:actions');
 
-export default function makeDispatchFn({ state, apiClient, navigate }) {
+export default function makeDispatchFn({ state, apiClient }) {
   typeCheck('state::Object', state);
   typeCheck('apiClient::Object', apiClient);
-  typeCheck('navigate::Object|Function', navigate);
 
   return function dispatchFn(fn, ...args) {
     if (!fn || typeof fn !== 'function') {
@@ -18,6 +17,6 @@ export default function makeDispatchFn({ state, apiClient, navigate }) {
       throw error;
     }
     debugActions(`Dispatching: ${fn.name || 'anonymous'}`, ...args);
-    return fn({ state, apiClient, navigate }, ...args);
+    return fn({ state, apiClient }, ...args);
   };
 }

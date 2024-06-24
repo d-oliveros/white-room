@@ -9,11 +9,9 @@ import Logo from '#client/components/Logo/Logo.jsx';
 import log from '#client/lib/log.js';
 import AuthActions from '#client/actions/Auth/index.jsx';
 import useBranch from '#client/hooks/useBranch.js';
-import useTransitionHook from '#client/hooks/useTransitionHook.js';
 import useDispatch from '#client/hooks/useDispatch.js';
 
 const LogoutPage = () => {
-  useTransitionHook(LogoutPage);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 

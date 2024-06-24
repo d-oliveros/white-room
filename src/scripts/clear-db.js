@@ -1,4 +1,5 @@
 import assert from 'assert';
+import knex from '#server/db/knex.js';
 
 const {
   NODE_ENV,
@@ -10,7 +11,6 @@ const ignoreTables = [
 
 export default async function clearDb() {
   assert(NODE_ENV !== 'production', 'Not enabled in production mode.');
-  const knex = require('../src/server/db/knex').default;
   const result = await knex.raw(
     `select 'drop table if exists "' || tablename || '" cascade;'
     from pg_tables

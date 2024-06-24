@@ -1,109 +1,87 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import lodashGet from 'lodash/fp/get.js';
+import React, { useState } from 'react';
+import { Form, Formik } from 'formik';
 
-import { API_ERROR_ACTION_PAYLOAD_VALIDATION_FAILED } from '#common/errorCodes.js';
+import {
+  API_ACTION_LOGIN,
+} from '#api/actionTypes.js';
 
-const initialState = {
-  formState: {
-    phone: '',
-    password: '',
+import {
+  createFormValidationFn,
+  createInitialValues,
+} from '#client/helpers/formikHelpers.js';
+
+import AuthActions from '#client/actions/Auth/index.jsx';
+import useApiState from '#client/hooks/useApiState.jsx';
+
+import FormikField from '#client/components/FormikField/FormikField.jsx';
+import useDispatch from '#client/hooks/useDispatch.js';
+import Link from '#client/components/Link/Link.jsx';
+import ErrorMessage from '#client/components/ErrorMessage/ErrorMessage.jsx';
+
+const formFields = [
+  {
+    id: 'phone',
+    type: 'phone',
+    properties: {
+      placeholder: 'Phone Number',
+    },
+    validations: ['phone', 'required'],
   },
-};
+  {
+    id: 'password',
+    type: 'password',
+    properties: {
+      autoComplete: 'false',
+      placeholder: 'Password',
+    },
+    validations: ['required'],
+  },
+];
 
-const isUserNotFoundError = (error) => lodashGet('details.fields.phone', error);
-const isIncorrectPasswordError = (error) => lodashGet('details.fields.password', error);
-const isPhoneValidationError = (error) => {
-  return error && error.name === API_ERROR_ACTION_PAYLOAD_VALIDATION_FAILED;
-};
-const isUnexpectedError = (error) => (
-  error
-  && !isUserNotFoundError(error)
-  && !isIncorrectPasswordError(error)
-  && !isPhoneValidationError(error)
-);
+const LoginForm = () => {
+  const [submitError, setSubmitError] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const loginApiState = useApiState({ action: API_ACTION_LOGIN });
+  const dispatch = useDispatch();
 
-class LoginForm extends Component {
-  static propTypes = {
-    onSubmit: PropTypes.func.isRequired,
-    isSubmitting: PropTypes.bool,
-    submitError: PropTypes.object,
+  const _onSubmit = (formValues) => {
+    dispatch(AuthActions.login, formValues);
   };
 
-  constructor(props) {
-    super(props);
-    this.state = initialState;
-  }
-
-  submitForm = (event) => {
-    event.preventDefault();
-    this.props.onSubmit(this.state.formState);
-    this.setState(initialState);
-  }
-
-  onInputChange = (event, field) => {
-    if (field === 'phone' && event.target.value.length > 10) {
-      return;
-    }
-    this.setState({
-      formState: {
-        ...this.state.formState,
-        [field]: event.target.value,
-      },
-    });
-  }
-
-  render() {
-    const { isSubmitting, submitError } = this.props;
-    const { formState } = this.state;
-
-    return (
-      <form onSubmit={this.submitForm}>
-        <input
-          type='tel'
-          pattern='[0-9]*'
-          name='phone'
-          placeholder='Phone Number'
-          value={formState.phone}
-          onChange={(event) => this.onInputChange(event, 'phone')}
-        />
-        {isPhoneValidationError(submitError) && (
-          <div className='formMessage error'>
-            <span>Sorry, that phone number is not a valid 10-digit phone number</span>
-          </div>
-        )}
-        <input
-          type='password'
-          name='password'
-          placeholder='Password'
-          value={formState.password}
-          onChange={(event) => this.onInputChange(event, 'password')}
-        />
-        {isIncorrectPasswordError(submitError) && (
-          <div className='formMessage error'>
-            <span>Whoops, your password is incorrect</span>
-          </div>
-        )}
-        {isUserNotFoundError(submitError) && (
-          <div className='formMessage error'>
-            <span>Sorry, there is no account with that phone number</span>
-          </div>
-        )}
-        <button
-          type='submit'
-          className='button blue'
-          disabled={isSubmitting}
-        >
-          {isSubmitting ? 'logging in...' : 'log in'}
-        </button>
-        {isUnexpectedError(submitError) && (
-          <div className='formMessage error'>
-            {submitError.message}
-          </div>
-        )}
-      </form>
-    );
-  }
-}
+  return (
+    <Formik
+      enableReinitialize
+      onSubmit={_onSubmit}
+      initialValues={createInitialValues({ formFields })}
+      validate={createFormValidationFn(formFields)}
+    >
+      {(formikBag) => (
+        <div className='loginFormContainer'>
+          <Form>
+            {loginApiState.error && (
+              <ErrorMessage>
+                {loginApiState.error.message}
+              </ErrorMessage>
+            )}
+            {formFields.map((formField) => (
+              <FormikField
+                key={formField.id}
+                formField={formField}
+                formikBag={formikBag}
+              />
+            ))}
+            <button
+              type='submit'
+              className='button'
+              disabled={loginApiState.inProgress || !formikBag.isValid}
+            >
+              {loginApiState.inProgress ? 'logging in...' : 'log in'}
+            </button>
+          </Form>
+        </div>
+      )}
+    </Formik>
+  );
+};
 
 export default LoginForm;

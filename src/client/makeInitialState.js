@@ -27,6 +27,8 @@ export default function makeInitialState() {
 
     // System
     isTransitioning: false,
+    isNotFound: null,
+
     pendingCommit: false,
     apiState: {},
     dataTables: {},
@@ -42,6 +44,7 @@ export default function makeInitialState() {
       askForReview: false,
       askPushNotifications: false,
     },
+    pageData: {},
     pageMetadata: {
       pageTitle: null,
       robots: null,

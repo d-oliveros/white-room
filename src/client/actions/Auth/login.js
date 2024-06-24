@@ -11,7 +11,6 @@ import sendDataToMobileApp, {
 } from '#client/helpers/sendDataToMobileApp.js';
 
 import anonymousUser from '#client/constants/anonymousUser.js';
-import safeLocalStorage from '#client/lib/safeLocalStorage.js';
 
 export async function onLogicSuccess({ state, apiClient, user, experimentActiveVariants }) {
   const analyticsSessionId = state.get(['analytics', 'analyticsSessionId']);
@@ -55,7 +54,7 @@ export async function onLogicSuccess({ state, apiClient, user, experimentActiveV
 }
 
 export default async function login({ state, apiClient }, { phone, password, autoLoginToken }) {
-  return apiClient.postWithState({
+  const { user, experimentActiveVariants } = await apiClient.postWithState({
     action: API_ACTION_LOGIN,
     state: state,
     payload: {
@@ -63,14 +62,16 @@ export default async function login({ state, apiClient }, { phone, password, aut
       password,
       autoLoginToken,
     },
-    onSuccess({ user, experimentActiveVariants }) {
-      safeLocalStorage.removeItem('viewedListingIds');
-      return onLogicSuccess({
-        state,
-        apiClient,
-        user,
-        experimentActiveVariants,
-      });
-    },
   });
+
+  if (user) {
+    await onLogicSuccess({
+      state,
+      apiClient,
+      user,
+      experimentActiveVariants,
+    });
+  }
+
+  return user;
 }

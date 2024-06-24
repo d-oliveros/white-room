@@ -33,8 +33,8 @@ export default function serveReactAppController(req, res, next) {
   const sessionToken = req.cookies[cookiesConfig.session.name];
 
   request
-    .post(rendererServerEndpoint)
-    .send({ state, url, sessionToken })
+    .get(rendererServerEndpoint)
+    .query({ state, url, sessionToken })
     .end((err, rendererRes) => {
       if ((!rendererRes || !rendererRes.text) && !err) {
         err = new Error('No response from the renderer server.');

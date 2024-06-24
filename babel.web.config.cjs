@@ -1,5 +1,3 @@
-const { generateScopedNameFactory } = require('@dr.pogodin/babel-plugin-react-css-modules/utils');
-
 module.exports = {
   presets: [
     ['@babel/preset-env', {
@@ -25,9 +23,7 @@ module.exports = {
             syntax: 'postcss-less',
           },
         },
-        generateScopedName: (
-          generateScopedNameFactory('[name]--[local]--[hash:base64:6]')
-        ),
+        generateScopedName: '[name]--[local]--[hash:base64:6]',
       },
     ],
   ],

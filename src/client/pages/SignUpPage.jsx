@@ -3,14 +3,12 @@ import { Navigate } from 'react-router-dom';
 
 import { hasRoleAnonymous } from '#common/userRoles.js';
 
+import getUserLandingPage from '#client/helpers/getUserLandingPage.js';
 import useBranch from '#client/hooks/useBranch.js';
-import useTransitionHook from '#client/hooks/useTransitionHook.js';
 import useDispatch from '#client/hooks/useDispatch.js';
 import SignupForm from '#client/components/SignupForm/SignupForm.jsx';
-import { getUserLandingPage } from '#client/helpers/allowedRoles.jsx';
 
 const SignUpPage = () => {
-  useTransitionHook(SignUpPage);
   const dispatch = useDispatch();
   const { currentUser } = useBranch({
     currentUser: ['currentUser'],
@@ -18,7 +16,7 @@ const SignUpPage = () => {
 
   if (!hasRoleAnonymous(currentUser.roles)) {
     return (
-      <Navigate to={getUserLandingPage({ userRoles: currentUser.roles })} />
+      <Navigate to={getUserLandingPage(currentUser)} />
     );
   }
 

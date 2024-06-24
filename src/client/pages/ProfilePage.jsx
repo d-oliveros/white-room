@@ -1,25 +1,46 @@
 import React from 'react';
+import { useParams, Navigate } from 'react-router-dom';
+import useBranch from '#client/hooks/useBranch.js';
+import sleepAsync from '#common/util/sleepAsync.js';
 
-import useTransitionHook from '#client/hooks/useTransitionHook.js';
 import UserActions from '#client/actions/User/index.jsx';
 
-const ProfilePage = () => {
-  const isTransitioning = useTransitionHook(ProfilePage);
+// const ProfilePage = ({ pageData, isTransitioning }) => {
+//   const params = useParams();
+//
+//   const { user } = useBranch({
+//     user: ['usersById', params.userId],
+//   });
+//
+//   if (isTransitioning) {
+//     return (
+//       <div className='loading-gif' />
+//     );
+//   }
+//
+//   return (
+//     <div>
+//       <h1>This is a Profile Page.</h1>
+//       <span>{`User: ${user.firstName}`}</span>
+//     </div>
+//   );
+// };
 
-  const params = useParams();
-  const { user } = useBranch({
-    user: ['usersById', params.userId],
-  });
-
+const ProfilePage = ({ user, isTransitioning }) => {
+  console.log(isTransitioning);
   if (isTransitioning) {
-    return null;
+    return (
+      <div className='loading-gif' />
+    );
   }
 
+  console.log('WAS RENDERED', user, isTransitioning);
+
   return (
-    <div>
+    <>
       <h1>This is a Profile Page.</h1>
-      <span>{`User: ${user.name}`}</span>
-    </div>
+      <span>{`User: ${user.firstName}`}</span>
+    </>
   );
 };
 
@@ -27,8 +48,33 @@ const ProfilePage = () => {
 //   await dispatch(UserActions.getBy, { id: parseInt(params.userId, 10) });
 // };
 
-ProfilePage.fetchPageData = ({ dispatch, params }) => Promise.all([
-  dispatch(UserActions.getBy, { id: parseInt(params.userId, 10) }),
-]);
+// ProfilePage.fetchPageData = ({ dispatch, params }) => Promise.all([
+//   dispatch(UserActions.getBy, { id: parseInt(params.userId, 10) }),
+// ]);
+
+ProfilePage.fetchPageData = async ({ dispatch, params, isNotFound }) => {
+  await sleepAsync(1500);
+  const pageData = {
+    user: {
+      id: 1,
+      firstName: 'David',
+    },
+  };
+
+  if (!pageData.user) {
+    isNotFound();
+  }
+
+  return pageData;
+};
+
+// ProfilePage.fetchPageData = async ({ dispatch, params, isNotFound }) => {
+//   await sleepAsync(3000);
+//   isNotFound();
+//
+//   return {
+//     user,
+//   };
+// };
 
 export default ProfilePage;

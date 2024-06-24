@@ -8,7 +8,6 @@ import { USER_ROLE_ANONYMOUS } from '#common/userRoles.js';
 
 import log from '#client/lib/log.js';
 import useBranch from '#client/hooks/useBranch.js';
-import useTransitionHook from '#client/hooks/useTransitionHook.js';
 import useAllowedRoles from '#client/hooks/useAllowedRoles.jsx';
 import useApiState from '#client/hooks/useApiState.jsx';
 import AuthActions from '#client/actions/Auth/index.jsx';
@@ -25,7 +24,6 @@ const ResetPasswordVerifyCodePage = () => {
     ],
     redirectUrl: '/',
   });
-  useTransitionHook(ResetPasswordVerifyCodePage);
   const navigate = useNavigate();
 
   const { verifyPhoneApiState } = useApiState({

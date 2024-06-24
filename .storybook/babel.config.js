@@ -1,4 +1,4 @@
-const appBabelConfig = require('../babel.config.js');
+const appBabelConfig = require('../babel.config.cjs');
 
 const storybookBabelConfig = {
   ...appBabelConfig,

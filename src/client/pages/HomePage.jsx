@@ -1,9 +1,9 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { hasRoleAnonymous } from '#common/userRoles.js';
 
 import useBranch from '#client/hooks/useBranch.js';
-import useDispatch from '#client/hooks/useDispatch.js';
 import useTransitionHook from '#client/hooks/useTransitionHook.js';
 
 import Link from '#client/components/Link/Link.jsx';
@@ -11,37 +11,35 @@ import Flex from '#client/components/Flex/Flex.jsx';
 import Text from '#client/components/Text/Text.jsx';
 import Box from '#client/components/Box/Box.jsx';
 
-const HomePage = () => {
-  const isTransitioning = useTransitionHook(HomePage);
-  const dispatch = useDispatch();
+const Homepage = ({ isTransitioning, user }) => {
+  const navigate = useNavigate();
 
   const { currentUser } = useBranch({
     currentUser: ['currentUser'],
   });
 
-  if (isTransitioning) {
-    return (
-      <div className='loading-gif' />
-    );
-  }
-
   return (
     <Box width='80%' margin='0 auto'>
       <h1>Home Page</h1>
+
+      {isTransitioning && (
+        <div className='loading-gif' />
+      )}
       <p>Hello! Thanks for visiting.</p>
 
+      <p>Serverside user: {user?.id || 'Loading...'}</p>
+
+      <p>You are {hasRoleAnonymous(currentUser.roles) ? 'Anonymous' : currentUser.firstName}.</p>
+
       {!hasRoleAnonymous(currentUser.roles) &&
-        <>
-          <p>{`You are ${currentUser.firstName}.`}</p>
-          <Link to='/logout'>Log out</Link>
-        </>
+        <Link to='/logout'>Log out</Link>
       }
 
       {hasRoleAnonymous(currentUser.roles) &&
         <>
           <Link to='/login'>Log In</Link>
 
-          <span onClick={() => dispatch(({ navigate }) => navigate('/login'))}>
+          <span onClick={() => navigate('/login')}>
             Redirect to Login
           </span>
         </>
@@ -68,13 +66,20 @@ const HomePage = () => {
   );
 };
 
-HomePage.getMetadata = ({ state, params }) => ({
+Homepage.getMetadata = ({ state, params }) => ({
   pageTitle: 'Homepage | White Room',
 });
 
-HomePage.fetchPageData = async ({ dispatch, params }) => {
-  // Example of setting state.
+Homepage.fetchPageData = async ({ dispatch, params }) => {
   await dispatch(({ state }) => { state.set(['anew'], true); });
+
+  // const data = await dispatch(requestApi, {
+  //   action: API_ACTION_VERIFY_PHONE_SMS_CODE_REQUESTED,
+  //   payload: {
+  //     true: true,
+  //   },
+  //   // cache: true,
+  // });
 
   // Example of a redirection.
   // await dispatch(({ navigate }) => navigate('/login'));
@@ -84,6 +89,12 @@ HomePage.fetchPageData = async ({ dispatch, params }) => {
   // dispatch(UserActions.loadById, { id: params.id });
 
   // fetchPageData redirections
+
+  return {
+    user: {
+      id: 1,
+    },
+  };
 };
 
-export default HomePage;
+export default Homepage;

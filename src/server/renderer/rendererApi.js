@@ -51,10 +51,20 @@ renderer.use(bodyParser.json({
 /**
  * Renders the client HTML.
  */
-renderer.post('/', (req, res, next) => {
-  const { state, url, sessionToken } = req.body;
+// renderer.post('*', (req, res, next) => {
+renderer.get('*', (req, res, next) => {
+  // const { state, sessionToken } = req.body;
+  const { state, sessionToken } = req.query;
 
-  renderReactApp({ state, url, sessionToken })
+  // Simulate a GET request by creating a new request object
+  // This is a limitation imposed by react-router 6 - we should refactor as soon as this is cleaned up
+  // const simulatedGetReq = {
+  //   method: 'GET',
+  //   query: { state, sessionToken },
+  //   ...req,
+  // };
+
+  renderReactApp({ state, req, res, sessionToken })
     .then((result) => {
       typeCheck('result::RendererResult', result);
       res.send(result);

@@ -20,8 +20,8 @@ export default function createTree(state, options) {
  * If the state is transitioning, turns a flag on. If not, it commits.
  * @override commit
  */
-function treeCommit() {
-  if (this.get('isTransitioning')) {
+function treeCommit({ force } = {}) {
+  if (!force && this.get('isTransitioning')) {
     debug('Transitioning. Not committing');
     this.set('pendingCommit', true);
   }
