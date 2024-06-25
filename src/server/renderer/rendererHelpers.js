@@ -81,15 +81,8 @@ export const fetchPageData = async ({ route, params, state, apiClient, navigate,
   let pageData = null;
   let pageMetadata = null;
 
-  const routeComponent = route.Component
-    ? (await route.Component).default
-    : null;
-
-  console.log('routeComponent');
-  console.log(routeComponent);
-
-  if (routeComponent?.fetchPageData) {
-    pageData = await routeComponent.fetchPageData({
+  if (route.Component?.fetchPageData) {
+    pageData = await route.Component.fetchPageData({
       dispatch: makeDispatchFn({
         state,
         apiClient,
@@ -100,8 +93,8 @@ export const fetchPageData = async ({ route, params, state, apiClient, navigate,
     });
   }
 
-  if (routeComponent?.getMetadata) {
-    pageMetadata = routeComponent.getMetadata({
+  if (route.Component?.getMetadata) {
+    pageMetadata = route.Component.getMetadata({
       state,
       params: params || {},
     });
@@ -161,6 +154,8 @@ export const createFetchRequest = (req, res) => {
  * @return {Object} The matched route and params.
  */
 export const matchRoute = (routes, pathname) => {
+  console.log('pathname');
+  console.log(pathname);
   let notFoundRoute = null;
 
   for (const route of routes) {

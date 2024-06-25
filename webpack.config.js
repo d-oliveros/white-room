@@ -5,7 +5,6 @@ import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import CssMinimizerPlugin from 'css-minimizer-webpack-plugin';
 import TerserPlugin from 'terser-webpack-plugin';
 import NodePolyfillPlugin from 'node-polyfill-webpack-plugin';
-import { WebpackManifestPlugin } from 'webpack-manifest-plugin';
 import ReactRefreshWebpackPlugin from '@pmmmwh/react-refresh-webpack-plugin';
 
 const {
@@ -188,10 +187,6 @@ const webpackConfig = {
       'process.env': JSON.stringify({}),
       'process.env.NODE_ENV': JSON.stringify(NODE_ENV),
       'global': 'window',
-    }),
-    new WebpackManifestPlugin({
-      fileName: 'manifest.json',
-      publicPath: '/build/',
     }),
   ].filter(Boolean),
   devServer: isProd ? null : {
