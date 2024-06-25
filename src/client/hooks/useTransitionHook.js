@@ -1,9 +1,9 @@
 import { useContext, useEffect } from 'react';
 import { useParams, useLocation, useBlocker } from 'react-router-dom';
 
+import StateContext from '#client/contexts/StateContext.js';
 import analytics from '#client/analytics/analytics.js';
 import log from '#client/lib/log.js';
-import ReactAppContext from '#client/core/ReactAppContext.js';
 import useIsMounted from '#client/hooks/useIsMounted.js';
 import useDispatch from '#client/hooks/useDispatch.js';
 import useScrollToTop from '#client/hooks/useScrollToTop.jsx';
@@ -31,14 +31,14 @@ const setPageTitle = (title) => {
  */
 const useTransitionHook = ({ fetchPageData, allowedRoles, getMetadata } = {}) => {
   useScrollToTop();
-  const { state } = useContext(ReactAppContext);
+  const state = useContext(StateContext);
   const isMounted = useIsMounted();
   const params = useParams();
   const location = useLocation();
   const dispatch = useDispatch();
 
   // Block navigating elsewhere when data has been entered into the input
-  let blocker = useBlocker(
+  useBlocker(
     ({ currentLocation, nextLocation }) =>
       currentLocation.pathname !== nextLocation.pathname
   );

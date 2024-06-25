@@ -1,5 +1,4 @@
 import { parse as parseUrl } from 'url';
-import { serializeError } from 'serialize-error';
 
 import React from 'react';
 import { renderToString } from 'react-dom/server';
@@ -14,7 +13,6 @@ import typeCheck from '#common/util/typeCheck.js';
 import createApiClient from '#api/createApiClient.js';
 
 import makeInitialState from '#client/makeInitialState.js';
-import makeDispatchFn from '#client/core/makeDispatchFn.js';
 import createTree from '#client/core/createTree.js';
 import AppContextProvider from '#client/contexts/AppContextProvider.jsx';
 import routes, { router } from '#client/routes.jsx';
@@ -24,14 +22,10 @@ import {
   assertIdleApiState,
   makeRendererResponse,
   serializeState,
+  matchRoute,
+  createFetchRequest,
+  fetchPageData,
 } from '#server/renderer/rendererHelpers.js';
-
-import {
-  RENDERER_RESPONSE_TYPE_SUCCESS,
-  RENDERER_RESPONSE_TYPE_REDIRECT,
-  RENDERER_RESPONSE_TYPE_NOT_FOUND,
-  RENDERER_RESPONSE_TYPE_ERROR,
-} from '#server/renderer/rendererResponseTypes.js';
 
 const {
   NODE_ENV,
@@ -56,134 +50,8 @@ const DEFAULT_PAGE_METADATA = {
   image: null,
 };
 
-/**
- * Runs the data fetching functions defined in the router state's component tree.
- */
-const fetchPageData = async ({ route, params, state, apiClient, navigate, onNotFound }) => {
-  let pageData = null;
-  let pageMetadata = null;
-
-  const routeComponent = route.Component
-    ? (await route.Component).default
-    : null;
-
-  console.log('routeComponent');
-  console.log(routeComponent);
-
-  if (routeComponent?.fetchPageData) {
-    pageData = await routeComponent.fetchPageData({
-      dispatch: makeDispatchFn({
-        state,
-        apiClient,
-        navigate,
-      }),
-      onNotFound,
-      params: params || {},
-    });
-  }
-
-  if (routeComponent?.getMetadata) {
-    pageMetadata = routeComponent.getMetadata({
-      state,
-      params: params || {},
-    });
-  }
-
-  return {
-    pageData,
-    pageMetadata,
-  };
-}
-
-const createFetchRequest = (req, res) => {
-  console.log('req.headers');
-  console.log(req.headers);
-  // Note: This had to take originalUrl into account for presumably vite's proxying
-  const url = new URL(req.originalUrl || req.url, APP_URL);
-
-  const controller = new AbortController();
-  res.on('close', () => controller.abort());
-
-  const headers = new Headers();
-
-  for (const [key, values] of Object.entries(req.headers)) {
-    if (values) {
-      if (Array.isArray(values)) {
-        for (const value of values) {
-          headers.append(key, value);
-        }
-      } else {
-        headers.set(key, values);
-      }
-    }
-  }
-
-  const init = {
-    method: req.method,
-    headers,
-    signal: controller.signal,
-  };
-
-  if (req.method !== 'GET' && req.method !== 'HEAD') {
-    init.body = req.body;
-  }
-
-  return new Request(url.href, init);
-}
-
-/**
- * Match the route against the routes array, including dynamic segments.
- *
- * @param {Array} routes Array of route objects.
- * @param {String} pathname URL pathname to match.
- *
- * @return {Object} The matched route and params.
- */
-const matchRoute = (routes, pathname) => {
-  let notFoundRoute = null;
-
-  for (const route of routes) {
-    const { path } = route;
-    if (path === '*') {
-      notFoundRoute = route;
-      continue;
-    }
-    const paramNames = [];
-    const regexPath = path.replace(/:([^/]+)/g, (_, paramName) => {
-      paramNames.push(paramName);
-      return '([^/]+)';
-    });
-
-    const regex = new RegExp(`^${regexPath}$`);
-    const match = pathname.match(regex);
-
-    if (match) {
-      const params = match.slice(1).reduce((acc, value, index) => {
-        acc[paramNames[index]] = value;
-        return acc;
-      }, {});
-
-      return {
-        route,
-        params,
-        isNotFound: false,
-      };
-    }
-  }
-  if (notFoundRoute) {
-    return {
-      route: notFoundRoute,
-      params: {},
-      isNotFound: true,
-    };
-  }
-
-  return null;
-};
-
 // TODO: Is it OK to leave this here?
-console.log('router');
-console.log(router);
+console.log('Router', router);
 let handler = createStaticHandler(router);
 
 // const routesLoaded = await Promise.all(router.map(async (route) => ({
@@ -209,9 +77,12 @@ let handler = createStaticHandler(router);
  * @param  {String} options.sessionToken Session token.
  * @return {Object}               Object with { type, html, redirectUrl, error }.
  */
-export default async function renderReactApp({ state: _state, req, res, sessionToken }) {
-  const initialState = { ...makeInitialState(), ..._state };
+export default async function renderReactApp({ state: initialStateData, req, res, sessionToken }) {
+  const initialState = { ...makeInitialState(), ...initialStateData };
   const url = req.originalUrl;
+
+  const now = Date.now();
+  debug(`Rendering client. URL: ${url}`);
 
   const state = createTree(initialState, {
     asynchronous: false,
@@ -219,12 +90,11 @@ export default async function renderReactApp({ state: _state, req, res, sessionT
     immutable: NODE_ENV !== 'production',
   });
 
-  const now = Date.now();
-  debug(`Rendering client. URL: ${url}`);
-
   try {
     const { pathname, search: urlSearch = '' } = parseUrl(url);
     const { route, params, isNotFound } = matchRoute(routes, pathname);
+
+    let httpStatus = isNotFound ? 404 : 200;
 
     typeCheck('route::NonEmptyObject', route, {
       errorMessage: `No default route configured.`,
@@ -240,10 +110,6 @@ export default async function renderReactApp({ state: _state, req, res, sessionT
 
     let redirectUrl = null;
 
-    console.log('DOING', url);
-    console.log('route');
-    console.log(route);
-
     const { pageData, pageMetadata } = await fetchPageData({
       route,
       params,
@@ -254,7 +120,7 @@ export default async function renderReactApp({ state: _state, req, res, sessionT
       },
       onNotFound: () => {
         state.state('isNotFound', true);
-        isNotFound = true;
+        httpStatus = 404;
       },
     });
 
@@ -266,13 +132,14 @@ export default async function renderReactApp({ state: _state, req, res, sessionT
     state.set('pageData', pageData || {});
     state.set('pageMetadata', pageMetadataWithDefaults);
     state.set('pageMetadataDefault', DEFAULT_PAGE_METADATA);
-    console.log('AAAs')
 
     if (redirectUrl) {
       debug(`\`navigate\` called with: ${redirectUrl}`);
+      httpStatus = 302;
       state.release();
+
       return makeRendererResponse({
-        type: RENDERER_RESPONSE_TYPE_REDIRECT,
+        status: httpStatus,
         redirectUrl,
       });
     }
@@ -282,10 +149,7 @@ export default async function renderReactApp({ state: _state, req, res, sessionT
     let fetchRequest = createFetchRequest(req, res);
     let context = await handler.query(fetchRequest);
 
-    console.log('er');
-    console.log(handler.dataRoutes);
     const staticRouter = createStaticRouter(handler.dataRoutes, context);
-    console.log('Or');
 
     const body = renderToString(
       React.createElement(AppContextProvider, { state, apiClient },
@@ -293,19 +157,18 @@ export default async function renderReactApp({ state: _state, req, res, sessionT
       )
     );
 
-    console.log('Ur');
     if (context.url) {
       debug(`Redirect to ${context.url}`);
+      httpStatus = 302;
       state.release();
+
       return makeRendererResponse({
-        type: RENDERER_RESPONSE_TYPE_REDIRECT,
+        status: httpStatus,
         redirectUrl: `${context.url}${urlSearch}`,
       });
     }
 
-    console.log('A')
     const appUrl = new URL(APP_URL);
-    console.log('bB')
 
     const html = renderLayout({
       body,
@@ -328,17 +191,15 @@ export default async function renderReactApp({ state: _state, req, res, sessionT
     debug(`Rendered in ${Date.now() - now}ms - HTML length: ${html.length}`);
 
     return makeRendererResponse({
-      type: isNotFound
-        ? RENDERER_RESPONSE_TYPE_NOT_FOUND
-        : RENDERER_RESPONSE_TYPE_SUCCESS,
       html,
+      status: httpStatus,
     });
   } catch (error) {
     state.release();
     debug(`Rendering error: ${error.message}`);
     return makeRendererResponse({
-      type: RENDERER_RESPONSE_TYPE_ERROR,
-      error: serializeError(error),
+      status: 500,
+      error,
     });
   }
 }

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState, useContext, useMemo } from 'react';
 import { Outlet } from 'react-router-dom';
 import classnames from 'classnames';
 import { useLocation, Routes, Route } from 'react-router-dom';
@@ -44,19 +44,20 @@ const RouteTransitionWrapper = ({ route, notFoundRoute }) => {
 }
 
 const App = () => {
-  console.log('LOADING APP');
+  // TODO: RENDER
+
   const apiClient = useApiClient();
   const location = useLocation();
   const [, setCheckAppVersionInterval] = useState(null);
   const [checkAppVersionLastRunTimestamp, setCheckAppVersionLastRunTimestamp] = useState(Date.now());
-
-  // TODO: GET NOT FOUND ROUTE COMPONENT
 
   const { userAgent, currentUser, askPushNotifications } = useBranch({
     userAgent: ['userAgent'],
     currentUser: ['currentUser'],
     askPushNotifications: ['askPushNotifications'],
   });
+
+  const isMobileApp = useMemo(() => isUserAgentMobileApp(userAgent), [userAgent]);
 
   useEffect(() => {
     const handleWheel = () => {
@@ -77,8 +78,6 @@ const App = () => {
       }
     }, 1000);
     setCheckAppVersionInterval(interval);
-
-    const isMobileApp = isUserAgentMobileApp(userAgent);
 
     if (isMobileApp) {
       if (!hasRoleAnonymous(currentUser.roles)) {
@@ -108,8 +107,6 @@ const App = () => {
       setCheckAppVersionInterval(null);
     };
   }, [checkAppVersionLastRunTimestamp, apiClient, currentUser, userAgent, location]);
-
-  const isMobileApp = isUserAgentMobileApp(userAgent);
 
   return (
     <div

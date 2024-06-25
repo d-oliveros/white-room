@@ -18,7 +18,7 @@ import {
 } from '#server/lib/experiments.js';
 import User from '#models/User/index.js';
 
-const debug = logger.createDebug('middleware:makeInitialState');
+const debug = logger.createDebug('renderer:makeInitialState');
 const env = process.env;
 const isAnalyticsEnabled = !!env.SEGMENT_KEY;
 
@@ -52,7 +52,7 @@ function extractUtmValuesFromExpressRequestQuery(req) {
 
 export default async function extractInitialStateMiddleware(req, res, next) {
   try {
-    const initialState = res.locals.initialState || makeInitialState();
+    const initialState = makeInitialState();
 
     // Pass server environment variables.
     initialState.env = Object.keys(initialState.env).reduce((acc, envKey) => ({

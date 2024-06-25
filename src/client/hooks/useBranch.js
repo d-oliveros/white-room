@@ -3,7 +3,6 @@ import StateContext from '#client/contexts/StateContext.js';
 
 export default function useBranch(mapping) {
   const state = useContext(StateContext);
-  console.log(state);
 
   const [cursorState, setCursorState] = useState(() => {
     return state.project(mapping);

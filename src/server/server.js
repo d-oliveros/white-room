@@ -1,7 +1,8 @@
 import path from 'path';
 import express from 'express';
 import bodyParser from 'body-parser';
-import cookieParser from 'cookie-parser';
+import makeCookieParser from 'cookie-parser';
+import { createProxyMiddleware } from 'http-proxy-middleware';
 import { fileURLToPath } from 'url';
 
 import {
@@ -17,82 +18,77 @@ import sendgridWebhookApi from '#server/lib/sendgridWebhookApi.js';
 import fileUploadsController from '#server/lib/fileUploadsController.js';
 import pdfViewerController from '#server/lib/pdfViewerController.js';
 
-import middleware from '#server/middleware/index.js';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+import assetNotFound from '#server/middleware/assetNotFound.js';
+import unwrapSessionToken from '#server/middleware/unwrapSessionToken.js';
+import handleCaps from '#server/middleware/handleCaps.js';
+import serveCdnAssets from '#server/middleware/serveCdnAssets.js';
+import errorHandler from '#server/middleware/errorHandler.js';
+import segmentLibProxy from '#server/middleware/segmentLibProxy.js';
 
 const {
   ENABLE_STORYBOOK,
   COOKIE_SECRET,
   COMMIT_HASH,
+  RENDERER_ENDPOINT,
   SEGMENT_LIB_PROXY_URL,
 } = process.env;
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 const ROOT_DIR = path.resolve(__dirname, '..', '..');
+const cookieParser = makeCookieParser(COOKIE_SECRET, cookiesConfig.session);
 
-const {
-  assetNotFound,
-  unwrapSessionToken,
-  handleCaps,
-  extractInitialState,
-  serveReactApp,
-  serveCdnAssets,
-  errorHandler,
-  segmentLibProxy,
-} = middleware;
+export default function createServer() {
+  const app = express();
 
-const app = express();
+  // Gateway-level middleware1
+  app.enable('trust proxy');
 
-// Server-level middleware
-app.enable('trust proxy');
+  app.use((req, res, next) => {
+    res.header('X-Served-By', 'node');
+    res.header('X-App-Commit-Hash', COMMIT_HASH);
+    next();
+  });
 
-app.use((req, res, next) => {
-  res.header('X-Served-By', 'node');
-  res.header('X-App-Commit-Hash', COMMIT_HASH);
-  next();
-});
+  // Server-level middleware
+  app.get('/health', (req, res) => res.sendStatus(200));
+  app.get('/sitemap.xml', sitemapController);
+  app.get('/pdf-viewer', pdfViewerController);
+  app.post('/upload-file', cookieParser, unwrapSessionToken, fileUploadsController);
 
-app.get('/health', (req, res) => res.sendStatus(200));
-app.get('/sitemap.xml', sitemapController);
+  if (SEGMENT_LIB_PROXY_URL) {
+    app.get('/sgmnt/:segmentApiKey/sgmntlib.min.js', segmentLibProxy);
+  }
 
-if (SEGMENT_LIB_PROXY_URL) {
-  app.get('/sgmnt/:segmentApiKey/sgmntlib.min.js', segmentLibProxy);
+  if (ENABLE_STORYBOOK === 'true') {
+    app.use('/storybook', express.static(path.join(ROOT_DIR, '.storybook', 'dist')));
+  }
+
+  app.use(serveCdnAssets);
+  app.use('/', express.static(path.join(ROOT_DIR, 'public')));
+  app.use(assetNotFound);
+
+  // Application-level middleware
+  // app.use(bodyParser.urlencoded({ extended: true }));
+
+  app.use('/sendgrid/webhooks', bodyParser.json(), sendgridWebhookApi);
+
+  // API-level middleware
+  app.use('/api/v1', createApiServer(actionSpecsList, {
+    sessionName: 'session',
+    adminRoles: [
+      USER_ROLE_ADMIN,
+    ],
+  }));
+
+  // Serves the React app
+  app.get('*', handleCaps, createProxyMiddleware({
+    target: RENDERER_ENDPOINT,
+  }));
+
+  // Error handler.
+  app.use(errorHandler);
+
+  return app;
 }
-
-app.get('/pdf-viewer', pdfViewerController);
-
-app.use(serveCdnAssets);
-app.use('/', express.static(path.join(ROOT_DIR, 'public')));
-
-if (ENABLE_STORYBOOK === 'true') {
-  app.use('/storybook', express.static(path.join(ROOT_DIR, '.storybook', 'dist')));
-}
-
-// Application-level middleware
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
-
-app.use('/sendgrid/webhooks', sendgridWebhookApi);
-
-// API server & misc server services.
-app.use(cookieParser(COOKIE_SECRET, cookiesConfig.session));
-app.use(unwrapSessionToken);
-app.use('/api/v1', createApiServer(actionSpecsList, {
-  sessionName: 'session',
-  adminRoles: [
-    USER_ROLE_ADMIN,
-  ],
-}));
-app.post('/upload-file', fileUploadsController);
-
-// React application server-side rendering.
-app.use(assetNotFound);
-app.use(handleCaps);
-app.use(extractInitialState);
-app.get('*', serveReactApp);
-
-// Error handler.
-app.use(errorHandler);
-
-export default app;

@@ -11,10 +11,8 @@ const {
 export default function errorHandler(err, req, res, next) { // eslint-disable-line no-unused-vars
   const status = err.status || err.statusCode || 500;
 
-  const shouldLogError = status >= 500;
-
   // Internal Errors
-  if (shouldLogError) {
+  if (status >= 500) {
     logger.error(err);
   }
 
@@ -23,36 +21,24 @@ export default function errorHandler(err, req, res, next) { // eslint-disable-li
     return;
   }
 
-  if (NODE_ENV === 'production') {
-    return res.sendStatus(status);
+  if (NODE_ENV === 'production' || status === 404) {
+    res.sendStatus(status);
+    return;
   }
 
-  switch (status) {
-    case 404:
-      res.sendStatus(status);
-      break;
+  const serialized = serializeError(err);
 
-    default: {
-      const serialized = serializeError(err);
+  const errData = `
+    <html>
+      <head>
+        <title>${status} error</title>
+      </head>
+      <body>
+        <pre>${err.stack.replace('\n', '<br>')}</pre>
+        <h4>Serialized error</h4>
+        <pre>${JSON.stringify(serialized, null, 2)}</pre>
+      </body>
+    </html>`;
 
-      // returns a JSON object if request is AJAX,
-      // returns a mini HTML page with error info if requesting the client
-      const responseBody = serialized.response && serialized.response.body || '<no response body>';
-      const errData = !res.locals.initialState ? serialized : `
-        <html>
-          <head>
-            <title>${status} error</title>
-          </head>
-          <body>
-            <pre>${err.stack.replace('\n', '<br>')}</pre>
-            <h4>Serialized error: body</h4>
-            <pre>${JSON.stringify(responseBody, null, 2)}</pre>
-            <h4>Serialized error: full</h4>
-            <pre>${JSON.stringify(serialized, null, 2)}</pre>
-          </body>
-        </html>`;
-
-      res.status(status).send(errData);
-    }
-  }
+  res.status(status).send(errData);
 }

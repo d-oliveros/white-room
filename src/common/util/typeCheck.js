@@ -186,19 +186,6 @@ const typeCheckCustomTypes = {
       return typeCheckCustomTypes.GeoJson.validate(x);
     },
   },
-  RendererResult: {
-    typeOf: 'Object',
-    validate: (x) => (
-      x
-      && x.type
-      && typeof x.type === 'string'
-      && (
-        x.html
-        || x.redirectUrl
-        || x.error
-      )
-    ),
-  },
 };
 
 function toDisplayString(actual) {

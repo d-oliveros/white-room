@@ -7,7 +7,6 @@ export const API_ERROR_INVALID_CREDENTIALS = 'ApiErrorInvalidCredentials';
 export const API_ERROR_REQUEST_INVALID_RESPONSE = 'ApiErrorRequestInvalidResponse';
 export const API_ERROR_REQUEST_FAILED = 'ApiErrorRequestFailed';
 export const API_ERROR_REQUEST_NOT_HANDLED_OK = 'ApiErrorRequestNotHandledOk';
-export const RENDERER_INVALID_RESPONSE_TYPE = 'RendererInvalidResponseType';
 export const ERROR_USER_ALREADY_EXISTS = 'ErrorUserAlreadyExists';
 export const ERROR_LISTING_ALREADY_EXISTS = 'ErrorListingAlreadyExists';
 export const AUTHY_ERROR_RESPONSE_NOT_OK = 'AuthyErrorResponseNotOk';

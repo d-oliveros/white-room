@@ -1,9 +1,14 @@
 import assert from 'assert';
 import { Router } from 'express';
 import bodyParser from 'body-parser';
+import cookieParser from 'cookie-parser';
+import unwrapSessionToken from '#server/middleware/unwrapSessionToken.js';
+
 import { v4 as uuidv4 } from 'uuid';
 import { serializeError } from 'serialize-error';
 import lodashKeyBy from 'lodash/fp/keyBy.js';
+
+import * as cookiesConfig from '#config/cookies.js';
 
 import logger from '#common/logger.js';
 import typeCheck from '#common/util/typeCheck.js';
@@ -15,6 +20,10 @@ import {
   API_ERROR_NOT_ALLOWED,
   API_ERROR_ACTION_PAYLOAD_VALIDATION_FAILED,
 } from '#common/errorCodes.js';
+
+const {
+  COOKIE_SECRET,
+} = process.env;
 
 const debug = logger.createDebug('api');
 
@@ -252,8 +261,13 @@ export default function createApiServer(actionSpecsArray, options = {}) {
 
   const router = new Router();
 
-  router.all('/:actionType',
+  router.use(
     bodyParser.json(),
+    cookieParser(COOKIE_SECRET, cookiesConfig.session),
+    unwrapSessionToken,
+  );
+
+  router.all('/:actionType',
     authenticateAction(actionSpecs, options),
     validateActionPayload(actionSpecs),
     handleActionRequest(actionSpecs),

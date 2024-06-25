@@ -22,8 +22,9 @@ const logger = (await import(`${moduleSourceDirectory}/common/logger.js`)).defau
 
 const startServer = async () => {
   logger.info('Starting server.');
-  const { default: server } = await import(`${moduleSourceDirectory}/server/server.js`);
+  const { default: createServer } = await import(`${moduleSourceDirectory}/server/server.js`);
 
+  const server = createServer();
   const listen = promisify(server.listen).bind(server);
   await listen(APP_PORT);
   logger.info(`Server listening on port: ${APP_PORT}`);
@@ -31,24 +32,20 @@ const startServer = async () => {
 
 const startRenderer = async () => {
   logger.info('Starting renderer service.');
-  const { default: rendererApi } = await import(`${moduleSourceDirectory}/server/renderer/rendererApi.js`);
+  const { default: createRendererServer } = await import(`${moduleSourceDirectory}/server/renderer/renderer.js`);
 
-  const listen = promisify(rendererApi.listen).bind(rendererApi);
+  const rendererServer = createRendererServer();
+  const listen = promisify(rendererServer.listen).bind(rendererServer);
   await listen(RENDERER_PORT);
   logger.info(`Renderer service listening on port: ${RENDERER_PORT}`);
 };
 
 const startCron = async () => {
-  const startLogMessage = ENABLE_CRON === 'whitelist_only'
-    ? 'Starting cron service in whitelist only mode.'
-    : 'Starting cron service.';
+  const startLogMessage = 'Starting cron service.';
 
   logger.info(startLogMessage);
 
-  if (ENABLE_CRON === 'whitelist_only') {
-    if (!CRON_WHITELIST) {
-      throw new Error('CRON_WHITELIST is not defined.');
-    }
+  if (CRON_WHITELIST) {
     logger.info(`Whitelisted cron jobs: ${CRON_WHITELIST}`);
   }
 

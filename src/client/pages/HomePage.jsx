@@ -49,6 +49,8 @@ const Homepage = ({ isTransitioning, user }) => {
         <button onClick={() => console.log('click')}>Button</button>
         <h3>Users</h3>
         <Link to='/profile/1'>User 1</Link>
+        <Link to='/profile/51231'>User NonExistant</Link>
+        <Link to='/t1e1e12'>Link NonExistant</Link>
       </div>
 
       <Flex>
