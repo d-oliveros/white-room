@@ -1,10 +1,11 @@
 import React, { Suspense } from 'react';
-import { Await, defer, useLoaderData, useAsyncError } from 'react-router-dom';
+import { Await, Navigate, defer, useLoaderData, useAsyncError } from 'react-router-dom';
 import { serializeError } from 'serialize-error';
 
 import log from '#client/lib/log.js';
-import App from '#client/App.jsx';
+import isRedirectResponse from '#common/util/isRedirectResponse.js';
 
+import App from '#client/App.jsx';
 import ErrorPage from '#client/pages/ErrorPage.jsx';
 
 const makeLoaderFn = ({ fetchPageData, apiClient, queryClient, store }) => {
@@ -38,12 +39,17 @@ const makeLoaderFn = ({ fetchPageData, apiClient, queryClient, store }) => {
     return new Promise((resolve) => {
       fetchPageDataPromise
         .then((pageProps) => {
-          resolve({
-            isDeferred: false,
-            data: pageProps,
-            promise: null,
-            error: null,
-          });
+          if (isRedirectResponse(pageProps)) {
+            resolve(pageProps);
+          }
+          else {
+            resolve({
+              isDeferred: false,
+              data: pageProps,
+              promise: null,
+              error: null,
+            });
+          }
         })
         .catch((fetchPageDataError) => {
           const error = new Error(
@@ -108,11 +114,18 @@ const LoaderTransitionHandler = ({ children }) => {
       <Await
         resolve={loaderData.promise}
         errorElement={<FetchDataErrorFallback />}
-        children={(pageProps) => {
+      >
+        {(pageProps) => {
+          if (isRedirectResponse(pageProps)) {
+            const url = pageProps.headers.get('Location');
+            return (
+              <Navigate to={url} />
+            );
+          }
           console.log('Rendering children', pageProps);
           return children(pageProps || {});
         }}
-      />
+      </Await>
     </Suspense>
   );
 };

@@ -32,13 +32,10 @@ const Link = ({
   color,
 }) => {
   const dispatch = useDispatch();
-
-  const { pathHistory } = useBranch({
-    pathHistory: ['analytics', 'pathHistory'],
-  });
+  const browsingHistory = useBranch('browsingHistory');
 
   const _onClick = () => {
-    const lastPath = pathHistory[1];
+    const lastPath = browsingHistory[1];
 
     if (restoreScrollPosition) {
       dispatch(Navigator.setShouldRestoreScrollPosition);

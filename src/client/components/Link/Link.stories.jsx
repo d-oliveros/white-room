@@ -20,7 +20,7 @@ Default.args = {
   onClick: null,
   children: 'Click me',
   dispatch: null,
-  pathHistory: null,
+  browsingHistory: null,
   style: null,
   color: null,
 };

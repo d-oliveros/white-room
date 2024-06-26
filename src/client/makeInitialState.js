@@ -32,6 +32,7 @@ export default function makeInitialState() {
 
     apiState: {},
     dataTables: {},
+    browsingHistory: [],
 
     scroll: {
       shouldRestoreScrollPosition: false,
@@ -61,7 +62,6 @@ export default function makeInitialState() {
       image: null,
     },
     analytics: {
-      pathHistory: [],
       analyticsSessionId: null,
       shouldTrackNewSession: false,
       isEnabled: false,

@@ -11,6 +11,7 @@ import {
 
 import logger from '#common/logger.js';
 import typeCheck from '#common/util/typeCheck.js';
+import isRedirectResponse from '#common/util/isRedirectResponse.js';
 import createApiClient from '#api/createApiClient.js';
 
 import makeInitialState from '#client/makeInitialState.js';
@@ -149,6 +150,19 @@ export default async function renderReactApp({ state: initialStateData, req, res
     console.log('Router', router);
     let handler = createStaticHandler(router);
     let context = await handler.query(fetchRequest);
+
+    if (isRedirectResponse(context)) {
+      const url = context.headers.get('Location');
+      httpStatus = context.status;
+      state.release();
+
+      debug(`Redirect to ${url}`);
+
+      return makeRendererResponse({
+        status: httpStatus,
+        redirectUrl: url,
+      });
+    }
 
     const staticRouter = createStaticRouter(handler.dataRoutes, context);
 
