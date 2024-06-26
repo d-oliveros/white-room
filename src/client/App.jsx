@@ -19,6 +19,7 @@ import sendDataToMobileApp, {
 
 import useBranch from '#client/hooks/useBranch.js';
 import useApiClient from '#client/hooks/useApiClient.js';
+import useBrowsingHistoryTracker from '#client/hooks/useBrowsingHistoryTracker.js';
 
 import MobileAppEventListener from '#client/components/MobileAppEventListener/MobileAppEventListener.jsx';
 import EnablePushNotificationsModal from '#client/components/EnablePushNotificationsModal/EnablePushNotificationsModal.jsx';
@@ -34,6 +35,8 @@ const App = () => {
   const location = useLocation();
   const [, setCheckAppVersionInterval] = useState(null);
   const [checkAppVersionLastRunTimestamp, setCheckAppVersionLastRunTimestamp] = useState(Date.now());
+
+  useBrowsingHistoryTracker();
 
   const { userAgent, currentUser, askPushNotifications } = useBranch({
     userAgent: ['userAgent'],

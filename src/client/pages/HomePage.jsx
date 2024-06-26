@@ -78,7 +78,7 @@ Homepage.getMetadata = ({ state, params }) => ({
 Homepage.fetchPageData = async ({ apiClient, queryClient, store, params }) => {
   // await sleepAsync(process.browser ? 3000 : 0);
   console.log('Sleeeeeping');
-  await sleepAsync(4000);
+  await sleepAsync(400);
   // await dispatch(({ state }) => { state.set(['anew'], true); });
 
   // const data = await dispatch(requestApi, {
@@ -98,7 +98,6 @@ Homepage.fetchPageData = async ({ apiClient, queryClient, store, params }) => {
 
   // fetchPageData redirections
 
-  throw new Error("DAYUM DAWGGG");
   console.log('WAKE UP!');
   return {
     user: {

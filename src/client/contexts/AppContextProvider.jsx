@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, StrictMode } from 'react';
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
@@ -17,16 +17,17 @@ const AppContextProvider = ({ state, queryClient, apiClient, children }) => {
   const [dispatch] = useState(() => makeDispatchFn({ state, apiClient }));
 
   return (
-    <StateContext.Provider value={state}>
-      <ApiClientContext.Provider value={apiClient}>
-        <QueryClientProvider client={queryClient}>
-          <DispatchContext.Provider value={dispatch}>
-           {children}
-          </DispatchContext.Provider>
-        </QueryClientProvider>
-      </ApiClientContext.Provider>
-   </StateContext.Provider>
-
+    <StrictMode>
+      <StateContext.Provider value={state}>
+        <ApiClientContext.Provider value={apiClient}>
+          <QueryClientProvider client={queryClient}>
+            <DispatchContext.Provider value={dispatch}>
+              {children}
+            </DispatchContext.Provider>
+          </QueryClientProvider>
+        </ApiClientContext.Provider>
+     </StateContext.Provider>
+    </StrictMode>
   );
 };
 
