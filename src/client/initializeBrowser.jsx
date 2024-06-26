@@ -14,15 +14,17 @@ import './style/fonts.less';
 import './style/global.less';
 
 import React, { Suspense } from 'react';
-import { RouterProvider, createBrowserRouter } from 'react-router-dom';
+import { RouterProvider, createBrowserRouter, matchRoutes } from 'react-router-dom';
 import { hydrateRoot } from 'react-dom/client';
+import { QueryClient } from '@tanstack/react-query'
 
 import log from '#client/lib/log.js';
 import createApiClient from '#api/createApiClient.js';
 import getStoreFromBrowser from '#client/core/getStoreFromBrowser.js';
 import initDevelopmentEnv from '#client/core/developmentEnv.js';
 import AppContextProvider from '#client/contexts/AppContextProvider.jsx';
-import { router } from '#client/routes.jsx';
+import makeRouter from '#client/core/makeRouter.jsx';
+import routes from '#client/routes.js';
 
 import { ANALYTICS_EVENT_USER_SESSION } from '#client/analytics/eventList.js';
 import analytics from '#client/analytics/analytics.js';
@@ -69,7 +71,6 @@ if (process.browser) {
 
   debug('Hydrating');
 
-  /*
   // When Serverside-Rendering, the matching rout is already served by the server.
   // However, given that it is lazy, it is possible that the modules are not loaded yet,
   // leading to a loading state being shown.
@@ -84,6 +85,7 @@ if (process.browser) {
   // Load the lazy matches and update the routes before creating your router
   // so we can hydrate the SSR-rendered content synchronously
   if (lazyMatches && lazyMatches?.length > 0) {
+    console.log('IS LAZY MATCH', lazyMatches, Date.now());
     await Promise.all(
       lazyMatches.map(async (m) => {
         let routeModule = await m.route.lazy();
@@ -93,27 +95,48 @@ if (process.browser) {
         });
       })
     );
+    console.log('Done...??', Date.now());
   }
-  */
 
-  let browserRouter = createBrowserRouter(router);
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        // With SSR, we usually want to set some default staleTime
+        // above 0 to avoid refetching immediately on the client
+        staleTime: 60 * 1000,
+      },
+    },
+  });
+
+  const router = makeRouter({
+    routes,
+    store,
+    apiClient,
+    queryClient,
+  });
 
   const root = hydrateRoot(containerNode, (
-    <AppContextProvider state={store} apiClient={apiClient}>
-      <RouterProvider router={browserRouter} />
+    <AppContextProvider state={store} apiClient={apiClient} queryClient={queryClient}>
+      <RouterProvider router={createBrowserRouter(router)} />
     </AppContextProvider>
   ));
 
   debug('Root mounted.');
 
   if (import.meta.hot) {
-    // TODO: How to "watch" all files?
     module.meta.hot.accept('./contexts/AppContextProvider.jsx', async () => {
       debug('Refreshing ./contexts/AppContextProvider.jsx');
       const { default: AppContextProvider } = await import('./contexts/AppContextProvider.jsx');
-      const { router } = await import('./routes.jsx');
+      const { default: makeRouter } = await import('./core/makeRouter.jsx');
+
+      const router = makeRouter({
+        store,
+        apiClient,
+        queryClient,
+      });
+
       root.render(
-        <AppContextProvider state={state} apiClient={apiClient}>
+        <AppContextProvider state={state} apiClient={apiClient} queryClient={queryClient}>
           <RouterProvider router={createBrowserRouter(router)} />
         </AppContextProvider>
       );

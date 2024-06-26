@@ -54,7 +54,7 @@ export async function onLogicSuccess({ state, apiClient, user, experimentActiveV
 }
 
 export default async function login({ state, apiClient }, { phone, password, autoLoginToken }) {
-  const { user, experimentActiveVariants } = await apiClient.postWithState({
+  const { user, experimentActiveVariants, success } = await apiClient.postWithState({
     action: API_ACTION_LOGIN,
     state: state,
     payload: {
@@ -64,7 +64,7 @@ export default async function login({ state, apiClient }, { phone, password, aut
     },
   });
 
-  if (user) {
+  if (success) {
     await onLogicSuccess({
       state,
       apiClient,

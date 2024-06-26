@@ -2,6 +2,15 @@ import { useContext, useState, useEffect } from 'react';
 import StateContext from '#client/contexts/StateContext.js';
 
 export default function useBranch(mapping) {
+  if (typeof mapping === 'string') {
+    mapping = [mapping];
+  }
+  let isSingleBranch = Array.isArray(mapping);
+
+  if (isSingleBranch) {
+    mapping = { [mapping[mapping.length - 1]]: mapping };
+  }
+
   const state = useContext(StateContext);
 
   const [cursorState, setCursorState] = useState(() => {
@@ -18,5 +27,7 @@ export default function useBranch(mapping) {
     return () => watcher.release();
   }, [mapping, state]);
 
-  return cursorState;
+  return isSingleBranch
+    ? cursorState[Object.keys(mapping)[0]]
+    : cursorState;
 }

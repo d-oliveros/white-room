@@ -9,7 +9,6 @@ import {
 } from '#common/userRoles.js';
 
 import getUserLandingPage from '#client/helpers/getUserLandingPage.js';
-import useTransitionHook from '#client/hooks/useTransitionHook.js';
 import useApiState from '#client/hooks/useApiState.jsx';
 import useBranch from '#client/hooks/useBranch.js';
 import useDispatch from '#client/hooks/useDispatch.js';
@@ -23,9 +22,7 @@ import AuthActions from '#client/actions/Auth/index.jsx';
 
 const LoginPage = () => {
   const dispatch = useDispatch();
-  const { currentUser } = useBranch({
-    currentUser: ['currentUser'],
-  });
+  const currentUser = useBranch('currentUser');
 
   if (!currentUser.roles.includes(USER_ROLE_ANONYMOUS)) {
     return (
@@ -55,9 +52,9 @@ LoginPage.getMetadata = ({ props, params }) => ({
   image: 'https://whiteroom.com/images/metadata/og-house.jpg',
 });
 
-LoginPage.fetchPageData = async ({ dispatch, params }) => {
-  dispatch(({ state }) => { state.set(['bnew'], true); });
-  // dispatch(UserActions.loadById, { id: params.id });
+
+LoginPage.fetchPageData = () => {
+  return null;
 };
 
 export default LoginPage;

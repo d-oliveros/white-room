@@ -2,34 +2,37 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { hasRoleAnonymous } from '#common/userRoles.js';
+import sleepAsync from '#common/util/sleepAsync.js';
 
 import useBranch from '#client/hooks/useBranch.js';
-import useTransitionHook from '#client/hooks/useTransitionHook.js';
 
 import Link from '#client/components/Link/Link.jsx';
 import Flex from '#client/components/Flex/Flex.jsx';
 import Text from '#client/components/Text/Text.jsx';
 import Box from '#client/components/Box/Box.jsx';
 
-const Homepage = ({ isTransitioning, user }) => {
+const Homepage = ({ user }) => {
+  console.log('Rendering Homepage.jsx');
+  const currentUser = useBranch('currentUser');
   const navigate = useNavigate();
 
-  const { currentUser } = useBranch({
-    currentUser: ['currentUser'],
-  });
+  console.log({ currentUser, user, navigate });
 
   return (
     <Box width='80%' margin='0 auto'>
       <h1>Home Page</h1>
 
-      {isTransitioning && (
-        <div className='loading-gif' />
-      )}
-      <p>Hello! Thanks for visiting.</p>
+      <p>
+        Hello! Thanks for visiting.
+        Serverside user: {user?.id || 'Loading...'}
+        Your user roles: {currentUser.roles}
+      </p>
 
-      <p>Serverside user: {user?.id || 'Loading...'}</p>
-
-      <p>You are {hasRoleAnonymous(currentUser.roles) ? 'Anonymous' : currentUser.firstName}.</p>
+      <p>
+        You are {hasRoleAnonymous(currentUser.roles)
+          ? '--'
+          : currentUser.firstName}
+      </p>
 
       {!hasRoleAnonymous(currentUser.roles) &&
         <Link to='/logout'>Log out</Link>
@@ -72,8 +75,11 @@ Homepage.getMetadata = ({ state, params }) => ({
   pageTitle: 'Homepage | White Room',
 });
 
-Homepage.fetchPageData = async ({ dispatch, params }) => {
-  await dispatch(({ state }) => { state.set(['anew'], true); });
+Homepage.fetchPageData = async ({ apiClient, queryClient, store, params }) => {
+  // await sleepAsync(process.browser ? 3000 : 0);
+  console.log('Sleeeeeping');
+  await sleepAsync(4000);
+  // await dispatch(({ state }) => { state.set(['anew'], true); });
 
   // const data = await dispatch(requestApi, {
   //   action: API_ACTION_VERIFY_PHONE_SMS_CODE_REQUESTED,
@@ -92,6 +98,8 @@ Homepage.fetchPageData = async ({ dispatch, params }) => {
 
   // fetchPageData redirections
 
+  throw new Error("DAYUM DAWGGG");
+  console.log('WAKE UP!');
   return {
     user: {
       id: 1,

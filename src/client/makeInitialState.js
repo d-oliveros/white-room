@@ -5,15 +5,18 @@ import anonymousUser from '#client/constants/anonymousUser.js';
  */
 export default function makeInitialState() {
   return {
-    // Session
+    // Server State
     currentUser: { ...anonymousUser },
 
-    // Data
+    // THIS SECTION REPLACED BY REACT QUERY
     users: {
       byId: {},
     },
 
-    // Environmental variables
+    // Client State
+    isTransitioning: false,
+    isNotFound: null,
+
     // Every property in this object will be passed to the initial frontend state
     // from the server's environment automatically. Add more environmental variables here
     // to expose them in the frontend. Careful - these will be public!
@@ -25,13 +28,11 @@ export default function makeInitialState() {
       COMMIT_HASH: null,
     },
 
-    // System
-    isTransitioning: false,
-    isNotFound: null,
-
     pendingCommit: false,
+
     apiState: {},
     dataTables: {},
+
     scroll: {
       shouldRestoreScrollPosition: false,
     },

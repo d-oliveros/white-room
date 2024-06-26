@@ -19,32 +19,16 @@ import sendDataToMobileApp, {
 
 import useBranch from '#client/hooks/useBranch.js';
 import useApiClient from '#client/hooks/useApiClient.js';
-import useTransitionHook from '#client/hooks/useTransitionHook.js';
+
 import MobileAppEventListener from '#client/components/MobileAppEventListener/MobileAppEventListener.jsx';
 import EnablePushNotificationsModal from '#client/components/EnablePushNotificationsModal/EnablePushNotificationsModal.jsx';
+import Link from '#client/components/Link/Link.jsx';
 
 // Interval for checking the app commit hash vs the server commit hash to reload the page when a new version is available.
 const CHECK_APP_VERSION_INTERVAL_MS = 1800000; // 30 minutes.
 
-const RouteTransitionWrapper = ({ route, notFoundRoute }) => {
-  const { isTransitioning, isNotFound, pageData } = useTransitionHook(route.component);
-
-  if (isNotFound && notFoundRoute.Component) {
-    return (
-      <notFoundRoute.Component />
-    );
-  }
-
-  return (
-    <route.component
-      {...pageData || {}}
-      isTransitioning={isTransitioning}
-    />
-  );
-}
-
 const App = () => {
-  // TODO: RENDER
+  console.log('Rendering App.jsx');
 
   const apiClient = useApiClient();
   const location = useLocation();
@@ -122,9 +106,9 @@ const App = () => {
       <header>
         <nav>
           <ul>
-            <li><a href="/">Home</a></li>
-            <li><a href="/signup">Sign Up</a></li>
-            <li><a href="/login">Login</a></li>
+            <li><Link to='/'>Home</Link></li>
+            <li><Link to='/signup'>Sign Up</Link></li>
+            <li><Link to='/login'>Login</Link></li>
           </ul>
         </nav>
       </header>

@@ -3,6 +3,7 @@ import { useRouteError } from "react-router-dom";
 
 const ErrorPage = () => {
   const error = useRouteError();
+  console.log(error);
 
   return (
     <div id="error-page">
@@ -10,6 +11,11 @@ const ErrorPage = () => {
       <p>Sorry, an unexpected error has occurred.</p>
       <p>
         <i>{error.statusText || error.message}</i>
+        {error.stack && (
+          <pre>
+            {error.stack}
+          </pre>
+        )}
       </p>
     </div>
   );

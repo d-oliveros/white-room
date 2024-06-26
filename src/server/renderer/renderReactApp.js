@@ -2,6 +2,7 @@ import { parse as parseUrl } from 'url';
 
 import React from 'react';
 import { renderToString } from 'react-dom/server';
+import { QueryClient } from '@tanstack/react-query'
 import {
   createStaticHandler,
   createStaticRouter,
@@ -15,7 +16,8 @@ import createApiClient from '#api/createApiClient.js';
 import makeInitialState from '#client/makeInitialState.js';
 import createTree from '#client/core/createTree.js';
 import AppContextProvider from '#client/contexts/AppContextProvider.jsx';
-import routes, { router } from '#client/routes.jsx';
+import makeRouter from '#client/core/makeRouter.jsx';
+import routes from '#client/routes.js';
 import renderLayout from '#client/renderLayout.js';
 
 import {
@@ -24,7 +26,6 @@ import {
   serializeState,
   matchRoute,
   createFetchRequest,
-  fetchPageData,
 } from '#server/renderer/rendererHelpers.js';
 
 const {
@@ -49,10 +50,6 @@ const DEFAULT_PAGE_METADATA = {
   description:  `${APP_TITLE}.`,
   image: null,
 };
-
-// TODO: Is it OK to leave this here?
-console.log('Router', router);
-let handler = createStaticHandler(router);
 
 // const routesLoaded = await Promise.all(router.map(async (route) => ({
 //   ...route,
@@ -92,7 +89,7 @@ export default async function renderReactApp({ state: initialStateData, req, res
 
   try {
     const { pathname, search: urlSearch = '' } = parseUrl(url);
-    const { route, params, isNotFound } = matchRoute(routes, pathname);
+    const { route, isNotFound } = matchRoute(routes, pathname);
 
     let httpStatus = isNotFound ? 404 : 200;
 
@@ -108,31 +105,25 @@ export default async function renderReactApp({ state: initialStateData, req, res
       sessionTokenName: 'X-Session-Token',
     });
 
-    let redirectUrl = null;
-
-    const { pageData, pageMetadata } = await fetchPageData({
-      route,
-      params,
-      state,
-      apiClient,
-      navigate: (url) => {
-        redirectUrl = url;
-      },
-      onNotFound: () => {
-        state.state('isNotFound', true);
-        httpStatus = 404;
+    const queryClient = new QueryClient({
+      defaultOptions: {
+        queries: {
+          staleTime: 60 * 1000,
+        },
       },
     });
 
+    let redirectUrl = null;
+
     const pageMetadataWithDefaults = {
       ...DEFAULT_PAGE_METADATA,
-      ...(pageMetadata || {}),
+      // ...(pageMetadata || {}),
     };
 
-    state.set('pageData', pageData || {});
     state.set('pageMetadata', pageMetadataWithDefaults);
     state.set('pageMetadataDefault', DEFAULT_PAGE_METADATA);
 
+    // TODO: Navigate on fetchPageData
     if (redirectUrl) {
       debug(`\`navigate\` called with: ${redirectUrl}`);
       httpStatus = 302;
@@ -146,13 +137,23 @@ export default async function renderReactApp({ state: initialStateData, req, res
 
     assertIdleApiState(state.get('apiState'));
 
+    const router = makeRouter({
+      routes,
+      queryClient,
+      apiClient,
+      store: state,
+    });
+
     let fetchRequest = createFetchRequest(req, res);
+
+    console.log('Router', router);
+    let handler = createStaticHandler(router);
     let context = await handler.query(fetchRequest);
 
     const staticRouter = createStaticRouter(handler.dataRoutes, context);
 
     const body = renderToString(
-      React.createElement(AppContextProvider, { state, apiClient },
+      React.createElement(AppContextProvider, { state, apiClient, queryClient },
         React.createElement(StaticRouterProvider, { router: staticRouter, context })
       )
     );
@@ -174,7 +175,7 @@ export default async function renderReactApp({ state: initialStateData, req, res
       body,
       useBuild,
       devScriptBaseUrl: `${appUrl.protocol}//${appUrl.hostname}`,
-      metaData: pageMetadataWithDefaults,
+      // metaData: pageMetadataWithDefaults,
       segmentKey: SEGMENT_KEY,
       webpackDevelopmentServerPort: WEBPACK_DEVELOPMENT_SERVER_PORT || 8001,
       serializedState: serializeState(state),

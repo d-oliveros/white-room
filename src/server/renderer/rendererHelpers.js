@@ -2,7 +2,6 @@ import jsesc from 'jsesc';
 import assert from 'assert';
 
 import typeCheck from '#common/util/typeCheck.js';
-import makeDispatchFn from '#client/core/makeDispatchFn.js';
 
 const {
   APP_URL,
@@ -75,44 +74,9 @@ export function withoutMonkeys(object) {
 }
 
 /**
- * Runs data fetching functions defined in the router state's component tree.
- */
-export const fetchPageData = async ({ route, params, state, apiClient, navigate, onNotFound }) => {
-  let pageData = null;
-  let pageMetadata = null;
-
-  if (route.Component?.fetchPageData) {
-    pageData = await route.Component.fetchPageData({
-      dispatch: makeDispatchFn({
-        state,
-        apiClient,
-        navigate,
-      }),
-      onNotFound,
-      params: params || {},
-    });
-  }
-
-  if (route.Component?.getMetadata) {
-    pageMetadata = route.Component.getMetadata({
-      state,
-      params: params || {},
-    });
-  }
-
-  return {
-    pageData,
-    pageMetadata,
-  };
-}
-
-/**
  * Creates a Fetch API Request object from an Express request and response.
  */
 export const createFetchRequest = (req, res) => {
-  console.log('[createFetchRequest] req.headers');
-  console.log(req.headers);
-  // Note: This had to take originalUrl into account for presumably vite's proxying
   const url = new URL(req.originalUrl || req.url, APP_URL);
 
   const controller = new AbortController();
