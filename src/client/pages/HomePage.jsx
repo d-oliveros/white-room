@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate, redirect } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import { hasRoleAnonymous } from '#common/userRoles.js';
 import sleepAsync from '#common/util/sleepAsync.js';
@@ -79,7 +79,9 @@ Homepage.fetchPageData = async ({ apiClient, queryClient, store, params }) => {
   // await sleepAsync(process.browser ? 3000 : 0);
   console.log('Sleeeeeping');
   await sleepAsync(400);
-  return redirect('/login');
+
+  // return redirect('/login');
+
   // await dispatch(({ state }) => { state.set(['anew'], true); });
 
   // const data = await dispatch(requestApi, {

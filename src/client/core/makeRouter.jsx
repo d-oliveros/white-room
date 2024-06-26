@@ -1,5 +1,5 @@
 import React, { Suspense } from 'react';
-import { Await, Navigate, defer, useLoaderData, useAsyncError } from 'react-router-dom';
+import { Await, Navigate, Outlet, defer, useLoaderData, useAsyncError } from 'react-router-dom';
 import { serializeError } from 'serialize-error';
 
 import log from '#client/lib/log.js';
@@ -7,11 +7,13 @@ import isRedirectResponse from '#common/util/isRedirectResponse.js';
 
 import App from '#client/App.jsx';
 import ErrorPage from '#client/pages/ErrorPage.jsx';
+import Link from '#client/components/Link/Link.jsx';
 
 const makeLoaderFn = ({ fetchPageData, apiClient, queryClient, store }) => {
   console.log('Making loaderFn');
   return ({ params }) => {
     console.log('loaderFn called');
+    // const shouldDefer = !!process.browser;
     const shouldDefer = !!process.browser;
 
     console.log('shouldDefer');
@@ -130,37 +132,60 @@ const LoaderTransitionHandler = ({ children }) => {
   );
 };
 
+const Layout = () => {
+  return (
+    <>
+      <header>
+        <nav>
+          <ul>
+            <li><Link to='/'>Home</Link></li>
+            <li><Link to='/signup'>Sign Up</Link></li>
+            <li><Link to='/login'>Login</Link></li>
+          </ul>
+        </nav>
+      </header>
+      <main>
+        <Outlet />
+      </main>
+    </>
+  );
+}
+
 const makeRouter = ({ routes, queryClient, apiClient, store }) => [
   {
     path: '/',
     element: <App />,
     errorElement: <ErrorPage />,
-    children: routes.map((route) => {
-      const PageComponent = route.Component;
-      let routeLoader = null;
+    children: [{
+      path: '/',
+      element: <Layout />,
+      children: routes.map((route) => {
+        const PageComponent = route.Component;
+        let routeLoader = null;
 
-      if (PageComponent.fetchPageData) {
-        routeLoader = makeLoaderFn({
-          fetchPageData: PageComponent.fetchPageData,
-          store,
-          queryClient,
-          apiClient,
-        });
-      }
+        if (PageComponent.fetchPageData) {
+          routeLoader = makeLoaderFn({
+            fetchPageData: PageComponent.fetchPageData,
+            store,
+            queryClient,
+            apiClient,
+          });
+        }
 
-      return {
-        path: route.path,
-        index: route.path === '/',
-        loader: routeLoader,
-        element: (
-          <LoaderTransitionHandler>
-            {(pageProps) => (
-              <PageComponent {...pageProps || {}} />
-            )}
-          </LoaderTransitionHandler>
-        ),
-      };
-    }),
+        return {
+          path: route.path,
+          index: route.path === '/',
+          loader: routeLoader,
+          element: (
+            <LoaderTransitionHandler>
+              {(pageProps) => (
+                <PageComponent {...pageProps || {}} />
+              )}
+            </LoaderTransitionHandler>
+          ),
+        };
+      }),
+    }],
   },
 ];
 
