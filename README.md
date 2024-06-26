@@ -26,7 +26,7 @@ Modern, SSR-first, isomorphic React/Express full-stack application starter kit.
 
 ## Dependencies
 
-* Node.js v22.2.0
+* Node.js v22.3.0
 * Docker
 
 
@@ -34,11 +34,11 @@ Modern, SSR-first, isomorphic React/Express full-stack application starter kit.
 
 #### Install Dependencies
 
-##### Install Node v22.2.0
+##### Install Node v22.3.0
 ```
 > curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.8/install.sh | bash
-> nvm install 22.2.0
-> nvm alias default 22.2.0
+> nvm install 22.3.0
+> nvm alias default 22.3.0
 ```
 
 ##### Start PostgreSQL and Redis with Docker Compose:
