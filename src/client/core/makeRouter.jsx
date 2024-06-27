@@ -13,7 +13,6 @@ const makeLoaderFn = ({ fetchPageData, apiClient, queryClient, store }) => {
   console.log('Making loaderFn');
   return ({ params }) => {
     console.log('loaderFn called');
-    // const shouldDefer = !!process.browser;
     const shouldDefer = !!process.browser;
 
     console.log('shouldDefer');
@@ -41,6 +40,8 @@ const makeLoaderFn = ({ fetchPageData, apiClient, queryClient, store }) => {
     return new Promise((resolve) => {
       fetchPageDataPromise
         .then((pageProps) => {
+          console.log('pageProps');
+          console.log(pageProps);
           if (isRedirectResponse(pageProps)) {
             resolve(pageProps);
           }
@@ -117,16 +118,7 @@ const LoaderTransitionHandler = ({ children }) => {
         resolve={loaderData.promise}
         errorElement={<FetchDataErrorFallback />}
       >
-        {(pageProps) => {
-          if (isRedirectResponse(pageProps)) {
-            const url = pageProps.headers.get('Location');
-            return (
-              <Navigate to={url} />
-            );
-          }
-          console.log('Rendering children', pageProps);
-          return children(pageProps || {});
-        }}
+        {(pageProps) => children(pageProps || {})}
       </Await>
     </Suspense>
   );
@@ -151,42 +143,63 @@ const Layout = () => {
   );
 }
 
-const makeRouter = ({ routes, queryClient, apiClient, store }) => [
-  {
-    path: '/',
-    element: <App />,
-    errorElement: <ErrorPage />,
-    children: [{
+const makeRouter = ({ routes, queryClient, apiClient, store }) => {
+  const notFoundRoute = routes.find(({ path }) => path === '*');
+  const NotFoundComponent = notFoundRoute?.Component || null;
+
+  return [
+    {
       path: '/',
-      element: <Layout />,
-      children: routes.map((route) => {
-        const PageComponent = route.Component;
-        let routeLoader = null;
+      element: <App />,
+      errorElement: <ErrorPage />,
+      children: [{
+        path: '/',
+        element: <Layout />,
+        children: routes.map((route) => {
+          const PageComponent = route.Component;
+          let routeLoader = null;
 
-        if (PageComponent.fetchPageData) {
-          routeLoader = makeLoaderFn({
-            fetchPageData: PageComponent.fetchPageData,
-            store,
-            queryClient,
-            apiClient,
-          });
-        }
+          if (PageComponent.fetchPageData) {
+            routeLoader = makeLoaderFn({
+              fetchPageData: PageComponent.fetchPageData,
+              store,
+              queryClient,
+              apiClient,
+            });
+          }
 
-        return {
-          path: route.path,
-          index: route.path === '/',
-          loader: routeLoader,
-          element: (
-            <LoaderTransitionHandler>
-              {(pageProps) => (
-                <PageComponent {...pageProps || {}} />
-              )}
-            </LoaderTransitionHandler>
-          ),
-        };
-      }),
-    }],
-  },
-];
+          return {
+            path: route.path,
+            index: route.path === '/',
+            loader: routeLoader,
+            element: (
+              <LoaderTransitionHandler>
+                {(pageProps) => {
+                  console.log('pageProps');
+                  console.log(pageProps);
+                  if (isRedirectResponse(pageProps)) {
+                    if (pageProps.status === 404 || pageProps.statusCode === 404) {
+                      return (
+                        <NotFoundComponent />
+                      );
+                    }
+                    const url = pageProps.headers.get('Location');
+                    return (
+                      <Navigate to={url} />
+                    );
+                  }
+
+                  return (
+                    <PageComponent {...pageProps || {}} />
+                  );
+                }}
+              </LoaderTransitionHandler>
+            ),
+          };
+        }),
+      }],
+    },
+  ];
+};
 
 export default makeRouter;

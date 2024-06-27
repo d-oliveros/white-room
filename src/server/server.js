@@ -1,5 +1,6 @@
 import path from 'path';
 import express from 'express';
+import helmet from 'helmet';
 import bodyParser from 'body-parser';
 import makeCookieParser from 'cookie-parser';
 import { createProxyMiddleware } from 'http-proxy-middleware';
@@ -26,6 +27,7 @@ import errorHandler from '#server/middleware/errorHandler.js';
 import segmentLibProxy from '#server/middleware/segmentLibProxy.js';
 
 const {
+  NODE_ENV,
   ENABLE_STORYBOOK,
   COOKIE_SECRET,
   COMMIT_HASH,
@@ -42,7 +44,11 @@ const cookieParser = makeCookieParser(COOKIE_SECRET, cookiesConfig.session);
 export default function createServer() {
   const app = express();
 
-  // Gateway-level middleware1
+  // Gateway-level middleware
+  if (NODE_ENV !== 'development') {
+    app.use(helmet());
+  }
+
   app.enable('trust proxy');
 
   app.use((req, res, next) => {

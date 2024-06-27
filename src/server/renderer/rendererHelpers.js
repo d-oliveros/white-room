@@ -34,6 +34,7 @@ export function makeRendererResponse({ status, html, redirectUrl, error }) {
   typeCheck('status::PositiveNumber', status);
   typeCheck('html::Maybe NonEmptyString', html);
   typeCheck('redirectUrl::Maybe NonEmptyString', redirectUrl);
+
   assert(html || redirectUrl || error, 'html, redirectUrl or error is required.');
 
   return {
