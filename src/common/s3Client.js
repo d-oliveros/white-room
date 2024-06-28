@@ -31,9 +31,9 @@ const {
 } = process.env;
 
 export const isEnabled = !!(
-  AWS_ACCESS_KEY
-  && AWS_SECRET_KEY
-  && AWS_FILES_UPLOAD_BUCKET
+  AWS_ACCESS_KEY &&
+  AWS_SECRET_KEY &&
+  AWS_FILES_UPLOAD_BUCKET
 );
 
 export const S3_ACL_PUBLIC_READ = 'public-read';
@@ -49,7 +49,6 @@ const client = new S3Client({
 
 const plugin = {
   applyToStack: (stack) => {
-    // Middleware added to mark start and end of each HTTP requests including retry.
     stack.add(
       (next, context) => async (args) => {
         const startTimestamp = Date.now();
@@ -62,7 +61,7 @@ const plugin = {
 
         logger.info(`${context.commandName}: ${args.input.Key} starts`, metadata);
         const result = await next(args);
-        logger.info(`${context.commandName}: ${args.input.Key} in ${Date.now() - startTimestamp}m`, metadata);
+        logger.info(`${context.commandName}: ${args.input.Key} in ${Date.now() - startTimestamp}ms`, metadata);
 
         return result;
       },
@@ -76,17 +75,11 @@ client.middlewareStack.use(plugin);
 export const s3BucketUrl = `https://s3.amazonaws.com/${AWS_FILES_UPLOAD_BUCKET}`;
 
 export const withoutLeadingSlash = (pathString) => (
-  pathString[0] === '/'
-    ? pathString.slice(1)
-    : pathString
+  pathString[0] === '/' ? pathString.slice(1) : pathString
 );
 
 /**
  * Downloads file from S3 bucket as a ReadableStream.
- *
- * @param {string} args.sourceFilePath Absolute path to the file to be downloaded.
- *
- * @return {ReadableStream} The stream.
  */
 export async function downloadStream(args) {
   typeCheck('args::NonEmptyObject', args);
@@ -95,10 +88,7 @@ export async function downloadStream(args) {
 
   assert(isEnabled, 'AWS S3 env keys are not set');
 
-  const {
-    sourceFilePath,
-    bucket,
-  } = args;
+  const { sourceFilePath, bucket } = args;
 
   const command = new GetObjectCommand({
     Bucket: bucket || AWS_FILES_UPLOAD_BUCKET,
@@ -113,10 +103,6 @@ export async function downloadStream(args) {
 
 /**
  * Downloads file from S3 bucket as a buffer.
- *
- * @param {string} args.sourceFilePath Absolute path to the file to be downloaded.
- *
- * @return {Promise} The buffer.
  */
 export function downloadAsBuffer(args) {
   return new Promise((resolve, reject) => {
@@ -127,17 +113,14 @@ export function downloadAsBuffer(args) {
 
       assert(isEnabled, 'AWS S3 env keys are not set');
 
-      const {
-        sourceFilePath,
-        bucket,
-      } = args;
+      const { sourceFilePath, bucket } = args;
 
       const command = new GetObjectCommand({
         Bucket: bucket || AWS_FILES_UPLOAD_BUCKET,
         Key: sourceFilePath,
       });
 
-      debug('Downloading file from S3 bucket ', { args });
+      debug('Downloading file from S3 bucket', { args });
 
       client.send(command)
         .then((response) => {
@@ -149,8 +132,7 @@ export function downloadAsBuffer(args) {
           stream.once('error', reject);
         })
         .catch(reject);
-    }
-    catch (err) {
+    } catch (err) {
       reject(err);
     }
   });
@@ -158,13 +140,6 @@ export function downloadAsBuffer(args) {
 
 /**
  * Uploads a file to an S3 bucket.
- *
- * @param {string}  args.sourceFilePath   Absolute path to the file to be uploaded.
- * @param {string}  args.targetFilePath   Path in S3 bucket to upload file into.
- * @param {boolean} args.deleteSourceFile If true, uploaded file will be deleted locally.
- * @param {boolean} args.isPrivate        Uses 'authenticated-read' or 'public-read' ACL value.
- *
- * @return {Promise<string>}              Absolute URL to the uploaded file.
  */
 export async function uploadToS3(args) {
   typeCheck('args::NonEmptyObject', args);
@@ -176,15 +151,9 @@ export async function uploadToS3(args) {
 
   assert(isEnabled, 'AWS S3 env keys are not set');
 
-  const {
-    sourceFilePath,
-    deleteSourceFile,
-    bucket,
-  } = args;
+  const { sourceFilePath, deleteSourceFile, bucket } = args;
 
-  const acl = args.isPrivate
-    ? S3_ACL_AUTHENTICATED_READ
-    : S3_ACL_PUBLIC_READ;
+  const acl = args.isPrivate ? S3_ACL_AUTHENTICATED_READ : S3_ACL_PUBLIC_READ;
 
   const targetFilePath = withoutLeadingSlash(args.targetFilePath);
   const blob = fs.readFileSync(sourceFilePath);
@@ -206,7 +175,6 @@ export async function uploadToS3(args) {
     await unlinkAsync(sourceFilePath);
   }
 
-  const s3BucketUrl = `https://s3.amazonaws.com/${bucket || AWS_FILES_UPLOAD_BUCKET}`;
   const uploadedFileUrl = `${s3BucketUrl}/${targetFilePath}`;
 
   debug('Uploaded file', uploadedFileUrl);
@@ -240,10 +208,6 @@ export async function uploadToSignedS3ObjectUrl({ s3PutObjectUrl, localFilePath 
 
 /**
  * Removes an object from an S3 bucket.
- *
- * @param {string} args.targetFilePath Path to file in S3 bucket to remove.
- *
- * @return {Promise<string>}           Absolute URL to the removed file.
  */
 export async function removeFromS3(args) {
   typeCheck('args::NonEmptyObject', args);
@@ -269,16 +233,8 @@ export async function removeFromS3(args) {
 
 /**
  * Uploads a directory to an S3 bucket.
- *
- * @param {string} dir
- * @param {string} bucketName
- *
- * @return {Promise}
  */
-export async function uploadDirToS3({
-  dir,
-  bucketName,
-}) {
+export async function uploadDirToS3({ dir, bucketName }) {
   const files = await getFiles(dir);
 
   for (const filePath of files) {

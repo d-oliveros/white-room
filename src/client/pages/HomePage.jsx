@@ -78,11 +78,13 @@ Homepage.getMetadata = ({ state, params }) => ({
 Homepage.fetchPageData = async ({ apiClient, queryClient, store, params }) => {
   // await sleepAsync(process.browser ? 3000 : 0);
   console.log('Sleeeeeping');
-  await sleepAsync(4000);
+  await sleepAsync(400);
 
-  return new Response('', {
-    status: 404,
-  });
+  // Returns a 404 code.
+  //
+  // return new Response('', {
+  //   status: 404,
+  // });
 
   // return redirect('/login');
 

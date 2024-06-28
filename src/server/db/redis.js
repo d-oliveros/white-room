@@ -1,10 +1,16 @@
-import IORedis from 'ioredis';
+import { createClient } from 'redis';
 import { v4 as uuidv4 } from 'uuid';
 
 import dbConfig from '#config/database.js';
 import logger from '#common/logger.js';
 
-const redis = new IORedis(dbConfig.redis);
+const redis = createClient({
+  url: `redis://${dbConfig.redis.host}:${dbConfig.redis.port}`
+});
+
+redis.on('error', (error) => {
+  logger.error('Redis connection error:', error);
+});
 
 const redisLeaderKey = 'app-redis-leader';
 const ttl = 8000;
@@ -13,31 +19,35 @@ redis.leaderId = uuidv4();
 redis.isLeader = false;
 
 redis.renewLeadership = async () => {
-  const currentLeaderId = await redis.get(redisLeaderKey);
-  if (currentLeaderId === redis.leaderId) {
-    // Renew leadership if still the leader
-    await redis.pexpire(redisLeaderKey, ttl); // Extend the TTL
-    setTimeout(redis.renewLeadership, ttl / 2);
-  }
-  else {
-    redis.isLeader = false;
+  try {
+    const currentLeaderId = await redis.get(redisLeaderKey);
+    if (currentLeaderId === redis.leaderId) {
+      // Renew leadership if still the leader
+      await redis.pexpire(redisLeaderKey, ttl); // Extend the TTL
+      setTimeout(redis.renewLeadership, ttl / 2);
+    } else {
+      redis.isLeader = false;
+    }
+  } catch (error) {
+    logger.error(`Redis Error: ${error.message} ${error.stack}`);
   }
 }
 
 redis.claimLeadership = async () => {
   try {
-    const result = await redis.set(redisLeaderKey, redis.leaderId, 'NX', 'PX', ttl);
+    const result = await redis.set(redisLeaderKey, redis.leaderId, {
+      NX: true,
+      PX: ttl
+    });
 
-    if (result === 'OK') {
+    if (result) {
       // Successfully acquired leadership
       redis.isLeader = true;
       setTimeout(redis.renewLeadership, ttl / 2);
-    }
-    else {
+    } else {
       redis.isLeader = false;
     }
-  }
-  catch (error) {
+  } catch (error) {
     logger.error(`Redis Error: ${error.message} ${error.stack}`);
   }
 }
@@ -47,10 +57,10 @@ redis.initClaimLeadershipInterval = async () => {
   return setInterval(redis.claimLeadership, ttl);
 }
 
-redis.on('error', (error) => {
+redis.connect().then(async () => {
+  redis.claimLeadershipInterval = await redis.initClaimLeadershipInterval();
+}).catch((error) => {
   logger.error('Redis connection error:', error);
 });
-
-redis.claimLeadershipInterval = redis.initClaimLeadershipInterval();
 
 export default redis;
