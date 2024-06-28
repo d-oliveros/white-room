@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import moment from 'moment';
+import dayjs from 'dayjs';
 
 const MINUTE = 60;
 const HOUR = 60 * MINUTE;
@@ -13,7 +13,7 @@ export default function useCountUpTimer({ startDate }) {
 
   useEffect(() => {
     const timer = setInterval(() => {
-      const totalSeconds = moment().diff(startDate, 'seconds');
+      const totalSeconds = dayjs().diff(startDate, 'seconds');
       if (totalSeconds > 0) {
         const hour = Math.floor(totalSeconds / HOUR);
         const minute = Math.floor((totalSeconds - (hour * HOUR)) / 60);

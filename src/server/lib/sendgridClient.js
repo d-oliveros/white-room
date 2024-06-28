@@ -1,4 +1,3 @@
-import superagent from 'superagent';
 import { resolve as resolveUrl } from 'url';
 import { serializeError } from 'serialize-error';
 
@@ -71,7 +70,7 @@ export const SENDGRID_EVENT_TO_ANALYTICS_EVENT_MAPPING = {
  * @param  {string} options.method         HTTP method to use.
  * @param  {string} options.path           Path to request.
  * @param  {Object} options.body           Request body.
- * @param  {Object} options.fullResponse   If true returns the full Sengrid response.
+ * @param  {Object} options.fullResponse   If true returns the full SendGrid response.
  * @return {Object}                        SendGrid response.
  */
 async function requestSendgridEndpoint({ method, path, body, fullResponse }) {
@@ -79,46 +78,62 @@ async function requestSendgridEndpoint({ method, path, body, fullResponse }) {
   typeCheck('method::NonEmptyString', method);
 
   path = path.indexOf('/') === 0 ? path.substr(1) : path;
-  method = method.toLowerCase();
+  method = method.toUpperCase();
 
   const url = resolveUrl('https://api.sendgrid.com/v3/', path);
 
   debug(`Sending ${method} request to: ${url}${body ? ' with ' + JSON.stringify(body, null, 2) : ''}`);
 
   if (!sendgridIsEnabled) {
-    debug('[requestSendGridEndpoint] SendGrid is not enabled. Aborting.');
+    debug('[requestSendgridEndpoint] SendGrid is not enabled. Aborting.');
     return null;
   }
 
-  let requestChain = superagent[method](url)
-    .set('Authorization', `Bearer ${SENDGRID_API_KEY}`)
-    .set('Content-Type', 'application/json')
-    .set('Accept', 'application/json');
+  const headers = {
+    'Authorization': `Bearer ${SENDGRID_API_KEY}`,
+    'Content-Type': 'application/json',
+    'Accept': 'application/json'
+  };
+
+  const options = {
+    method,
+    headers
+  };
 
   if (body) {
-    requestChain = requestChain.send(body);
+    options.body = JSON.stringify(body);
   }
 
   let result;
 
   try {
-    const response = await requestChain;
+    const response = await fetch(url, options);
+
+    if (!response.ok) {
+      const errorBody = await response.json();
+      const error = new Error(`SendGrid response not OK: ${response.statusText}`);
+      error.name = SENDGRID_ERROR_RESPONSE_NOT_OK;
+      error.details = {
+        responseStatus: response.status,
+        responseBody: errorBody,
+        responseHeaders: [...response.headers.entries()].reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {})
+      };
+      error.inner = serializeError(new Error(response.statusText));
+      throw error;
+    }
+
     if (fullResponse) {
       result = response;
+    } else {
+      result = await response.json();
     }
-    else {
-      result = response.body;
-    }
-  }
-  catch (superagentError) {
-    const error = new Error(`SendGrid response not OK: ${superagentError.message}`);
+  } catch (fetchError) {
+    const error = new Error(`SendGrid request failed: ${fetchError.message}`);
     error.name = SENDGRID_ERROR_RESPONSE_NOT_OK;
     error.details = {
-      responseStatus: superagentError.status,
-      responseBody: superagentError.response && superagentError.response.body || null,
-      responseHeaders: superagentError.response && superagentError.response.headers || null,
+      message: fetchError.message,
+      stack: fetchError.stack
     };
-    error.inner = serializeError(superagentError);
     throw error;
   }
 

@@ -1,8 +1,8 @@
-import moment from 'moment';
+import dayjs from 'dayjs';
 import pluralize from 'pluralize';
 import typeCheck from '#common/util/typeCheck.js';
 import capitalize from '#common/util/capitalize.js';
-import momentWithAustinTimezone from '#common/util/momentWithAustinTimezone.js';
+import dayjsWithAustinTimezone from '#common/util/dayjsWithAustinTimezone.js';
 
 const ONE_DAY_IN_SECONDS = 24 * 60 * 60;
 
@@ -88,8 +88,8 @@ export function roundTwoDecimals(number) {
 }
 
 export function getFormattedFromNowDate({ date, compact }) {
-  const pastDate = momentWithAustinTimezone(date);
-  const nowDate = momentWithAustinTimezone();
+  const pastDate = dayjsWithAustinTimezone(date);
+  const nowDate = dayjsWithAustinTimezone();
   const dateDifference = Math.floor((nowDate.unix() - pastDate.unix()) / ONE_DAY_IN_SECONDS);
 
   if (dateDifference === 0) {
@@ -106,12 +106,12 @@ export function getFormattedFromNowDate({ date, compact }) {
   if (dateDifference === 1) {
     return compact ? '1d' : 'Yesterday';
   }
-  return compact ? `${dateDifference}d` : momentWithAustinTimezone(date).format('MMMM Do');
+  return compact ? `${dateDifference}d` : dayjsWithAustinTimezone(date).format('MMMM Do');
 }
 
 export function getDateRangeDuration({ fromDate, toDate }) {
-  const fromMoment = momentWithAustinTimezone(fromDate);
-  const toMoment = momentWithAustinTimezone(toDate);
+  const fromMoment = dayjsWithAustinTimezone(fromDate);
+  const toMoment = dayjsWithAustinTimezone(toDate);
   const diffInYears = toMoment.diff(fromMoment, 'years');
   if (diffInYears >= 1) {
     const diffInMonths = toMoment.diff(fromMoment, 'months') % 12;
@@ -125,8 +125,8 @@ export function getDateRangeDuration({ fromDate, toDate }) {
 }
 
 export function formatAgoDate(date, options = {}) {
-  const pastDate = moment(date);
-  const nowDate = moment();
+  const pastDate = dayjs(date);
+  const nowDate = dayjs();
   const numberOfDays = Math.round((nowDate.unix() - pastDate.unix()) / ONE_DAY_IN_SECONDS);
   const useDays = options.useDays || false;
 

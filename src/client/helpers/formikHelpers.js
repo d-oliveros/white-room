@@ -1,4 +1,4 @@
-import moment from 'moment';
+import dayjs from 'dayjs';
 import { getIn, setIn } from 'formik';
 
 import lodashKeyBy from 'lodash/fp/keyBy.js';
@@ -8,7 +8,7 @@ import log from '#client/lib/log.js';
 import typeCheck from '#common/util/typeCheck.js';
 import objectNormalize from '#common/util/objectNormalize.js';
 import extractPhoneFromText from '#common/util/extractPhoneFromText.js';
-import momentWithAustinTimezone from '#common/util/momentWithAustinTimezone.js';
+import dayjsWithAustinTimezone from '#common/util/dayjsWithAustinTimezone.js';
 import preventDefaultPropagation from '#client/helpers/preventDefaultPropagation.js';
 import { isChromeBrowser } from '#common/util/isUserAgentMobileApp.js';
 
@@ -129,7 +129,7 @@ export const validators = {
     return String(value) === String(checkValue) ? 'Values must be different' : undefined;
   },
   dateOfBirth: (dob) => {
-    const dobMoment = moment(dob);
+    const dobMoment = dayjs(dob);
     if (
       dob
       && (
@@ -172,8 +172,8 @@ export const validators = {
     if (!value) {
       return undefined;
     }
-    const nowMoment = momentWithAustinTimezone().startOf('day');
-    const valueMoment = momentWithAustinTimezone(value);
+    const nowMoment = dayjsWithAustinTimezone().startOf('day');
+    const valueMoment = dayjsWithAustinTimezone(value);
     if (valueMoment.isBefore(nowMoment)) {
       return 'Please enter a date in the future.';
     }
@@ -183,7 +183,7 @@ export const validators = {
     if (
       value
       && properties.date
-      && !moment(value).isSameOrBefore(moment(properties.date))
+      && !dayjs(value).isSameOrBefore(dayjs(properties.date))
     ) {
       return properties.beforeOrSameThanDateMessage;
     }
@@ -193,14 +193,14 @@ export const validators = {
     if (
       value
       && properties.date
-      && !moment(value).isSameOrAfter(moment(properties.date))
+      && !dayjs(value).isSameOrAfter(dayjs(properties.date))
     ) {
       return properties.afterThanDateMessage;
     }
     return undefined;
   },
   date: (value) => {
-    const valueMoment = moment(value);
+    const valueMoment = dayjs(value);
     if (
       value
       && (
@@ -747,7 +747,7 @@ export function getFormValueDisplay({ formField, value }) {
   // Transform date objects to date strings.
   if (formValueDisplay && formField.type.includes('date')) {
     const dateFormat = properties.dateFormat || 'LLLL';
-    formValueDisplay = moment(formValueDisplay).format(dateFormat);
+    formValueDisplay = dayjs(formValueDisplay).format(dateFormat);
   }
   return formValueDisplay || '--';
 }

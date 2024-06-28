@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import lodashCompact from 'lodash/fp/compact.js';
 
 const MINUTE = 60;
@@ -7,7 +7,7 @@ const HOUR = 60 * MINUTE;
 const DAY = 24 * HOUR;
 
 function getTimerValues(fromDate) {
-  const secondsTotal = moment().diff(moment(fromDate), 'seconds');
+  const secondsTotal = dayjs().diff(dayjs(fromDate), 'seconds');
   if (secondsTotal > 0) {
     const day = Math.floor(secondsTotal / DAY);
     const hour = Math.floor((secondsTotal - (day * DAY)) / HOUR);
@@ -33,7 +33,7 @@ export default function useFromNowTimer({ fromDate }) {
 
   useEffect(() => {
     const timer = setInterval(() => {
-      const secondsTotal = moment().diff(moment(fromDate), 'seconds');
+      const secondsTotal = dayjs().diff(dayjs(fromDate), 'seconds');
 
       if (secondsTotal > 0) {
         setTimerValue(getTimerValues(fromDate));

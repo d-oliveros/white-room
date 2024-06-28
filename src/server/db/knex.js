@@ -1,6 +1,6 @@
 import assert from 'assert';
 import createKnex from 'knex';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import knexPostgis from 'knex-postgis';
 import pg from 'pg';
 import { v4 as uuidv4 } from 'uuid';
@@ -10,7 +10,7 @@ import slugify from '#common/util/slugify.js';
 import dbConfig from '#config/database.js';
 
 pg.types.setTypeParser(pg.types.builtins.DATE, (val) => {
-  return val === null ? null : moment(val).format('YYYY-MM-DD');
+  return val === null ? null : dayjs(val).format('YYYY-MM-DD');
 });
 
 const knex = createKnex(dbConfig.knex);

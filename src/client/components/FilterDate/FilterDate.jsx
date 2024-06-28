@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import moment from 'moment';
+import dayjs from 'dayjs';
 
 import DatePicker from '#client/components/DatePicker/DatePicker.jsx';
 
@@ -27,7 +27,7 @@ class FilterDate extends Component {
       value,
     } = this.props;
     const dateMoment = typeof value === 'string'
-      ? moment(value)
+      ? dayjs(value)
       : value;
 
     return (

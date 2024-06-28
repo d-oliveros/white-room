@@ -39,6 +39,7 @@ if (process.browser) {
   // Get the serialized state injected by the server
   const store = getStoreFromBrowser();
 
+  console.log(process.env.NODE_ENV);
   // Initialize the development environment if not in production
   if (process.env.NODE_ENV !== 'production') {
     initDevelopmentEnv(store);

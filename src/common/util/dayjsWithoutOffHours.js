@@ -1,13 +1,13 @@
-import momentWithAustinTimezone from '#common/util/momentWithAustinTimezone.js';
+import dayjsWithAustinTimezone from '#common/util/dayjsWithAustinTimezone.js';
 import durationSettingsToMsArray from '#common/util/durationSettingsToMsArray.js';
 
-export default function momentWithoutOffHours({
+export default function dayjsWithoutOffHours({
   startMoment,
   cutoffEarlyHour,
   cutoffLateHour,
   morningReminderTime,
 }) {
-  const reminderDate = momentWithAustinTimezone(startMoment);
+  const reminderDate = dayjsWithAustinTimezone(startMoment);
 
   if (cutoffEarlyHour && reminderDate.hour() < cutoffEarlyHour) {
     reminderDate.set(morningReminderTime);
@@ -27,7 +27,7 @@ export function getReminderDateOffHours({
   cutoffLateHour,
   morningReminderTime,
 }) {
-  const firstReminder = momentWithoutOffHours({
+  const firstReminder = dayjsWithoutOffHours({
     startMoment,
     cutoffEarlyHour,
     cutoffLateHour,
@@ -39,8 +39,8 @@ export function getReminderDateOffHours({
     return [
       ...reminders,
       {
-        date: momentWithoutOffHours({
-          startMoment: momentWithAustinTimezone(lastReminder.date).add(delayMs, 'ms'),
+        date: dayjsWithoutOffHours({
+          startMoment: dayjsWithAustinTimezone(lastReminder.date).add(delayMs, 'ms'),
           cutoffEarlyHour,
           cutoffLateHour,
           morningReminderTime,

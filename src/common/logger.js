@@ -1,7 +1,7 @@
 import createDebug from 'debug';
 import winston from 'winston';
 import PrettyError from 'pretty-error';
-import moment from 'moment';
+import dayjs from 'dayjs';
 
 const {
   APP_ID,
@@ -15,7 +15,7 @@ const transports = [];
 const pe = new PrettyError();
 
 const customFormat = winston.format.printf(({ level, message, timestamp, ...metadata }) => {
-  let msg = `${moment(timestamp).format('HH:mm:ss.SSS')} [${level}]: ${message}`;
+  let msg = `${dayjs(timestamp).format('HH:mm:ss.SSS')} [${level}]: ${message}`;
   if (metadata && Object.keys(metadata).length) {
     msg += ` ${JSON.stringify(metadata)}`;
   }

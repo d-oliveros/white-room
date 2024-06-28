@@ -1,4 +1,3 @@
-import superagent from 'superagent';
 import { v4 as uuidv4 } from 'uuid';
 import { serializeError } from 'serialize-error';
 
@@ -61,51 +60,50 @@ function makeApiRequestMethod({
 
     debug(`Requesting ${apiPath}/${actionType}`, actionPayload);
 
-    let requestChain = superagent[method](`${appUrl}${apiPath}/${actionType}`);
-
+    const url = `${appUrl}${apiPath}/${actionType}`;
     const sessionToken = getSessionToken ? getSessionToken() : null;
 
-    if (sessionToken) {
-      requestChain = requestChain.set(sessionTokenName, sessionToken);
-    }
+    const options = {
+      method: method.toUpperCase(),
+      headers: {}
+    };
 
-    if (actionOptions.onProgressFn) {
-      typeCheck('onProgressFn::Function', actionOptions.onProgressFn);
-      requestChain = requestChain.on('progress', actionOptions.onProgressFn);
+    if (sessionToken) {
+      options.headers[sessionTokenName] = sessionToken;
     }
 
     if (actionOptions.timeout) {
-      typeCheck('timeout::PositiveNumber', actionOptions.timeout);
-      requestChain = requestChain.timeout(actionOptions.timeout);
+      options.timeout = actionOptions.timeout;
     }
 
-    switch (method) {
-      case 'get': {
-        if (actionPayload) {
-          requestChain = requestChain.query(actionPayload);
-        }
-        break;
-      }
-      case 'post': {
-        requestChain = requestChain.set('accept', 'application/json');
-        if (actionPayload) {
-          requestChain = requestChain.send(actionPayload);
-        }
-        break;
+    if (method === 'get' && actionPayload) {
+      const query = new URLSearchParams(actionPayload).toString();
+      url += `?${query}`;
+    } else if (method === 'post') {
+      options.headers['Content-Type'] = 'application/json';
+      if (actionPayload) {
+        options.body = JSON.stringify(actionPayload);
       }
     }
+
     let res;
     let error;
     const errorReferenceKey = uuidv4();
+
     try {
-      res = await requestChain;
-    }
-    catch (superagentError) {
-      error = superagentError;
+      const response = await fetch(url, options);
+      res = await response.json();
+
+      if (!response.ok) {
+        error = new Error(res.message || 'Request failed');
+        error.name = API_ERROR_REQUEST_FAILED;
+      }
+    } catch (fetchError) {
+      error = fetchError;
       error.details = {
-        errorReferenceKey: errorReferenceKey,
-        actionType: actionType,
-        actionPayload: actionPayload,
+        errorReferenceKey,
+        actionType,
+        actionPayload,
       };
     }
 
@@ -114,13 +112,12 @@ function makeApiRequestMethod({
         error = new Error(`Invalid response object: ${JSON.stringify(res)}`);
         error.name = API_ERROR_REQUEST_INVALID_RESPONSE;
         error.details = {
-          errorReferenceKey: errorReferenceKey,
-          actionType: actionType,
-          actionPayload: actionPayload,
+          errorReferenceKey,
+          actionType,
+          actionPayload,
         };
-      }
-      else if (!res.body.success) {
-        const resError = res.body.result;
+      } else if (!res.success) {
+        const resError = res.result;
         if (resError && resError.message) {
           error = new Error(resError.message);
 
@@ -129,21 +126,19 @@ function makeApiRequestMethod({
           }
 
           error.name = resError.name || API_ERROR_REQUEST_FAILED;
-
           error.details = {
             ...(resError.details || {}),
             errorReferenceKey: resError.details.errorReferenceKey || errorReferenceKey,
-            actionType: actionType,
-            actionPayload: actionPayload,
+            actionType,
+            actionPayload,
           };
-        }
-        else {
+        } else {
           error = new Error(`API request not successful without error message: ${JSON.stringify(res)}`);
           error.name = API_ERROR_REQUEST_FAILED;
           error.details = {
-            errorReferenceKey: errorReferenceKey,
-            actionType: actionType,
-            actionPayload: actionPayload,
+            errorReferenceKey,
+            actionType,
+            actionPayload,
           };
         }
       }
@@ -173,14 +168,11 @@ function makeApiRequestMethod({
 
     if (process.browser) {
       debug(`Success ${apiPath}/${actionType}`, res.body.result);
-    }
-    else {
+    } else {
       debug(`Success ${apiPath}/${actionType}`);
     }
 
-    // TODO(@d-oliveros): Warn if `Set-Cookie` header is present but we're on serverside.
-
-    return res.body.result;
+    return res.result;
   };
 }
 
@@ -287,8 +279,7 @@ export default function createApiClient(params = {}) {
           await optPromise;
         }
       }
-    }
-    catch (apiClientError) {
+    } catch (apiClientError) {
       const errorShortId = apiClientError.details?.shortId || uuidv4();
       const error = new Error(`[API:${action}] ${apiClientError.message}`);
       error.name = apiClientError.name || API_ERROR_REQUEST_NOT_HANDLED_OK;

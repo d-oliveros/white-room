@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import Datetime from 'react-datetime';
 import lodashIsEqual from 'lodash/fp/isEqual.js';
 import isValidDateWithoutTimeString from '#common/util/isValidDateWithoutTimeString.js';
@@ -23,7 +23,7 @@ const onlyUpdateOnPropChangeNames = [
 const renderDaysInWeek = (props, currentDate, selectedDate) => {
   if (selectedDate) {
     const initialDate = selectedDate;
-    const finalDate = moment(selectedDate).add(6, 'days');
+    const finalDate = dayjs(selectedDate).add(6, 'days');
     const shouldHighlight = currentDate.isBetween(
       initialDate,
       finalDate,
@@ -107,8 +107,8 @@ class DatePicker extends Component {
         isValidDate={isValidDate}
         value={value && typeof value === 'string'
           ? new Date(value)
-          : (value && moment(value).isValid()
-            ? moment(value).toDate()
+          : (value && dayjs(value).isValid()
+            ? dayjs(value).toDate()
             : placeholderValue
           )
         }

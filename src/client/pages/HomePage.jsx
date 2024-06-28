@@ -23,7 +23,7 @@ const Homepage = ({ user }) => {
       <h1>Home Page</h1>
 
       <p>
-        Hello! Thanks for visiting.
+        Hello! Thaasdnks for visiting.
         Serverside user: {user?.id || 'Loading...'}
         Your user roles: {currentUser.roles}
       </p>

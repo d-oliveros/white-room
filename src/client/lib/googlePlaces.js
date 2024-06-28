@@ -9,10 +9,6 @@ import {
   makeLocationPointString,
 } from '#common/addressHelpers';
 
-export {
-  geocodeByAddress as getGooglePlaceByListingAddress,
-} from 'react-places-autocomplete';
-
 const addressStreetNameVariantBlacklist = [
   'n',
   'north',

@@ -1,4 +1,4 @@
-import moment from 'moment';
+import dayjs from 'dayjs';
 import extractDateParts from '#common/util/extractDateParts.js';
 
 export default function dateStringMomentWithCurrentTime(dateString) {
@@ -6,7 +6,7 @@ export default function dateStringMomentWithCurrentTime(dateString) {
   if (!dateParts) {
     return null;
   }
-  const dateMoment = moment()
+  const dateMoment = dayjs()
     .year(dateParts.year)
     .month(dateParts.month - 1)
     .date(dateParts.day);

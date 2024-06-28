@@ -1,6 +1,5 @@
 import assert from 'assert';
 import lodashCloneDeep from 'lodash/fp/cloneDeep.js';
-import superagent from 'superagent';
 
 import logger from '#common/logger.js';
 
@@ -110,9 +109,9 @@ const sendSingleSlackMessage = async ({ channel, attachments, message, identity 
     };
 
     if (
-      slackBody.channel === SLACK_REDIRECT_MESSAGES_CHANNEL
-      && channel !== SLACK_REDIRECT_MESSAGES_CHANNEL
-      && Array.isArray(slackBody.attachments[0]?.fields)
+      slackBody.channel === SLACK_REDIRECT_MESSAGES_CHANNEL &&
+      channel !== SLACK_REDIRECT_MESSAGES_CHANNEL &&
+      Array.isArray(slackBody.attachments[0]?.fields)
     ) {
       slackBody.attachments[0].fields.push({
         title: 'Original Channel',
@@ -120,11 +119,20 @@ const sendSingleSlackMessage = async ({ channel, attachments, message, identity 
       });
     }
 
-    slackResponse = await superagent.post(SLACK_ENDPOINT)
-      .set('Content-Type', 'application/json')
-      .send(slackBody);
-  }
-  catch (error) {
+    const response = await fetch(SLACK_ENDPOINT, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(slackBody),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to send message to Slack: ${response.statusText}`);
+    }
+
+    slackResponse = await response.json();
+  } catch (error) {
     error.name = 'SlackError';
     error.details = {
       channel,

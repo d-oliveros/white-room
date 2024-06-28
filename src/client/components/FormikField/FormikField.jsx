@@ -4,7 +4,7 @@ import classnames from 'classnames';
 import { Field, getIn } from 'formik';
 import Autosuggest from 'react-autosuggest';
 import { NumericFormat } from 'react-number-format';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import lodashCompact from 'lodash/fp/compact.js';
 
 import emptyFunction from '#common/util/emptyFunction.js';
@@ -404,9 +404,9 @@ class FormikField extends Component {
             className='datePicker'
             name={formField.id}
             skipOnChangeReRender={properties.skipOnChangeReRender}
-            onChange={(momentInstance) => {
-              let value = momentInstance?.toISOString
-                ? momentInstance.toISOString()
+            onChange={(dayjsInstance) => {
+              let value = dayjsInstance?.toISOString
+                ? dayjsInstance.toISOString()
                 : null;
 
               if (properties.dateWithoutTime) {
@@ -443,16 +443,16 @@ class FormikField extends Component {
             className='datePicker'
             name={formField.id}
             skipOnChangeReRender={properties.skipOnChangeReRender}
-            onChange={(momentInstance) => {
-              if (!momentInstance) {
+            onChange={(dayjsInstance) => {
+              if (!dayjsInstance) {
                 setFieldValue(formField.id, null);
               }
-              else if (momentInstance.toISOString) {
-                setFieldValue(formField.id, momentInstance.toISOString());
+              else if (dayjsInstance.toISOString) {
+                setFieldValue(formField.id, dayjsInstance.toISOString());
                 setFieldTouched(formField.id);
               }
               if (properties.onChange) {
-                properties.onChange(momentInstance ? momentInstance.toISOString() : null);
+                properties.onChange(dayjsInstance ? dayjsInstance.toISOString() : null);
               }
             }}
             timeFormat={properties.timeFormat}
@@ -475,7 +475,7 @@ class FormikField extends Component {
           <DateInput
             formFieldId={formField.id}
             onChange={(newValue) => {
-              const newValueMoment = moment(newValue, 'YYYY-MM-DD');
+              const newValueMoment = dayjs(newValue, 'YYYY-MM-DD');
               if (newValue.length === 10 && newValueMoment.isValid()) {
                 setFieldValue(formField.id, newValueMoment.toISOString());
               }
@@ -486,7 +486,7 @@ class FormikField extends Component {
             onBlur={() => {
               setFieldTouched(formField.id);
             }}
-            value={value ? moment(value).format('YYYY-MM-DD') : ''}
+            value={value ? dayjs(value).format('YYYY-MM-DD') : ''}
             disabled={properties.disabled}
           />
         );
@@ -496,7 +496,7 @@ class FormikField extends Component {
           <ExpirationDateInput
             formFieldId={formField.id}
             onChange={(newValue) => {
-              const newValueMoment = moment(newValue, 'MM-YY');
+              const newValueMoment = dayjs(newValue, 'MM-YY');
 
               if (newValueMoment.isValid()) {
                 setFieldValue(formField.id, newValueMoment.toISOString());
@@ -505,7 +505,7 @@ class FormikField extends Component {
             onBlur={() => {
               setFieldTouched(formField.id);
             }}
-            value={value ? moment(value).format('MM-YY') : ''}
+            value={value ? dayjs(value).format('MM-YY') : ''}
             disabled={properties.disabled}
           />
         );

@@ -1,5 +1,5 @@
 import typeCheckModule from 'type-check';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import ipRegex from 'ip-regex';
 import isUrl from '#common/util/isUrl.js';
 import extractDateParts from '#common/util/extractDateParts.js';
@@ -30,7 +30,7 @@ const typeCheckCustomTypes = {
   },
   DateString: {
     typeOf: 'String',
-    validate: (x) => x && moment(x).isValid(),
+    validate: (x) => x && dayjs(x).isValid(),
   },
   DayString: {
     typeOf: 'String',
@@ -44,9 +44,9 @@ const typeCheckCustomTypes = {
     typeOf: 'String',
     validate: (x) => x && emailRegex.test(x),
   },
-  Moment: {
+  Dayjs: {
     typeOf: 'Object',
-    validate: (x) => moment.isMoment(x) && x.isValid(),
+    validate: (x) => dayjs.isDayjs(x) && x.isValid(),
   },
   FileObject: {
     typeOf: 'Object',

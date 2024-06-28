@@ -1,5 +1,4 @@
 import formidable from 'formidable';
-import superagent from 'superagent';
 import path from 'path';
 import { v4 as uuidv4 } from 'uuid';
 import fs from 'fs';
@@ -68,16 +67,23 @@ export async function uploadIncomingFile(req, params) {
  * @return {Promise<string>}  The downloaded file's absolute path.
  */
 export async function downloadFile(url, localFilePath) {
+  // TODO(@d-oliveros): Test if the fetch refactor works!
   const downloadPath = localFilePath || `${os.tmpdir()}/${uuidv4()}`;
   const downloadStream = fs.createWriteStream(downloadPath);
 
-  superagent.get(url).pipe(downloadStream);
+  const response = await fetch(url);
+
+  if (!response.ok) {
+    throw new Error(`Failed to download file: ${response.statusText}`);
+  }
+
+  const fileStream = response.body.pipe(downloadStream);
 
   const filePath = await new Promise((resolve, reject) => {
-    downloadStream.on('finish', () => {
+    fileStream.on('finish', () => {
       resolve(downloadStream.path);
     });
-    downloadStream.on('error', (error) => {
+    fileStream.on('error', (error) => {
       reject(error);
     });
   });

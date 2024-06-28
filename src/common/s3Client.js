@@ -1,7 +1,6 @@
 import fs from 'fs';
 import path from 'path';
 import assert from 'assert';
-import superagent from 'superagent';
 import mime from 'mime';
 
 import {
@@ -194,16 +193,24 @@ export async function uploadToSignedS3ObjectUrl({ s3PutObjectUrl, localFilePath 
   const fileBuffer = await readFileAsync(localFilePath);
   const headers = parseQueryString(s3PutObjectUrl.split('?')[1]);
 
-  const putImageRequest = superagent
-    .put(s3PutObjectUrl);
+  const options = {
+    method: 'PUT',
+    headers: {}
+  };
 
   for (const headerName of Object.keys(headers)) {
-    putImageRequest.set(headerName, headers[headerName]);
+    options.headers[headerName] = headers[headerName];
   }
 
-  const result = await putImageRequest.send(fileBuffer);
+  options.body = fileBuffer;
 
-  return result;
+  const response = await fetch(s3PutObjectUrl, options);
+
+  if (!response.ok) {
+    throw new Error(`Failed to upload to signed S3 URL: ${response.statusText}`);
+  }
+
+  return response;
 }
 
 /**

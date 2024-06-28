@@ -1,4 +1,3 @@
-import superagent from 'superagent';
 import { resolve as resolveUrl } from 'url';
 
 import logger from '#common/logger.js';
@@ -48,7 +47,7 @@ async function requestAuthyEndpoint({ method, path, body, appName }) {
   typeCheck('appName::NonEmptyString', appName);
 
   path = path.indexOf('/') === 0 ? path.substr(1) : path;
-  method = method.toLowerCase();
+  method = method.toUpperCase();
 
   const url = resolveUrl('https://api.authy.com', path);
   const authyApiKey = AUTHY_APP_TO_API_KEY_MAPPING[appName];
@@ -60,40 +59,55 @@ async function requestAuthyEndpoint({ method, path, body, appName }) {
     return null;
   }
 
-  let requestChain = superagent[method](url)
-    .set('X-Authy-API-Key', `${authyApiKey}`)
-    .set('Content-Type', 'application/json')
-    .set('Accept', 'application/json');
+  const headers = {
+    'X-Authy-API-Key': `${authyApiKey}`,
+    'Content-Type': 'application/json',
+    'Accept': 'application/json'
+  };
+
+  const options = {
+    method,
+    headers
+  };
 
   if (body) {
-    requestChain = requestChain.send(body);
+    options.body = JSON.stringify(body);
   }
 
   let result;
 
   try {
-    const response = await requestChain;
-    result = response.body;
-  }
-  catch (superagentError) {
-    if (
-      superagentError.response &&
-      superagentError.response.body &&
-      (
-        superagentError.response.body.message === 'Verification code is incorrect'
-        || superagentError.response.body.message === 'Phone number not provisioned with any carrier'
-        || superagentError.response.body.message === 'Cannot send SMS to landline phone numbers'
-      )
-    ) {
-      return superagentError.response.body;
+    const response = await fetch(url, options);
+
+    if (!response.ok) {
+      const errorBody = await response.json();
+
+      if (
+        errorBody.message === 'Verification code is incorrect' ||
+        errorBody.message === 'Phone number not provisioned with any carrier' ||
+        errorBody.message === 'Cannot send SMS to landline phone numbers'
+      ) {
+        return errorBody;
+      }
+
+      const error = new Error(`Authy response not OK: ${response.statusText}`);
+      error.name = AUTHY_ERROR_RESPONSE_NOT_OK;
+      error.details = {
+        responseStatus: response.status,
+        responseBody: errorBody,
+        responseHeaders: [...response.headers.entries()].reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {})
+      };
+
+      throw error;
     }
 
-    const error = new Error(`Authy response not OK: ${superagentError.message}`);
+    result = await response.json();
+  } catch (fetchError) {
+    const error = new Error(`Authy request failed: ${fetchError.message}`);
     error.name = AUTHY_ERROR_RESPONSE_NOT_OK;
     error.details = {
-      responseStatus: superagentError.status,
-      responseBody: superagentError.response && superagentError.response.body || null,
-      responseHeaders: superagentError.response && superagentError.response.headers || null,
+      message: fetchError.message,
+      stack: fetchError.stack
     };
 
     throw error;

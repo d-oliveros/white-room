@@ -1,6 +1,5 @@
 import assert from 'assert';
 import path from 'path';
-import superagent from 'superagent';
 import typeCheck from '#common/util/typeCheck.js';
 import parseS3Url from '#common/util/parseS3Url.js';
 import log from '#client/lib/log.js';
@@ -67,6 +66,14 @@ export function getFileBlobFromObjectUrl(objectUrl) {
   });
 }
 
+/**
+ * Uploads a file to S3.
+ *
+ * @param {Object} fileObjToBeUploaded - The file object to be uploaded.
+ * @param {Object} params - Parameters for the upload.
+ *
+ * @return {Object} - The response data from the upload.
+ */
 export async function uploadFileToS3(fileObjToBeUploaded, params) {
   typeCheck('fileObjToBeUploaded::FileObject', fileObjToBeUploaded);
   typeCheck('params::NonEmptyObject', params);
@@ -100,8 +107,12 @@ export async function uploadFileToS3(fileObjToBeUploaded, params) {
     formData.append('uploadAs', uploadAs);
   }
 
-  const uploadResponse = await superagent.post('/upload-file', formData);
-  const uploadResponseBody = uploadResponse.body;
+  const response = await fetch('/upload-file', {
+    method: 'POST',
+    body: formData,
+  });
+
+  const uploadResponseBody = await response.json();
 
   debug('Uploaded file', {
     fileObjToBeUploaded,
@@ -116,6 +127,14 @@ export async function uploadFileToS3(fileObjToBeUploaded, params) {
   return uploadResponseBody.data;
 }
 
+/**
+ * Creates a proxied S3 file path.
+ *
+ * @param {string} s3FileUrl - The S3 file URL.
+ * @param {string} appUrl - The application URL.
+ *
+ * @return {string} - The proxied S3 file path.
+ */
 export function makeProxiedS3FilePath(s3FileUrl, appUrl) {
   const parsedS3FileUrl = parseS3Url(s3FileUrl);
 
@@ -125,6 +144,13 @@ export function makeProxiedS3FilePath(s3FileUrl, appUrl) {
   return `${appUrl || ''}/aws-s3/${parsedS3FileUrl.bucket}/${parsedS3FileUrl.key}`;
 }
 
+/**
+ * Gets the dimensions of an image.
+ *
+ * @param {string} fileUrl - The URL of the image file.
+ *
+ * @return {Promise<Object>} - A promise that resolves to an object containing the image dimensions.
+ */
 export function getImageDimension(fileUrl) {
   return new Promise((resolve) => {
     const img = new Image();
@@ -138,6 +164,14 @@ export function getImageDimension(fileUrl) {
   });
 }
 
+/**
+ * Validates a file to be uploaded.
+ *
+ * @param {Object} fileObjectToBeUploaded - The file object to be uploaded.
+ * @param {Object} params - Validation parameters.
+ *
+ * @return {Promise<string|null>} - A promise that resolves to a validation error message or null if there are no errors.
+ */
 export async function getFileValidationError(fileObjectToBeUploaded, params) {
   const mimeType = fileObjectToBeUploaded.type;
   const { minWidth = 0, minHeight = 0 } = params;
@@ -178,6 +212,13 @@ export async function getFileValidationError(fileObjectToBeUploaded, params) {
   return null;
 }
 
+/**
+ * Checks if a file is a PDF.
+ *
+ * @param {string} filePath - The file path.
+ *
+ * @return {boolean} - True if the file is a PDF, false otherwise.
+ */
 export function isPDFFile(filePath) {
   const fileExtension = (path.extname(filePath || '')).replace('.', '').toLowerCase();
   return fileExtension === 'pdf';

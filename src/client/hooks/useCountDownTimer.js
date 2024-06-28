@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
-import moment from 'moment';
+import dayjs from 'dayjs';
 
 const MINUTE = 60;
 const HOUR = 60 * MINUTE;
 const DAY = HOUR * 24;
 
 function getValues(endDate) {
-  const totalSeconds = moment(endDate).diff(moment(), 'seconds');
+  const totalSeconds = dayjs(endDate).diff(dayjs(), 'seconds');
   if (totalSeconds > 0) {
     const day = Math.floor(totalSeconds / DAY);
     const hour = Math.floor((totalSeconds - (day * DAY)) / HOUR);
@@ -30,7 +30,7 @@ export default function useCountDownTimer({ endDate }) {
 
   useEffect(() => {
     const timer = setInterval(() => {
-      const totalSeconds = moment(endDate).diff(moment(), 'seconds');
+      const totalSeconds = dayjs(endDate).diff(dayjs(), 'seconds');
 
       if (totalSeconds > 0) {
         setTimerValue(getValues(endDate));

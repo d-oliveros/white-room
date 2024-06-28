@@ -1,4 +1,4 @@
-import momentWithAustinTimezone from '#common/util/momentWithAustinTimezone.js';
+import dayjsWithAustinTimezone from '#common/util/dayjsWithAustinTimezone.js';
 
 const nextMorningMomentSet = {
   hour: 12,
@@ -7,7 +7,7 @@ const nextMorningMomentSet = {
 };
 
 export default function nextMorningAutotextDelay() {
-  const currentDate = momentWithAustinTimezone();
-  const nextDate = momentWithAustinTimezone().set(nextMorningMomentSet).add(1, 'days');
+  const currentDate = dayjsWithAustinTimezone();
+  const nextDate = dayjsWithAustinTimezone().set(nextMorningMomentSet).add(1, 'days');
   return nextDate.diff(currentDate);
 }

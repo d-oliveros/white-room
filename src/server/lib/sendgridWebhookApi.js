@@ -1,8 +1,7 @@
 import { Router } from 'express';
 import { serializeError } from 'serialize-error';
 import lodashPick from 'lodash/fp/pick.js';
-import moment from 'moment';
-import superagent from 'superagent';
+import dayjs from 'dayjs';
 
 import logger from '#common/logger.js';
 import { trackServersideEvent } from '#server/lib/serversideAnalytics.js';
@@ -38,16 +37,18 @@ sendgridWebhookApi.post('/event-dispatcher', async (req, res, next) => {
 
     for (const appUrl of Object.keys(eventsByAppUrl)) {
       try {
-        await superagent.post(`${appUrl}/sendgrid/webhooks/event`)
-          .set('Content-Type', 'application/json')
-          .send(eventsByAppUrl[appUrl]);
-      }
-      catch (err) {} // eslint-disable-line no-empty
+        await fetch(`${appUrl}/sendgrid/webhooks/event`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(eventsByAppUrl[appUrl]),
+        });
+      } catch (err) {} // eslint-disable-line no-empty
     }
 
     res.sendStatus(200);
-  }
-  catch (sendgridError) {
+  } catch (sendgridError) {
     const error = new Error('Error while processing Sendgrid event via /event-dispatcher webhook.');
     error.inner = serializeError(sendgridError);
     error.details = {
@@ -75,7 +76,7 @@ sendgridWebhookApi.post('/event', async (req, res, next) => {
           ...whitelistFields(eventRawData),
           sgMessageId,
           sgEventId: eventRawData.sg_event_id,
-          createdDate: moment.unix(eventRawData.timestamp).toISOString(),
+          createdDate: dayjs.unix(eventRawData.timestamp).toISOString(),
           userAgent: eventRawData.useragent,
           transactionalEmailId: transactionalEmail.id,
         };
