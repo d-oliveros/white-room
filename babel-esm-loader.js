@@ -1,189 +1,172 @@
-import path from 'path'
-import { fileURLToPath, pathToFileURL } from 'url'
-import babel from '@babel/core'
-
-const SUPPORTED_EXTENSIONS = {
-  '.js': false,
-  '.jsx': true,
-  '.ts': false,
-  '.tsx': true,
-};
+import path from 'path';
+import { fileURLToPath, pathToFileURL } from 'url';
+import babel from '@babel/core';
 
 const nodeModulesRegex = /node_modules/;
+
 
 function isNodeModules(filePath) {
   return nodeModulesRegex.test(filePath);
 }
 
 /**
- * @param {string} specifier
- * @param {{
- *   conditions: !Array<string>,
- *   parentURL: !(string | undefined),
- * }} context
- * @param {Function} nextResolve
- * @returns {Promise<{ url: string }>}
+ * Replaces the extension of a given URL.
+ * @param {URL} url - The URL whose extension will be replaced.
+ * @param {string} fromExtension - The extension to replace.
+ * @param {string} toExtension - The new extension.
+ * @returns {string} - The URL with the new extension.
+ */
+function replaceExtension(url, fromExtension, toExtension) {
+  url.pathname = url.pathname.slice(0, -fromExtension.length) + toExtension;
+  return url.href;
+}
+
+/**
+ * Resolve module specifier to a URL.
+ * @param {string} specifier - The module specifier.
+ * @param {object} context - The context object.
+ * @param {function} nextResolve - The next resolve function in the chain.
+ * @returns {Promise<object>} - The resolved module.
  */
 export async function resolve(specifier, context, nextResolve) {
   try {
     if (path.isAbsolute(specifier)) {
-      specifier = pathToFileURL(specifier).toString()
+      specifier = pathToFileURL(specifier).toString();
     }
 
-    return await nextResolve(specifier, context)
+    return await nextResolve(specifier, context);
   }
-  catch (/**@type {any} */ error) {
-    if (!specifier.startsWith('.') && !specifier.startsWith('file:')) throw error
+  catch (error) {
+    if (!specifier.startsWith('.') && !specifier.startsWith('file:')) {
+      throw error;
+    }
 
     const resolvedPath = fileURLToPath(new URL(specifier, context.parentURL));
-    if (isNodeModules(resolvedPath)) throw error;
+    if (isNodeModules(resolvedPath)) {
+      throw error;
+    }
 
     const extension = path.extname(resolvedPath);
 
     if (error.code === 'ERR_MODULE_NOT_FOUND' && extension === '.js') {
-      const specifierUrl = new URL(specifier, context.parentURL)
-      const sameFileButTs = replaceExtension(specifierUrl, '.js', '.ts')
+      const specifierUrl = new URL(specifier, context.parentURL);
+      const sameFileButTs = replaceExtension(specifierUrl, '.js', '.ts');
 
-      const resolvedTs = await tryResolve(sameFileButTs)
-      if (resolvedTs) return resolvedTs
+      const resolvedTs = await tryResolve(sameFileButTs);
+      if (resolvedTs) {
+        return resolvedTs;
+      }
 
-      const sameFileButTsx = replaceExtension(specifierUrl, '.js', '.tsx')
-      const resolvedTsx = await tryResolve(sameFileButTsx)
+      const sameFileButTsx = replaceExtension(specifierUrl, '.js', '.tsx');
+      const resolvedTsx = await tryResolve(sameFileButTsx);
 
-      if (resolvedTsx) return resolvedTsx
+      if (resolvedTsx) {
+        return resolvedTsx;
+      }
 
-      throw error
+      throw error;
     }
     else {
-      throw error
+      throw error;
     }
   }
 
   /**
-   * @param {string} specifier
+   * Attempt to resolve a module specifier.
+   * @param {string} specifier - The module specifier.
+   * @returns {Promise<object|undefined>} - The resolved module or undefined.
    */
   async function tryResolve(specifier) {
     try {
-      return await nextResolve(specifier, context)
-    } catch (error) {
-      return undefined
+      return await nextResolve(specifier, context);
+    }
+    catch (error) {
+      return undefined;
     }
   }
 }
 
 /**
- * @param {string} url
- * @param {Object} context
- * @param {Function} defaultGetFormat
- * @returns {Promise<{ format: string }>}
+ * Get the format of the module (e.g., 'module', 'commonjs').
+ * @param {string} url - The module URL.
+ * @param {object} context - The context object.
+ * @param {function} defaultGetFormat - The default getFormat function.
+ * @returns {Promise<object>} - The format of the module.
  */
 export async function getFormat(url, context, defaultGetFormat) {
-  const urlUrl = new URL(url)
-  const resolvedPath = fileURLToPath(url);
-
-  if (isNodeModules(resolvedPath)) {
-    return defaultGetFormat(url, context, defaultGetFormat);
-  }
-
-  if (urlUrl.protocol === 'file:') {
-    const extension = path.extname(resolvedPath);
-
-    if (SUPPORTED_EXTENSIONS[extension]) {
-      return defaultGetFormat(replaceExtension(urlUrl, extension, '.js'), context, defaultGetFormat)
-    }
-  }
-  return defaultGetFormat(url, context, defaultGetFormat)
+  return defaultGetFormat(url, context, defaultGetFormat);
 }
 
 /**
- *
- * @param {URL} url
- * @param {string} fromExtension
- * @param {string} toExtension
+ * Transform source code with Babel.
+ * @param {string|Buffer} source - The source code to transform.
+ * @param {object} context - The context object.
+ * @returns {Promise<object>} - The transformed source and source map.
  */
-function replaceExtension(url, fromExtension, toExtension) {
-  url.pathname = url.pathname.slice(0, -fromExtension.length) + toExtension
-
-  return url.href
-}
-
-/**
- * @param {!(string | SharedArrayBuffer | Uint8Array)} source
- * @param {{
- *   format: string,
- *   url: string,
- * }} context
- * @param {Function} [defaultTransformSource]
- * @returns {Promise<{ source: !(string | SharedArrayBuffer | Uint8Array) }>}
- */
-export async function transformSource(source, context, defaultTransformSource) {
-  const {url, format} = context
+export async function transformSource(source, context) {
+  const { url, format } = context;
   const resolvedPath = fileURLToPath(url);
 
   if (isNodeModules(resolvedPath) || (format !== 'module' && format !== 'commonjs')) {
-    if (defaultTransformSource) {
-      return defaultTransformSource(source, context, defaultTransformSource)
-    } else {
-      return {source}
-    }
+    return { source };
   }
 
-  const stringSource =
-    typeof source === 'string'
-      ? source
-      : Buffer.isBuffer(source)
-        ? source.toString('utf-8')
-        : Buffer.from(source).toString('utf-8')
+  const stringSource = Buffer.isBuffer(source) ? source.toString('utf-8') : source;
 
-  const sourceCode = (
-    await babel.transformAsync(stringSource, {
+  try {
+    const { code, map } = await babel.transformAsync(stringSource, {
       sourceType: 'module',
       filename: resolvedPath,
-    })
-  )?.code
+      sourceMaps: true,  // Ensure this is explicitly set
+      retainLines: true  // Add this option to preserve whitespace
+    });
 
-  return sourceCode
-    ? { source: sourceCode }
-    : defaultTransformSource?.(source, context, defaultTransformSource)
+    return {
+      source: code,
+      sourceMap: map ? JSON.stringify(map) : null
+    };
+  }
+  catch (error) {
+    console.error('Babel transformation error:', error);
+    throw new Error('Error transforming source with Babel.');
+  }
 }
 
 /**
- * @param {string} url
- * @param {{
- *   format: string,
- * }} context
- * @param {Function} nextLoad
- * @returns {Promise<{ source: !(string | SharedArrayBuffer | Uint8Array), format: string}>}
+ * Load the module and return the transformed source and source map.
+ * @param {string} url - The module URL.
+ * @param {object} context - The context object.
+ * @param {function} nextLoad - The next load function in the chain.
+ * @returns {Promise<object>} - The loaded module.
  */
 export async function load(url, context, nextLoad) {
-  const {format, source} = await nextLoad(url, context).catch(async (/** @type {any} */ error) => {
+  if (!url.endsWith('.jsx')) {
+    return nextLoad(url, context);
+  }
+
+  const { format, source } = await nextLoad(url, context).catch(async (error) => {
     if (error.code === 'ERR_UNKNOWN_FILE_EXTENSION') {
-      return await nextLoad(url, {...context, format: 'module'})
+      return await nextLoad(url, { ...context, format: 'module' });
     }
     else {
-      throw error
+      throw error;
     }
-  })
+  });
 
   if (source) {
-    const transformed = await transformSource(source, {format, url}, undefined)
+    const transformed = await transformSource(source, { format, url });
+
     if (transformed) {
       return {
         source: transformed.source,
         format,
-      };
-    }
-    else {
-      return {
-        format,
-        source,
+        sourceMap: transformed.sourceMap,
       };
     }
   }
-  else {
-    return {
-      format,
-      source,
-    };
-  }
+
+  return {
+    format,
+    source,
+  };
 }
