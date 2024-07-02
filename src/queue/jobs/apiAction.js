@@ -1,10 +1,10 @@
 import {
   actionSpecsList,
-} from '#api';
+} from '#api/index.js';
 
 import {
   QUEUE_JOB_API_ACTION,
-} from '#queue/jobTypes';
+} from '#queue/jobTypes.js';
 
 export default {
   name: QUEUE_JOB_API_ACTION,

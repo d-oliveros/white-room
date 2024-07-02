@@ -7,13 +7,13 @@ import parseJSON from '#common/util/parseJSON.js';
 import typeCheck from '#common/util/typeCheck.js';
 import generateRandomPhone from '#common/util/generateRandomPhone.js';
 
-import queue from '#queue';
+import queue from '#queue/index.js';
 
 import redis from '#server/db/redis.js';
 import knex from '#server/db/knex.js';
 import User from '#models/User/index.js';
 
-import usersFixture from '../migrations/seeds/usersFixture.json';
+import usersFixture from '../migrations/seeds/usersFixture.json' with { type: 'json' };
 
 const {
   NODE_ENV,
@@ -41,7 +41,7 @@ export async function clearDbData() {
     return trx.commit();
   });
 
-  await redis.flushallAsync();
+  await redis.flushAll();
 }
 
 export function generateRandomName() {

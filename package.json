@@ -8,7 +8,7 @@
   },
   "scripts": {
     "start": "npm run dev",
-    "dev": "run-p  dev-node dev-webpack",
+    "dev": "run-p dev-node dev-webpack",
     "dev-node": "clear && node --watch-path=./src --env-file=.env --env-file=.env.default --import 'data:text/javascript,import { register } from \"node:module\"; import { pathToFileURL } from \"node:url\"; register(\"./babel-esm-loader.js\", pathToFileURL(\"./\"));' init",
     "dev-webpack": "clear && dotenv -e .env -e .env.default webpack serve",
     "dev-debug": "cross-env DEBUG=white-room* npm run dev",
@@ -22,7 +22,7 @@
     "lint": "eslint --max-warnings 0 --ignore-path .gitignore . && clear && echo '[lint]: Done.'",
     "lint-fix": "eslint --fix --ignore-path .gitignore . && echo '[lint-fix]: Done.'",
     "test-build": "npm run build && USE_BUILD=true node init",
-    "test": "cross-env NODE_ENV=test mocha --require _registerBabel.js --ui bdd --recursive --exit",
+    "test": "POSTGRES_DATABASE=whiteroom_dev mocha --ui bdd --recursive --exit",
     "test-watch": "npm run test -- --watch",
     "script": "node src/scripts/load",
     "cron-task": "cross-env DEBUG=whiteroom* dotenv -e .env -e .env.default node util/load run-cron",

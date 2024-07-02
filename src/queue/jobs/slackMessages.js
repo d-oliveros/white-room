@@ -1,7 +1,7 @@
-import { postSlackMessage } from '#server/lib/slackClient';
+import { postSlackMessage } from '#server/lib/slackClient.js';
 
 import logger from '#common/logger.js';
-import { QUEUE_JOB_SLACK_MESSAGES } from '#queue/jobTypes';
+import { QUEUE_JOB_SLACK_MESSAGES } from '#queue/jobTypes.js';
 
 export default {
   name: QUEUE_JOB_SLACK_MESSAGES,

@@ -50,10 +50,10 @@ async function generateSitemapXmlString() {
 
 export default async function sitemapController(req, res, next) {
   try {
-    let sitemapXmlString = await redis.getAsync(REDIS_SITEMAP_KEY);
+    let sitemapXmlString = await redis.get(REDIS_SITEMAP_KEY);
     if (!sitemapXmlString) {
       sitemapXmlString = await generateSitemapXmlString();
-      await redis.setexAsync(
+      await redis.setex(
         REDIS_SITEMAP_KEY,
         REDIS_SITEMAP_EXPIRATION_IN_SECONDS,
         sitemapXmlString,

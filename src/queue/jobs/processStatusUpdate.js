@@ -1,10 +1,10 @@
 import {
   processStatusUpdate,
-} from '#common/stateMachine';
+} from '#common/stateMachine.js';
 
 import {
   QUEUE_JOB_PROCESS_STATUS_UPDATE,
-} from '#queue/jobTypes';
+} from '#queue/jobTypes.js';
 
 export default {
   name: QUEUE_JOB_PROCESS_STATUS_UPDATE,

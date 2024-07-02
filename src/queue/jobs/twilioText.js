@@ -1,9 +1,9 @@
 import redis from '#server/db/redis.js';
-import { sendTwilioText } from '#server/lib/twilioClient';
+import { sendTwilioText } from '#server/lib/twilioClient.js';
 
 import {
   QUEUE_JOB_TWILIO_TEXT,
-} from '#queue/jobTypes';
+} from '#queue/jobTypes.js';
 
 export default {
   name: QUEUE_JOB_TWILIO_TEXT,
@@ -17,7 +17,7 @@ export default {
         message,
       } = job.data;
 
-      const sender = await redis.getAsync(senderId);
+      const sender = await redis.get(senderId);
 
       await sendTwilioText({
         sender: sender,
