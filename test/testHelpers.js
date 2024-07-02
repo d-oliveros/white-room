@@ -130,8 +130,8 @@ export function waitForJobEvents({ count: maxCount, filter, event = 'completed' 
 }
 
 export function assertIsRejected(promise) {
-  typeCheck('promiseThen::Function', promise?.then);
-  typeCheck('promiseCatch::Function', promise?.catch);
+  typeCheck('promiseThen::Function|AsyncFunction', promise?.then);
+  typeCheck('promiseCatch::Function|AsyncFunction', promise?.catch);
 
   return new Promise((resolve, reject) => {
     let isResolved = false;

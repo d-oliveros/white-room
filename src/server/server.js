@@ -76,8 +76,6 @@ export default function createServer() {
   app.use(assetNotFound);
 
   // Application-level middleware
-  // app.use(bodyParser.urlencoded({ extended: true }));
-
   app.use('/sendgrid/webhooks', bodyParser.json(), sendgridWebhookApi);
 
   // API-level middleware

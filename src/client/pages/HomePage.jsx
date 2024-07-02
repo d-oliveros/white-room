@@ -13,8 +13,11 @@ import Box from '#client/components/Box/Box.jsx';
 
 const Homepage = ({ user }) => {
   console.log('Rendering Homepage.jsx');
+
   const currentUser = useBranch('currentUser');
   const navigate = useNavigate();
+
+  // throw new Error('NOPE!', { cause: new Error('ANOT ER!!')});
 
   console.log({ currentUser, user, navigate });
 
@@ -23,7 +26,7 @@ const Homepage = ({ user }) => {
       <h1>Home Page</h1>
 
       <p>
-        Hello! Thaasdnks for visiting.
+        Hello! Thanks for visiting.
         Serverside user: {user?.id || 'Loading...'}
         Your user roles: {currentUser.roles}
       </p>

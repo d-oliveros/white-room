@@ -3,7 +3,7 @@ import dayjs from 'dayjs';
 import Datetime from 'react-datetime';
 import lodashIsEqual from 'lodash/fp/isEqual.js';
 import isValidDateWithoutTimeString from '#common/util/isValidDateWithoutTimeString.js';
-import dateStringMomentWithCurrentTime from '#common/util/dateStringMomentWithCurrentTime.js';
+import dateStringDayjsWithCurrentTime from '#common/util/dateStringDayjsWithCurrentTime.js';
 
 const onlyUpdateOnPropChangeNames = [
   'value',
@@ -88,7 +88,7 @@ class DatePicker extends Component {
     let { value } = this.props;
 
     if (isValidDateWithoutTimeString(value)) {
-      value = dateStringMomentWithCurrentTime(value);
+      value = dateStringDayjsWithCurrentTime(value);
     }
 
     return (

@@ -60,7 +60,7 @@ function makeApiRequestMethod({
 
     debug(`Requesting ${apiPath}/${actionType}`, actionPayload);
 
-    const url = `${appUrl}${apiPath}/${actionType}`;
+    let url = `${appUrl}${apiPath}/${actionType}`;
     const sessionToken = getSessionToken ? getSessionToken() : null;
 
     const options = {

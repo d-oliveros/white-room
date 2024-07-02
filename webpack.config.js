@@ -39,7 +39,7 @@ const webpackConfig = {
     // filename: isProd
     //   ? '[name].[contenthash].js'
     //   : '[name].bundle.js',
-    publicPath: isProd ? '/' : '/build',
+    publicPath: isProd ? '/' : `http://localhost:${webpackDevServerPort}/build/`,
     clean: true,
   },
   resolve: {
@@ -194,7 +194,7 @@ const webpackConfig = {
     port: webpackDevServerPort,
     static: {
       directory: buildPath,
-      publicPath: '/build/',
+      publicPath: `http://localhost:${webpackDevServerPort}/build/`,
     },
     headers: {
       'Access-Control-Allow-Origin': '*',
@@ -202,7 +202,7 @@ const webpackConfig = {
     compress: true,
     hot: true,
     client: {
-      webSocketURL: `ws://0.0.0.0:${webpackDevServerPort}/ws`,
+      webSocketURL: `ws://localhost:${webpackDevServerPort}/ws`,
     },
   },
 };

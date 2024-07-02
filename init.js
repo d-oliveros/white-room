@@ -13,8 +13,6 @@ const {
   NODE_ENV
 } = process.env;
 
-// TODO: Check if module resolver works in this scope!
-
 const moduleSourceDirectory = USE_BUILD === 'true' ? './lib' : './src';
 
 const knex = (await import(`${moduleSourceDirectory}/server/db/knex.js`));

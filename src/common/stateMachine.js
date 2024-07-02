@@ -10,7 +10,7 @@ const statusUpdateHookManager = (() => {
     registerStatusUpdateHooks(newStatusUpdateHooks) {
       for (const hook of newStatusUpdateHooks) {
         typeCheck('table::NonEmptyString', hook.table);
-        typeCheck('handler::Function', hook.handler);
+        typeCheck('handler::Function|AsyncFunction', hook.handler);
         typeCheck('fromStatus::Maybe NonEmptyString|Array', hook.fromStatus);
         typeCheck('toStatus::NonEmptyString|NonEmptyArray', hook.toStatus);
       }

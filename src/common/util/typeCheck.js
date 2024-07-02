@@ -189,35 +189,32 @@ const typeCheckCustomTypes = {
 };
 
 function toDisplayString(actual) {
-  return (
-    typeof actual === 'function'
-      ? '(function `' + (actual.name || '(anonymous)') + '`)'
-      : (
-        typeof actual === 'string'
-          ? (!String(actual) ? '(empty string)' : '(string `' + String(actual) + '`)')
-          : (
-            Array.isArray(actual)
-              ? (!(actual.length > 0) ? '(empty array)' : '(array `' + String(actual) + '`)')
-              : (
-                typeof actual === 'number'
-                  ? '(number `' + String(actual) + '`)'
-                  : (
-                    actual === null
-                      ? '(null)'
-                      : (
-                        actual === undefined
-                          ? '(undefined)'
-                          : (
-                            typeof actual === 'object'
-                              ? '(object `' + Object.prototype.toString.apply(actual) + '`)'
-                              : String(actual)
-                          )
-                      )
-                  )
-              )
-          )
-      )
-  );
+  if (actual?.constructor?.name === 'AsyncFunction') {
+    return '(AsyncFunction `' + (actual.name || '(anonymous)') + '`)';
+  }
+  if (actual?.constructor?.name === 'Function' || typeof actual === 'function') {
+    return '(Function `' + (actual.name || '(anonymous)') + '`)';
+  }
+  if (typeof actual === 'string') {
+    return !String(actual) ? '(empty string)' : '(string `' + String(actual) + '`)';
+  }
+  if (Array.isArray(actual)) {
+    return !(actual.length > 0) ? '(empty array)' : '(array `' + String(actual) + '`)';
+  }
+  if (typeof actual === 'number') {
+    return '(number `' + String(actual) + '`)';
+  }
+  if (actual === null) {
+    return '(null)';
+  }
+  if (actual === undefined) {
+    return '(undefined)';
+  }
+  if (typeof actual === 'object') {
+    return '(Object `' + Object.prototype.toString.apply(actual) + '`)';
+  }
+
+  return String(actual);
 }
 
 export default function typeCheck(annotatedTypeName, toCheck, options = {}) {

@@ -43,7 +43,9 @@ const {
  *
  * @see .env.default in the project's root for reference
  */
-export default function createRendererServer() {
+export default function createRendererServer({ getAppState } = {}) {
+  typeCheck('getAppState::Maybe AsyncFunction|Function', getAppState);
+
   const renderer = express();
 
   renderer.get('/health', (req, res) => res.sendStatus(200));
@@ -51,7 +53,7 @@ export default function createRendererServer() {
   renderer.use(
     cookieParser(COOKIE_SECRET, cookiesConfig.session),
     unwrapSessionToken,
-    extractInitialState,
+    extractInitialState({ getAppState }),
   );
 
   renderer.get('*', async (req, res, next) => {

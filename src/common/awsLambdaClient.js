@@ -1,11 +1,10 @@
-import AWS from 'aws-sdk';
-
+import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
 import logger from '#common/logger.js';
 import typeCheck from '#common/util/typeCheck.js';
 import parseJSON from '#common/util/parseJSON.js';
 
 const debug = logger.createDebug('awsLambdaClient');
-const lambda = new AWS.Lambda();
+const lambdaClient = new LambdaClient();
 
 export const LAMBDA_FUNCTION_TBD = 'tbd';
 
@@ -17,37 +16,45 @@ export const LAMBDA_FUNCTION_TBD = 'tbd';
  * @return {Object}                      Function response.
  */
 export async function invokeLambdaFunction({ functionName, payload }) {
+  // Type checking for functionName and payload
   typeCheck('functionName::NonEmptyString', functionName);
   typeCheck('payload::Maybe NonEmptyObject', payload);
 
   debug(`Invoking Lambda function "${functionName}".`, payload);
 
-  const result = await lambda.invoke({
+  const params = {
     FunctionName: functionName,
     InvocationType: 'RequestResponse',
     LogType: 'Tail',
-    Payload: JSON.stringify(payload || {}),
-  }).promise();
+    Payload: Buffer.from(JSON.stringify(payload || {})),
+  };
 
-  typeCheck('result::NonEmptyObject', result);
-  typeCheck('resultStatus::PositiveNumber', result.StatusCode);
+  try {
+    const result = await lambdaClient.send(new InvokeCommand(params));
 
-  const resultPayload = parseJSON(result.Payload);
-  typeCheck('resultPayload::NonEmptyObject', resultPayload);
+    typeCheck('result::NonEmptyObject', result);
+    typeCheck('resultStatus::PositiveNumber', result.StatusCode);
 
-  if (result.StatusCode !== 200) {
-    const error = new Error(
-      `Error while invoking Lambda function "${functionName}": ${resultPayload}`
-    );
-    error.name = 'AwsLambdaFunctionInvokeError';
-    error.details = {
-      functionName,
-      payload,
-      resultPayload,
-    };
+    const resultPayload = parseJSON(Buffer.from(result.Payload).toString());
+    typeCheck('resultPayload::NonEmptyObject', resultPayload);
+
+    if (result.StatusCode !== 200) {
+      const error = new Error(
+        `Error while invoking Lambda function "${functionName}": ${resultPayload}`
+      );
+      error.name = 'AwsLambdaFunctionInvokeError';
+      error.details = {
+        functionName,
+        payload,
+        resultPayload,
+      };
+      throw error;
+    }
+
+    debug(`[${functionName}]`, result);
+    return resultPayload;
+  } catch (error) {
+    debug(`Error invoking Lambda function "${functionName}":`, error);
     throw error;
   }
-
-  debug(`[${functionName}]`, result);
-  return resultPayload;
 }

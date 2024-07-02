@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
 import extractDateParts from '#common/util/extractDateParts.js';
 
-export default function dateStringMomentWithCurrentTime(dateString) {
+export default function dateStringDayjsWithCurrentTime(dateString) {
   const dateParts = extractDateParts(dateString);
   if (!dateParts) {
     return null;

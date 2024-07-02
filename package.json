@@ -14,7 +14,7 @@
     "dev-debug": "cross-env DEBUG=white-room* npm run dev",
     "build": "concurrently 'npm:build-babel' 'npm:build-webpack' 'npm:build-storybook'",
     "build-e2e": "concurrently 'npm:build-babel' 'npm:build-webpack'",
-    "build-babel": "babel src --out-dir lib --keep-file-extension",
+    "build-babel": "babel src --out-dir lib --keep-file-extension ",
     "build-webpack": "webpack --config webpack.config.js",
     "build-storybook": "cross-env NODE_ENV=development build-storybook -s ./public -c ./.storybook -o ./.storybook/dist",
     "webpack-analyze-bundle": "npm run build-webpack && webpack --config webpack.config.js --profile --json > build/stats.json && webpack-bundle-analyzer build/stats.json build",
@@ -44,6 +44,7 @@
     "storybook": "start-storybook -s ./public -p 6006"
   },
   "dependencies": {
+    "@aws-sdk/client-lambda": "^3.608.0",
     "@aws-sdk/client-s3": "^3.600.0",
     "@dr.pogodin/babel-plugin-react-css-modules": "^6.13.2",
     "@segment/analytics-node": "^2.1.2",
@@ -153,6 +154,7 @@
     "react-refresh": "^0.14.2",
     "sinon": "^18.0.0",
     "style-loader": "^4.0.0",
+    "supertest": "^7.0.0",
     "terser-webpack-plugin": "^5.3.10",
     "url-loader": "^4.1.1",
     "webpack": "^5.92.1",

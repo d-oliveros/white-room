@@ -1,13 +1,13 @@
 import { assert } from 'chai';
-import momentWithAustinTimezone from '#common/util/momentWithAustinTimezone.js';
-import momentWithoutOffHours, {
+import dayjsWithAustinTimezone from '#common/util/dayjsWithAustinTimezone.js';
+import dayjsWithoutOffHours, {
   getReminderDateOffHours,
-} from '#common/util/momentWithoutOffHours.js';
+} from '#common/util/dayjsWithoutOffHours.js';
 
-describe('momentWithoutOffHours', () => {
+describe('dayjsWithoutOffHours', () => {
   it('without cutoff and with start should return start', () => {
     // Arrange
-    const now = momentWithAustinTimezone()
+    const now = dayjsWithAustinTimezone()
       .year(2021)
       .month(12)
       .date(1)
@@ -16,7 +16,7 @@ describe('momentWithoutOffHours', () => {
       .second(21);
 
     // Act
-    const output = momentWithoutOffHours({
+    const output = dayjsWithoutOffHours({
       startMoment: now,
     });
 
@@ -26,7 +26,7 @@ describe('momentWithoutOffHours', () => {
 
   it('start is before the early cutoff should return morningReminderTime', () => {
     // Arrange
-    const start = momentWithAustinTimezone()
+    const start = dayjsWithAustinTimezone()
       .year(2021)
       .month(12)
       .date(1)
@@ -34,7 +34,7 @@ describe('momentWithoutOffHours', () => {
       .minute(59)
       .second(59);
 
-    const expected = momentWithAustinTimezone()
+    const expected = dayjsWithAustinTimezone()
       .year(2021)
       .month(12)
       .date(1)
@@ -43,7 +43,7 @@ describe('momentWithoutOffHours', () => {
       .second(0);
 
     // Act
-    const output = momentWithoutOffHours({
+    const output = dayjsWithoutOffHours({
       startMoment: start,
       cutoffEarlyHour: 8,
       cutoffLateHour: 22,
@@ -60,7 +60,7 @@ describe('momentWithoutOffHours', () => {
 
   it('start is at the early cutoff should return start', () => {
     // Arrange
-    const start = momentWithAustinTimezone()
+    const start = dayjsWithAustinTimezone()
       .year(2021)
       .month(12)
       .date(1)
@@ -68,7 +68,7 @@ describe('momentWithoutOffHours', () => {
       .minute(0)
       .second(0);
 
-    const expected = momentWithAustinTimezone()
+    const expected = dayjsWithAustinTimezone()
       .year(2021)
       .month(12)
       .date(1)
@@ -77,7 +77,7 @@ describe('momentWithoutOffHours', () => {
       .second(0);
 
     // Act
-    const output = momentWithoutOffHours({
+    const output = dayjsWithoutOffHours({
       startMoment: start,
       cutoffEarlyHour: 8,
       cutoffLateHour: 22,
@@ -94,7 +94,7 @@ describe('momentWithoutOffHours', () => {
 
   it('start is after the early cutoff, but at the same hour should return start', () => {
     // Arrange
-    const start = momentWithAustinTimezone()
+    const start = dayjsWithAustinTimezone()
       .year(2021)
       .month(12)
       .date(1)
@@ -102,7 +102,7 @@ describe('momentWithoutOffHours', () => {
       .minute(0)
       .second(1);
 
-    const expected = momentWithAustinTimezone()
+    const expected = dayjsWithAustinTimezone()
       .year(2021)
       .month(12)
       .date(1)
@@ -111,7 +111,7 @@ describe('momentWithoutOffHours', () => {
       .second(1);
 
     // Act
-    const output = momentWithoutOffHours({
+    const output = dayjsWithoutOffHours({
       startMoment: start,
       cutoffEarlyHour: 8,
       cutoffLateHour: 22,
@@ -128,7 +128,7 @@ describe('momentWithoutOffHours', () => {
 
   it('start is after the early cutoff should return start', () => {
     // Arrange
-    const start = momentWithAustinTimezone()
+    const start = dayjsWithAustinTimezone()
       .year(2021)
       .month(12)
       .date(1)
@@ -136,7 +136,7 @@ describe('momentWithoutOffHours', () => {
       .minute(0)
       .second(1);
 
-    const expected = momentWithAustinTimezone()
+    const expected = dayjsWithAustinTimezone()
       .year(2021)
       .month(12)
       .date(1)
@@ -145,7 +145,7 @@ describe('momentWithoutOffHours', () => {
       .second(1);
 
     // Act
-    const output = momentWithoutOffHours({
+    const output = dayjsWithoutOffHours({
       startMoment: start,
       cutoffEarlyHour: 8,
       cutoffLateHour: 22,
@@ -162,7 +162,7 @@ describe('momentWithoutOffHours', () => {
 
   it('start is before the later cutoff should return start', () => {
     // Arrange
-    const start = momentWithAustinTimezone()
+    const start = dayjsWithAustinTimezone()
       .year(2021)
       .month(12)
       .date(1)
@@ -170,7 +170,7 @@ describe('momentWithoutOffHours', () => {
       .minute(59)
       .second(59);
 
-    const expected = momentWithAustinTimezone()
+    const expected = dayjsWithAustinTimezone()
       .year(2021)
       .month(12)
       .date(1)
@@ -179,7 +179,7 @@ describe('momentWithoutOffHours', () => {
       .second(59);
 
     // Act
-    const output = momentWithoutOffHours({
+    const output = dayjsWithoutOffHours({
       startMoment: start,
       cutoffEarlyHour: 8,
       cutoffLateHour: 22,
@@ -196,7 +196,7 @@ describe('momentWithoutOffHours', () => {
 
   it('start is at the later cutoff should return tomorrow at morningReminderTime', () => {
     // Arrange
-    const start = momentWithAustinTimezone()
+    const start = dayjsWithAustinTimezone()
       .year(2021)
       .month(12)
       .date(1)
@@ -204,7 +204,7 @@ describe('momentWithoutOffHours', () => {
       .minute(0)
       .second(0);
 
-    const expected = momentWithAustinTimezone()
+    const expected = dayjsWithAustinTimezone()
       .year(2021)
       .month(12)
       .date(2)
@@ -213,7 +213,7 @@ describe('momentWithoutOffHours', () => {
       .second(0);
 
     // Act
-    const output = momentWithoutOffHours({
+    const output = dayjsWithoutOffHours({
       startMoment: start,
       cutoffEarlyHour: 8,
       cutoffLateHour: 22,
@@ -230,7 +230,7 @@ describe('momentWithoutOffHours', () => {
 
   it('start is after the later cutoff, but at the same hour should return tomorrow at morningReminderTime', () => { // eslint-disable-line max-len
     // Arrange
-    const start = momentWithAustinTimezone()
+    const start = dayjsWithAustinTimezone()
       .year(2021)
       .month(12)
       .date(1)
@@ -238,7 +238,7 @@ describe('momentWithoutOffHours', () => {
       .minute(0)
       .second(1);
 
-    const expected = momentWithAustinTimezone()
+    const expected = dayjsWithAustinTimezone()
       .year(2021)
       .month(12)
       .date(2)
@@ -247,7 +247,7 @@ describe('momentWithoutOffHours', () => {
       .second(0);
 
     // Act
-    const output = momentWithoutOffHours({
+    const output = dayjsWithoutOffHours({
       startMoment: start,
       cutoffEarlyHour: 8,
       cutoffLateHour: 22,
@@ -264,7 +264,7 @@ describe('momentWithoutOffHours', () => {
 
   it('start is after the later cutoff should return tomorrow at morningReminderTime', () => {
     // Arrange
-    const start = momentWithAustinTimezone()
+    const start = dayjsWithAustinTimezone()
       .year(2021)
       .month(12)
       .date(1)
@@ -272,7 +272,7 @@ describe('momentWithoutOffHours', () => {
       .minute(0)
       .second(1);
 
-    const expected = momentWithAustinTimezone()
+    const expected = dayjsWithAustinTimezone()
       .year(2021)
       .month(12)
       .date(2)
@@ -281,7 +281,7 @@ describe('momentWithoutOffHours', () => {
       .second(0);
 
     // Act
-    const output = momentWithoutOffHours({
+    const output = dayjsWithoutOffHours({
       startMoment: start,
       cutoffEarlyHour: 8,
       cutoffLateHour: 22,
@@ -298,7 +298,7 @@ describe('momentWithoutOffHours', () => {
 
   it('start is after the later cutoff, later day should return the next day at morningReminderTime', () => {
     // Arrange
-    const start = momentWithAustinTimezone()
+    const start = dayjsWithAustinTimezone()
       .year(2021)
       .month(12)
       .date(3)
@@ -306,7 +306,7 @@ describe('momentWithoutOffHours', () => {
       .minute(0)
       .second(1);
 
-    const expected = momentWithAustinTimezone()
+    const expected = dayjsWithAustinTimezone()
       .year(2021)
       .month(12)
       .date(4)
@@ -315,7 +315,7 @@ describe('momentWithoutOffHours', () => {
       .second(0);
 
     // Act
-    const output = momentWithoutOffHours({
+    const output = dayjsWithoutOffHours({
       startMoment: start,
       cutoffEarlyHour: 8,
       cutoffLateHour: 22,
@@ -332,7 +332,7 @@ describe('momentWithoutOffHours', () => {
 
   it('start is before early cutoff, but after the later cutoff (incorrect cutoff) return the next day at morningReminderTime', () => { // eslint-disable-line max-len
     // Arrange
-    const start = momentWithAustinTimezone()
+    const start = dayjsWithAustinTimezone()
       .year(2021)
       .month(12)
       .date(1)
@@ -340,7 +340,7 @@ describe('momentWithoutOffHours', () => {
       .minute(0)
       .second(1);
 
-    const expected = momentWithAustinTimezone()
+    const expected = dayjsWithAustinTimezone()
       .year(2021)
       .month(12)
       .date(2)
@@ -349,7 +349,7 @@ describe('momentWithoutOffHours', () => {
       .second(0);
 
     // Act
-    const output = momentWithoutOffHours({
+    const output = dayjsWithoutOffHours({
       startMoment: start,
       cutoffEarlyHour: 14,
       cutoffLateHour: 7,
@@ -368,7 +368,7 @@ describe('momentWithoutOffHours', () => {
     it('should move reminders to the next day', () => {
       const reminders = getReminderDateOffHours({
         delays: '3h,12h',
-        startMoment: momentWithAustinTimezone()
+        startMoment: dayjsWithAustinTimezone()
           .year(2022)
           .month(9)
           .date(12)
@@ -399,7 +399,7 @@ describe('momentWithoutOffHours', () => {
     it('should keep reminders in the next day', () => {
       const reminders = getReminderDateOffHours({
         delays: '3h,12h',
-        startMoment: momentWithAustinTimezone()
+        startMoment: dayjsWithAustinTimezone()
           .year(2022)
           .month(9)
           .date(12)
