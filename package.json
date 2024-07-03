@@ -162,7 +162,7 @@
     "webpack-cli": "^5.1.4",
     "webpack-dev-server": "^5.0.4"
   },
-  "main": "init.js",
+  "main": "white-room/init.js",
   "directories": {
     "test": "test"
   },
