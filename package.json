@@ -9,7 +9,7 @@
   "scripts": {
     "start": "npm run dev",
     "dev": "run-p dev-node dev-webpack",
-    "dev-node": "clear && node --watch-path=./src --env-file=.env --env-file=.env.default --import 'data:text/javascript,import { register } from \"node:module\"; import { pathToFileURL } from \"node:url\"; register(\"./babel-esm-loader.js\", pathToFileURL(\"./\"));' init",
+    "dev-node": "clear && node --watch-path=./src --env-file=.env --env-file=.env.default --import 'data:text/javascript,import { register } from \"node:module\"; import { pathToFileURL } from \"node:url\"; register(\"./babel-esm-loader.js\", pathToFileURL(\"./\"));' app/init",
     "dev-webpack": "clear && dotenv -e .env -e .env.default webpack serve",
     "dev-debug": "cross-env DEBUG=white-room* npm run dev",
     "build": "run-p build-babel build-webpack build-storybook",
@@ -162,7 +162,7 @@
     "webpack-cli": "^5.1.4",
     "webpack-dev-server": "^5.0.4"
   },
-  "main": "white-room/init.js",
+  "main": "app/init.js",
   "directories": {
     "test": "test"
   },
@@ -181,14 +181,10 @@
     "defaults"
   ],
   "imports": {
-    "#api/*": "./src/api/*",
-    "#client/*": "./src/client/*",
-    "#common/*": "./src/common/*",
-    "#config/*": "./src/config/*",
-    "#cron/*": "./src/cron/*",
-    "#queue/*": "./src/queue/*",
-    "#models/*": "./src/models/*",
-    "#server/*": "./src/server/*",
-    "#util/*": "./src/util/*"
+    "#admin/*": "./app/admin/*",
+    "#auth/*": "./app/auth/*",
+    "#base/*": "./app/base/*",
+    "#user/*": "./app/user/*",
+    "#white-room/*": "./src/*"
   }
 }
