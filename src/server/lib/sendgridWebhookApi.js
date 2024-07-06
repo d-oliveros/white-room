@@ -49,8 +49,9 @@ sendgridWebhookApi.post('/event-dispatcher', async (req, res, next) => {
 
     res.sendStatus(200);
   } catch (sendgridError) {
-    const error = new Error('Error while processing Sendgrid event via /event-dispatcher webhook.');
-    error.inner = serializeError(sendgridError);
+    const error = new Error('Error while processing Sendgrid event via /event-dispatcher webhook.', {
+      cause: sendgridError,
+    });
     error.details = {
       requestBody: req.body,
     };
@@ -126,8 +127,9 @@ sendgridWebhookApi.post('/event', async (req, res, next) => {
     res.sendStatus(200);
   }
   catch (sendgridError) {
-    const error = new Error('Error while processing Sendgrid event via /event webhook.');
-    error.inner = serializeError(sendgridError);
+    const error = new Error('Error while processing Sendgrid event via /event webhook.', {
+      cause: sendgridError,
+    });
     error.details = {
       requestBody: req.body,
     };

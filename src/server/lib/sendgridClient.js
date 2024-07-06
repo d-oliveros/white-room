@@ -118,7 +118,6 @@ async function requestSendgridEndpoint({ method, path, body, fullResponse }) {
         responseBody: errorBody,
         responseHeaders: [...response.headers.entries()].reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {})
       };
-      error.inner = serializeError(new Error(response.statusText));
       throw error;
     }
 

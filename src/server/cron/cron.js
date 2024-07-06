@@ -87,9 +87,8 @@ export function runPeriodicService({ service, config = {} }) {
         );
       }
     } catch (error) {
-      const cronError = new Error(`[cron:${serviceId}] Error: ${error.message}`);
+      const cronError = new Error(`[cron:${serviceId}] Error: ${error.message}`, { cause: error });
       cronError.stack = error.stack;
-      cronError.inner = error;
       cronError.details = { serviceId };
       logger.error(cronError);
       const errorSlackMessageAttachments = [

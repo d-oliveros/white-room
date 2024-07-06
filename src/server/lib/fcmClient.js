@@ -70,7 +70,6 @@ async function requestFCMEndpoint({ method, path, body }) {
         responseBody: errorBody,
         responseHeaders: [...response.headers.entries()].reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {})
       };
-      error.inner = serializeError(new Error(response.statusText));
       throw error;
     }
 

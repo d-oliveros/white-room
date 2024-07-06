@@ -28,9 +28,8 @@ queue.on('stalled', (job) => {
 });
 
 queue.on('failed', (job, err) => {
-  const error = new Error(`Job #${job.id} failed: ${err}`);
+  const error = new Error(`Job #${job.id} failed: ${err}`, { cause: err });
   error.name = 'QueueJobFailed';
-  error.inner = serializeError(err);
   error.details = {
     queueError: true,
     jobId: job.id,
@@ -44,9 +43,10 @@ queue.on('failed', (job, err) => {
     job.remove().then(() => {
       debug(`Successfully removed failed job ${job.id}`);
     }).catch((removeError) => {
-      const error = new Error(`Job #${job.id} failed and could not be deleted: ${removeError}`);
+      const error = new Error(`Job #${job.id} failed and could not be deleted: ${removeError}`, {
+        cause: removeError,
+      });
       error.name = 'QueueJobFailedNotRemoved';
-      error.inner = serializeError(removeError);
       error.details = {
         queueError: true,
         jobId: job.id,
@@ -63,9 +63,8 @@ queue.on('completed', (job, result) => {
     job.remove().then(() => {
       debug(`Successfully removed completed job ${job.id}`);
     }).catch((err) => {
-      const error = new Error(`Completed job #${job.id} could not be deleted: ${err}`);
+      const error = new Error(`Completed job #${job.id} could not be deleted: ${err}`, { cause: err });
       error.name = 'QueueJobCompletedNotRemoved';
-      error.inner = serializeError(err);
       error.details = {
         queueError: true,
         jobId: job.id,
