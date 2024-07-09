@@ -1,5 +1,4 @@
 import { resolve as resolveUrl } from 'url';
-import { serializeError } from 'serialize-error';
 
 import logger from '#white-room/logger.js';
 import typeCheck from '#white-room/util/typeCheck.js';

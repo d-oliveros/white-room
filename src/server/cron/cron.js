@@ -149,7 +149,7 @@ export const initCronJobs = async ({ periodicFunctions }) => {
     throw new Error('Periodic functions must be provided as an array');
   }
 
-  console.log('Initializing cron jobs with the following periodic functions:', periodicFunctions);
+  logger.info('[cron] Initializing cron jobs with the following periodic functions:', periodicFunctions);
 
   for (const { serviceId, service, crontab } of periodicFunctions) {
     if (!service) {

@@ -6,6 +6,11 @@ import loadModules from '#white-room/loadModules.js';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const {
+  NODE_ENV,
+  COMMIT_HASH,
+  APP_PORT,
+  RENDERER_PORT,
+  RENDERER_ENDPOINT,
   ENABLE_KNEX_MIGRATIONS,
   ENABLE_SERVER,
   ENABLE_RENDERER,
@@ -15,7 +20,6 @@ const {
 
 const init = async ({ modulesDir, config }) => {
   const modules = await loadModules(modulesDir);
-  console.log(modules.auth.service);
 
   return startServices({
     modules,
@@ -26,6 +30,11 @@ const init = async ({ modulesDir, config }) => {
 init({
   modulesDir: __dirname,
   config: {
+    useHelmet: NODE_ENV !== 'development',
+    port: APP_PORT,
+    rendererPort: RENDERER_PORT,
+    rendererEndpoint: RENDERER_ENDPOINT,
+    commitHash: COMMIT_HASH,
     enableKnexMigrations: ENABLE_KNEX_MIGRATIONS === 'true',
     enableServer: ENABLE_SERVER === 'true',
     enableRenderer: ENABLE_RENDERER === 'true',

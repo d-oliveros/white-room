@@ -3,12 +3,6 @@
  */
 export default function makeInitialState() {
   return {
-    // THIS SECTION REPLACED BY REACT QUERY
-    users: {
-      byId: {},
-    },
-
-    // Client State
     isTransitioning: false,
     isNotFound: null,
 

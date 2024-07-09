@@ -9,18 +9,17 @@ export default async function getById({ state, apiClient }, { userId, refresh })
     return state.get(statePath);
   }
 
-  await apiClient.postWithState({
+  const user = await apiClient.postWithState({
     action: 'user.getById',
     state: state,
     payload: {
       userId,
       fieldgroup: summaryFieldgroup,
     },
-    onSuccess(user) {
-      if (user) {
-        state.set(statePath, user);
-        return user;
-      }
-    },
   });
+
+  if (user) {
+    state.set(statePath, user);
+    return user;
+  }
 }

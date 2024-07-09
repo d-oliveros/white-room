@@ -25,7 +25,7 @@ const EnablePushNotificationsModal = ({ onClose }) => {
     });
     setTimeout(() => {
       dispatch(({ state }) => {
-        state.set(['mobileApp', 'askPushNotifications'], false);
+        state.set(['client', 'mobileApp', 'askPushNotifications'], false);
       });
       if (onClose) {
         onClose();

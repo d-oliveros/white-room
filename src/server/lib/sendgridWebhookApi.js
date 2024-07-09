@@ -1,5 +1,4 @@
 import { Router } from 'express';
-import { serializeError } from 'serialize-error';
 import lodashPick from 'lodash/fp/pick.js';
 import dayjs from 'dayjs';
 

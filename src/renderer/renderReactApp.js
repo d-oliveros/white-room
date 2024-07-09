@@ -121,8 +121,8 @@ export default async function renderReactApp({ state: initialStateData, req, res
       // ...(pageMetadata || {}),
     };
 
-    state.set('pageMetadata', pageMetadataWithDefaults);
-    state.set('pageMetadataDefault', DEFAULT_PAGE_METADATA);
+    state.set('client.pageMetadata', pageMetadataWithDefaults);
+    state.set('client.pageMetadataDefault', DEFAULT_PAGE_METADATA);
 
     // TODO: Navigate on fetchPageData
     if (redirectUrl) {
@@ -136,7 +136,7 @@ export default async function renderReactApp({ state: initialStateData, req, res
       });
     }
 
-    assertIdleApiState(state.get('apiState'));
+    assertIdleApiState(state.get(['client', 'apiState']));
 
     const router = makeRouter({
       routes,

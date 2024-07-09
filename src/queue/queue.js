@@ -1,5 +1,4 @@
 import Bull from 'bull';
-import { serializeError } from 'serialize-error';
 import ms from 'ms';
 
 import dbConfig from '#white-room/config/database.js';

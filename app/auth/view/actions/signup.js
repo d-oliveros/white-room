@@ -12,10 +12,10 @@ import sendDataToMobileApp, {
 } from '#white-room/client/helpers/sendDataToMobileApp.js';
 
 export default async function signup({ state, apiClient }, params) {
-  const analyticsSessionId = state.get(['analytics', 'analyticsSessionId']);
-  const experimentActiveVariants = state.get(['analytics', 'experiments', 'activeVariants']);
-  const utmSource = state.get(['analytics', 'utmValues', 'source']);
-  const isMobileApp = state.get(['mobileApp', 'isMobileApp']);
+  const analyticsSessionId = state.get(['client', 'analytics', 'analyticsSessionId']);
+  const experimentActiveVariants = state.get(['client', 'analytics', 'experiments', 'activeVariants']);
+  const utmSource = state.get(['client', 'analytics', 'utmValues', 'source']);
+  const isMobileApp = state.get(['client', 'mobileApp', 'isMobileApp']);
 
   let newUser;
 

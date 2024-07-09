@@ -123,9 +123,9 @@ const ResetPasswordVerifyCodePage = () => {
 };
 
 ResetPasswordVerifyCodePage.getMetadata = (state) => ({
-  pageTitle: state.get(['env', 'APP_TITLE']),
+  pageTitle: state.get(['client', 'env', 'APP_TITLE']),
   section: SCREEN_ID_RESET_PASSWORD_VALIDATE_CODE,
-  keywords: `${state.get(['env', 'APP_ID'])}, reset password, code`,
+  keywords: `${state.get(['client', 'env', 'APP_ID'])}, reset password, code`,
   description: 'Reset your password.',
 });
 

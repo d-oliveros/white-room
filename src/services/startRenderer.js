@@ -33,24 +33,26 @@ export const getRoutesFromModules = (modules) => {
   return allRoutes;
 };
 
-export const getAppStateFromModules = (modules) => {
+export const getInitialStateFromModules = (modules) => {
   const initialState = {};
 
   for (const moduleName of Object.keys(modules)) {
-    const module = modules[moduleName];
+    const { view } = modules[moduleName];
 
-    if (module.view && typeof module.view.makeInitialState === 'function') {
-      const moduleInitialState = module.view.makeInitialState();
-
-      for (const key in moduleInitialState) {
+    if (view?.initialState) {
+      if (typeof view.initialState !== 'object') {
+        throw new Error(`[${moduleName}]: 'initialState' must be an object (got: ${view.initialState})`);
+      }
+      for (const key in view.initialState) {
         if (key in initialState) {
-          throw new Error(`Duplicate initial state key found: ${key}`);
+          throw new Error(`[${moduleName}]: Duplicate initial state key found: ${key}`);
         }
-        initialState[key] = moduleInitialState[key];
+        initialState[key] = view.initialState[key];
       }
     }
   }
 
+  console.log('IS', initialState);
   return initialState;
 };
 
@@ -58,20 +60,22 @@ export const getAppStateFromModules = (modules) => {
  * Starts the renderer service.
  * Loads the renderer server module and begins listening on the configured port.
  */
-const startRenderer = async ({ routes, getAppState, config }) => {
+const startRenderer = async ({ routes, initialState, middleware, port }) => {
   const logger = (await import('../logger.js')).default;
-  logger.info('Starting renderer service.');
+  logger.info(`Starting renderer service in port: ${port}`);
+  logger.info(`React Routes: ${JSON.stringify(routes, null, 2)}`);
 
-  const { createRendererServer } = await import('../renderer/rendererServer.js');
+  const createRendererServer = (await import('../renderer/createRendererServer.js')).default;
 
   const rendererServer = createRendererServer({
     routes,
-    getAppState
+    initialState,
+    middleware,
   });
   const listen = promisify(rendererServer.listen).bind(rendererServer);
-  await listen(config.port);
+  await listen(port);
 
-  logger.info(`Renderer service listening on port: ${config.port}`);
+  logger.info(`Renderer service listening on port: ${port}`);
 };
 
 export default startRenderer;

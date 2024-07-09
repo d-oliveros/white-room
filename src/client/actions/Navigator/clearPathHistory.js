@@ -1,3 +1,3 @@
 export default function clearPathHistory({ state }) {
-  state.set(['browsingHistory'], []);
+  state.set(['client', 'browsingHistory'], []);
 }

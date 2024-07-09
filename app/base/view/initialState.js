@@ -1,8 +1,7 @@
-const makeInitialState = (state = {}) => ({
-  ...state,
+const initialState = {
   testingSomeState: {
     setInInitial: true,
   },
-});
+};
 
-export default makeInitialState;
+export default initialState;

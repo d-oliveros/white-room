@@ -24,6 +24,6 @@ export default function developmentEnvironment(state) {
 
   // Enable debug messages initially.
   if (typeof safeLocalStorage.getItem('debug') !== 'string') {
-    safeLocalStorage.setItem('debug', `${state.get(['env', 'APP_ID'])}:*`);
+    safeLocalStorage.setItem('debug', `${state.get(['client', 'env', 'APP_ID'])}:*`);
   }
 }

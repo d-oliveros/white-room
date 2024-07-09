@@ -8,7 +8,7 @@ const useBrowsingHistoryTracker = () => {
   const state = useContext(StateContext)
 
   useEffect(() => {
-    const browsingHistory = state.get(['browsingHistory']) || [];
+    const browsingHistory = state.get(['client', 'browsingHistory']) || [];
 
     console.log('browsingHistory');
     console.log(browsingHistory);

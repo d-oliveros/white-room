@@ -8,14 +8,14 @@ import {
 
 export default async function askForPushNotifications({ state }) {
   const currentUser = state.get(['currentUser']);
-  const userAgent = state.get(['analytics', 'userAgent']);
-  const askedPushNotificationPermission = state.get(['mobileApp', 'askedPushNotificationPermission']);
+  const userAgent = state.get(['client', 'analytics', 'userAgent']);
+  const askedPushNotificationPermission = state.get(['client', 'mobileApp', 'askedPushNotificationPermission']);
 
   if (
     !hasRoleAnonymous(currentUser.roles)
     && isUserAgentIphoneApp(userAgent)
     && !askedPushNotificationPermission
   ) {
-    state.set(['mobileApp', 'askPushNotifications'], true);
+    state.set(['client', 'mobileApp', 'askPushNotifications'], true);
   }
 }

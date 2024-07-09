@@ -17,5 +17,5 @@ export default function setPageMetadata({ state }, pageMetadata) {
   typeCheck('description::NonEmptyString', description);
   typeCheck('image::NonEmptyString', image);
 
-  state.set(['pageMetadata'], pageMetadata);
+  state.set(['client', 'pageMetadata'], pageMetadata);
 }

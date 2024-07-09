@@ -21,6 +21,7 @@ function makeApiRequestMethod({
   apiBasePath,
   appUrl,
   sessionTokenName,
+  listeners,
 }) {
   return async function apiRequest(path, actionPayload, actionOptions = {}) {
     // typeCheck('path::ValidActionType', path, {
@@ -150,6 +151,19 @@ function makeApiRequestMethod({
       debug(`Success ${apiBasePath}/${path}`);
     }
 
+    console.log('res.result IS', res.result);
+
+
+    if (listeners) {
+      let listenerPath = path.replace(/\//g, '.');
+      if (listenerPath.startsWith('.')) {
+        listenerPath = listenerPath.slice(1);
+      }
+      if (typeof listeners[listenerPath] === 'function') {
+        await listeners[listenerPath](res.result);
+      }
+    }
+
     return res.result;
   };
 }
@@ -165,7 +179,8 @@ export default function createApiClient(params = {}) {
   typeCheck('getSessionToken::Maybe Function', params.getSessionToken);
   typeCheck('commitHash::Maybe String', params.commitHash);
   typeCheck('sessionTokenName::NonEmptyString', params.sessionTokenName);
-  typeCheck('apiBasePath::NonEmptyString', params.apiBasePath);
+  typeCheck('apiPath::NonEmptyString', params.apiPath);
+  typeCheck('listeners::Maybe Array', params.listeners);
 
   const apiClient = {
     commitHashChangedTimestamp: null,
@@ -173,9 +188,10 @@ export default function createApiClient(params = {}) {
       method: 'get',
       commitHash: params.commitHash,
       getSessionToken: params.getSessionToken,
-      apiBasePath: params.apiBasePath,
+      apiBasePath: params.apiPath,
       appUrl: params.appUrl,
       sessionTokenName: params.sessionTokenName,
+      listeners: params.listeners,
       onCommitHashChange: () => {
         apiClient.commitHashChangedTimestamp = (
           apiClient.commitHashChangedTimestamp || Date.now()
@@ -186,9 +202,10 @@ export default function createApiClient(params = {}) {
       method: 'post',
       commitHash: params.commitHash,
       getSessionToken: params.getSessionToken,
-      apiBasePath: params.apiBasePath,
+      apiBasePath: params.apiPath,
       appUrl: params.appUrl,
       sessionTokenName: params.sessionTokenName,
+      listeners: params.listeners,
       onCommitHashChange: () => {
         apiClient.commitHashChangedTimestamp = (
           apiClient.commitHashChangedTimestamp || Date.now()

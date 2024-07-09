@@ -57,8 +57,8 @@ const ResetPasswordConfirmPage = () => {
 };
 
 ResetPasswordConfirmPage.getMetadata = ({ state }) => ({
-  title: state.get(['env', 'APP_TITLE']),
-  keywords: `${state.get(['env', 'APP_ID'])}, reset password`,
+  title: state.get(['client', 'env', 'APP_TITLE']),
+  keywords: `${state.get(['client', 'env', 'APP_ID'])}, reset password`,
   description: 'Reset your password.',
 });
 

@@ -2,6 +2,8 @@ import { readdir } from 'fs/promises';
 import { extname, basename, dirname, resolve } from 'path';
 import { cloneDeep, isEqual } from 'lodash-es';
 
+import logger from './logger.js';
+
 const jsFileRegex = /\.(j|t)sx?$/;
 
 export const isJsFile = (filePath) => {
@@ -45,7 +47,7 @@ const importAndAssignModule = (filePath, targetObject, key, promises) => {
 const moduleSkeleton = {
   view: {
     routes: [],
-    makeInitialState: null,
+    initialState: null,
   },
   crontab: {},
   middleware: null,
@@ -54,7 +56,7 @@ const moduleSkeleton = {
 };
 
 const loadModule = async (moduleDir) => {
-  console.log(`Loading module: ${moduleDir}`);
+  logger.info(`[loadModule] Loading module: ${moduleDir}`);
 
   // const moduleName = basename(moduleDir);
   const module = cloneDeep(moduleSkeleton);
@@ -80,8 +82,8 @@ const loadModule = async (moduleDir) => {
           if (viewEntry.name === 'routes.js') {
             importAndAssignModule(viewFilePath, module.view, 'routes', promises);
           }
-          else if (viewEntry.name === 'makeInitialState.js') {
-            importAndAssignModule(viewFilePath, module.view, 'makeInitialState', promises);
+          else if (viewEntry.name === 'initialState.js') {
+            importAndAssignModule(viewFilePath, module.view, 'initialState', promises);
           }
         }
       }

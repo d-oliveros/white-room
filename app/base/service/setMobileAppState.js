@@ -7,9 +7,9 @@ export default async function setMobileAppState(
     features,
   }
 ) {
-  state.set(['mobileApp', 'deviceRegistrationId'], deviceRegistrationId);
-  state.set(['mobileApp', 'askedPushNotificationPermission'], askedPushNotificationPermission);
-  state.set(['mobileApp', 'geolocationPermission'], geolocationPermission);
-  state.set(['mobileApp', 'features'], features || {});
+  state.set(['client', 'mobileApp', 'deviceRegistrationId'], deviceRegistrationId);
+  state.set(['client', 'mobileApp', 'askedPushNotificationPermission'], askedPushNotificationPermission);
+  state.set(['client', 'mobileApp', 'geolocationPermission'], geolocationPermission);
+  state.set(['client', 'mobileApp', 'features'], features || {});
   state.commit();
 }

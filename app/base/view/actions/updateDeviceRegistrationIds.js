@@ -16,8 +16,8 @@ export default async function updateDeviceRegistrationIds(
         oldDeviceRegistrationId,
       },
       onSuccess() {
-        state.set(['mobileApp', 'deviceRegistrationId'], newDeviceRegistrationId);
-        state.set(['mobileApp', 'askedPushNotificationPermission'], true);
+        state.set(['client', 'mobileApp', 'deviceRegistrationId'], newDeviceRegistrationId);
+        state.set(['client', 'mobileApp', 'askedPushNotificationPermission'], true);
       },
     });
   }

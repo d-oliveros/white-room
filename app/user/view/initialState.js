@@ -1,16 +1,13 @@
 import anonymousUser from '#user/constants/anonymousUser.js';
 
 /**
- * Makes the initial client state.
+ * Initial client state.
  */
-export default function initialState() {
-  return {
-    // Server State
-    currentUser: { ...anonymousUser },
+const initialState = {
+  currentUser: { ...anonymousUser },
+  users: {
+    byId: {},
+  },
+};
 
-    // THIS SECTION REPLACED BY REACT QUERY
-    users: {
-      byId: {},
-    },
-  };
-}
+export default initialState;

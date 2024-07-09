@@ -1,6 +1,7 @@
 import { SitemapStream, streamToPromise } from 'sitemap';
-import typeCheck from '#white-room/util/typeCheck.js';
+import lodashValues from 'lodash/fp/values.js';
 
+import typeCheck from '#white-room/util/typeCheck.js';
 import redis from '#white-room/server/db/redis.js';
 
 const {
@@ -40,8 +41,8 @@ async function generateSitemapXmlString(urls) {
   return sitemapString;
 }
 
-export const makeSitemapGeneratorFromModules = async (modules) => {
-  const sitemapGenerators = (modules || [])
+export const getSitemapGeneratorFromModules = (modules) => {
+  const sitemapGenerators = lodashValues(modules)
     .filter(({ sitemapGenerator }) => sitemapGenerator)
     .map(({ sitemapGenerator }) => sitemapGenerator);
 

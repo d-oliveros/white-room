@@ -1,23 +1,34 @@
 import { promisify } from 'util';
 import lodashValues from 'lodash/fp/values.js';
+import typeCheck from '#white-room/util/typeCheck.js';
 
-const {
-  NODE_ENV,
-  COMMIT_HASH,
-  RENDERER_ENDPOINT,
-  APP_PORT,
-} = process.env;
-
-export const getServices = (modules) => {
+export const getServicesFromModules = (modules) => {
   return lodashValues(modules)
     .reduce((memo, { service }) => [ ...memo, ...service ], []);
 };
+
+export const getMiddlewareFromModules = (modules) => {
+  const modulesMiddleware = lodashValues(modules)
+    .map(({ middleware }) => middleware)
+    .filter((middleware) => typeof middleware === 'function');
+
+  for (const middleware of modulesMiddleware) {
+    typeCheck('middleware::Function', middleware);
+  }
+
+  return async (app) => {
+    for (const middleware of modulesMiddleware) {
+      console.log(middleware);
+      middleware(app);
+    }
+  }
+}
 
 /**
  * Starts the API server.
  * Loads necessary modules and begins listening on the configured port.
  */
-const startServer = async ({ services }) => {
+const startServer = async ({ services, port, sitemapGenerator, middleware, config = {} }) => {
   const logger = (await import(`../logger.js`)).default;
   logger.info('Starting server.');
 
@@ -25,17 +36,15 @@ const startServer = async ({ services }) => {
 
   const server = createServer({
     services,
-    config: {
-      useHelmet:  NODE_ENV !== 'development',
-      commitHash: COMMIT_HASH,
-      rendererEndpoint: RENDERER_ENDPOINT,
-      middleware: (app) => app.use((req, res, next) => { console.log('w00t!!'); next(); }),
-    },
+    middleware,
+    sitemapGenerator,
+    config,
   });
-  const listen = promisify(server.listen).bind(server);
-  await listen(APP_PORT);
 
-  logger.info(`Server listening on port: ${APP_PORT}`);
+  const listen = promisify(server.listen).bind(server);
+  await listen(port);
+
+  logger.info(`Server listening on port: ${port}`);
 };
 
 export default startServer;

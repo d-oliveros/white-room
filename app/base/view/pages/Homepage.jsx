@@ -78,7 +78,7 @@ Homepage.getMetadata = ({ state, params }) => ({
   pageTitle: 'Homepage | White Room',
 });
 
-Homepage.fetchPageData = async ({ apiClient, queryClient, store, params }) => {
+Homepage.fetchPageData = async ({ apiClient, queryClient, state, params }) => {
   // await sleepAsync(process.browser ? 3000 : 0);
   console.log('Sleeeeeping');
   await sleepAsync(400);

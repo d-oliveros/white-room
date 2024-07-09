@@ -20,7 +20,7 @@ import { hydrateRoot } from 'react-dom/client';
 import { QueryClient } from '@tanstack/react-query'
 
 import createApiClient from '#white-room/createApiClient.js';
-import getStoreFromBrowser from '#white-room/client/core/getStoreFromBrowser.js';
+import getStoreFromServerState from '#white-room/client/core/getStoreFromServerState.js';
 import initDevelopmentEnv from '#white-room/client/core/developmentEnv.js';
 import AppContextProvider from '#white-room/client/contexts/AppContextProvider.jsx';
 import makeRouter from '#white-room/client/core/makeRouter.jsx';
@@ -30,6 +30,7 @@ import analytics from '#white-room/client/analytics/analytics.js';
 
 // TODO: Implement dynamic loading of routes! Or inject routes object!
 // import routes from '#white-room/client/routes.js';
+import listeners from '#user/view/listeners.js';
 import HomePage from '#base/view/pages/Homepage.jsx';
 import PdfGeneratorPage from '#base/view/pages/PdfGeneratorPage.jsx';
 import NotFoundPage from '#base/view/pages/NotFoundPage.jsx';
@@ -42,8 +43,13 @@ debug(`Has root component? ${!!AppContextProvider}`);
 if (process.browser) {
   debug('Initializing browser client.');
 
-  // Get the serialized state injected by the server
-  const store = getStoreFromBrowser();
+  // Get the serialized state
+  const store = getStoreFromServerState({
+    serverStateStr: global.__INITIAL_STATE__,
+    baobabOptions: {
+      immutable: NODE_ENV !== 'production',
+    },
+  });
 
   // Initialize the development environment if not in production
   if (process.env.NODE_ENV !== 'production') {
@@ -56,6 +62,7 @@ if (process.browser) {
     apiPath: '/api/v1',
     appUrl: store.get(['env', 'APP_URL']),
     sessionTokenName: 'X-Session-Token',
+    listeners,
   });
 
   // Configure the analytics library

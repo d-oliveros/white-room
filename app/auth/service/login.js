@@ -1,15 +1,12 @@
-import jwt from 'jsonwebtoken';
-import lodashOmit from 'lodash/fp/omit.js';
 import lodashXor from 'lodash/fp/xor.js';
 
 import experimentsConfig from '#white-room/config/experiments.js';
 import * as cookiesConfig from '#white-room/config/cookies.js';
 import typeCheck from '#white-room/util/typeCheck.js';
+import jwtSign from '#white-room/util/jwtSign.js';
+import omitExperimentActiveVariants from '#white-room/util/omitExperimentActiveVariants.js';
 import { getExperimentActiveVariants } from '#white-room/server/lib/experiments.js';
 import User from '#user/model/userRepository.js';
-
-const { JWT_KEY } = process.env;
-const omitExperimentActiveVariants = lodashOmit('experimentActiveVariants');
 
 export default {
   validate({ phone, password, autoLoginToken }) {
@@ -59,7 +56,7 @@ export default {
       userId: user.id,
       roles: user.roles,
     };
-    const userSessionJwtToken = jwt.sign(userSession, JWT_KEY);
+    const userSessionJwtToken = jwtSign(userSession);
 
     // Sets the user token in a cookie.
     setCookie(

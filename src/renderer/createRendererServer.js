@@ -8,11 +8,11 @@ import logger from '#white-room/logger.js';
 import typeCheck from '#white-room/util/typeCheck.js';
 
 import unwrapSessionToken from '#white-room/server/middleware/unwrapSessionToken.js';
-import extractInitialState from '#white-room/renderer/extractInitialState.js';
+import makeClientInitialState from '#white-room/renderer/makeClientInitialState.js';
 import renderReactApp from '#white-room/renderer/renderReactApp.js';
 
 const {
-COOKIE_SECRET,
+  COOKIE_SECRET,
 } = process.env;
 
 /**
@@ -43,8 +43,8 @@ COOKIE_SECRET,
  *
  * @see .env.default in the project's root for reference
  */
-export const createRendererServer = ({ routes, getAppState } = {}) => {
-  typeCheck('getAppState::Maybe AsyncFunction|Function', getAppState);
+const createRendererServer = ({ routes, initialState, middleware } = {}) => {
+  typeCheck('initialState::Maybe Object', initialState);
 
   const renderer = express();
 
@@ -53,15 +53,23 @@ export const createRendererServer = ({ routes, getAppState } = {}) => {
   renderer.use(
     cookieParser(COOKIE_SECRET, cookiesConfig.session),
     unwrapSessionToken,
-    extractInitialState({ getAppState }),
+    makeClientInitialState({ initialState }),
   );
+
+  // Attach custom middleware.
+  if (typeof middleware === 'function') {
+    middleware(renderer);
+  }
 
   renderer.get('*', async (req, res, next) => {
     try {
       const state = res.locals.initialState;
       const sessionToken = res.locals.sessionToken;
 
+      console.log('INITAL STATE IS', state);
+
       const result = await renderReactApp({ req, res, state, sessionToken, routes });
+
       typeCheck('result::NonEmptyObject', result, {
         errorMessage: 'Invalid result returned by the react app render function.',
       });
@@ -112,5 +120,6 @@ export const createRendererServer = ({ routes, getAppState } = {}) => {
   });
 
   return renderer;
-
 }
+
+export default createRendererServer;

@@ -6,6 +6,7 @@ import makeCookieParser from 'cookie-parser';
 import { createProxyMiddleware } from 'http-proxy-middleware';
 import { fileURLToPath } from 'url';
 
+import logger from '#white-room/logger.js';
 import typeCheck from '#white-room/util/typeCheck.js';
 import * as cookiesConfig from '#white-room/config/cookies.js';
 
@@ -26,7 +27,6 @@ import segmentLibProxy from './middleware/segmentLibProxy.js';
 const {
   ENABLE_STORYBOOK,
   COOKIE_SECRET,
-  RENDERER_ENDPOINT,
   SEGMENT_LIB_PROXY_URL,
 } = process.env;
 
@@ -36,7 +36,9 @@ const __dirname = path.dirname(__filename);
 const ROOT_DIR = path.resolve(__dirname, '..', '..');
 const cookieParser = makeCookieParser(COOKIE_SECRET, cookiesConfig.session);
 
-export function createServer({ services, sitemapGenerator, middleware, config = {} }) {
+export function createServer({ services, sitemapGenerator, config = {} }) {
+  logger.info('Creating server', config);
+
   typeCheck('config::Object', config);
 
   const {
@@ -86,15 +88,10 @@ export function createServer({ services, sitemapGenerator, middleware, config = 
   // Application-level middleware
   app.use('/sendgrid/webhooks', bodyParser.json(), sendgridWebhookApi);
 
-  // Attach custom middleware.
-  if (typeof middleware === 'function') {
-    middleware(app);
-  }
-
   // Serves the React app
   if (rendererEndpoint) {
     app.get('*', handleCaps, createProxyMiddleware({
-      target: RENDERER_ENDPOINT,
+      target: rendererEndpoint,
     }));
   }
 

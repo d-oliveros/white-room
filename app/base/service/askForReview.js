@@ -7,8 +7,8 @@ import {
 
 export default function askForReview({ state }) {
   const currentUser = state.get(['currentUser']);
-  const userAgent = state.get(['analytics', 'userAgent']);
-  const mobileAppFeatures = state.get(['mobileApp', 'features']);
+  const userAgent = state.get(['client', 'analytics', 'userAgent']);
+  const mobileAppFeatures = state.get(['client', 'mobileApp', 'features']);
   const askedForAppStoreReview = currentUser.settings.askedForAppStoreReview;
 
   if (
@@ -17,6 +17,6 @@ export default function askForReview({ state }) {
     && mobileAppFeatures.rateAppV1
     && !askedForAppStoreReview
   ) {
-    state.set(['mobileApp', 'askForReview'], true);
+    state.set(['client', 'mobileApp', 'askForReview'], true);
   }
 }

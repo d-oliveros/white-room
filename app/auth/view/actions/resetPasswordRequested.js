@@ -23,7 +23,7 @@ export default async function resetPasswordRequested({ state, apiClient }, param
   } = params;
 
   const user = await apiClient.post('/auth/reset-password', { token, password });
-  const analyticsSessionId = state.get(['analytics', 'analyticsSessionId']);
+  const analyticsSessionId = state.get(['client', 'analytics', 'analyticsSessionId']);
 
   analytics.alias(user.id, analyticsSessionId);
 

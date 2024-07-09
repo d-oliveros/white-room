@@ -9,8 +9,8 @@ import sendDataToMobileApp, {
 import anonymousUser from '#user/constants/anonymousUser.js';
 
 export async function onLogicSuccess({ state, apiClient, user, experimentActiveVariants }) {
-  const analyticsSessionId = state.get(['analytics', 'analyticsSessionId']);
-  const mobileAppState = state.get(['mobileApp']);
+  const analyticsSessionId = state.get(['client', 'analytics', 'analyticsSessionId']);
+  const mobileAppState = state.get(['client', 'mobileApp']);
   const currentUser = { ...anonymousUser, ...user };
 
   // Set experiments.
