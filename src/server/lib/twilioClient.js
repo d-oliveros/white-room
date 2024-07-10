@@ -1,7 +1,7 @@
-import logger from '#common/logger.js';
-import typeCheck from '#common/util/typeCheck.js';
-import ToE164Phone from '#common/util/ToE164Phone.js';
-import extractPhoneFromText from '#common/util/extractPhoneFromText.js';
+import logger from '#white-room/logger.js';
+import typeCheck from '#white-room/util/typeCheck.js';
+import ToE164Phone from '#white-room/util/ToE164Phone.js';
+import extractPhoneFromText from '#white-room/util/extractPhoneFromText.js';
 
 const {
   TWILIO_ACCOUNT_ID,

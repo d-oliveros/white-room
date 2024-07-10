@@ -3,14 +3,14 @@ import { getIn, setIn } from 'formik';
 
 import lodashKeyBy from 'lodash/fp/keyBy.js';
 
-import log from '#client/lib/log.js';
+import log from '#white-room/client/lib/log.js';
 
-import typeCheck from '#common/util/typeCheck.js';
-import objectNormalize from '#common/util/objectNormalize.js';
-import extractPhoneFromText from '#common/util/extractPhoneFromText.js';
-import dayjsWithAustinTimezone from '#common/util/dayjsWithAustinTimezone.js';
-import preventDefaultPropagation from '#client/helpers/preventDefaultPropagation.js';
-import { isChromeBrowser } from '#common/util/isUserAgentMobileApp.js';
+import typeCheck from '#white-room/util/typeCheck.js';
+import objectNormalize from '#white-room/util/objectNormalize.js';
+import extractPhoneFromText from '#white-room/util/extractPhoneFromText.js';
+import dayjsWithAustinTimezone from '#white-room/util/dayjsWithAustinTimezone.js';
+import preventDefaultPropagation from '#white-room/client/helpers/preventDefaultPropagation.js';
+import { isChromeBrowser } from '#white-room/util/isUserAgentMobileApp.js';
 
 export const validators = {
   required: (value) => {

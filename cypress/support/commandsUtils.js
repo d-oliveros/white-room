@@ -1,5 +1,4 @@
-import experimentsConfig from '#config/experiments.js';
-import { API_ACTION_EXPERIMENT_ACTIVE_VARIANTS_UPDATE } from '#api/actionTypes.js';
+import experimentsConfig from '#white-room/config/experiments.js';
 
 function isApiResponse(res) {
   return !!(res && res.body && 'success' in res.body && 'result' in res.body);
@@ -50,7 +49,7 @@ Cypress.Commands.add('setExperimentVariants', (experimentActiveVariants) => {
   };
 
   return cy.apiRequest({
-    action: API_ACTION_EXPERIMENT_ACTIVE_VARIANTS_UPDATE,
+    action: 'tbd.API_ACTION_EXPERIMENT_ACTIVE_VARIANTS_UPDATE',
     payload: {
       experimentActiveVariants: newExperimentActiveVariants,
     },

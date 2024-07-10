@@ -1,10 +1,9 @@
 import Bull from 'bull';
-import { serializeError } from 'serialize-error';
 import ms from 'ms';
 
-import dbConfig from '#config/database.js';
-import logger from '#common/logger.js';
-import typeCheck from '#common/util/typeCheck.js';
+import dbConfig from '#white-room/config/database.js';
+import logger from '#white-room/logger.js';
+import typeCheck from '#white-room/util/typeCheck.js';
 
 const KUE_DEFAULT_TTL_MS = ms('3d');
 
@@ -28,9 +27,8 @@ queue.on('stalled', (job) => {
 });
 
 queue.on('failed', (job, err) => {
-  const error = new Error(`Job #${job.id} failed: ${err}`);
+  const error = new Error(`Job #${job.id} failed: ${err}`, { cause: err });
   error.name = 'QueueJobFailed';
-  error.inner = serializeError(err);
   error.details = {
     queueError: true,
     jobId: job.id,
@@ -44,9 +42,10 @@ queue.on('failed', (job, err) => {
     job.remove().then(() => {
       debug(`Successfully removed failed job ${job.id}`);
     }).catch((removeError) => {
-      const error = new Error(`Job #${job.id} failed and could not be deleted: ${removeError}`);
+      const error = new Error(`Job #${job.id} failed and could not be deleted: ${removeError}`, {
+        cause: removeError,
+      });
       error.name = 'QueueJobFailedNotRemoved';
-      error.inner = serializeError(removeError);
       error.details = {
         queueError: true,
         jobId: job.id,
@@ -63,9 +62,8 @@ queue.on('completed', (job, result) => {
     job.remove().then(() => {
       debug(`Successfully removed completed job ${job.id}`);
     }).catch((err) => {
-      const error = new Error(`Completed job #${job.id} could not be deleted: ${err}`);
+      const error = new Error(`Completed job #${job.id} could not be deleted: ${err}`, { cause: err });
       error.name = 'QueueJobCompletedNotRemoved';
-      error.inner = serializeError(err);
       error.details = {
         queueError: true,
         jobId: job.id,

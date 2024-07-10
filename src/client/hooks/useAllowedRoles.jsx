@@ -2,11 +2,10 @@ import { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import assert from 'assert';
 
-import parseQueryString from '#common/util/parseQueryString.js';
-import typeCheck from '#common/util/typeCheck.js';
-import useBranch from '#client/hooks/useBranch.js';
-import log from '#client/lib/log.js';
-import getUserLandingPage from '#client/helpers/getUserLandingPage.js';
+import parseQueryString from '#white-room/util/parseQueryString.js';
+import typeCheck from '#white-room/util/typeCheck.js';
+import useBranch from '#white-room/client/hooks/useBranch.js';
+import log from '#white-room/client/lib/log.js';
 
 const debug = log.debug('hooks:useAllowedRoles');
 
@@ -30,7 +29,7 @@ export default function useAllowedRoles({ roles, redirectUrl, addRedirectQueryPa
   const redirectTo = (
     locationQuery.next
     || redirectUrl
-    || getUserLandingPage(currentUser)
+    || '/'
   );
 
   useEffect(() => {

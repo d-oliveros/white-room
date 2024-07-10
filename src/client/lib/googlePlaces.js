@@ -1,13 +1,13 @@
 import lodashCompact from 'lodash/fp/compact.js';
 import lodashUniq from 'lodash/fp/uniq.js';
 
-import typeCheck from '#common/util/typeCheck.js';
+import typeCheck from '#white-room/util/typeCheck.js';
 
 import {
   makeAddressStreetDisplay,
   makeFullAddressDisplay,
   makeLocationPointString,
-} from '#common/addressHelpers';
+} from '#white-room/server/lib/addressHelpers';
 
 const addressStreetNameVariantBlacklist = [
   'n',

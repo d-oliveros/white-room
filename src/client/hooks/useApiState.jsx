@@ -1,5 +1,5 @@
-import { initialApiActionState } from '#api/createApiClient.js';
-import useBranch from '#client/hooks/useBranch.js';
+import { initialApiActionState } from '#white-room/api/createApiClient.js';
+import useBranch from '#white-room/client/hooks/useBranch.js';
 
 export default function useApiState(apiActionSetting, opts = {}) {
   apiActionSetting = typeof apiActionSetting === 'string'

@@ -1,7 +1,8 @@
 import { SitemapStream, streamToPromise } from 'sitemap';
+import lodashValues from 'lodash/fp/values.js';
 
-import redis from '#server/db/redis.js';
-import knex from '#server/db/knex.js';
+import typeCheck from '#white-room/util/typeCheck.js';
+import redis from '#white-room/server/db/redis.js';
 
 const {
   APP_URL,
@@ -21,18 +22,10 @@ const sitemapStaticUrls = [
  *
  * @return {string} The sitemap string in XML format.
  */
-async function generateSitemapXmlString() {
-  const users = await knex('users').select(['id']);
-
-  const userSitemapUrls = users.map((user) => ({
-    url: `/users/${user.id}`,
-    priority: 0.5,
-    changefreq: 'monthly',
-  }));
-
+async function generateSitemapXmlString(urls) {
   const sitemapUrls = [
     ...sitemapStaticUrls,
-    ...userSitemapUrls,
+    ...urls,
   ];
 
   const smStream = new SitemapStream({ hostname: APP_URL });
@@ -48,21 +41,53 @@ async function generateSitemapXmlString() {
   return sitemapString;
 }
 
-export default async function sitemapController(req, res, next) {
-  try {
-    let sitemapXmlString = await redis.getAsync(REDIS_SITEMAP_KEY);
-    if (!sitemapXmlString) {
-      sitemapXmlString = await generateSitemapXmlString();
-      await redis.setexAsync(
-        REDIS_SITEMAP_KEY,
-        REDIS_SITEMAP_EXPIRATION_IN_SECONDS,
-        sitemapXmlString,
+export const getSitemapGeneratorFromModules = (modules) => {
+  const sitemapGenerators = lodashValues(modules)
+    .filter(({ sitemapGenerator }) => sitemapGenerator)
+    .map(({ sitemapGenerator }) => sitemapGenerator);
+
+  return async () => {
+    const sitemapGeneratorPromises = sitemapGenerators.map((generator) => generator());
+
+    const urls = (await Promise.allSettled(sitemapGeneratorPromises))
+      .reduce((memo, results) => [
+        ...memo,
+        ...(results.value || []),
+      ],
+        sitemapStaticUrls,
       );
-    }
-    res.header('Content-Type', 'application/xml');
-    res.send(sitemapXmlString);
+
+    return urls;
   }
-  catch (error) {
-    next(error);
+}
+
+export default function createSitemapController(sitemapGenerator) {
+  typeCheck('sitemapGenerator::Maybe Function|AsyncFunction', sitemapGenerator);
+
+  return async (req, res, next) => {
+    try {
+      let sitemapXmlString = redis
+        ? await redis.get(REDIS_SITEMAP_KEY)
+        : null;
+
+      if (!sitemapXmlString) {
+        const urls = sitemapGenerator
+          ? await sitemapGenerator()
+          : [];
+
+        sitemapXmlString = await generateSitemapXmlString(urls);
+
+        if (redis) {
+          await redis.set(REDIS_SITEMAP_KEY, sitemapXmlString, {
+            EX: REDIS_SITEMAP_EXPIRATION_IN_SECONDS
+          });
+        }
+      }
+      res.header('Content-Type', 'application/xml');
+      res.send(sitemapXmlString);
+    }
+    catch (error) {
+      next(error);
+    }
   }
 }

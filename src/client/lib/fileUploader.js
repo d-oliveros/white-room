@@ -1,8 +1,8 @@
 import assert from 'assert';
 import path from 'path';
-import typeCheck from '#common/util/typeCheck.js';
-import parseS3Url from '#common/util/parseS3Url.js';
-import log from '#client/lib/log.js';
+import typeCheck from '#white-room/util/typeCheck.js';
+import parseS3Url from '#white-room/util/parseS3Url.js';
+import log from '#white-room/client/lib/log.js';
 
 const debug = log.debug('fileUploader');
 

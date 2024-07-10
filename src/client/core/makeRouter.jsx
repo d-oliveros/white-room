@@ -1,13 +1,11 @@
 import React, { Suspense } from 'react';
-import { Await, Navigate, Outlet, defer, useLoaderData, useAsyncError } from 'react-router-dom';
+import { Await, Navigate, Outlet, Link, defer, useLoaderData, useAsyncError } from 'react-router-dom';
 import { serializeError } from 'serialize-error';
 
-import log from '#client/lib/log.js';
-import isRedirectResponse from '#common/util/isRedirectResponse.js';
+import log from '#white-room/client/lib/log.js';
+import isRedirectResponse from '#white-room/util/isRedirectResponse.js';
 
-import App from '#client/App.jsx';
-import ErrorPage from '#client/pages/ErrorPage.jsx';
-import Link from '#client/components/Link/Link.jsx';
+import App from '#white-room/client/App.jsx';
 
 const makeLoaderFn = ({ fetchPageData, apiClient, queryClient, store }) => {
   console.log('Making loaderFn');
@@ -143,7 +141,7 @@ const Layout = () => {
   );
 }
 
-const makeRouter = ({ routes, queryClient, apiClient, store }) => {
+const makeRouter = ({ routes, ErrorPage, queryClient, apiClient, store }) => {
   const notFoundRoute = routes.find(({ path }) => path === '*');
   const NotFoundComponent = notFoundRoute?.Component || null;
 

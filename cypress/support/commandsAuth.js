@@ -1,10 +1,4 @@
-import typeCheck from '#common/util/typeCheck.js';
-
-import {
-  API_ACTION_SIGNUP,
-  API_ACTION_LOGIN,
-  API_ACTION_LOGOUT,
-} from '#api/actionTypes.js';
+import typeCheck from '#white-room/util/typeCheck.js';
 
 function makeSignupFormData(signupData) {
   const phone = signupData.phone;
@@ -33,7 +27,7 @@ Cypress.Commands.add('signup', (signupData = {}) => {
   });
 
   return cy.apiRequest({
-    action: API_ACTION_SIGNUP,
+    path: '/auth/signup',
     payload: signupFormData,
   });
 });
@@ -45,7 +39,7 @@ Cypress.Commands.add('login', (phone, password = '1234') => {
   });
 
   return cy.apiRequest({
-    action: API_ACTION_LOGIN,
+    path: '/auth/login',
     payload: {
       phone: phone,
       password: password,
@@ -60,7 +54,7 @@ Cypress.Commands.add('logout', () => {
   });
 
   return cy.apiRequest({
-    action: API_ACTION_LOGOUT,
+    path: '/auth/logout',
   });
 });
 

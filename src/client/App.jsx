@@ -3,27 +3,22 @@ import { Outlet } from 'react-router-dom';
 import classnames from 'classnames';
 import { useLocation, Routes, Route } from 'react-router-dom';
 
-import parseQueryString from '#common/util/parseQueryString.js';
-import isUserAgentMobileApp, { isUserAgentIphoneApp } from '#common/util/isUserAgentMobileApp.js';
+import parseQueryString from '#white-room/util/parseQueryString.js';
+import isUserAgentMobileApp, { isUserAgentIphoneApp } from '#white-room/util/isUserAgentMobileApp.js';
 
-import { hasRoleAnonymous } from '#common/userRoles.js';
-
-import {
-  API_ACTION_GET_APP_COMMIT_HASH,
-} from '#api/actionTypes.js';
+import { hasRoleAnonymous } from '#user/constants/userRoles.js';
 
 import sendDataToMobileApp, {
   MOBILE_APP_ACTION_TYPE_ROUTE_CHANGED,
   MOBILE_APP_ACTION_TYPE_CURRENT_USER,
-} from '#client/helpers/sendDataToMobileApp.js';
+} from '#white-room/client/helpers/sendDataToMobileApp.js';
 
-import useBranch from '#client/hooks/useBranch.js';
-import useApiClient from '#client/hooks/useApiClient.js';
-import useBrowsingHistoryTracker from '#client/hooks/useBrowsingHistoryTracker.js';
+import useBranch from '#white-room/client/hooks/useBranch.js';
+import useApiClient from '#white-room/client/hooks/useApiClient.js';
+import useBrowsingHistoryTracker from '#white-room/client/hooks/useBrowsingHistoryTracker.js';
 
-import MobileAppEventListener from '#client/components/MobileAppEventListener/MobileAppEventListener.jsx';
-import EnablePushNotificationsModal from '#client/components/EnablePushNotificationsModal/EnablePushNotificationsModal.jsx';
-import Link from '#client/components/Link/Link.jsx';
+import MobileAppEventListener from '#base/view/components/MobileAppEventListener/MobileAppEventListener.jsx';
+import EnablePushNotificationsModal from '#base/view/components/EnablePushNotificationsModal/EnablePushNotificationsModal.jsx';
 
 // Interval for checking the app commit hash vs the server commit hash to reload the page when a new version is available.
 const CHECK_APP_VERSION_INTERVAL_MS = 1800000; // 30 minutes.

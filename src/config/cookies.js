@@ -1,7 +1,7 @@
 import { parse } from 'url';
 
 const {
-  APP_URL,
+  APP_URL = 'http://localhost:3000',
 } = process.env;
 
 const defaultSettings = {

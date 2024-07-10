@@ -2,17 +2,16 @@ import assert from 'assert';
 import { Analytics } from '@segment/analytics-node';
 import { v4 as uuidv4 } from 'uuid';
 
-import logger from '#common/logger.js';
-import typeCheck from '#common/util/typeCheck.js';
+import logger from '#white-room/logger.js';
+import typeCheck from '#white-room/util/typeCheck.js';
 import {
   USER_ROLE_ANONYMOUS,
-  hasRoleAdmin,
   hasRoleAnonymous,
-} from '#common/userRoles.js';
+} from '#user/constants/userRoles.js';
 
 import {
   transformUserDataToSegmentIdentifyTraits,
-} from '#client/analytics/analytics.js';
+} from '#white-room/client/analytics/analytics.js';
 
 const {
   SEGMENT_KEY,
@@ -41,19 +40,20 @@ export default function makeServersideContext({ user = anonymousUser }) {
 
   serversideContext.eventId = uuidv4();
 
+  // TODO: Move to userland
   serversideContext.userRoles = user.roles;
   serversideContext.isAnonymous = hasRoleAnonymous(user.roles);
-  serversideContext.isAdmin = hasRoleAdmin(user.roles);
+  // serversideContext.isAdmin = hasRoleAdmin(user.roles);
 
-  if (!serversideContext.isAnonymous) {
-    serversideContext.userId = user.id;
-    serversideContext.userFirstName = user.firstName;
-    serversideContext.userLastName = user.lastName;
-    serversideContext.userProfileImage = user.profileImage;
-    serversideContext.userPhone = user.phone;
-    serversideContext.userEmail = user.email;
-    serversideContext.userSignupProvider = user.signupProvider;
-  }
+  // if (!serversideContext.isAnonymous) {
+  //   serversideContext.userId = user.id;
+  //   serversideContext.userFirstName = user.firstName;
+  //   serversideContext.userLastName = user.lastName;
+  //   serversideContext.userProfileImage = user.profileImage;
+  //   serversideContext.userPhone = user.phone;
+  //   serversideContext.userEmail = user.email;
+  //   serversideContext.userSignupProvider = user.signupProvider;
+  // }
 
   // Sanitize the application context object by removing empty values, except booleans and numbers.
   Object.keys(serversideContext).forEach((serversideContextFieldName) => {

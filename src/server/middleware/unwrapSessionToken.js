@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 
-import * as cookiesConfig from '#config/cookies.js';
-import logger from '#common/logger.js';
+import * as cookiesConfig from '#white-room/config/cookies.js';
+import logger from '#white-room/logger.js';
 
 const {
   JWT_KEY,

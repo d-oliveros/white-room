@@ -1,11 +1,11 @@
 import { resolve as resolveUrl } from 'url';
 
-import logger from '#common/logger.js';
-import typeCheck from '#common/util/typeCheck.js';
+import logger from '#white-room/logger.js';
+import typeCheck from '#white-room/util/typeCheck.js';
 
 import {
   AUTHY_ERROR_RESPONSE_NOT_OK,
-} from '#common/errorCodes.js';
+} from '#white-room/constants/errorCodes.js';
 
 const debug = logger.createDebug('authy');
 

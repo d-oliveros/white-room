@@ -1,12 +1,11 @@
 import { createClient } from 'redis';
 import { v4 as uuidv4 } from 'uuid';
 
-import dbConfig from '#config/database.js';
-import logger from '#common/logger.js';
+import dbConfig from '#white-room/config/database.js';
+import logger from '#white-room/logger.js';
 
-const redis = createClient({
-  url: `redis://${dbConfig.redis.host}:${dbConfig.redis.port}`
-});
+const redisUrl = `redis://${dbConfig.redis.host}:${dbConfig.redis.port}`;
+const redis = createClient({ url: redisUrl });
 
 redis.on('error', (error) => {
   logger.error('Redis connection error:', error);

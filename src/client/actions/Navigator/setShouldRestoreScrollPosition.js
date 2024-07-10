@@ -1,3 +1,3 @@
 export default function setShouldRestoreScrollPosition({ state }) {
-  state.set(['scrollPositions', 'shouldRestoreScrollPosition'], true);
+  state.set(['client', 'scrollPositions', 'shouldRestoreScrollPosition'], true);
 }

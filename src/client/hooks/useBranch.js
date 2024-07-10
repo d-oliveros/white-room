@@ -1,5 +1,5 @@
 import { useContext, useState, useEffect } from 'react';
-import StateContext from '#client/contexts/StateContext.js';
+import StateContext from '#white-room/client/contexts/StateContext.js';
 
 export default function useBranch(mapping) {
   if (typeof mapping === 'string') {

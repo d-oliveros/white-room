@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-import configureDecoratedComponent from '#client/helpers/configureDecoratedComponent.js';
+import configureDecoratedComponent from '#white-room/client/helpers/configureDecoratedComponent.js';
 
 const CHECK_INTERVAL = 250;
 

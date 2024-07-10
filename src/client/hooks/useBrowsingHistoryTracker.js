@@ -1,14 +1,14 @@
 import { useEffect, useContext } from 'react';
 import { useLocation } from 'react-router-dom';
 
-import StateContext from '#client/contexts/StateContext.js';
+import StateContext from '#white-room/client/contexts/StateContext.js';
 
 const useBrowsingHistoryTracker = () => {
   const location = useLocation();
   const state = useContext(StateContext)
 
   useEffect(() => {
-    const browsingHistory = state.get(['browsingHistory']) || [];
+    const browsingHistory = state.get(['client', 'browsingHistory']) || [];
 
     console.log('browsingHistory');
     console.log(browsingHistory);

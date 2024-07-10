@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 
-import useBranch from '#client/hooks/useBranch.js';
+import useBranch from '#white-room/client/hooks/useBranch.js';
 
 function useScrollToTop() {
   const { shouldRestoreScrollPosition } = useBranch({

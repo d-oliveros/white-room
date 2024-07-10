@@ -1,12 +1,11 @@
 import { resolve as resolveUrl } from 'url';
-import { serializeError } from 'serialize-error';
 
-import logger from '#common/logger.js';
-import typeCheck from '#common/util/typeCheck.js';
+import logger from '#white-room/logger.js';
+import typeCheck from '#white-room/util/typeCheck.js';
 
 import {
   FIREBASE_CLOUD_MESSAGING_ERROR_RESPONSE_NOT_OK,
-} from '#common/errorCodes.js';
+} from '#white-room/constants/errorCodes.js';
 
 const debug = logger.createDebug('fcm');
 
@@ -70,7 +69,6 @@ async function requestFCMEndpoint({ method, path, body }) {
         responseBody: errorBody,
         responseHeaders: [...response.headers.entries()].reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {})
       };
-      error.inner = serializeError(new Error(response.statusText));
       throw error;
     }
 

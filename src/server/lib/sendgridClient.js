@@ -1,12 +1,11 @@
 import { resolve as resolveUrl } from 'url';
-import { serializeError } from 'serialize-error';
 
-import logger from '#common/logger.js';
-import typeCheck from '#common/util/typeCheck.js';
+import logger from '#white-room/logger.js';
+import typeCheck from '#white-room/util/typeCheck.js';
 
 import {
   SENDGRID_ERROR_RESPONSE_NOT_OK,
-} from '#common/errorCodes.js';
+} from '#white-room/constants/errorCodes.js';
 
 import {
   ANALYTICS_EVENT_EMAIL_DELIVERED,
@@ -18,11 +17,11 @@ import {
   ANALYTICS_EVENT_EMAIL_UNSUBSCRIBE,
   ANALYTICS_EVENT_EMAIL_GROUP_UNSUBSCRIBE,
   ANALYTICS_EVENT_EMAIL_GROUP_RESUBSCRIBE,
-} from '#client/analytics/eventList.js';
+} from '#white-room/client/analytics/eventList.js';
 
 import {
   postSlackMessage,
-} from '#server/lib/slackClient.js';
+} from '#white-room/server/lib/slackClient.js';
 
 const {
   APP_URL,
@@ -118,7 +117,6 @@ async function requestSendgridEndpoint({ method, path, body, fullResponse }) {
         responseBody: errorBody,
         responseHeaders: [...response.headers.entries()].reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {})
       };
-      error.inner = serializeError(new Error(response.statusText));
       throw error;
     }
 

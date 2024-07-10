@@ -1,66 +1,44 @@
 import { v4 as uuidv4 } from 'uuid';
 import { serializeError } from 'serialize-error';
 
-import typeCheck from '#common/util/typeCheck.js';
-import handleUserErrorMessages from '#common/handleUserErrorMessages.js';
-
 import {
   API_ERROR_REQUEST_INVALID_RESPONSE,
   API_ERROR_REQUEST_FAILED,
   API_ERROR_REQUEST_NOT_HANDLED_OK,
-} from '#common/errorCodes.js';
+} from '#white-room/constants/errorCodes.js';
 
-import log from '#client/lib/log.js';
-import * as actionTypes from '#api/actionTypes.js';
+import typeCheck from '#white-room/util/typeCheck.js';
+
+import log from '#white-room/client/lib/log.js';
 
 const debug = log.debug('api:client');
-
-const actionTypesList = Object.keys(actionTypes);
-
-export function makeApiRequestUrl({ actionType, actionPayload, apiPath, appUrl }) {
-  typeCheck('appUrl::NonEmptyString', appUrl);
-  typeCheck('actionType::ValidActionType', actionType, {
-    customTypes: {
-      ValidActionType: {
-        typeOf: 'String',
-        validate: (x) => actionTypesList.includes(x),
-      },
-    },
-  });
-  typeCheck('actionPayload::Maybe Object', actionPayload);
-
-  const query = actionPayload
-    ? `?${new URLSearchParams(actionPayload)}`
-    : '';
-
-  return `${appUrl}${apiPath}/${actionType}${query}`;
-}
 
 function makeApiRequestMethod({
   method,
   commitHash,
   getSessionToken,
   onCommitHashChange,
-  apiPath,
+  apiBasePath,
   appUrl,
   sessionTokenName,
 }) {
-  return async function apiRequest(actionType, actionPayload, actionOptions = {}) {
-    typeCheck('actionType::ValidActionType', actionType, {
-      customTypes: {
-        ValidActionType: {
-          typeOf: 'String',
-          validate: (x) => actionTypesList.includes(x),
-        },
-      },
-    });
+  return async function apiRequest(path, actionPayload, actionOptions = {}) {
+    // typeCheck('path::ValidActionType', path, {
+    //   customTypes: {
+    //     ValidActionType: {
+    //       typeOf: 'String',
+    //       validate: (x) => pathsList.includes(x),
+    //     },
+    //   },
+    // });
+    typeCheck('path::NonEmptyString', path);
     typeCheck('actionPayload::Maybe Object', actionPayload);
     typeCheck('getSessionToken::Maybe Function', getSessionToken);
     typeCheck('actionOptions::Object', actionOptions);
 
-    debug(`Requesting ${apiPath}/${actionType}`, actionPayload);
+    debug(`Requesting ${apiBasePath}/${path}`, actionPayload);
 
-    let url = `${appUrl}${apiPath}/${actionType}`;
+    let url = `${appUrl}${apiBasePath}/${path}`;
     const sessionToken = getSessionToken ? getSessionToken() : null;
 
     const options = {
@@ -79,7 +57,8 @@ function makeApiRequestMethod({
     if (method === 'get' && actionPayload) {
       const query = new URLSearchParams(actionPayload).toString();
       url += `?${query}`;
-    } else if (method === 'post') {
+    }
+    else if (method === 'post') {
       options.headers['Content-Type'] = 'application/json';
       if (actionPayload) {
         options.body = JSON.stringify(actionPayload);
@@ -98,11 +77,12 @@ function makeApiRequestMethod({
         error = new Error(res.message || 'Request failed');
         error.name = API_ERROR_REQUEST_FAILED;
       }
-    } catch (fetchError) {
+    }
+    catch (fetchError) {
       error = fetchError;
       error.details = {
         errorReferenceKey,
-        actionType,
+        path,
         actionPayload,
       };
     }
@@ -113,7 +93,7 @@ function makeApiRequestMethod({
         error.name = API_ERROR_REQUEST_INVALID_RESPONSE;
         error.details = {
           errorReferenceKey,
-          actionType,
+          path,
           actionPayload,
         };
       } else if (!res.success) {
@@ -129,7 +109,7 @@ function makeApiRequestMethod({
           error.details = {
             ...(resError.details || {}),
             errorReferenceKey: resError.details.errorReferenceKey || errorReferenceKey,
-            actionType,
+            path,
             actionPayload,
           };
         } else {
@@ -137,7 +117,7 @@ function makeApiRequestMethod({
           error.name = API_ERROR_REQUEST_FAILED;
           error.details = {
             errorReferenceKey,
-            actionType,
+            path,
             actionPayload,
           };
         }
@@ -157,20 +137,20 @@ function makeApiRequestMethod({
     }
 
     if (error) {
-      debug(`Failed ${apiPath}/${actionType}`, {
+      debug(`Failed ${apiBasePath}/${path}`, {
         error: serializeError(error),
       });
       log.error(error);
-      error.originalMessage = error.message;
-      error.message = handleUserErrorMessages({ error });
       throw error;
     }
 
     if (process.browser) {
-      debug(`Success ${apiPath}/${actionType}`, res.body.result);
+      debug(`Success ${apiBasePath}/${path}`, res.body.result);
     } else {
-      debug(`Success ${apiPath}/${actionType}`);
+      debug(`Success ${apiBasePath}/${path}`);
     }
+
+    console.log('res.result IS', res.result);
 
     return res.result;
   };
@@ -195,7 +175,7 @@ export default function createApiClient(params = {}) {
       method: 'get',
       commitHash: params.commitHash,
       getSessionToken: params.getSessionToken,
-      apiPath: params.apiPath,
+      apiBasePath: params.apiPath,
       appUrl: params.appUrl,
       sessionTokenName: params.sessionTokenName,
       onCommitHashChange: () => {
@@ -208,7 +188,7 @@ export default function createApiClient(params = {}) {
       method: 'post',
       commitHash: params.commitHash,
       getSessionToken: params.getSessionToken,
-      apiPath: params.apiPath,
+      apiBasePath: params.apiPath,
       appUrl: params.appUrl,
       sessionTokenName: params.sessionTokenName,
       onCommitHashChange: () => {
@@ -279,11 +259,11 @@ export default function createApiClient(params = {}) {
           await optPromise;
         }
       }
-    } catch (apiClientError) {
+    }
+    catch (apiClientError) {
       const errorShortId = apiClientError.details?.shortId || uuidv4();
-      const error = new Error(`[API:${action}] ${apiClientError.message}`);
+      const error = new Error(`[API:${action}] ${apiClientError.message}`, { cause: apiClientError });
       error.name = apiClientError.name || API_ERROR_REQUEST_NOT_HANDLED_OK;
-      error.inner = serializeError(apiClientError);
       error.details = {
         action,
         queryId,
@@ -291,11 +271,10 @@ export default function createApiClient(params = {}) {
         shortId: errorShortId,
       };
       log.error(error);
-      apiClientError.originalMessage = apiClientError.message;
-      apiClientError.message = handleUserErrorMessages({ error: apiClientError, shortId: errorShortId });
       apiRequestState.set(['inProgress'], false);
       apiRequestState.set(['error'], apiClientError);
       apiRequestState.set(['progressPercent'], 100);
+
       if (onError) {
         onError(apiClientError);
       }

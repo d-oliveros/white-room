@@ -1,13 +1,13 @@
 const {
-  POSTGRES_HOST,
-  POSTGRES_PORT,
-  POSTGRES_USER,
-  POSTGRES_PASSWORD,
+  POSTGRES_HOST = '127.0.0.1',
+  POSTGRES_PORT = '5432',
+  POSTGRES_USER = 'postgres',
+  POSTGRES_PASSWORD = 'postgres',
   POSTGRES_DATABASE,
   NODE_ENV,
-  REDIS_DB,
-  REDIS_HOST,
-  REDIS_PORT,
+  REDIS_DB = '0',
+  REDIS_HOST = '127.0.0.1',
+  REDIS_PORT = '6379',
 } = process.env;
 
 const config = {
@@ -25,6 +25,7 @@ const config = {
       directory: './migrations/seeds',
     },
     migrations: {
+      directory: '...all dirs here...',
       stub: './config/migrations.stub',
     },
   },

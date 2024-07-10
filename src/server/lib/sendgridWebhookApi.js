@@ -1,17 +1,16 @@
 import { Router } from 'express';
-import { serializeError } from 'serialize-error';
 import lodashPick from 'lodash/fp/pick.js';
 import dayjs from 'dayjs';
 
-import logger from '#common/logger.js';
-import { trackServersideEvent } from '#server/lib/serversideAnalytics.js';
+import logger from '#white-room/logger.js';
+import { trackServersideEvent } from '#white-room/server/lib/serversideAnalytics.js';
 import {
   SENDGRID_EVENT_OPENED,
   SENDGRID_EVENT_CLICKED,
   SENDGRID_EVENT_TO_ANALYTICS_EVENT_MAPPING,
-} from '#server/lib/sendgridClient.js';
+} from '#white-room/server/lib/sendgridClient.js';
 
-import knex from '#server/db/knex.js';
+import knex from '#white-room/server/db/knex.js';
 
 const sendgridWebhookApi = new Router();
 const debug = logger.createDebug('sendgridWebhookApi');
@@ -49,8 +48,9 @@ sendgridWebhookApi.post('/event-dispatcher', async (req, res, next) => {
 
     res.sendStatus(200);
   } catch (sendgridError) {
-    const error = new Error('Error while processing Sendgrid event via /event-dispatcher webhook.');
-    error.inner = serializeError(sendgridError);
+    const error = new Error('Error while processing Sendgrid event via /event-dispatcher webhook.', {
+      cause: sendgridError,
+    });
     error.details = {
       requestBody: req.body,
     };
@@ -126,8 +126,9 @@ sendgridWebhookApi.post('/event', async (req, res, next) => {
     res.sendStatus(200);
   }
   catch (sendgridError) {
-    const error = new Error('Error while processing Sendgrid event via /event webhook.');
-    error.inner = serializeError(sendgridError);
+    const error = new Error('Error while processing Sendgrid event via /event webhook.', {
+      cause: sendgridError,
+    });
     error.details = {
       requestBody: req.body,
     };

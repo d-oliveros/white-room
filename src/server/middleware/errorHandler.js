@@ -1,5 +1,5 @@
 import { serializeError } from 'serialize-error';
-import logger from '#common/logger.js';
+import logger from '#white-room/logger.js';
 
 const {
   NODE_ENV,

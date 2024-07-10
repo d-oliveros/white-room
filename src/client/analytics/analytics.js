@@ -3,16 +3,15 @@ import lodashGet from 'lodash/fp/get.js';
 
 import {
   USER_ROLE_ANONYMOUS,
-} from '#common/userRoles.js';
+} from '#user/constants/userRoles.js';
 
-import log from '#client/lib/log.js';
-import makeApplicationContext from '#client/analytics/makeApplicationContext.js';
+import log from '#white-room/client/lib/log.js';
+import makeApplicationContext from '#white-room/client/analytics/makeApplicationContext.js';
 
 import {
   ANALYTICS_EVENT_PAGE_VIEWED,
-} from '#client/analytics/eventList.js';
+} from '#white-room/client/analytics/eventList.js';
 
-const NODE_ENV = process.env.NODE_ENV;
 const debug = log.debug('analytics');
 
 function makeUserId(state) {
@@ -59,6 +58,7 @@ function makeCommonEventParams(state, navigationContext, integrations) {
     env: {
       APP_ID,
       APP_TITLE,
+      NODE_ENV,
     },
   } = state;
 

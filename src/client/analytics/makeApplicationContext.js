@@ -4,12 +4,12 @@ import url from 'url';
 import {
   hasRoleAnonymous,
   hasRoleAdmin,
-} from '#common/userRoles.js';
+} from '#user/constants/userRoles.js';
 
 import isUserAgentMobileApp, {
   isUserAgentIphoneApp,
   isUserAgentAndroidApp,
-} from '#common/util/isUserAgentMobileApp.js';
+} from '#white-room/util/isUserAgentMobileApp.js';
 
 /**
  * Extracts application-specific contextual data from a state object.

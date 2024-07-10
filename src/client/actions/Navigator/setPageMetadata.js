@@ -1,4 +1,4 @@
-import typeCheck from '#common/util/typeCheck.js';
+import typeCheck from '#white-room/util/typeCheck.js';
 
 export default function setPageMetadata({ state }, pageMetadata) {
   typeCheck('pageMetadata::Object', pageMetadata);
@@ -17,5 +17,5 @@ export default function setPageMetadata({ state }, pageMetadata) {
   typeCheck('description::NonEmptyString', description);
   typeCheck('image::NonEmptyString', image);
 
-  state.set(['pageMetadata'], pageMetadata);
+  state.set(['client', 'pageMetadata'], pageMetadata);
 }

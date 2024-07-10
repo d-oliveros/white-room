@@ -7,20 +7,14 @@ import lodashCompact from 'lodash/fp/compact.js';
 import lodashPickBy from 'lodash/fp/pickBy.js';
 import { setIn } from 'formik';
 
-import typeCheck from '#common/util/typeCheck.js';
-import objectDiff from '#common/util/objectDiff.js';
+import typeCheck from '#white-room/util/typeCheck.js';
+import objectDiff from '#white-room/util/objectDiff.js';
 
-import branch from '#client/core/branch.jsx';
-import configureDecoratedComponent from '#client/helpers/configureDecoratedComponent.js';
-import withApiState from '#client/helpers/withApiState.js';
-import withInfiniteScroll from '#client/helpers/withInfiniteScroll.js';
-import log from '#client/lib/log.js';
-
-import {
-  API_ACTION_DATATABLE_GET,
-} from '#api/actionTypes.js';
-
-import updateSettings from '#client/actions/User/updateSettings.js';
+import branch from '#white-room/client/core/branch.jsx';
+import configureDecoratedComponent from '#white-room/client/helpers/configureDecoratedComponent.js';
+import withApiState from '#white-room/client/helpers/withApiState.js';
+import withInfiniteScroll from '#white-room/client/helpers/withInfiniteScroll.js';
+import log from '#white-room/client/lib/log.js';
 
 const debug = log.debug('dataTables');
 const ALL_ITEMS_COUNT = 500000;
@@ -106,23 +100,23 @@ export function actionInitializeDataTableState({ state }, {
   fuzzy = withoutEmptyValues(fuzzy);
   filter = withoutEmptyValues(filter);
   const sortId = makeSortIdString(sort);
-  if (!state.exists(['dataTables', dataSource, 'items'])) {
-    state.set(['dataTables', dataSource, 'items'], []);
+  if (!state.exists(['client', 'dataTables', dataSource, 'items'])) {
+    state.set(['client', 'dataTables', dataSource, 'items'], []);
   }
 
-  if (!state.exists(['dataTables', dataSource, 'itemIdsBySort', sortId])) {
-    state.set(['dataTables', dataSource, 'itemIdsBySort', sortId], []);
+  if (!state.exists(['client', 'dataTables', dataSource, 'itemIdsBySort', sortId])) {
+    state.set(['client', 'dataTables', dataSource, 'itemIdsBySort', sortId], []);
   }
 
-  if (!state.exists(['dataTables', dataSource, 'views'])) {
-    state.set(['dataTables', dataSource, 'views'], {});
+  if (!state.exists(['client', 'dataTables', dataSource, 'views'])) {
+    state.set(['client', 'dataTables', dataSource, 'views'], {});
   }
 
-  if (!state.exists(['dataTables', dataSource, 'viewSettings'])) {
-    state.set(['dataTables', dataSource, 'viewSettings'], {});
+  if (!state.exists(['client', 'dataTables', dataSource, 'viewSettings'])) {
+    state.set(['client', 'dataTables', dataSource, 'viewSettings'], {});
   }
-  if (viewId && !state.exists(['dataTables', dataSource, 'views', viewId])) {
-    state.set(['dataTables', dataSource, 'views', viewId], {
+  if (viewId && !state.exists(['client', 'dataTables', dataSource, 'views', viewId])) {
+    state.set(['client', 'dataTables', dataSource, 'views', viewId], {
       filter,
       sort,
       fuzzy,
@@ -132,8 +126,8 @@ export function actionInitializeDataTableState({ state }, {
     });
   }
 
-  if (viewId && !state.exists(['dataTables', dataSource, 'views', viewId, '$items'])) {
-    state.set(['dataTables', dataSource, 'views', viewId, '$items'], monkey({
+  if (viewId && !state.exists(['client', 'dataTables', dataSource, 'views', viewId, '$items'])) {
+    state.set(['client', 'dataTables', dataSource, 'views', viewId, '$items'], monkey({
       cursors: {
         items: ['dataTables', dataSource, 'items'],
         itemIdsInSortGroup: ['dataTables', dataSource, 'itemIdsBySort', sortId],
@@ -225,8 +219,8 @@ export function actionInitializeDataTableState({ state }, {
     // HACK(@d-oliveros):
     //  baobab-react is not emitting an update event after creating a new monkey.
     //  Faking a value update to trigger a baobab-react component update.
-    const currentItems = state.get(['dataTables', dataSource, 'items']);
-    state.set(['dataTables', dataSource, 'items'], [...(currentItems || [])]);
+    const currentItems = state.get(['client', 'dataTables', dataSource, 'items']);
+    state.set(['client', 'dataTables', dataSource, 'items'], [...(currentItems || [])]);
 
     // NOTE(@d-oliveros): Only commit if a view object has been created, as it may already have listeners waiting for data.
     state.commit();
@@ -264,7 +258,7 @@ export function actionInitializeDataTableUIControlsState({ state }, {
   viewSettings.loadAllData = !!viewSettings.loadAllData;
   viewSettings.includeItemsCount = viewSettings.includeItemsCount || false;
 
-  state.set(['dataTables', dataSource, 'viewSettings', rootViewId], viewSettings);
+  state.set(['client', 'dataTables', dataSource, 'viewSettings', rootViewId], viewSettings);
 
   return actionInitializeDataTableState({ state }, {
     dataSource,
@@ -300,7 +294,7 @@ export function actionDataTableLoadNextPage({ state, apiClient }, {
   typeCheck('count::PositiveNumber', count);
   typeCheck('onSuccess::Maybe Function', onSuccess);
 
-  const dataTableViewConfig = state.get(['dataTables', dataSource, 'views', viewId]);
+  const dataTableViewConfig = state.get(['client', 'dataTables', dataSource, 'views', viewId]);
   if (!dataTableViewConfig) {
     const error = new Error(`DataTable "${dataSource}" view ID "${viewId}" hasn't been configured yet.`);
     error.name = 'DataTableViewNotConfiguredError';
@@ -380,7 +374,7 @@ export async function actionDataTableLoadItems({ state, apiClient }, args) {
   const sortId = makeSortIdString(sort);
 
   const result = await apiClient.postWithState({
-    action: API_ACTION_DATATABLE_GET,
+    action: 'whiteroom.getDataTableItems',
     queryId: lodashCompact([dataSource, viewId]).join('-'),
     state: state,
     payload: {
@@ -402,16 +396,16 @@ export async function actionDataTableLoadItems({ state, apiClient }, args) {
       const updatedItemIds = [];
 
       // Update existing items.
-      state.get(['dataTables', dataSource, 'items']).forEach((currItem) => {
+      state.get(['client', 'dataTables', dataSource, 'items']).forEach((currItem) => {
         const newItem = itemsById[currItem.id];
         if (newItem) {
-          state.set(['dataTables', dataSource, 'items', { id: newItem.id }], newItem);
+          state.set(['client', 'dataTables', dataSource, 'items', { id: newItem.id }], newItem);
           updatedItemIds.push(newItem.id);
         }
       });
 
       // Add new items to sort group.
-      const itemIdsInSortGroup = state.get(['dataTables', dataSource, 'itemIdsBySort', sortId]) || [];
+      const itemIdsInSortGroup = state.get(['client', 'dataTables', dataSource, 'itemIdsBySort', sortId]) || [];
       const itemIdsExistInSortGroup = itemIdsInSortGroup
         .reduce((memo, id) => ({
           ...memo,
@@ -419,7 +413,7 @@ export async function actionDataTableLoadItems({ state, apiClient }, args) {
         }), {});
       for (const item of items) {
         if (!itemIdsExistInSortGroup[item.id]) {
-          state.push(['dataTables', dataSource, 'itemIdsBySort', sortId], item.id);
+          state.push(['client', 'dataTables', dataSource, 'itemIdsBySort', sortId], item.id);
         }
       }
 
@@ -427,17 +421,17 @@ export async function actionDataTableLoadItems({ state, apiClient }, args) {
       const itemsToAdd = items.filter(({ id }) => {
         return !updatedItemIds.includes(id);
       });
-      state.concat(['dataTables', dataSource, 'items'], itemsToAdd);
+      state.concat(['client', 'dataTables', dataSource, 'items'], itemsToAdd);
       if (viewId) {
-        state.set(['dataTables', dataSource, 'views', viewId, 'isFullyLoaded'], isFullyLoaded || false);
+        state.set(['client', 'dataTables', dataSource, 'views', viewId, 'isFullyLoaded'], isFullyLoaded || false);
         if (typeof totalItemsCount === 'number') {
-          state.set(['dataTables', dataSource, 'views', viewId, 'totalItemsCount'], totalItemsCount);
+          state.set(['client', 'dataTables', dataSource, 'views', viewId, 'totalItemsCount'], totalItemsCount);
         }
       }
 
       // Update the view's loaded items count.
       state.apply(
-        ['dataTables', dataSource, 'views', viewId, 'loadedCount'],
+        ['client', 'dataTables', dataSource, 'views', viewId, 'loadedCount'],
         (loadedCount) => loadedCount + count,
       );
 
@@ -478,6 +472,7 @@ export function actionDataTableLoadItemsIfNotFullyLoaded({ state, apiClient }, {
   typeCheck('viewId::Maybe NonEmptyString', viewId);
 
   const dataTableIsFullyLoaded = state.get([
+    'client',
     'dataTables',
     dataSource,
     'views',
@@ -496,7 +491,7 @@ export function actionDataTableLoadItemsIfNotFullyLoaded({ state, apiClient }, {
 
 export async function actionDataTableReset({ state }, { dataSource }) {
   typeCheck('dataSource::NonEmptyString', dataSource);
-  state.unset(['dataTables', dataSource]);
+  state.unset(['client', 'dataTables', dataSource]);
   state.commit();
 }
 
@@ -504,10 +499,10 @@ export async function actionDataTableRemoveItem({ state }, { dataSource, entityI
   typeCheck('dataSource::NonEmptyString', dataSource);
   typeCheck('entityId::PositiveNumber|NonEmptyString', entityId);
 
-  const dataTableItems = state.get(['dataTables', dataSource, 'items']);
+  const dataTableItems = state.get(['client', 'dataTables', dataSource, 'items']);
 
   if (Array.isArray(dataTableItems)) {
-    state.set(['dataTables', dataSource, 'items'], dataTableItems.filter((item) => {
+    state.set(['client', 'dataTables', dataSource, 'items'], dataTableItems.filter((item) => {
       return item.id !== entityId;
     }));
   }
@@ -578,7 +573,7 @@ export function dataTable(dataTableParamsOrGetter) {
       }
       return {
         dataTableApiState: {
-          action: API_ACTION_DATATABLE_GET,
+          action: 'whiteroom.getDataTableItems',
           queryId: lodashCompact([params.dataSource, params.viewId]).join('-'),
         },
       };
@@ -707,7 +702,6 @@ export function dataTableUIControls(dataTableParamsOrGetter) {
         onInfiniteScrollCallbackReady: PropTypes.func,
         items: PropTypes.array,
         dataTableApiState: PropTypes.object,
-        sortUserSettingsFieldId: PropTypes.string,
         currentUser: PropTypes.object,
       }
 
@@ -805,7 +799,6 @@ export function dataTableUIControls(dataTableParamsOrGetter) {
         const {
           initialViewSettings,
           viewSettings,
-          sortUserSettingsFieldId,
           currentUser,
           dispatch,
         } = this.props;
@@ -827,13 +820,6 @@ export function dataTableUIControls(dataTableParamsOrGetter) {
               [fieldId]: newSortDirection,
             },
           });
-        }
-        if (sortUserSettingsFieldId) {
-          // eslint-disable-next-line max-len
-          const newUserSettings = setIn({ ...currentUser.settings }, sortUserSettingsFieldId,
-            newSortDirection ? { [fieldId]: newSortDirection } : undefined,
-          );
-          dispatch(updateSettings, newUserSettings);
         }
       }
 

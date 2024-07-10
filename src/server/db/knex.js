@@ -5,15 +5,41 @@ import knexPostgis from 'knex-postgis';
 import pg from 'pg';
 import { v4 as uuidv4 } from 'uuid';
 
-import logger from '#common/logger.js';
-import slugify from '#common/util/slugify.js';
-import dbConfig from '#config/database.js';
+import logger from '#white-room/logger.js';
+import slugify from '#white-room/util/slugify.js';
+
+const {
+  POSTGRES_HOST = '127.0.0.1',
+  POSTGRES_PORT = '5432',
+  POSTGRES_USER = 'postgres',
+  POSTGRES_PASSWORD = 'postgres',
+  POSTGRES_DATABASE,
+  NODE_ENV,
+} = process.env;
+
+const dbConfig = {
+  client: 'pg',
+  connection: {
+    host: POSTGRES_HOST,
+    port: POSTGRES_PORT,
+    user: POSTGRES_USER,
+    password: POSTGRES_PASSWORD,
+    database: POSTGRES_DATABASE,
+    charset: 'utf8',
+  },
+  seeds: NODE_ENV === 'production' ? null : {
+    directory: './migrations/seeds',
+  },
+  migrations: {
+    stub: './config/migrations.stub',
+  },
+};
 
 pg.types.setTypeParser(pg.types.builtins.DATE, (val) => {
   return val === null ? null : dayjs(val).format('YYYY-MM-DD');
 });
 
-const knex = createKnex(dbConfig.knex);
+const knex = createKnex(dbConfig);
 
 // Install postgis functions in knex.postgis.
 // https://github.com/jfgodoy/knex-postgis
@@ -24,10 +50,13 @@ export const st = knexPostgis(knex);
  *
  * @return {Promise}
  */
-export async function postgresMigrateToLatestSchema() {
+export async function postgresMigrateToLatestSchema(/* { modules } */) {
+  // TODO: How to modularize modules model schemas?
+  // https://chatgpt.com/share/8c0f01c7-0bd4-49a6-b538-94e85e7b55e0
   logger.info('Checking if schema migration is needed.');
-  const result = await knex.migrate.latest([dbConfig.knex]);
-  logger.info(`Migration needed? ${result}`);
+  logger.info('TODO!');
+  // const result = await knex.migrate.latest([dbConfig]);
+  // logger.info(`Migration needed? ${result}`);
 }
 
 /**

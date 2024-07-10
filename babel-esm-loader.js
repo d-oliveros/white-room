@@ -2,11 +2,8 @@ import path from 'path';
 import { fileURLToPath, pathToFileURL } from 'url';
 import babel from '@babel/core';
 
-const nodeModulesRegex = /node_modules/;
-
-
 function isNodeModules(filePath) {
-  return nodeModulesRegex.test(filePath);
+  return filePath.includes('node_modules');
 }
 
 /**
