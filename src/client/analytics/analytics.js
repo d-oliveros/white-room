@@ -12,7 +12,6 @@ import {
   ANALYTICS_EVENT_PAGE_VIEWED,
 } from '#white-room/client/analytics/eventList.js';
 
-const NODE_ENV = process.env.NODE_ENV;
 const debug = log.debug('analytics');
 
 function makeUserId(state) {
@@ -59,6 +58,7 @@ function makeCommonEventParams(state, navigationContext, integrations) {
     env: {
       APP_ID,
       APP_TITLE,
+      NODE_ENV,
     },
   } = state;
 

@@ -9,7 +9,7 @@ const debug = log.debug('client:state');
  *
  * @return {Object}  Baobab Tree
  */
-export default function createTree(state, options) {
+export default function createStore(state, options) {
   const tree = new Baobab(state, options);
   tree.__commit = tree.commit;
   tree.commit = treeCommit.bind(tree);

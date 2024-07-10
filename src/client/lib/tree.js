@@ -9,8 +9,13 @@ const debug = log.debug('lib:tree');
  *
  * @return {Object}  Baobab Tree
  */
-export default function createTree(state, options) {
-  const tree = new Baobab(state, options);
+export default function createStore(state, options) {
+  const tree = new Baobab(state, {
+    asynchronous: false,
+    autocommit: false,
+    immutable: false,
+    ...(options || {}),
+  });
   tree.__commit = tree.commit;
   tree.commit = treeCommit.bind(tree);
   return tree;

@@ -4,6 +4,7 @@ import { stringify } from 'flatted';
 import objectDiff from '#white-room/util/objectDiff.js';
 import checkLocalStorage from '#white-room/util/checkLocalStorage.js';
 
+// TODO: Do not depend on process.env.NODE_ENV
 const NODE_ENV = process.env.NODE_ENV;
 
 const hasLocalStorage = checkLocalStorage();

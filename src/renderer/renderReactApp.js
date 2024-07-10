@@ -15,7 +15,7 @@ import isRedirectResponse from '#white-room/util/isRedirectResponse.js';
 import createApiClient from '#white-room/api/createApiClient.js';
 
 import makeInitialState from '#white-room/client/makeInitialState.js';
-import createTree from '#white-room/client/core/createTree.js';
+import createStore from '#white-room/client/core/createStore.js';
 import AppContextProvider from '#white-room/client/contexts/AppContextProvider.jsx';
 
 import makeRouter from '#white-room/client/core/makeRouter.jsx';
@@ -82,7 +82,7 @@ export default async function renderReactApp({ state: initialStateData, req, res
   const now = Date.now();
   debug(`Rendering client. URL: ${url}`);
 
-  const state = createTree(initialState, {
+  const store = createStore(initialState, {
     asynchronous: false,
     autoCommit: false,
     immutable: NODE_ENV !== 'production',
@@ -121,14 +121,14 @@ export default async function renderReactApp({ state: initialStateData, req, res
       // ...(pageMetadata || {}),
     };
 
-    state.set('client.pageMetadata', pageMetadataWithDefaults);
-    state.set('client.pageMetadataDefault', DEFAULT_PAGE_METADATA);
+    store.set('client.pageMetadata', pageMetadataWithDefaults);
+    store.set('client.pageMetadataDefault', DEFAULT_PAGE_METADATA);
 
     // TODO: Navigate on fetchPageData
     if (redirectUrl) {
       debug(`\`navigate\` called with: ${redirectUrl}`);
       httpStatus = 302;
-      state.release();
+      store.release();
 
       return makeRendererResponse({
         status: httpStatus,
@@ -136,13 +136,13 @@ export default async function renderReactApp({ state: initialStateData, req, res
       });
     }
 
-    assertIdleApiState(state.get(['client', 'apiState']));
+    assertIdleApiState(store.get(['client', 'apiState']));
 
     const router = makeRouter({
       routes,
       queryClient,
       apiClient,
-      store: state,
+      store,
     });
 
     let fetchRequest = createFetchRequest(req, res);
@@ -161,7 +161,7 @@ export default async function renderReactApp({ state: initialStateData, req, res
       }
       else {
         const url = context.headers.get('Location');
-        state.release();
+        store.release();
 
         debug(`Redirect to ${url}`);
 
@@ -175,7 +175,7 @@ export default async function renderReactApp({ state: initialStateData, req, res
     const staticRouter = createStaticRouter(handler.dataRoutes, context);
 
     const body = renderToString(
-      React.createElement(AppContextProvider, { state, apiClient, queryClient },
+      React.createElement(AppContextProvider, { store, apiClient, queryClient },
         React.createElement(StaticRouterProvider, { router: staticRouter, context })
       )
     );
@@ -183,7 +183,7 @@ export default async function renderReactApp({ state: initialStateData, req, res
     if (context.url) {
       debug(`Redirect to ${context.url}`);
       httpStatus = 302;
-      state.release();
+      store.release();
 
       return makeRendererResponse({
         status: httpStatus,
@@ -200,7 +200,7 @@ export default async function renderReactApp({ state: initialStateData, req, res
       // metaData: pageMetadataWithDefaults,
       segmentKey: SEGMENT_KEY,
       webpackDevelopmentServerPort: WEBPACK_DEVELOPMENT_SERVER_PORT || 8001,
-      serializedState: serializeState(state),
+      serializedState: serializeState(store),
       bundleSrc: useBuild
         ? `${AWS_BUNDLES_URL || ''}/js/bundle${COMMIT_HASH ? `-${COMMIT_HASH}` : ''}.js`
         : null,
@@ -209,7 +209,7 @@ export default async function renderReactApp({ state: initialStateData, req, res
         : null,
     });
 
-    state.release();
+    store.release();
 
     debug(`Rendered in ${Date.now() - now}ms - HTML length: ${html.length}`);
 
@@ -218,7 +218,7 @@ export default async function renderReactApp({ state: initialStateData, req, res
       status: httpStatus,
     });
   } catch (error) {
-    state.release();
+    store.release();
     debug(`Rendering error: ${error.message}`);
     return makeRendererResponse({
       status: 500,

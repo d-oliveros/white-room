@@ -18,19 +18,22 @@ import { RouterProvider, createBrowserRouter, matchRoutes } from 'react-router-d
 import createDebug from 'debug';
 import { hydrateRoot } from 'react-dom/client';
 import { QueryClient } from '@tanstack/react-query'
+import he from 'he'
 
-import createApiClient from '#white-room/createApiClient.js';
-import getStoreFromServerState from '#white-room/client/core/getStoreFromServerState.js';
+import createApiClient from '#white-room/api/createApiClient.js';
+import createStore from '#white-room/client/core/createStore.js';
 import initDevelopmentEnv from '#white-room/client/core/developmentEnv.js';
+import initListeners from '#white-room/client/core/initListeners.js';
 import AppContextProvider from '#white-room/client/contexts/AppContextProvider.jsx';
 import makeRouter from '#white-room/client/core/makeRouter.jsx';
+import parseJSON from '#white-room/util/parseJSON.js';
 
 import { ANALYTICS_EVENT_USER_SESSION } from '#white-room/client/analytics/eventList.js';
 import analytics from '#white-room/client/analytics/analytics.js';
 
 // TODO: Implement dynamic loading of routes! Or inject routes object!
 // import routes from '#white-room/client/routes.js';
-import listeners from '#user/view/listeners.js';
+import userListeners from '#user/view/listeners.js';
 import HomePage from '#base/view/pages/Homepage.jsx';
 import PdfGeneratorPage from '#base/view/pages/PdfGeneratorPage.jsx';
 import NotFoundPage from '#base/view/pages/NotFoundPage.jsx';
@@ -43,26 +46,38 @@ debug(`Has root component? ${!!AppContextProvider}`);
 if (process.browser) {
   debug('Initializing browser client.');
 
+  const state = global.__INITIAL_STATE__
+    ? parseJSON(he.decode(global.__INITIAL_STATE__))
+    : {};
+
+  const {
+    NODE_ENV,
+    COMMIT_HASH,
+    APP_URL,
+   } = state.env || {};
+
   // Get the serialized state
-  const store = getStoreFromServerState({
-    serverStateStr: global.__INITIAL_STATE__,
-    baobabOptions: {
-      immutable: NODE_ENV !== 'production',
-    },
+  const store = createStore(state, {
+    immutable: NODE_ENV !== 'production',
   });
 
   // Initialize the development environment if not in production
-  if (process.env.NODE_ENV !== 'production') {
+  if (NODE_ENV !== 'production') {
     initDevelopmentEnv(store);
   }
 
   // Create API client
   const apiClient = createApiClient({
-    commitHash: store.get(['env', 'COMMIT_HASH']),
+    commitHash: COMMIT_HASH,
     apiPath: '/api/v1',
-    appUrl: store.get(['env', 'APP_URL']),
+    appUrl: APP_URL,
     sessionTokenName: 'X-Session-Token',
-    listeners,
+  });
+
+  initListeners({
+    listeners: userListeners,
+    store,
+    apiClient,
   });
 
   // Configure the analytics library
@@ -83,6 +98,14 @@ if (process.browser) {
   const containerNode = global.document.getElementById('react-container');
 
   debug('Hydrating');
+
+  // TODO: Implement dynamic loading of routes! Or inject routes object!
+  const routes = [
+    { path: '/', exact: true, Component: HomePage },
+    { path: '/user/:userId', Component: UserPage },
+    { path: '/pdf-generator/:pdfComponentId', Component: PdfGeneratorPage },
+    { path: '*', Component: NotFoundPage },
+  ];
 
   // When Serverside-Rendering, the matching rout is already served by the server.
   // However, given that it is lazy, it is possible that the modules are not loaded yet,
@@ -121,14 +144,6 @@ if (process.browser) {
     },
   });
 
-  // TODO: Implement dynamic loading of routes! Or inject routes object!
-  const routes = [
-    { path: '/', exact: true, Component: HomePage },
-    { path: '/user/:userId', Component: UserPage },
-    { path: '/pdf-generator/:pdfComponentId', Component: PdfGeneratorPage },
-    { path: '*', Component: NotFoundPage },
-  ];
-
   const router = makeRouter({
     routes,
     store,
@@ -137,7 +152,7 @@ if (process.browser) {
   });
 
   const root = hydrateRoot(containerNode, (
-    <AppContextProvider state={store} apiClient={apiClient} queryClient={queryClient}>
+    <AppContextProvider {...{ store, apiClient, queryClient }}>
       <RouterProvider router={createBrowserRouter(router)} />
     </AppContextProvider>
   ));
@@ -157,7 +172,7 @@ if (process.browser) {
       });
 
       root.render(
-        <AppContextProvider state={state} apiClient={apiClient} queryClient={queryClient}>
+        <AppContextProvider {...{ store, apiClient, queryClient }}>
           <RouterProvider router={createBrowserRouter(router)} />
         </AppContextProvider>
       );

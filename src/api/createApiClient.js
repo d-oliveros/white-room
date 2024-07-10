@@ -21,7 +21,6 @@ function makeApiRequestMethod({
   apiBasePath,
   appUrl,
   sessionTokenName,
-  listeners,
 }) {
   return async function apiRequest(path, actionPayload, actionOptions = {}) {
     // typeCheck('path::ValidActionType', path, {
@@ -153,17 +152,6 @@ function makeApiRequestMethod({
 
     console.log('res.result IS', res.result);
 
-
-    if (listeners) {
-      let listenerPath = path.replace(/\//g, '.');
-      if (listenerPath.startsWith('.')) {
-        listenerPath = listenerPath.slice(1);
-      }
-      if (typeof listeners[listenerPath] === 'function') {
-        await listeners[listenerPath](res.result);
-      }
-    }
-
     return res.result;
   };
 }
@@ -180,7 +168,6 @@ export default function createApiClient(params = {}) {
   typeCheck('commitHash::Maybe String', params.commitHash);
   typeCheck('sessionTokenName::NonEmptyString', params.sessionTokenName);
   typeCheck('apiPath::NonEmptyString', params.apiPath);
-  typeCheck('listeners::Maybe Array', params.listeners);
 
   const apiClient = {
     commitHashChangedTimestamp: null,
@@ -191,7 +178,6 @@ export default function createApiClient(params = {}) {
       apiBasePath: params.apiPath,
       appUrl: params.appUrl,
       sessionTokenName: params.sessionTokenName,
-      listeners: params.listeners,
       onCommitHashChange: () => {
         apiClient.commitHashChangedTimestamp = (
           apiClient.commitHashChangedTimestamp || Date.now()
@@ -205,7 +191,6 @@ export default function createApiClient(params = {}) {
       apiBasePath: params.apiPath,
       appUrl: params.appUrl,
       sessionTokenName: params.sessionTokenName,
-      listeners: params.listeners,
       onCommitHashChange: () => {
         apiClient.commitHashChangedTimestamp = (
           apiClient.commitHashChangedTimestamp || Date.now()
