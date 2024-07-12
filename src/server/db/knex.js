@@ -54,7 +54,7 @@ export async function postgresMigrateToLatestSchema(/* { modules } */) {
   // TODO: How to modularize modules model schemas?
   // https://chatgpt.com/share/8c0f01c7-0bd4-49a6-b538-94e85e7b55e0
   logger.info('Checking if schema migration is needed.');
-  logger.info('TODO!');
+  // TODO
   // const result = await knex.migrate.latest([dbConfig]);
   // logger.info(`Migration needed? ${result}`);
 }

@@ -1,5 +1,5 @@
 export default {
   handler() {
-    return true;
+    console.log('Health: OK!');
   },
 };

@@ -197,14 +197,10 @@ const typeCheckCustomTypes = {
     typeOf: 'Object',
     validate: (x) => !!(
         x
-        && typeof x.id === 'string'
-        && x.id
-        && typeof x.path === 'string'
-        && x.path
+        && typeof x.id === 'string' && x.id
+        && typeof x.path === 'string' && x.path
         && typeof x.handler === 'function'
-        && (!x.queueConcurrency || typeof x.queueConcurrency === 'number')
         && (!x.validate || typeof x.validate === 'function')
-        && (!x.handler || typeof x.handler === 'function')
         && (!x.roles || Array.isArray(x.roles))
     ),
   },

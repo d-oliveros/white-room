@@ -14,10 +14,6 @@ import logger from '#white-room/logger.js';
 import typeCheck from '#white-room/util/typeCheck.js';
 import trimStringValues from '#white-room/util/trimStringValues.js';
 
-const {
-  COOKIE_SECRET,
-} = process.env;
-
 const debug = logger.createDebug('api');
 
 function rejectApiRequest({ res, error, path }) {
@@ -234,7 +230,7 @@ export default function createApiServer(services, options = {}) {
 
   router.use(
     bodyParser.json(),
-    cookieParser(COOKIE_SECRET, cookiesConfig.session),
+    cookieParser(options.cookieSecret, cookiesConfig.session),
     unwrapSessionToken,
   );
 

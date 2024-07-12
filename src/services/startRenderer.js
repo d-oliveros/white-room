@@ -52,7 +52,7 @@ export const getInitialStateFromModules = (modules) => {
     }
   }
 
-  console.log('IS', initialState);
+  console.log('Initial renderer state', initialState);
   return initialState;
 };
 
@@ -60,10 +60,10 @@ export const getInitialStateFromModules = (modules) => {
  * Starts the renderer service.
  * Loads the renderer server module and begins listening on the configured port.
  */
-const startRenderer = async ({ routes, initialState, middleware, port }) => {
+const startRenderer = async ({ port, routes, initialState, middleware, config = {} }) => {
   const logger = (await import('../logger.js')).default;
   logger.info(`Starting renderer service in port: ${port}`);
-  logger.info(`React Routes: ${JSON.stringify(routes, null, 2)}`);
+  console.log(routes);
 
   const createRendererServer = (await import('../renderer/createRendererServer.js')).default;
 
@@ -71,6 +71,7 @@ const startRenderer = async ({ routes, initialState, middleware, port }) => {
     routes,
     initialState,
     middleware,
+    config,
   });
   const listen = promisify(rendererServer.listen).bind(rendererServer);
   await listen(port);

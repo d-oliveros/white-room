@@ -24,17 +24,10 @@ import serveCdnAssets from './middleware/serveCdnAssets.js';
 import errorHandler from './middleware/errorHandler.js';
 import segmentLibProxy from './middleware/segmentLibProxy.js';
 
-const {
-  ENABLE_STORYBOOK,
-  COOKIE_SECRET,
-  SEGMENT_LIB_PROXY_URL,
-} = process.env;
-
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const ROOT_DIR = path.resolve(__dirname, '..', '..');
-const cookieParser = makeCookieParser(COOKIE_SECRET, cookiesConfig.session);
 
 export function createServer({ services, sitemapGenerator, config = {} }) {
   logger.info('Creating server', config);
@@ -45,6 +38,8 @@ export function createServer({ services, sitemapGenerator, config = {} }) {
     useHelmet,
     commitHash,
     rendererEndpoint,
+    cookieSecret,
+    enableStorybook,
   } = config;
 
   const app = express();
@@ -66,13 +61,18 @@ export function createServer({ services, sitemapGenerator, config = {} }) {
   app.get('/health', (req, res) => res.sendStatus(200));
   app.get('/sitemap.xml', createSitemapController(sitemapGenerator));
   app.get('/pdf-viewer', pdfViewerController);
-  app.post('/upload-file', cookieParser, unwrapSessionToken, fileUploadsController);
+  app.post(
+    '/upload-file',
+    makeCookieParser(config.cookieSecret, cookiesConfig.session),
+    unwrapSessionToken,
+    fileUploadsController,
+  );
 
-  if (SEGMENT_LIB_PROXY_URL) {
+  if (config.segmentLibProxyUrl) {
     app.get('/sgmnt/:segmentApiKey/sgmntlib.min.js', segmentLibProxy);
   }
 
-  if (ENABLE_STORYBOOK === 'true') {
+  if (enableStorybook === 'true') {
     app.use('/storybook', express.static(path.join(ROOT_DIR, '.storybook', 'dist')));
   }
 
@@ -82,7 +82,7 @@ export function createServer({ services, sitemapGenerator, config = {} }) {
 
   // API-level middleware
   if (services.length > 0) {
-    app.use('/api/v1', createApiServer(services));
+    app.use('/api/v1', createApiServer(services, { cookieSecret }));
   }
 
   // Application-level middleware

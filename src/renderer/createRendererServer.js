@@ -11,10 +11,6 @@ import unwrapSessionToken from '#white-room/server/middleware/unwrapSessionToken
 import makeClientInitialState from '#white-room/renderer/makeClientInitialState.js';
 import renderReactApp from '#white-room/renderer/renderReactApp.js';
 
-const {
-  COOKIE_SECRET,
-} = process.env;
-
 /**
  * Renderer server.
  *
@@ -43,15 +39,20 @@ const {
  *
  * @see .env.default in the project's root for reference
  */
-const createRendererServer = ({ routes, initialState, middleware } = {}) => {
+const createRendererServer = ({ routes, initialState, middleware, config = {} } = {}) => {
   typeCheck('initialState::Maybe Object', initialState);
 
   const renderer = express();
 
   renderer.get('/health', (req, res) => res.sendStatus(200));
 
+  if (!config.cookieSecret) {
+    const error = new Error('No config.cookieSecret provided.');
+    logger.warn(error.stack);
+  }
+
   renderer.use(
-    cookieParser(COOKIE_SECRET, cookiesConfig.session),
+    cookieParser(config.cookieSecret || 'secret', cookiesConfig.session),
     unwrapSessionToken,
     makeClientInitialState({ initialState }),
   );

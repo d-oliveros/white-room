@@ -7,6 +7,7 @@ import { getSitemapGeneratorFromModules } from './server/lib/sitemapController.j
 import startServer, { getMiddlewareFromModules, getServicesFromModules } from './services/startServer.js';
 import startRenderer, { getRoutesFromModules, getInitialStateFromModules } from './services/startRenderer.js';
 import startCron, { getPeriodicFunctionsFromModules } from './services/startCron.js';
+import startQueue, { getQueueHandlersFromModules } from './services/startQueue.js';
 import startUncaughtExceptionHandler from './services/startUncaughtExceptionHandler.js';
 
 // import open from 'open';
@@ -24,12 +25,15 @@ const startServices = async ({ modules, config = {} } = {}) => {
     enableServer = false,
     enableRenderer = false,
     enableCron = false,
-    // enableQueue = false,
+    enableQueue = false,
+    queueId = 'queue',
     port = '3000',
     rendererPort = '3001',
     useHelmet = true,
     commitHash = null,
     rendererEndpoint = null,
+    cookieSecret = 'secret',
+    segmentLibProxyUrl = null,
   } = config;
 
   // THROW ERROR check modules are provided
@@ -59,6 +63,7 @@ const startServices = async ({ modules, config = {} } = {}) => {
         useHelmet,
         commitHash,
         rendererEndpoint,
+        segmentLibProxyUrl,
       },
     }));
   }
@@ -72,10 +77,13 @@ const startServices = async ({ modules, config = {} } = {}) => {
     console.log('MIDDLEWARE IS', middleware);
 
     promises.push(startRenderer({
+      port: rendererPort,
       routes,
       initialState,
       middleware,
-      port: rendererPort,
+      config: {
+        cookieSecret,
+      },
     }));
   }
 
@@ -86,6 +94,12 @@ const startServices = async ({ modules, config = {} } = {}) => {
     promises.push(startCron({
       periodicFunctions,
     }));
+  }
+
+  if (enableQueue) {
+    const queueHandlers = getQueueHandlersFromModules(modules);
+
+    promises.push(startQueue({ queueId, queueHandlers }));
   }
 
   if (promises.length === 0) {

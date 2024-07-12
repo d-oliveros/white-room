@@ -1,22 +1,36 @@
-import { createClient } from 'redis';
+import Redis from 'ioredis';
 import { v4 as uuidv4 } from 'uuid';
-
 import dbConfig from '#white-room/config/database.js';
 import logger from '#white-room/logger.js';
 
-const redisUrl = `redis://${dbConfig.redis.host}:${dbConfig.redis.port}`;
-const redis = createClient({ url: redisUrl });
+// Create Redis client using connection details from database configuration
+const redis = new Redis({
+  host: dbConfig.redis.host,
+  port: dbConfig.redis.port,
+  db: dbConfig.redis.db,
+  maxRetriesPerRequest: null,
+});
 
-redis.on('error', (error) => {
-  logger.error('Redis connection error:', error);
+redis.on('connect', () => {
+  logger.info('[redis] Connected to Redis');
+});
+
+redis.on('error', (redisError) => {
+  const error = new Error('Redis connection error', { cause: redisError });
+  error.name = redisError.name;
+  logger.error(error);
 });
 
 const redisLeaderKey = 'app-redis-leader';
-const ttlSeconds = 8;
+const ttlSeconds = 3;
 
+// Unique identifier for this instance and initial leadership status
 redis.leaderId = uuidv4();
 redis.isLeader = false;
 
+/**
+ * Renews the leadership of the current instance by extending the TTL
+ */
 redis.renewLeadership = async () => {
   try {
     const currentLeaderId = await redis.get(redisLeaderKey);
@@ -24,42 +38,48 @@ redis.renewLeadership = async () => {
       // Renew leadership if still the leader
       await redis.expire(redisLeaderKey, ttlSeconds); // Extend the TTL in seconds
       setTimeout(redis.renewLeadership, (ttlSeconds * 1000) / 2); // Schedule next renewal at half TTL
-    } else {
+    }
+    else {
+      logger.info(`Instance ${redis.leaderId} is no longer the leader`);
       redis.isLeader = false;
     }
-  } catch (error) {
-    logger.error(`Redis Error during renewLeadership: ${error.message} ${error.stack}`);
+  } catch (redisError) {
+    const error = new Error(`Redis Error during renewLeadership: ${redisError.message}`, { cause: redisError });
+    logger.error(error);
   }
 };
 
+/**
+ * Claims leadership by setting the leader key in Redis with a TTL
+ */
 redis.claimLeadership = async () => {
   try {
-    const result = await redis.set(redisLeaderKey, redis.leaderId, {
-      NX: true,
-      PX: ttlSeconds * 1000 // Set TTL in milliseconds for `set`
-    });
+    const result = await redis.set(redisLeaderKey, redis.leaderId, 'PX', ttlSeconds * 1000, 'NX');
 
     if (result) {
-      // Successfully acquired leadership
+      // If successfully set the key, the current instance becomes the leader
+      logger.info(`[redis] Instance ${redis.leaderId} has become the leader`);
       redis.isLeader = true;
       setTimeout(redis.renewLeadership, (ttlSeconds * 1000) / 2); // Schedule first renewal at half TTL
-    } else {
-      redis.isLeader = false;
     }
   } catch (error) {
     logger.error(`Redis Error during claimLeadership: ${error.message} ${error.stack}`);
   }
 };
 
+/**
+ * Initializes the interval to claim leadership periodically
+ */
 redis.initClaimLeadershipInterval = async () => {
+  logger.info('[redis] Initializing leadership claim interval');
   await redis.claimLeadership();
   return setInterval(redis.claimLeadership, ttlSeconds * 1000); // Repeat claiming every TTL seconds
 };
 
-redis.connect().then(async () => {
+// The `ioredis` client automatically connects upon instantiation, so no need to call `connect()`
+redis.on('ready', async () => {
+  logger.info(`[redis] Redis client is ready: ${redis.leaderId}`);
   redis.claimLeadershipInterval = await redis.initClaimLeadershipInterval();
-}).catch((error) => {
-  logger.error('Redis connection error:', error);
 });
 
 export default redis;

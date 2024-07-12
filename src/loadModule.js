@@ -49,16 +49,17 @@ const moduleSkeleton = {
     routes: [],
     initialState: null,
   },
-  crontab: {},
   middleware: null,
   service: [],
   models: {},
+  crontab: {},
 };
 
 const loadModule = async (moduleDir) => {
-  logger.info(`[loadModule] Loading module: ${moduleDir}`);
+  const moduleName = basename(moduleDir);
 
-  // const moduleName = basename(moduleDir);
+  logger.info(`[loadModule] Loading "${moduleName}" module: ${moduleDir}`);
+
   const module = cloneDeep(moduleSkeleton);
 
   const entries = await readdir(moduleDir, { withFileTypes: true });
@@ -70,7 +71,9 @@ const loadModule = async (moduleDir) => {
     if (entry.isDirectory()) {
       if (entry.name === 'service') {
         const promise = importServiceModule(filePath)
-          .then(serviceModules => module.service.push(...serviceModules));
+          .then((moduleServices) => {
+            module.service.push(...moduleServices);
+          });
 
         promises.push(promise);
       }
@@ -119,9 +122,13 @@ const loadModule = async (moduleDir) => {
     throw new AggregateError(errors, 'One or more modules failed to load');
   }
 
-  // Check if the module is empty and return null if it is
-  const isEmptyModule = isEqual(module, moduleSkeleton);
-  return isEmptyModule ? null : module;
+  if (isEqual(module, moduleSkeleton)) {
+    return null;
+  }
+
+  module.name = moduleName;
+
+  return module;
 };
 
 export default loadModule;

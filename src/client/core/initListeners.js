@@ -6,6 +6,7 @@ const initListeners = ({ listeners, apiClient, store } = {}) => {
   const dispatch = makeDispatchFn({ state: store, apiClient });
 
   for (const { serviceId, action, event } of Object.keys(listeners)) {
+    console.log(`Attaching event listener: ${serviceId} ${event}`)
     store.on(`apiClient:${event}:${serviceId}`, async ({ requestPayload } = {}) => {
       dispatch(action, requestPayload);
     });

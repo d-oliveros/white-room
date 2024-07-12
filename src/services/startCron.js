@@ -1,16 +1,30 @@
 import lodashValues from 'lodash/fp/values.js';
 
+const transformCrontab = (crontab) => {
+  const transformed = {};
+
+  for (const key in crontab) {
+    if (Object.prototype.hasOwnProperty.call(crontab, key)) {
+      const newKey = key.replace('.service', '');
+      transformed[newKey] = crontab[key];
+    }
+  }
+
+  return transformed;
+}
+
 export const getPeriodicFunctionsFromModules = (modules) => {
   const periodicFunctions = [];
 
   lodashValues(modules).forEach(({ service, crontab }) => {
     if (service && crontab) {
+      const _crontab = transformCrontab(crontab);
       service.forEach(({ id, handler }) => {
-        if (crontab[id]) {
+        if (_crontab[id]) {
           periodicFunctions.push({
             serviceId: id,
-            service: handler,
-            crontab: crontab[id],
+            handler: handler,
+            crontab: _crontab[id],
           });
         }
       });
@@ -26,7 +40,9 @@ export const getPeriodicFunctionsFromModules = (modules) => {
  */
 const startCron = async ({ periodicFunctions }) => {
   const logger = (await import(`../logger.js`)).default;
-  logger.info('Starting cron service.');
+  logger.info('Starting cron service');
+
+  console.log(periodicFunctions);
 
   const { initCronJobs } = await import(`../server/cron/cron.js`);
   initCronJobs({ periodicFunctions });

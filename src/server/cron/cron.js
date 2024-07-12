@@ -1,5 +1,6 @@
 import { serializeError } from 'serialize-error';
 import cron from 'node-cron';
+import lodashMemoize from 'lodash/fp/memoize.js';
 
 import logger from '../../logger.js';
 import redis from '../db/redis.js';
@@ -16,19 +17,14 @@ const {
 } = process.env;
 
 /**
- * Wrapper for a cron fn's handler. Runs the cron fn and posts success/failure notifications.
+ * Runs the cron fn and posts success/failure notifications.
  *
  * @param  {string} serviceId                Cron fn name.
  * @param  {string} onlyReportErrorsOverride Overrides the onlyReportErrors config param.
  * @param  {string} crontab                  Cron tab.
  * @return {Function}
  */
-export function runPeriodicService({ service, config = {} }) {
-  const {
-    id: serviceId,
-    handler,
-  } = service;
-
+export async function runPeriodicService({ serviceId, handler, config = {} }) {
   const {
     onlyReportErrors = false,
     slackChannel = null,
@@ -36,90 +32,87 @@ export function runPeriodicService({ service, config = {} }) {
     timeoutMs,
   } = config;
 
-  return async () => {
-    let now;
+  const now = Date.now();
 
-    if (!redis?.isLeader) {
-      // Not the leader, skip execution
-      return;
+  if (!redis?.isLeader) {
+    // Not the leader, skip execution
+    console.log('Not redis leader.');
+    return;
+  }
+
+  try {
+    if (!onlyReportErrors) {
+      logger.info(`[cron:${serviceId}] Running.`);
     }
+    const result = await new Promise((resolve, reject) => {
+      let isResolved = false;
 
-    try {
-      if (!onlyReportErrors) {
-        logger.info(`[cron:${serviceId}] Running.`);
+      if (timeoutMs) {
+        setTimeout(() => {
+          if (!isResolved) {
+            isResolved = true;
+            const error = new Error(`Cron function timeout after ${timeoutMs} ms: ${serviceId}`);
+            error.name = 'CronTaskTimeoutError';
+            error.details = { serviceId, timeoutMs };
+            reject(error);
+          }
+        }, timeoutMs);
       }
-      now = Date.now();
 
-      const result = await new Promise((resolve, reject) => {
-        let isResolved = false;
+      Promise.resolve(handler())
+        .then((result) => {
+          if (!isResolved) {
+            isResolved = true;
+            resolve(result);
+          }
+        })
+        .catch((error) => {
+          if (!isResolved) {
+            isResolved = true;
+            reject(error);
+          }
+        });
+    });
 
-        if (timeoutMs) {
-          setTimeout(() => {
-            if (!isResolved) {
-              isResolved = true;
-              const error = new Error(`Cron function timeout after ${timeoutMs} ms: ${serviceId}`);
-              error.name = 'CronTaskTimeoutError';
-              error.details = { serviceId, timeoutMs };
-              reject(error);
-            }
-          }, timeoutMs);
-        }
+    if (!onlyReportErrors) {
+      logger.info(
+        `[cron:${serviceId}] Success after ${((Date.now() - now) / 1000).toFixed(2)} seconds.` +
+        (result ? `\nMessage: ${JSON.stringify(result, null, 2)}` : '')
+      );
+    }
+  } catch (error) {
+    const cronError = new Error(`[cron:${serviceId}] Error: ${error.message}`, { cause: error });
+    cronError.stack = error.stack;
+    cronError.details = { serviceId };
+    logger.error(cronError);
+    const errorSlackMessageAttachments = [
+      {
+        fallback: `Failure: "${serviceId}"`,
+        title: `Failure: "${serviceId}"`,
+        color: '#ff0000',
+        text: (
+          `Failure after ${((Date.now() - now) / 1000).toFixed(2)} seconds.\n` +
+          `Error: ${JSON.stringify(serializeError(error), null, 2)}`
+        ),
+      },
+    ];
 
-        Promise.resolve(handler())
-          .then((result) => {
-            if (!isResolved) {
-              isResolved = true;
-              resolve(result);
-            }
-          })
-          .catch((error) => {
-            if (!isResolved) {
-              isResolved = true;
-              reject(error);
-            }
-          });
+    if (slackChannel) {
+      await postSlackMessage({
+        channel: slackChannel,
+        identity: SLACK_IDENTITY_CRON,
+        attachments: errorSlackMessageAttachments,
       });
-
-      if (!onlyReportErrors) {
-        logger.info(
-          `[cron:${serviceId}] Success after ${((Date.now() - now) / 1000).toFixed(2)} seconds.` +
-          (result ? `\nMessage: ${JSON.stringify(result, null, 2)}` : '')
-        );
-      }
-    } catch (error) {
-      const cronError = new Error(`[cron:${serviceId}] Error: ${error.message}`, { cause: error });
-      cronError.stack = error.stack;
-      cronError.details = { serviceId };
-      logger.error(cronError);
-      const errorSlackMessageAttachments = [
-        {
-          fallback: `Failure: "${serviceId}"`,
-          title: `Failure: "${serviceId}"`,
-          color: '#ff0000',
-          text: (
-            `Failure after ${((Date.now() - now) / 1000).toFixed(2)} seconds.\n` +
-            `Error: ${JSON.stringify(serializeError(error), null, 2)}`
-          ),
-        },
-      ];
-
-      if (slackChannel) {
-        await postSlackMessage({
-          channel: slackChannel,
-          identity: SLACK_IDENTITY_CRON,
-          attachments: errorSlackMessageAttachments,
-        });
-      }
-
-      if (errorSlackChannel) {
-        await postSlackMessage({
-          channel: errorSlackChannel,
-          identity: SLACK_IDENTITY_CRON,
-          attachments: errorSlackMessageAttachments,
-        });
-      }
     }
-  };
+
+    if (errorSlackChannel) {
+      await postSlackMessage({
+        channel: errorSlackChannel,
+        identity: SLACK_IDENTITY_CRON,
+        attachments: errorSlackMessageAttachments,
+      });
+    }
+  }
 }
 
 /**
@@ -137,29 +130,28 @@ const isCronJobWhitelisted = (serviceId) => {
   return false;
 };
 
-let cronJobsLoaded = false;
-
 /**
  * Starts the cron jobs.
  */
-export const initCronJobs = async ({ periodicFunctions }) => {
-  if (cronJobsLoaded) return true;
-
+export const initCronJobs = lodashMemoize(async ({ periodicFunctions }) => {
   if (!periodicFunctions || !Array.isArray(periodicFunctions)) {
     throw new Error('Periodic functions must be provided as an array');
   }
 
-  logger.info('[cron] Initializing cron jobs with the following periodic functions:', periodicFunctions);
+  logger.info(
+    '[cron] Initializing cron jobs with the following periodic functions:',
+    periodicFunctions.map(({ serviceId, crontab }) => `${serviceId}:${crontab}`),
+  );
 
-  for (const { serviceId, service, crontab } of periodicFunctions) {
-    if (!service) {
+  for (const { serviceId, handler, crontab } of periodicFunctions) {
+    if (!handler) {
       logger.warn(`[cron] Warning: Service handler for ${serviceId} was not found.`);
       continue;
     }
 
     if (isCronJobWhitelisted(serviceId)) {
       try {
-        cron.schedule(crontab, () => runPeriodicService({ serviceId, service }), {
+        cron.schedule(crontab, () => runPeriodicService({ serviceId, handler }), {
           scheduled: true,
           timezone: TZ,
         });
@@ -174,8 +166,11 @@ export const initCronJobs = async ({ periodicFunctions }) => {
     }
   }
 
-  cronJobsLoaded = true;
+  let cronJobsDisabled = false;
 
-  // TODO: Return interface to stop cron jobs.
-  return true;
-};
+  return () => {
+    if (cronJobsDisabled) return;
+    // TODO disable cron jobs;
+    cronJobsDisabled = true;
+  };
+});

@@ -1,3 +1,5 @@
+const User = {};
+
 export const summaryFieldgroup = [
   'id',
   'name',
@@ -10,7 +12,4 @@ export const loginFieldgroup = [
   'password',
 ];
 
-export default {
-  summaryFieldgroup,
-  loginFieldgroup,
-};
+export default User;
