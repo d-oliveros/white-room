@@ -1,6 +1,6 @@
 import {
   hasRoleAdmin,
-} from '#user/constants/userRoles.js';
+} from '#user/constants/roles.js';
 
 export default function getUserLandingPage(user) {
   let landingPage = '/';

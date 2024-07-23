@@ -3,7 +3,7 @@ import { Navigate } from 'react-router-dom';
 
 import {
   hasRoleAnonymous,
-} from '#user/constants/userRoles.js';
+} from '#user/constants/roles.js';
 
 import getUserLandingPage from '#auth/view/helpers/getUserLandingPage.js';
 import useApiState from '#white-room/client/hooks/useApiState.jsx';

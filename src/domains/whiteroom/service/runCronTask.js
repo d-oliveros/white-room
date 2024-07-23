@@ -3,8 +3,8 @@ import typeCheck from '#white-room/util/typeCheck.js';
 import { runPeriodicService } from '#white-room/server/cron/cron.js';
 
 import {
-  USER_ROLE_ADMIN,
-} from '#user/constants/userRoles.js';
+  ROLE_ADMIN,
+} from '#user/constants/roles.js';
 
 import {
   postSlackMessage,
@@ -12,7 +12,7 @@ import {
 
 export default {
   roles: [
-    USER_ROLE_ADMIN,
+    ROLE_ADMIN,
   ],
   validate: ({ serviceId }) => {
     typeCheck('serviceId::NonEmptyString', serviceId);

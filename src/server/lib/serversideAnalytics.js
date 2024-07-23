@@ -5,9 +5,9 @@ import { v4 as uuidv4 } from 'uuid';
 import logger from '#white-room/logger.js';
 import typeCheck from '#white-room/util/typeCheck.js';
 import {
-  USER_ROLE_ANONYMOUS,
+  ROLE_ANONYMOUS,
   hasRoleAnonymous,
-} from '#user/constants/userRoles.js';
+} from '#user/constants/roles.js';
 
 import {
   transformUserDataToSegmentIdentifyTraits,
@@ -21,7 +21,7 @@ const debug = logger.createDebug('analytics:serversideAnalytics');
 
 const anonymousUser = {
   roles: [
-    USER_ROLE_ANONYMOUS,
+    ROLE_ANONYMOUS,
   ],
 };
 

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { USER_ROLE_ANONYMOUS } from '#user/constants/userRoles.js';
+import { ROLE_ANONYMOUS } from '#user/constants/roles.js';
 
 import log from '#white-room/client/lib/log.js';
 import useBranch from '#white-room/client/hooks/useBranch.js';
@@ -17,7 +17,7 @@ import Link from '#base/view/components/Link/Link.jsx';
 const ResetPasswordVerifyCodePage = () => {
   useAllowedRoles({
     roles: [
-      USER_ROLE_ANONYMOUS,
+      ROLE_ANONYMOUS,
     ],
     redirectUrl: '/',
   });

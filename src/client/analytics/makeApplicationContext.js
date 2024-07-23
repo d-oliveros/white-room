@@ -4,7 +4,7 @@ import url from 'url';
 import {
   hasRoleAnonymous,
   hasRoleAdmin,
-} from '#user/constants/userRoles.js';
+} from '#user/constants/roles.js';
 
 import isUserAgentMobileApp, {
   isUserAgentIphoneApp,

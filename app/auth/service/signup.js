@@ -3,7 +3,7 @@ import lodashPick from 'lodash/fp/pick.js';
 
 import * as cookiesConfig from '#white-room/config/cookies.js';
 import logger from '#white-room/logger.js';
-import { USER_ROLE_USER } from '#user/constants/userRoles.js';
+import { ROLE_USER } from '#user/constants/roles.js';
 import typeCheck from '#white-room/util/typeCheck.js';
 
 import User from '#user/model/userRepository.js';
@@ -25,7 +25,7 @@ export default {
         : undefined,
       signupProvider: 'email',
       roles: [
-        USER_ROLE_USER,
+        ROLE_USER,
       ],
       lastVisitAt: new Date().toISOString(),
     };

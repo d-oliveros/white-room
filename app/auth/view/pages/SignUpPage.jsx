@@ -1,7 +1,7 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
 
-import { hasRoleAnonymous } from '#user/constants/userRoles.js';
+import { hasRoleAnonymous } from '#user/constants/roles.js';
 
 import useBranch from '#white-room/client/hooks/useBranch.js';
 import useDispatch from '#white-room/client/hooks/useDispatch.js';

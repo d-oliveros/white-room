@@ -6,7 +6,7 @@ import { useLocation, Routes, Route } from 'react-router-dom';
 import parseQueryString from '#white-room/util/parseQueryString.js';
 import isUserAgentMobileApp, { isUserAgentIphoneApp } from '#white-room/util/isUserAgentMobileApp.js';
 
-import { hasRoleAnonymous } from '#user/constants/userRoles.js';
+import { hasRoleAnonymous } from '#user/constants/roles.js';
 
 import sendDataToMobileApp, {
   MOBILE_APP_ACTION_TYPE_ROUTE_CHANGED,
