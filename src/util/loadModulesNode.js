@@ -12,35 +12,42 @@ const INDEX_REGEX = /index\.js$/;
  * @param {string} [ignoreFile] - A file to ignore during the scan.
  * @returns {Promise<object>} - An object containing all imported modules.
  */
-export default async function loadModulesNode(directory, ignoreFile) {
+export default async function loadModulesNode(directory) {
   const modules = {};
 
   if (directory.startsWith('file://')) {
     directory = dirname(directory.replace('file://', ''));
   }
 
-  const files = await readdir(directory);
+  try {
+    const files = await readdir(directory);
 
-  for (const file of files) {
-    const filePath = resolve(directory, file);
-    const moduleName = file.replace(EXTENSION_REGEX, '');
+    for (const file of files) {
+      const filePath = resolve(directory, file);
+      const moduleName = file.replace(EXTENSION_REGEX, '');
 
 
-    if ((ignoreFile && filePath === ignoreFile) || INDEX_REGEX.test(filePath)) {
-      continue;
+      if (INDEX_REGEX.test(filePath)) {
+        continue;
+      }
+
+      const fileStat = await stat(filePath);
+
+      if (EXTENSION_REGEX.test(extname(file))) {
+        modules[moduleName] = await import(filePath);
+        modules[moduleName] = modules[moduleName].default || modules[moduleName];
+      }
+      else if (fileStat.isDirectory()) {
+        modules[moduleName] = await loadModulesNode(filePath);
+      }
     }
 
-    const fileStat = await stat(filePath);
-
-    if (EXTENSION_REGEX.test(extname(file))) {
-      modules[moduleName] = await import(filePath);
-      modules[moduleName] = modules[moduleName].default || modules[moduleName];
-    }
-    else if (fileStat.isDirectory()) {
-      modules[moduleName] = await loadModulesNode(filePath, ignoreFile);
-    }
+    return modules;
   }
-
-
-  return modules;
+  catch (error) {
+    if (error.code !== 'ENOENT') {
+      console.error(error);
+    }
+    return null;
+  }
 }

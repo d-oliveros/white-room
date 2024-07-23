@@ -2,7 +2,8 @@ import { dirname } from 'path';
 import { fileURLToPath } from 'url';
 import startServices from '#white-room/startServices.js';
 import loadModules from '#white-room/loadModules.js';
-console.log('HERE');
+import runMigrations from '#white-room/server/db/runMigrations.js';
+
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const {
@@ -13,7 +14,7 @@ const {
   QUEUE_ID,
   RENDERER_PORT,
   RENDERER_ENDPOINT,
-  ENABLE_KNEX_MIGRATIONS,
+  AUTORUN_MIGRATIONS,
   ENABLE_SERVER,
   ENABLE_RENDERER,
   ENABLE_CRON,
@@ -21,8 +22,36 @@ const {
   ENABLE_STORYBOOK,
 } = process.env;
 
-const init = async ({ modulesDir, config }) => {
+// Configuration interface
+interface Config {
+  useHelmet: boolean;
+  segmentLibProxyUrl?: string;
+  commitHash?: string;
+  port?: string;
+  rendererPort?: string;
+  rendererEndpoint?: string;
+  queueId?: string;
+  enableServer: boolean;
+  enableRenderer: boolean;
+  enableCron: boolean;
+  enableQueue: boolean;
+  enableStorybook: boolean;
+}
+
+// Function argument interface
+interface InitArgs {
+  modulesDir: string;
+  config: Config;
+}
+
+// Initialize function
+const init = async ({ modulesDir, config }: InitArgs) => {
   const modules = await loadModules(modulesDir);
+
+  if (AUTORUN_MIGRATIONS === 'true') {
+    const { dataSource } = await import('./data-source.js');
+    await runMigrations(dataSource);
+  }
 
   return startServices({
     modules,
@@ -30,6 +59,7 @@ const init = async ({ modulesDir, config }) => {
   });
 };
 
+// Initialize with environment variables and __dirname
 init({
   modulesDir: __dirname,
   config: {
@@ -40,7 +70,6 @@ init({
     rendererPort: RENDERER_PORT,
     rendererEndpoint: RENDERER_ENDPOINT,
     queueId: QUEUE_ID,
-    enableKnexMigrations: ENABLE_KNEX_MIGRATIONS === 'true',
     enableServer: ENABLE_SERVER === 'true',
     enableRenderer: ENABLE_RENDERER === 'true',
     enableCron: ENABLE_CRON === 'true',

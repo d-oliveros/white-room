@@ -1,3 +1,6 @@
+import { globSync } from 'glob';
+import path from 'path';
+
 const {
   POSTGRES_HOST = '127.0.0.1',
   POSTGRES_PORT = '5432',
@@ -22,11 +25,9 @@ const config = {
       charset: 'utf8',
     },
     seeds: NODE_ENV === 'production' ? null : {
-      directory: './migrations/seeds',
-    },
-    migrations: {
-      directory: '...all dirs here...',
-      stub: './config/migrations.stub',
+      directory: globSync('./app/**/*.seed.js')
+        .map((filepath) => path.dirname(filepath))
+        .reduce((memo, dir) => memo.includes(dir) ? memo : [ ...memo, dir ], []),
     },
   },
   redis: {
