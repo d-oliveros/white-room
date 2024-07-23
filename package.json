@@ -9,7 +9,7 @@
   "scripts": {
     "start": "npm run dev",
     "dev": "run-p dev-node dev-webpack",
-    "dev-node": "clear && node --watch-path=./src --env-file=.env --env-file=.env.default --import 'data:text/javascript,import { register } from \"node:module\"; import { pathToFileURL } from \"node:url\"; register(\"./babel-esm-loader.js\", pathToFileURL(\"./\"));' app/init",
+    "dev-node": "clear && node --watch-path=./src --env-file=.env --env-file=.env.default --import 'data:text/javascript,import { register } from \"node:module\"; import { pathToFileURL } from \"node:url\"; register(\"ts-node/esm\", pathToFileURL(\"./\")); register(\"./babel-esm-loader.js\", pathToFileURL(\"./\")); ' app/init.ts",
     "dev-webpack": "clear && dotenv -e .env -e .env.default webpack serve",
     "dev-debug": "cross-env DEBUG=white-room* npm run dev",
     "build": "run-p build-babel build-webpack build-storybook",
@@ -41,7 +41,9 @@
     "cypress:open": "cypress open --e2e --browser electron",
     "cypress:test": "cypress run",
     "prepush": "npm run lint",
-    "storybook": "start-storybook -s ./public -p 6006"
+    "storybook": "start-storybook -s ./public -p 6006",
+    "type-check": "tsc --noEmit",
+    "precommit": "npm run type-check"
   },
   "dependencies": {
     "@aws-sdk/client-lambda": "^3.608.0",
@@ -121,6 +123,7 @@
     "@storybook/addon-essentials": "^8.1.11",
     "@storybook/addon-links": "^8.1.11",
     "@storybook/react": "^8.1.11",
+    "@types/node": "^20.14.11",
     "autoprefixer": "^10.4.19",
     "babel-loader": "^9.1.3",
     "chai": "^5.1.1",
@@ -144,18 +147,24 @@
     "json-loader": "^0.5.7",
     "less": "^4.2.0",
     "less-loader": "^12.2.0",
+    "lint-staged": "^15.2.7",
     "mini-css-extract-plugin": "^2.9.0",
     "mocha": "^10.5.2",
     "node-libs-browser": "^2.2.1",
     "node-polyfill-webpack-plugin": "^4.0.0",
+    "nodemon": "^3.1.4",
     "npm-run-all": "^4.1.5",
     "postcss-less": "^6.0.0",
     "postcss-loader": "^8.1.1",
     "react-refresh": "^0.14.2",
+    "reflect-metadata": "^0.2.2",
     "sinon": "^18.0.0",
     "style-loader": "^4.0.0",
     "supertest": "^7.0.0",
     "terser-webpack-plugin": "^5.3.10",
+    "ts-node": "^10.9.2",
+    "typeorm": "^0.3.20",
+    "typescript": "^5.5.4",
     "url-loader": "^4.1.1",
     "webpack": "^5.92.1",
     "webpack-bundle-analyzer": "^4.10.2",
@@ -186,5 +195,11 @@
     "#base/*": "./app/base/*",
     "#user/*": "./app/user/*",
     "#white-room/*": "./src/*"
+  },
+  "lint-staged": {
+    "*.ts": [
+      "npm run type-check",
+      "git add"
+    ]
   }
 }
