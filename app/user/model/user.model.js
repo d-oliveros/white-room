@@ -1,6 +1,4 @@
-import { EntitySchema } from 'typeorm';
-
-const User = new EntitySchema({
+const UserModel = {
   name: 'User',
   tableName: 'users',
   columns: {
@@ -30,6 +28,25 @@ const User = new EntitySchema({
     { columns: ['slug'] },
     { columns: ['createdAt'] },
   ],
-});
+};
 
-export default User;
+export const summaryFieldgroup = [
+  'id',
+  'firstName',
+  'lastName',
+  'email',
+  'slug',
+  'roles',
+  'lastVisitAt',
+  'phone',
+  'createdAt',
+  'sessionCount',
+  'shouldRefreshRoles',
+];
+
+export const loginFieldgroup = [
+  'id',
+  'password',
+];
+
+export default UserModel;

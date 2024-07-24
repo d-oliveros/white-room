@@ -5,7 +5,7 @@ import {
   ROLE_USER,
 } from '#user/constants/roles.js';
 
-import User from '#user/model/userRepository.js';
+import User, { summaryFieldgroup } from '#user/model/user.js';
 
 export default {
   roles: [
@@ -22,7 +22,7 @@ export default {
     const [updatedUser] = await User
       .update(userUpdates)
       .where({ id: userId })
-      .returning(User.fieldgroups.summary);
+      .returning(summaryFieldgroup);
 
     return updatedUser;
   },

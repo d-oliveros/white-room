@@ -74,6 +74,7 @@ if (process.browser) {
     sessionTokenName: 'X-Session-Token',
   });
 
+  // TODO: Dynamic listeners loading!
   initListeners({
     listeners: userListeners,
     store,

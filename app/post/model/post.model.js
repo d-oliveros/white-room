@@ -1,6 +1,4 @@
-import { EntitySchema } from 'typeorm';
-
-const Post = new EntitySchema({
+const PostModel = {
   name: 'Post',
   tableName: 'posts',
   columns: {
@@ -36,6 +34,6 @@ const Post = new EntitySchema({
       nullable: true,
     },
   },
-});
+};
 
-export default Post;
+export default PostModel;

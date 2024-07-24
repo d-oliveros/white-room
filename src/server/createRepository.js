@@ -1,16 +1,7 @@
-import { dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
-
-import loadModulesNode from '#white-room/util/loadModulesNode.js';
 import knex from '#white-room/server/db/knex.js';
 
-const createRepository = async (tableName, fileURL) => {
-  const __filename = fileURLToPath(fileURL);
-  const __dirname = dirname(__filename);
-
-  const modules = await loadModulesNode(`${__dirname}/methods`);
-
-  const repository = new Proxy(modules || {}, {
+const createRepository = async (tableName, methods) => {
+  const repository = new Proxy(methods || {}, {
     get(target, name) {
       if (name in target) {
         return target[name];
