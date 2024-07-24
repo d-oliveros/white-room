@@ -4,7 +4,7 @@ import {
 
 import {
   hasRoleAnonymous,
-} from '#user/constants/userRoles.js';
+} from '#user/constants/roles.js';
 
 export default async function askForPushNotifications({ state }) {
   const currentUser = state.get(['currentUser']);

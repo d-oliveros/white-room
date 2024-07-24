@@ -1,4 +1,4 @@
-import glob from 'glob';
+import { globSync } from 'glob';
 import pathModule from 'path';
 
 const regexSource = /\*.jsx?$/;
@@ -57,7 +57,7 @@ export default function babelPluginTransformGlobImports({ types: t }) {
         body.forEach((node, index) => {
           if (node.type === 'ImportDeclaration' && regexSource.test(node.source.value)) {
             const source = node.source.value;
-            const files = glob.sync(source, { cwd: basePath })
+            const files = globSync(source, { cwd: basePath })
               .filter((file) => /\.jsx?$/.test(file) && !/index\.jsx?$/.test(file));
 
             if (files.length > 0) {

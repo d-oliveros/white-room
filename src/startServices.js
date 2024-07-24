@@ -1,7 +1,6 @@
 import logger from './logger.js';
 import removeEmpty from './util/removeEmpty.js';
 
-import { postgresMigrateToLatestSchema } from './server/db/knex.js';
 import { getSitemapGeneratorFromModules } from './server/lib/sitemapController.js';
 
 import startServer, { getMiddlewareFromModules, getServicesFromModules } from './services/startServer.js';
@@ -21,7 +20,6 @@ const startServices = async ({ modules, config = {} } = {}) => {
   logger.info(`Modules: ${JSON.stringify(removeEmpty(modules), null, 2)}`);
 
   const {
-    enableKnexMigrations = false,
     enableServer = false,
     enableRenderer = false,
     enableCron = false,
@@ -41,14 +39,6 @@ const startServices = async ({ modules, config = {} } = {}) => {
   startUncaughtExceptionHandler();
 
   const promises = [];
-
-  // Run the latest Knex migrations on startup
-  if (enableKnexMigrations) {
-    if (!postgresMigrateToLatestSchema) {
-      // THROW ERROR about postgresMigrateToLatestSchema not provided!
-    }
-    promises.push(postgresMigrateToLatestSchema({ modules }));
-  }
 
   // Start the API server
   if (enableServer) {

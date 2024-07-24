@@ -2,8 +2,8 @@ import assert from 'assert';
 import lodashGet from 'lodash/fp/get.js';
 
 import {
-  USER_ROLE_ANONYMOUS,
-} from '#user/constants/userRoles.js';
+  ROLE_ANONYMOUS,
+} from '#user/constants/roles.js';
 
 import log from '#white-room/client/lib/log.js';
 import makeApplicationContext from '#white-room/client/analytics/makeApplicationContext.js';
@@ -83,7 +83,7 @@ function makeCommonEventParams(state, navigationContext, integrations) {
     eventParams.integrations = integrations;
   }
 
-  if (user.roles.includes(USER_ROLE_ANONYMOUS)) {
+  if (user.roles.includes(ROLE_ANONYMOUS)) {
     eventParams.anonymousId = analyticsSessionId;
   }
   else if (user.id) {
@@ -170,7 +170,7 @@ export default {
     const state = this.store.get();
     const user = state.currentUser;
     const userId = makeUserId(state);
-    const isAnonymous = user.roles.includes(USER_ROLE_ANONYMOUS);
+    const isAnonymous = user.roles.includes(ROLE_ANONYMOUS);
     const navigationContext = extractNavigationContextFromWindow(this._window);
     const segmentTraits = isAnonymous
       ? null

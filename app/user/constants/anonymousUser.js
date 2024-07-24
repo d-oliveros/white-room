@@ -1,8 +1,8 @@
-import { USER_ROLE_ANONYMOUS } from '#user/constants/userRoles.js';
+import { ROLE_ANONYMOUS } from '#user/constants/roles.js';
 
 export default {
   roles: [
-    USER_ROLE_ANONYMOUS,
+    ROLE_ANONYMOUS,
   ],
   sessionCount: 1,
 };

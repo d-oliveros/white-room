@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import parseQueryString from '#white-room/util/parseQueryString.js';
-import { hasRoleAnonymous } from '#user/constants/userRoles.js';
+import { hasRoleAnonymous } from '#user/constants/roles.js';
 
 import Logo from '#base/view/components/Logo/Logo.jsx';
 

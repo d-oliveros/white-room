@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-import { USER_ROLE_ANONYMOUS } from '#user/constants/userRoles.js';
+import { ROLE_ANONYMOUS } from '#user/constants/roles.js';
 
 import log from '#white-room/client/lib/log.js';
 import useAllowedRoles from '#white-room/client/hooks/useAllowedRoles.jsx';
@@ -19,7 +19,7 @@ import ErrorMessage from '#base/view/components/ErrorMessage/ErrorMessage.jsx';
 const ResetPasswordPage = () => {
   useAllowedRoles({
     roles: [
-      USER_ROLE_ANONYMOUS,
+      ROLE_ANONYMOUS,
     ],
     redirectUrl: '/',
   });

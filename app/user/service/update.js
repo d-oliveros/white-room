@@ -1,16 +1,16 @@
 import typeCheck from '#white-room/util/typeCheck.js';
 
 import {
-  USER_ROLE_ADMIN,
-  USER_ROLE_USER,
-} from '#user/constants/userRoles.js';
+  ROLE_ADMIN,
+  ROLE_USER,
+} from '#user/constants/roles.js';
 
 import User from '#user/model/userRepository.js';
 
 export default {
   roles: [
-    USER_ROLE_ADMIN,
-    USER_ROLE_USER,
+    ROLE_ADMIN,
+    ROLE_USER,
   ],
   validate({ userUpdates }) {
     typeCheck('userUpdates::NonEmptyObject', userUpdates);

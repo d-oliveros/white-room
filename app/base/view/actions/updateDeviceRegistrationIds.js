@@ -1,11 +1,11 @@
-import { USER_ROLE_ANONYMOUS } from '#user/constants/userRoles.js';
+import { ROLE_ANONYMOUS } from '#user/constants/roles.js';
 
 export default async function updateDeviceRegistrationIds(
   { state, apiClient },
   { newDeviceRegistrationId, oldDeviceRegistrationId }
 ) {
   const userRoles = state.get(['currentUser', 'roles']);
-  const isAnonymous = userRoles.includes(USER_ROLE_ANONYMOUS);
+  const isAnonymous = userRoles.includes(ROLE_ANONYMOUS);
 
   if (!isAnonymous) {
     await apiClient.postWithState({

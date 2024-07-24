@@ -10,7 +10,7 @@ const createRepository = async (tableName, fileURL) => {
 
   const modules = await loadModulesNode(`${__dirname}/methods`);
 
-  const repository = new Proxy(modules, {
+  const repository = new Proxy(modules || {}, {
     get(target, name) {
       if (name in target) {
         return target[name];

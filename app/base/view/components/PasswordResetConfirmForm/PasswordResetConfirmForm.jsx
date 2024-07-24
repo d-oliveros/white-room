@@ -7,9 +7,7 @@ import {
   validatePasswordConfirm,
 } from '#white-room/client/helpers/formikHelpers.js';
 
-import Button, {
-  BUTTON_THEME_ADOBE_YELLOW,
-} from '#base/view/components/Button/Button.jsx';
+import Button from '#base/view/components/Button/Button.jsx';
 import FormikField from '#base/view/components/FormikField/FormikField.jsx';
 
 const formFields = [

@@ -3,7 +3,7 @@ import {
 } from '#white-room/util/isUserAgentMobileApp.js';
 import {
   hasRoleAnonymous,
-} from '#user/constants/userRoles.js';
+} from '#user/constants/roles.js';
 
 export default function askForReview({ state }) {
   const currentUser = state.get(['currentUser']);

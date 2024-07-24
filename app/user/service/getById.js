@@ -4,18 +4,18 @@ import {
 } from '#white-room/constants/errorCodes.js';
 
 import {
-  USER_ROLE_ADMIN,
-  USER_ROLE_USER,
+  ROLE_ADMIN,
+  ROLE_USER,
   hasRoleAdmin,
-} from '#user/constants/userRoles.js';
+} from '#user/constants/roles.js';
 
 import User from '#user/model/userRepository.js';
 
 export default {
   path: '/user/getById',
   roles: [
-    USER_ROLE_ADMIN,
-    USER_ROLE_USER,
+    ROLE_ADMIN,
+    ROLE_USER,
   ],
   validate({ userId, fieldgroup }) {
     typeCheck('userId::PositiveNumber', userId);
