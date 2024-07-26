@@ -2,7 +2,7 @@ import logger from '#white-room/logger.js';
 
 const runMigrations = async (dataSource) => {
   try {
-    logger.info('[runMigrations] Checking if schema migration is needed.');
+    logger.info('[runMigrations] Checking if schema migrations are needed.');
     await dataSource.initialize();
     const migrationsRan = await dataSource.runMigrations({
       transaction: true,

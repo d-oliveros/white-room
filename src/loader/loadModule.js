@@ -2,7 +2,7 @@ import { readdir } from 'fs/promises';
 import { extname, basename, dirname, resolve } from 'path';
 import { cloneDeep, isEqual } from 'lodash-es';
 
-import logger from './logger.js';
+import logger from '../logger.js';
 
 const jsFileRegex = /\.(j|t)sx?$/;
 

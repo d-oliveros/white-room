@@ -1,7 +1,7 @@
 import { dirname } from 'path';
 import { fileURLToPath } from 'url';
 import startServices from '#white-room/startServices.js';
-import loadModules from '#white-room/loadModules.js';
+import loadModules from '#white-room/loader/loadModules.js';
 import runMigrations from '#white-room/server/db/runMigrations.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));

@@ -1,4 +1,4 @@
-const PostModel = {
+const postModel = {
   name: 'Post',
   tableName: 'posts',
   columns: {
@@ -36,4 +36,4 @@ const PostModel = {
   },
 };
 
-export default PostModel;
+export default postModel;

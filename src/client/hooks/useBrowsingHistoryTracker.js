@@ -10,9 +10,6 @@ const useBrowsingHistoryTracker = () => {
   useEffect(() => {
     const browsingHistory = state.get(['client', 'browsingHistory']) || [];
 
-    console.log('browsingHistory');
-    console.log(browsingHistory);
-
     if (browsingHistory[browsingHistory.length - 1] !== location.pathname) {
       state.set(['browsingHistory'], [ ...browsingHistory, location.pathname ]);
       state.commit();

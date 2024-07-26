@@ -1,3 +1,3 @@
-import loadModulesNode from '#white-room/util/loadModulesNode.js';
+import importModulesDir from '#white-room/loader/importModulesDir.js';
 
-export default await loadModulesNode(import.meta.url);
+export default await importModulesDir(import.meta.url);

@@ -1,6 +1,6 @@
 import typeCheck from '#white-room/util/typeCheck.js';
 import knex from '#white-room/server/db/knex.js';
-import { summaryFieldgroup } from '#user/model/userFieldgroups.js';
+import { summaryFieldgroup } from '#user/model/userModel.js';
 
 export default async function trackUserVisit({ id, increaseSessionCount }) {
   typeCheck('id::PositiveNumber', id);

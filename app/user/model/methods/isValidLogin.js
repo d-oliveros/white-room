@@ -5,7 +5,7 @@ import { promisify } from 'util';
 import knex from '#white-room/server/db/knex.js';
 import {
   loginFieldgroup,
-} from '#user/model/userFieldgroups.js';
+} from '#user/model/userModel.js';
 
 const compareAsync = promisify(bcrypt.compare);
 

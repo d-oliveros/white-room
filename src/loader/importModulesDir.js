@@ -12,7 +12,7 @@ const INDEX_REGEX = /index\.js$/;
  * @param {string} [ignoreFile] - A file to ignore during the scan.
  * @returns {Promise<object>} - An object containing all imported modules.
  */
-export default async function loadModulesNode(directory) {
+export default async function importModulesDir(directory) {
   const modules = {};
 
   if (directory.startsWith('file://')) {
@@ -38,7 +38,7 @@ export default async function loadModulesNode(directory) {
         modules[moduleName] = modules[moduleName].default || modules[moduleName];
       }
       else if (fileStat.isDirectory()) {
-        modules[moduleName] = await loadModulesNode(filePath);
+        modules[moduleName] = await importModulesDir(filePath);
       }
     }
 

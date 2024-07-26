@@ -56,9 +56,6 @@ export default (app) => {
           };
         }
       }
-
-      console.log('req.cookies');
-      console.log(req.cookies);
       const cookieExperimentActiveVariants = req.cookies[cookiesConfig.experimentActiveVariants.name] || {};
       const userExperimentActiveVariants = user ? user.experimentActiveVariants || {} : null;
 

@@ -18,7 +18,6 @@ export const getMiddlewareFromModules = (modules) => {
 
   return async (app) => {
     for (const middleware of modulesMiddleware) {
-      console.log(middleware);
       middleware(app);
     }
   }

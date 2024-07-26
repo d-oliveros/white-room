@@ -42,8 +42,6 @@ const startCron = async ({ periodicFunctions }) => {
   const logger = (await import(`../logger.js`)).default;
   logger.info('Starting cron service');
 
-  console.log(periodicFunctions);
-
   const { initCronJobs } = await import(`../server/cron/cron.js`);
   initCronJobs({ periodicFunctions });
 

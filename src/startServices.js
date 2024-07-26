@@ -17,7 +17,7 @@ import startUncaughtExceptionHandler from './services/startUncaughtExceptionHand
  */
 const startServices = async ({ modules, config = {} } = {}) => {
   logger.info('Starting services.');
-  logger.info(`Modules: ${JSON.stringify(removeEmpty(modules), null, 2)}`);
+  // logger.info(`Modules: ${JSON.stringify(removeEmpty(modules), null, 2)}`);
 
   const {
     enableServer = false,
@@ -63,8 +63,6 @@ const startServices = async ({ modules, config = {} } = {}) => {
     const routes = getRoutesFromModules(modules);
     const middleware = getMiddlewareFromModules(modules);
     const initialState = getInitialStateFromModules(modules);
-
-    console.log('MIDDLEWARE IS', middleware);
 
     promises.push(startRenderer({
       port: rendererPort,

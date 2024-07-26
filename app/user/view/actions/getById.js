@@ -1,5 +1,5 @@
 import typeCheck from '#white-room/util/typeCheck.js';
-import { summaryFieldgroup } from '#user/model/userFieldgroups.js';
+import { summaryFieldgroup } from '#user/model/userModel.js';
 
 export default async function getById({ state, apiClient }, { userId, refresh }) {
   typeCheck('userId::PositiveNumber', userId);

@@ -1,8 +1,8 @@
 import 'reflect-metadata';
-import { glob } from 'glob';
-import { DataSource, EntitySchema } from 'typeorm';
+import { DataSource } from 'typeorm';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import getEntitySchemas from '#white-room/loader/getEntitySchemas.js';
 
 const {
   POSTGRES_HOST = '127.0.0.1',
@@ -13,17 +13,6 @@ const {
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const __root = path.dirname(__dirname);
-
-const entityFiles = await glob('./**/model/*.model.js');
-
-const entitySchemas = (await Promise.all(entityFiles.map(async (filepath) => {
-  const model = (await import(path.resolve(__root, filepath))).default;
-  if (typeof model === 'object' && model.name && model.tableName && model.columns) {
-    return new EntitySchema(model);
-  }
-  return null;
-}))).filter(Boolean);
 
 export const dataSource = new DataSource({
   type: 'postgres',
@@ -34,7 +23,7 @@ export const dataSource = new DataSource({
   database: POSTGRES_DATABASE,
   synchronize: false,
   logging: true,
-  entities: entitySchemas,
+  entities: getEntitySchemas('./**/model/*model.js'),
   migrations: [path.join(__dirname, '../migrations/*.ts')],
   subscribers: [],
 });

@@ -1,6 +1,6 @@
 import createRepository from '#white-room/server/createRepository.js';
-import PostModel from './post.model.js';
+import postModel from './postModel.js';
 
-const postRepository = await createRepository(PostModel.tableName);
+const postRepository = await createRepository(postModel.tableName);
 
 export default postRepository;

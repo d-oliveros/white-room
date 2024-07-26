@@ -5,7 +5,8 @@ import {
   ROLE_USER,
 } from '#user/constants/roles.js';
 
-import User, { summaryFieldgroup } from '#user/model/user.js';
+import { summaryFieldgroup } from '#user/model/userModel.js';
+import User from '#user/model/userRepository.js';
 
 export default {
   roles: [
