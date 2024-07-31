@@ -5,7 +5,7 @@ import { hasRoleAnonymous } from '#user/constants/roles.js';
 
 import useBranch from '#white-room/client/hooks/useBranch.js';
 import useDispatch from '#white-room/client/hooks/useDispatch.js';
-import SignupForm from '#base/view/components/SignupForm/SignupForm.jsx';
+import SignupForm from '#app/view/components/SignupForm/SignupForm.jsx';
 
 import getUserLandingPage from '#auth/view/helpers/getUserLandingPage.js';
 

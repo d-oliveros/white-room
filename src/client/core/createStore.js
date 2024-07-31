@@ -1,7 +1,7 @@
 import Baobab from 'baobab';
-import log from '#white-room/client/lib/log.js';
+import logger from '#white-room/logger.js';
 
-const debug = log.debug('client:state');
+const debug = logger.createDebug('client:state');
 
 /**
  * Creates a state object, which is an instance of Baobab,

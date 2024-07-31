@@ -3,16 +3,16 @@ import { useNavigate } from 'react-router-dom';
 
 import { ROLE_ANONYMOUS } from '#user/constants/roles.js';
 
-import log from '#white-room/client/lib/log.js';
+import logger from '#white-room/logger.js';
 import useBranch from '#white-room/client/hooks/useBranch.js';
 import useAllowedRoles from '#white-room/client/hooks/useAllowedRoles.jsx';
 import useApiState from '#white-room/client/hooks/useApiState.jsx';
 import AuthActions from '#auth/view/actions/index.jsx';
 
-import PasswordResetSmsVerifyCode from '#base/view/components/PasswordResetSmsVerifyCode/PasswordResetSmsVerifyCode.jsx';
-import SmsSendingIndicator from '#base/view/components/SmsSendingIndicator/SmsSendingIndicator.jsx';
-import Navbar from '#base/view/components/Navbar/Navbar.jsx';
-import Link from '#base/view/components/Link/Link.jsx';
+import PasswordResetSmsVerifyCode from '#app/view/components/PasswordResetSmsVerifyCode/PasswordResetSmsVerifyCode.jsx';
+import SmsSendingIndicator from '#app/view/components/SmsSendingIndicator/SmsSendingIndicator.jsx';
+import Navbar from '#app/view/components/Navbar/Navbar.jsx';
+import Link from '#app/view/components/Link/Link.jsx';
 
 const ResetPasswordVerifyCodePage = () => {
   useAllowedRoles({
@@ -56,7 +56,7 @@ const ResetPasswordVerifyCodePage = () => {
         setState((prevState) => ({ ...prevState, incorrectCodeSubmitted: true }));
       }
     } catch (error) {
-      log.error(error);
+      logger.error(error);
     }
   };
 

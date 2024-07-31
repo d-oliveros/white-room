@@ -135,30 +135,6 @@ const webpackConfig = {
         },
       },
       {
-        test: /\.less$/,
-        use: [
-          isProd ? MiniCssExtractPlugin.loader : 'style-loader',
-          {
-            loader: 'css-loader',
-            options: {
-              modules: {
-                localIdentName: '[name]--[local]--[hash:base64:5]',
-              },
-              importLoaders: 1,
-            },
-          },
-          'postcss-loader',
-          {
-            loader: 'less-loader',
-            options: {
-              additionalData: (
-                `@import "${srcPath}/client/style/variables.less";\n`
-              ),
-            },
-          },
-        ],
-      },
-      {
         test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
         use: {
           loader: 'url-loader',
@@ -168,6 +144,36 @@ const webpackConfig = {
             name: 'fonts/[name].[ext]',
           },
         },
+      },
+      // TailwindCSS
+      {
+        test: /\.css$/,
+        exclude: /app/,
+        use: [
+          // isProd ? MiniCssExtractPlugin.loader : 'style-loader',
+          'style-loader',
+          'css-loader',
+          'postcss-loader',
+        ],
+      },
+      // CSS Modules
+      {
+        test: /\.css$/,
+        exclude: /src/,
+        use: [
+          // isProd ? MiniCssExtractPlugin.loader : 'style-loader',
+          'style-loader',
+          {
+            loader: 'css-loader',
+            options: {
+              modules: {
+                localIdentName: '[name]--[local]--[hash:base64:6]',
+              },
+              importLoaders: 1,
+            },
+          },
+          'postcss-loader',
+        ],
       },
     ],
   },

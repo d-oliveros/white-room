@@ -10,10 +10,10 @@ import useApiState from '#white-room/client/hooks/useApiState.jsx';
 import useBranch from '#white-room/client/hooks/useBranch.js';
 import useDispatch from '#white-room/client/hooks/useDispatch.js';
 
-import Box from '#base/view/components/Box/Box.jsx';
-import Link from '#base/view/components/Link/Link.jsx';
-import LoginForm from '#base/view/components/LoginForm/LoginForm.jsx';
-import Logo from '#base/view/components/Logo/Logo.jsx';
+import Box from '#app/view/components/Box/Box.jsx';
+import Link from '#app/view/components/Link/Link.jsx';
+import LoginForm from '#app/view/components/LoginForm/LoginForm.jsx';
+import Logo from '#app/view/components/Logo/Logo.jsx';
 
 import AuthActions from '#auth/view/actions/index.jsx';
 

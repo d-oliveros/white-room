@@ -25,9 +25,9 @@ const {
 // Configuration interface
 interface Config {
   useHelmet: boolean;
-  segmentLibProxyUrl?: string;
-  commitHash?: string;
-  port?: string;
+  segmentLibProxyUrl: string | null;
+  commitHash: string | null;
+  port: string;
   rendererPort?: string;
   rendererEndpoint?: string;
   queueId?: string;
@@ -64,9 +64,9 @@ init({
   modulesDir: __dirname,
   config: {
     useHelmet: NODE_ENV !== 'development',
-    segmentLibProxyUrl: SEGMENT_LIB_PROXY_URL,
-    commitHash: COMMIT_HASH,
-    port: APP_PORT,
+    segmentLibProxyUrl: SEGMENT_LIB_PROXY_URL || null,
+    commitHash: COMMIT_HASH || null,
+    port: APP_PORT || '3000',
     rendererPort: RENDERER_PORT,
     rendererEndpoint: RENDERER_ENDPOINT,
     queueId: QUEUE_ID,

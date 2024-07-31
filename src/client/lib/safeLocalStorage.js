@@ -1,8 +1,8 @@
-import log from '#white-room/client/lib/log.js';
+import logger from '#white-room/logger.js';
 import checkLocalStorage from '#white-room/util/checkLocalStorage.js';
 
 const hasLocalStorage = checkLocalStorage();
-const debug = log.debug('client:safeLocalStorage');
+const debug = logger.createDebug('client:safeLocalStorage');
 
 function _safeLocalStorageCall(methodName, ...args) {
   if (!hasLocalStorage) {
@@ -15,7 +15,7 @@ function _safeLocalStorageCall(methodName, ...args) {
     result = global.localStorage[methodName](...args);
   }
   catch (error) {
-    log.error(error);
+    logger.error(error);
     return null;
   }
 

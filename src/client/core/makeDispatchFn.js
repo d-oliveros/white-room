@@ -1,7 +1,7 @@
 import typeCheck from '#white-room/util/typeCheck.js';
-import log from '#white-room/client/lib/log.js';
+import logger from '#white-room/logger.js';
 
-const debugActions = log.debug('client:actions');
+const debugActions = logger.debug('client:actions');
 
 export default function makeDispatchFn({ state, apiClient }) {
   typeCheck('state::Object', state);

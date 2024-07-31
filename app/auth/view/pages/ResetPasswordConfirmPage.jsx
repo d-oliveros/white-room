@@ -5,9 +5,9 @@ import parseQueryString from '#white-room/util/parseQueryString.js';
 
 import useBranch from '#white-room/client/hooks/useBranch.js';
 
-import PasswordResetConfirmForm from '#base/view/components/PasswordResetConfirmForm/PasswordResetConfirmForm.jsx';
-import Navbar from '#base/view/components/Navbar/Navbar.jsx';
-import Link from '#base/view/components/Link/Link.jsx';
+import PasswordResetConfirmForm from '#app/view/components/PasswordResetConfirmForm/PasswordResetConfirmForm.jsx';
+import Navbar from '#app/view/components/Navbar/Navbar.jsx';
+import Link from '#app/view/components/Link/Link.jsx';
 
 import AuthActions from '#auth/view/actions/index.jsx';
 

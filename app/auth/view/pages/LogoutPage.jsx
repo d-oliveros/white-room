@@ -4,9 +4,9 @@ import { useNavigate } from 'react-router-dom';
 import parseQueryString from '#white-room/util/parseQueryString.js';
 import { hasRoleAnonymous } from '#user/constants/roles.js';
 
-import Logo from '#base/view/components/Logo/Logo.jsx';
+import Logo from '#app/view/components/Logo/Logo.jsx';
 
-import log from '#white-room/client/lib/log.js';
+import logger from '#white-room/logger.js';
 import AuthActions from '#auth/view/actions/index.jsx';
 import useBranch from '#white-room/client/hooks/useBranch.js';
 import useDispatch from '#white-room/client/hooks/useDispatch.js';
@@ -30,7 +30,7 @@ const LogoutPage = () => {
             global.location.href = redirectUrl;
           }
         })
-        .catch((error) => log.error(error));
+        .catch((error) => logger.error(error));
     }
     else {
       navigate(redirectUrl);

@@ -1,9 +1,8 @@
-import dayjs from 'dayjs';
 import { getIn, setIn } from 'formik';
 
 import lodashKeyBy from 'lodash/fp/keyBy.js';
 
-import log from '#white-room/client/lib/log.js';
+import logger from '#white-room/logger.js';
 
 import typeCheck from '#white-room/util/typeCheck.js';
 import objectNormalize from '#white-room/util/objectNormalize.js';
@@ -759,7 +758,7 @@ export function withErrorReporter(func) {
       await func(...args);
     }
     catch (error) {
-      log.error(error);
+      logger.error(error);
       if (typeof global.alert === 'function') {
         global.alert(error.message);
       }

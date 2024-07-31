@@ -3,18 +3,18 @@ import { useLocation, useNavigate } from 'react-router-dom';
 
 import { ROLE_ANONYMOUS } from '#user/constants/roles.js';
 
-import log from '#white-room/client/lib/log.js';
+import logger from '#white-room/logger.js';
 import useAllowedRoles from '#white-room/client/hooks/useAllowedRoles.jsx';
 import useApiState from '#white-room/client/hooks/useApiState.jsx';
 import postWithState from '#white-room/client/actions/postWithState.js';
 
 import AuthActions from '#auth/view/actions/index.jsx';
 
-import PasswordResetSmsForm from '#base/view/components/PasswordResetSmsForm/PasswordResetSmsForm.jsx';
-import SmsSendingIndicator from '#base/view/components/SmsSendingIndicator/SmsSendingIndicator.jsx';
-import Navbar from '#base/view/components/Navbar/Navbar.jsx';
-import Link from '#base/view/components/Link/Link.jsx';
-import ErrorMessage from '#base/view/components/ErrorMessage/ErrorMessage.jsx';
+import PasswordResetSmsForm from '#app/view/components/PasswordResetSmsForm/PasswordResetSmsForm.jsx';
+import SmsSendingIndicator from '#app/view/components/SmsSendingIndicator/SmsSendingIndicator.jsx';
+import Navbar from '#app/view/components/Navbar/Navbar.jsx';
+import Link from '#app/view/components/Link/Link.jsx';
+import ErrorMessage from '#app/view/components/ErrorMessage/ErrorMessage.jsx';
 
 const ResetPasswordPage = () => {
   useAllowedRoles({
@@ -78,7 +78,7 @@ const ResetPasswordPage = () => {
         }));
       }
     } catch (error) {
-      log.error(error);
+      logger.error(error);
     }
   };
 

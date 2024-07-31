@@ -5,9 +5,9 @@ import assert from 'assert';
 import parseQueryString from '#white-room/util/parseQueryString.js';
 import typeCheck from '#white-room/util/typeCheck.js';
 import useBranch from '#white-room/client/hooks/useBranch.js';
-import log from '#white-room/client/lib/log.js';
+import logger from '#white-room/logger.js';
 
-const debug = log.debug('hooks:useAllowedRoles');
+const debug = logger.createDebug('hooks:useAllowedRoles');
 
 export default function useAllowedRoles({ roles, redirectUrl, addRedirectQueryParam = true }) {
   typeCheck('roles::NonEmptyArray', roles);

@@ -1,4 +1,5 @@
 import { promisify } from 'util';
+import sleepAsync from '#white-room/util/sleepAsync.js';
 
 export const getRoutesFromModules = (modules) => {
   const allRoutes = [];

@@ -5,14 +5,14 @@ import {
   ROLE_ANONYMOUS,
 } from '#user/constants/roles.js';
 
-import log from '#white-room/client/lib/log.js';
+import logger from '#white-room/logger.js';
 import makeApplicationContext from '#white-room/client/analytics/makeApplicationContext.js';
 
 import {
   ANALYTICS_EVENT_PAGE_VIEWED,
 } from '#white-room/client/analytics/eventList.js';
 
-const debug = log.debug('analytics');
+const debug = logger.createDebug('analytics');
 
 function makeUserId(state) {
   return String(state.currentUser?.id || state.analytics.analyticsSessionId);
@@ -324,7 +324,7 @@ export default {
       this._window.analytics[methodName](...args);
     }
     catch (error) {
-      log.error(error);
+      logger.error(error);
     }
 
     return true;

@@ -10,7 +10,7 @@ const renderLayout = ({
   useBuild,
   devScriptBaseUrl,
   webpackDevelopmentServerPort,
-  body
+  renderedReactAppHtml
 }) => `
 <!doctype html>
 <html>
@@ -60,7 +60,6 @@ const renderLayout = ({
     ${!bundleStyleSrc ? `
       <style>
         html {
-          display: none;
         }
       </style>
     ` : ''}
@@ -79,7 +78,7 @@ const renderLayout = ({
   <body>
 
     <!-- Initialized Client's HTML -->
-    <div id='react-container'>${body}</div>
+    <div id='react-container'>${renderedReactAppHtml}</div>
 
     <div id='scripts'>
       <!-- Serialized State -->

@@ -2,7 +2,7 @@ import {
   ANALYTICS_EVENT_SIGNUP,
 } from '#white-room/client/analytics/eventList.js';
 
-import log from '#white-room/client/lib/log.js';
+import logger from '#white-room/logger.js';
 import analytics from '#white-room/client/analytics/analytics.js';
 
 import anonymousUser from '#user/constants/anonymousUser.js';
@@ -43,7 +43,7 @@ export default async function signup({ state, apiClient }, params) {
       state.set('currentUser', newUser);
     },
     onError(error) {
-      log.error(error);
+      logger.error(error);
     },
   });
 

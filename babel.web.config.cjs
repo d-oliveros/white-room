@@ -16,13 +16,13 @@ module.exports = {
     [
       '@dr.pogodin/react-css-modules',
       {
-        removeImport: false,
+        replaceImport: false,
         webpackHotModuleReloading: true,
-        filetypes: {
-          '.less': {
-            syntax: 'postcss-less',
-          },
-        },
+        // filetypes: {
+        //   '.css': {
+        //     syntax: 'postcss',
+        //   },
+        // },
         generateScopedName: '[name]--[local]--[hash:base64:6]',
       },
     ],
