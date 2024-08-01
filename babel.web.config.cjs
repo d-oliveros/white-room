@@ -10,19 +10,19 @@ module.exports = {
   ],
   plugins: [
     'react-refresh/babel',
-    './babel-plugin-transform-glob-imports',
+    // './babel-plugin-transform-glob-imports',
     ['@babel/plugin-transform-runtime', { corejs: 3 }],
     ['@babel/plugin-proposal-decorators', { legacy: true }],
     [
       '@dr.pogodin/react-css-modules',
       {
-        removeImport: false,
+        replaceImport: false,
         webpackHotModuleReloading: true,
-        filetypes: {
-          '.less': {
-            syntax: 'postcss-less',
-          },
-        },
+        // filetypes: {
+        //   '.css': {
+        //     syntax: 'postcss',
+        //   },
+        // },
         generateScopedName: '[name]--[local]--[hash:base64:6]',
       },
     ],

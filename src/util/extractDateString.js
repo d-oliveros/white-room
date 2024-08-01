@@ -1,5 +1,5 @@
 import lodashPadStart from 'lodash/padStart.js';
-import dayjsWithAustinTimezone from '#white-room/util/dayjsWithAustinTimezone.js';
+import dayjsWithDefaultTimezone from '#white-room/util/dayjsWithDefaultTimezone.js';
 
 /**
  * Extracts a date string without time in YYYY-MM-DD format,
@@ -12,7 +12,7 @@ export default function extractDateString(dateIsoString) {
   if (!dateIsoString || typeof dateIsoString !== 'string') {
     return null;
   }
-  const dateMoment = dayjsWithAustinTimezone(dateIsoString);
+  const dateMoment = dayjsWithDefaultTimezone(dateIsoString);
   if (!dateMoment.isValid()) {
     return null;
   }

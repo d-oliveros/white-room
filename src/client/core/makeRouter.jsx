@@ -2,7 +2,7 @@ import React, { Suspense } from 'react';
 import { Await, Navigate, Outlet, Link, defer, useLoaderData, useAsyncError } from 'react-router-dom';
 import { serializeError } from 'serialize-error';
 
-import log from '#white-room/client/lib/log.js';
+import logger from '#white-room/logger.js';
 import isRedirectResponse from '#white-room/util/isRedirectResponse.js';
 
 import App from '#white-room/client/App.jsx';
@@ -58,7 +58,7 @@ const makeLoaderFn = ({ fetchPageData, apiClient, queryClient, store }) => {
             { cause: fetchPageDataError },
           );
 
-          log.error(error);
+          logger.error(error);
 
           resolve({
             isDeferred: false,

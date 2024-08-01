@@ -14,9 +14,9 @@ import branch from '#white-room/client/core/branch.jsx';
 import configureDecoratedComponent from '#white-room/client/helpers/configureDecoratedComponent.js';
 import withApiState from '#white-room/client/helpers/withApiState.js';
 import withInfiniteScroll from '#white-room/client/helpers/withInfiniteScroll.js';
-import log from '#white-room/client/lib/log.js';
+import logger from '#white-room/logger.js';
 
-const debug = log.debug('dataTables');
+const debug = logger.createDebug('dataTables');
 const ALL_ITEMS_COUNT = 500000;
 const withoutEmptyValues = lodashPickBy((item) => {
   if (

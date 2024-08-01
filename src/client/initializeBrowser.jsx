@@ -9,10 +9,7 @@
  * - Ensures proper initialization in the browser environment
  * - Configured as the entry point in Webpack
  */
-import './style/normalize.less';
-import './style/fonts.less';
-import './style/global.less';
-
+// import './style/main.css';
 import React, { Suspense } from 'react';
 import { RouterProvider, createBrowserRouter, matchRoutes } from 'react-router-dom';
 import createDebug from 'debug';
@@ -34,10 +31,11 @@ import analytics from '#white-room/client/analytics/analytics.js';
 // TODO: Implement dynamic loading of routes! Or inject routes object!
 // import routes from '#white-room/client/routes.js';
 import userListeners from '#user/view/listeners.js';
-import HomePage from '#base/view/pages/Homepage.jsx';
-import PdfGeneratorPage from '#base/view/pages/PdfGeneratorPage.jsx';
-import NotFoundPage from '#base/view/pages/NotFoundPage.jsx';
+import HomePage from '#app/view/pages/Homepage.jsx';
+import PdfGeneratorPage from '#app/view/pages/PdfGeneratorPage.jsx';
+import NotFoundPage from '#app/view/pages/NotFoundPage.jsx';
 import UserPage from '#user/view/pages/UserPage.jsx';
+import './style/main.css';
 
 const debug = createDebug('initializeBrowser');
 

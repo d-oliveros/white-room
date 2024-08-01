@@ -2,9 +2,9 @@ import assert from 'assert';
 import path from 'path';
 import typeCheck from '#white-room/util/typeCheck.js';
 import parseS3Url from '#white-room/util/parseS3Url.js';
-import log from '#white-room/client/lib/log.js';
+import logger from '#white-room/logger.js';
 
-const debug = log.debug('fileUploader');
+const debug = logger.createDebug('fileUploader');
 
 const UUID_V4_REGEX = /-[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}/;
 const UNIX_DATE_REGEX = /-\d{13}/;

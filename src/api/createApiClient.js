@@ -9,9 +9,9 @@ import {
 
 import typeCheck from '#white-room/util/typeCheck.js';
 
-import log from '#white-room/client/lib/log.js';
+import logger from '#white-room/logger.js';
 
-const debug = log.debug('api:client');
+const debug = logger.createDebug('api:client');
 
 function makeApiRequestMethod({
   method,
@@ -140,7 +140,7 @@ function makeApiRequestMethod({
       debug(`Failed ${apiBasePath}/${path}`, {
         error: serializeError(error),
       });
-      log.error(error);
+      logger.error(error);
       throw error;
     }
 
@@ -270,7 +270,7 @@ export default function createApiClient(params = {}) {
         payload,
         shortId: errorShortId,
       };
-      log.error(error);
+      logger.error(error);
       apiRequestState.set(['inProgress'], false);
       apiRequestState.set(['error'], apiClientError);
       apiRequestState.set(['progressPercent'], 100);

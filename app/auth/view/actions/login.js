@@ -1,5 +1,5 @@
 import analytics from '#white-room/client/analytics/analytics.js';
-import { ANALYTICS_EVENT_LOGGED_IN } from '#base/constants/eventList.js';
+import { ANALYTICS_EVENT_LOGGED_IN } from '#app/constants/eventList.js';
 
 import updateDeviceRegistrationIds from '#user/service/updateDeviceRegistrationIds.js';
 import sendDataToMobileApp, {

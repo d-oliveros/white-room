@@ -43,6 +43,9 @@ export const makeProcessServiceJobFn = (queueHandlers) => {
       .filter(result => result.status === 'rejected')
       .map(result => result.reason);
 
+    if (errors.length === 1) {
+      throw errors[0];
+    }
     if (errors.length > 0) {
       throw AggregateError(errors, 'Queue handler failed.');
     }

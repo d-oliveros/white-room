@@ -26,12 +26,15 @@ const loadModules = async (modulesDir) => {
       }
     }
     else {
-      errors.push(new Error(`Failed to load module at ${name}`, { cause: result.reason }));
+      errors.push(new Error(`Failed to load module "${name}"`, { cause: result.reason }));
     }
   });
 
+  if (errors.length === 1) {
+    throw errors[0];
+  }
   if (errors.length > 0) {
-    throw new AggregateError(errors, 'One or more modules failed to import');
+    throw new AggregateError(errors, 'Some modules failed to import.');
   }
 
   return modules;

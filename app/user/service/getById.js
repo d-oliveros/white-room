@@ -11,8 +11,33 @@ import {
 
 import User from '#user/model/userRepository.js';
 
+/*
+import logger from '#white-room/logger.js';
+
+const withRoles = ({ res }) => {
+  try {
+    return res.locals.session.roles.includes([
+      ROLE_ADMIN,
+      ROLE_USER,
+    ]);
+  }
+  catch (innerError) {
+    const error = new Error(`Error while authorizing: ${innerError.message}`, {
+      cause: innerError,
+    });
+    error.name = innerError.name;
+    logger.error(error);
+    return false;
+  }
+}
+*/
+
 export default {
   path: '/user/getById',
+  // auth: withRoles([
+  //   ROLE_ADMIN,
+  //   ROLE_USER,
+  // ]),
   roles: [
     ROLE_ADMIN,
     ROLE_USER,

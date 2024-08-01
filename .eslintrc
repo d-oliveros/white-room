@@ -42,7 +42,7 @@
         "map": [
           ["#admin", "./app/admin"],
           ["#auth", "./app/auth"],
-          ["#base", "./app/base"],
+          ["#app", "./app/app"],
           ["#user", "./app/user"],
           ["#white-room", "./src"],
         ],

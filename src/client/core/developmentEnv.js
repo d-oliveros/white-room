@@ -1,6 +1,6 @@
 import debug from 'debug';
-import log from '../lib/log.js';
-import safeLocalStorage from '../lib/safeLocalStorage.js';
+import objectDiff from '#white-room/util/objectDiff.js';
+import safeLocalStorage from '#white-room/client/lib/safeLocalStorage.js';
 
 export default function developmentEnvironment(state) {
 
@@ -11,7 +11,7 @@ export default function developmentEnvironment(state) {
   // Attaches a state debugger.
   const stateDebugger = debug('state');
   state.on('update', ({ type, data: { currentData, previousData } }) => {
-    const diff = log.diff(currentData, previousData).value;
+    const diff = objectDiff(currentData, previousData).value;
     stateDebugger('tree updated', type, diff);
   });
 

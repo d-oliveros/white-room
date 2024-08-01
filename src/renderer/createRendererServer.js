@@ -106,7 +106,7 @@ const createRendererServer = ({ routes, initialState, middleware, config = {} } 
    */
   renderer.use((err, req, res, next) => {
     const status = err.status || err.statusCode || 500;
-    logger.silly(`${status} - ${req.url}`);
+    logger.trace(`${status} - ${req.url}`);
 
     if (status >= 500 || status === 400) {
       logger.error(err);

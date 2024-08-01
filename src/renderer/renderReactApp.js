@@ -174,7 +174,7 @@ export default async function renderReactApp({ state: initialStateData, req, res
 
     const staticRouter = createStaticRouter(handler.dataRoutes, context);
 
-    const body = renderToString(
+    const renderedReactAppHtml = renderToString(
       React.createElement(AppContextProvider, { store, apiClient, queryClient },
         React.createElement(StaticRouterProvider, { router: staticRouter, context })
       )
@@ -194,7 +194,7 @@ export default async function renderReactApp({ state: initialStateData, req, res
     const appUrl = new URL(APP_URL);
 
     const html = renderLayout({
-      body,
+      renderedReactAppHtml,
       useBuild,
       devScriptBaseUrl: `${appUrl.protocol}//${appUrl.hostname}`,
       // metaData: pageMetadataWithDefaults,
