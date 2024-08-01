@@ -10,7 +10,7 @@
  * - Configured as the entry point in Webpack
  */
 // import './style/main.css';
-import React, { Suspense } from 'react';
+import React from 'react';
 import { RouterProvider, createBrowserRouter, matchRoutes } from 'react-router-dom';
 import createDebug from 'debug';
 import { hydrateRoot } from 'react-dom/client';

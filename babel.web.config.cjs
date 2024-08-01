@@ -10,7 +10,6 @@ module.exports = {
   ],
   plugins: [
     'react-refresh/babel',
-    // './babel-plugin-transform-glob-imports',
     ['@babel/plugin-transform-runtime', { corejs: 3 }],
     ['@babel/plugin-proposal-decorators', { legacy: true }],
     [
@@ -18,11 +17,6 @@ module.exports = {
       {
         replaceImport: false,
         webpackHotModuleReloading: true,
-        // filetypes: {
-        //   '.css': {
-        //     syntax: 'postcss',
-        //   },
-        // },
         generateScopedName: '[name]--[local]--[hash:base64:6]',
       },
     ],

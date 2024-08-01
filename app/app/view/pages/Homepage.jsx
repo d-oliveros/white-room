@@ -8,6 +8,7 @@ import logger from '#white-room/logger.js';
 import useBranch from '#white-room/client/hooks/useBranch.js';
 
 import Link from '#app/view/components/Link/Link.jsx';
+
 import './pages.css';
 
 const debug = logger.createDebug('Homepage');
@@ -57,6 +58,7 @@ const Homepage = ({ user }) => {
 
       <div>
         <button onClick={() => console.log('click')}>Button</button>
+
         <h3>Users</h3>
         <Link to='/user/1'>User 1</Link>
         <Link to='/user/51231'>User NonExistant</Link>

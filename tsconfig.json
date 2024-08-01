@@ -46,6 +46,7 @@
       "#auth/*": ["./app/auth/*"],
       "#app/*": ["./app/app/*"],
       "#user/*": ["./app/user/*"],
+      "#post/*": ["./app/post/*"],
       "#white-room/*": ["./src/*"]
     },
     "esModuleInterop": true,              // Enables emit interoperability between CommonJS and ES Modules
