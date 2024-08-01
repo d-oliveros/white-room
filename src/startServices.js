@@ -1,5 +1,4 @@
 import logger from './logger.js';
-import removeEmpty from './util/removeEmpty.js';
 
 import { getSitemapGeneratorFromModules } from './server/lib/sitemapController.js';
 
@@ -102,8 +101,11 @@ const startServices = async ({ modules, config = {} } = {}) => {
     .filter(result => result.status === 'rejected')
     .map(result => result.reason);
 
+  if (errors.length === 1) {
+    throw errors[0];
+  }
   if (errors.length > 0) {
-    throw new AggregateError(errors, 'One or more services failed to start');
+    throw new AggregateError(errors, 'Some services failed to start.');
   }
 
   // Uncomment to open the application in a browser in development

@@ -2,9 +2,6 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 
-import Box from '#app/view/components/Box/Box.jsx';
-import Card from '#app/view/components/Card/Card.jsx';
-import DarkModal from '#app/view/components/DarkModal/DarkModal.jsx';
 import S3FileDisplay from '#app/view/components/S3FileDisplay/S3FileDisplay.jsx';
 import InitialsCircle, {
   INITIALS_CIRCLE_THEME_PURPLE,
@@ -38,111 +35,109 @@ const ModalDocsSplitView = ({
   const [viewingItem, setViewingItem] = useState(getInitialState(groups));
 
   return (
-    <DarkModal>
-      <Box styleName='ModalDocsSplitView'>
-        <Box styleName='navbar'>
-          <img
-            onClick={onClose}
-            src='/images/x-circle-gray-dark.svg'
-            alt='close-icon'
-            styleName='closeButton'
-            width='40px'
-            height='40px'
-          />
-          {navbarTitle}
-        </Box>
-        <Box styleName='body'>
-          <Box styleName='leftChildContainer'>
-            <Box styleName='leftChildInner'>
-              <Box styleName='sidebarItemContainer'>
-                <Box styleName='sidebarTitle'>
-                  {sidebarTitle}
-                </Box>
-                {groups.map((group, index) => (
-                  <Card
-                    // eslint-disable-next-line react/no-array-index-key
-                    key={`${group.title}-${index}`}
-                    margin={index === 0 ? '0 0 10px' : '10px 0'}
-                    padding='15px'
-                  >
-                    {group.title && (
-                      <Box styleName='sidebarGroupTitle'>
-                        <Box display='inlineBlock' paddingRight='10px'>
-                          <InitialsCircle
-                            name={group.title}
-                            theme={index % 2 === 0
-                              ? INITIALS_CIRCLE_THEME_PURPLE
-                              : INITIALS_CIRCLE_THEME_YELLOW
-                            }
-                          />
-                        </Box>
-                        {group.title}
-                      </Box>
-                    )}
-                    {(group.items || []).map(({ title, subtitle, value }, index) => {
-                      const isActive = viewingItem?.value === value;
-                      return (
-                        <Box
-                          // eslint-disable-next-line react/no-array-index-key
-                          key={`${value}-${index}`}
-                          styleName={classnames('itemRow', isActive && 'itemRowActive')}
-                          onClick={() => {
-                            setViewingItem({
-                              title: `${group.title}: ${title} ${subtitle || ''}`.trim(),
-                              value: value,
-                            });
-                          }}
-                        >
-                          <Box>
-                            <span styleName='sidebarItemTitle'>
-                              {title}
+    <div styleName='ModalDocsSplitView'>
+      <div styleName='navbar'>
+        <img
+          onClick={onClose}
+          src='/images/x-circle-gray-dark.svg'
+          alt='close-icon'
+          styleName='closeButton'
+          width='40px'
+          height='40px'
+        />
+        {navbarTitle}
+      </div>
+      <div styleName='body'>
+        <div styleName='leftChildContainer'>
+          <div styleName='leftChildInner'>
+            <div styleName='sidebarItemContainer'>
+              <div styleName='sidebarTitle'>
+                {sidebarTitle}
+              </div>
+              {groups.map((group, index) => (
+                <div
+                  // eslint-disable-next-line react/no-array-index-key
+                  key={`${group.title}-${index}`}
+                  margin={index === 0 ? '0 0 10px' : '10px 0'}
+                  padding='15px'
+                >
+                  {group.title && (
+                    <div styleName='sidebarGroupTitle'>
+                      <div display='inlineBlock' paddingRight='10px'>
+                        <InitialsCircle
+                          name={group.title}
+                          theme={index % 2 === 0
+                            ? INITIALS_CIRCLE_THEME_PURPLE
+                            : INITIALS_CIRCLE_THEME_YELLOW
+                          }
+                        />
+                      </div>
+                      {group.title}
+                    </div>
+                  )}
+                  {(group.items || []).map(({ title, subtitle, value }, index) => {
+                    const isActive = viewingItem?.value === value;
+                    return (
+                      <div
+                        // eslint-disable-next-line react/no-array-index-key
+                        key={`${value}-${index}`}
+                        styleName={classnames('itemRow', isActive && 'itemRowActive')}
+                        onClick={() => {
+                          setViewingItem({
+                            title: `${group.title}: ${title} ${subtitle || ''}`.trim(),
+                            value: value,
+                          });
+                        }}
+                      >
+                        <div>
+                          <span styleName='sidebarItemTitle'>
+                            {title}
+                          </span>
+                          {subtitle && (
+                            <span styleName='sidebarItemSubtitle'>
+                              {subtitle}
                             </span>
-                            {subtitle && (
-                              <span styleName='sidebarItemSubtitle'>
-                                {subtitle}
-                              </span>
-                            )}
-                          </Box>
-                          <Box styleName='sidebarItemViewCta'>
-                            {isActive ? 'viewing' : 'View'}
-                          </Box>
-                        </Box>
-                      );
-                    })}
-                  </Card>
-                ))}
-              </Box>
-              {ctaText && ctaClick && (
-                <Box styleName='sidebarFooter'>
-                  <Button
-                    theme={BUTTON_THEME_ADOBE_BLUE}
-                    hasBoxShadow
-                    minWidth='100%'
-                    onClick={ctaClick}
-                  >
-                    {ctaText}
-                  </Button>
-                </Box>
-              )}
-            </Box>
-          </Box>
-          <Box styleName='rightChildContainer'>
-            {viewingItem && (
-              <>
-                <Box styleName='fileTitle'>
-                  {viewingItem.title}
-                </Box>
-                <Box styleName='fileContent'>
-                  <S3FileDisplay
-                    url={viewingItem.value}
-                  />
-                </Box>
-              </>
+                          )}
+                        </div>
+                        <div styleName='sidebarItemViewCta'>
+                          {isActive ? 'viewing' : 'View'}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              ))}
+            </div>
+            {ctaText && ctaClick && (
+              <div styleName='sidebarFooter'>
+                <Button
+                  theme={BUTTON_THEME_ADOBE_BLUE}
+                  hasdivShadow
+                  minWidth='100%'
+                  onClick={ctaClick}
+                >
+                  {ctaText}
+                </Button>
+              </div>
             )}
-          </Box>
-        </Box>
-      </Box>
-    </DarkModal>
+          </div>
+        </div>
+        <div styleName='rightChildContainer'>
+          {viewingItem && (
+            <>
+              <div styleName='fileTitle'>
+                {viewingItem.title}
+              </div>
+              <div styleName='fileContent'>
+                <S3FileDisplay
+                  url={viewingItem.value}
+                />
+              </div>
+            </>
+          )}
+        </div>
+      </div>
+    </div>
   );
 };
 

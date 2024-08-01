@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import Box from '#app/view/components/Box/Box.jsx';
 import DarkModal from '#app/view/components/DarkModal/DarkModal.jsx';
 import './ModalSplitView.css';
 
@@ -13,9 +12,9 @@ const ModalSplitView = ({
 
   return (
     <DarkModal>
-      <Box styleName='ModalSplitView'>
-        <Box styleName='leftChildContainer'>
-          <Box margin='40px'>
+      <div styleName='ModalSplitView'>
+        <div styleName='leftChildContainer'>
+          <div margin='40px'>
             <img
               onClick={onClose}
               src='/images/circle-x-icon-white.svg'
@@ -23,12 +22,12 @@ const ModalSplitView = ({
               styleName='closeButton'
             />
             {leftChild}
-          </Box>
-        </Box>
-        <Box styleName='rightChildContainer'>
+          </div>
+        </div>
+        <div styleName='rightChildContainer'>
           {rightChild}
-        </Box>
-      </Box>
+        </div>
+      </div>
     </DarkModal>
   );
 };

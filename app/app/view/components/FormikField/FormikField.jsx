@@ -42,7 +42,6 @@ import InfoOptionCheckboxList from '#app/view/components/InfoOptionCheckboxList/
 import FormFieldTagList from '#app/view/components/FormFieldTagList/FormFieldTagList.jsx';
 import EditTextbox from '#app/view/components/EditTextbox/EditTextbox.jsx';
 import Text from '#app/view/components/Text/Text.jsx';
-import Box from '#app/view/components/Box/Box.jsx';
 import Flex from '#app/view/components/Flex/Flex.jsx';
 
 /* eslint-disable max-len */
@@ -186,7 +185,7 @@ class FormikField extends Component {
           <Flex
             alignItems='center'
           >
-            <Box
+            <div
               width='calc(100% - 50px)'
             >
               <Field
@@ -197,8 +196,8 @@ class FormikField extends Component {
                 validate={properties.validate}
                 value={value}
               />
-            </Box>
-            <Box
+            </div>
+            <div
               onClick={properties.onScanClick}
               cursor='pointer'
               backgroundImage='url(/images/scan-barcode.svg)'
@@ -744,11 +743,11 @@ class FormikField extends Component {
                         maxHeight='280px'
                       />
                       {s3FileUrl && properties.requirePDFDocs && !isPDFFile(s3FileUrl) && (
-                        <Box>
+                        <div>
                           <Text color='red' weight='bold'>
                             The document provided is not a PDF. Please upload a PDF instead, if possible.
                           </Text>
-                        </Box>
+                        </div>
                       )}
                     </div>
                   );

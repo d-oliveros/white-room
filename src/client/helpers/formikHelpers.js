@@ -1,13 +1,12 @@
+import dayjs from 'dayjs';
 import { getIn, setIn } from 'formik';
-
 import lodashKeyBy from 'lodash/fp/keyBy.js';
 
 import logger from '#white-room/logger.js';
-
 import typeCheck from '#white-room/util/typeCheck.js';
 import objectNormalize from '#white-room/util/objectNormalize.js';
 import extractPhoneFromText from '#white-room/util/extractPhoneFromText.js';
-import dayjsWithAustinTimezone from '#white-room/util/dayjsWithAustinTimezone.js';
+import dayjsWithDefaultTimezone from '#white-room/util/dayjsWithDefaultTimezone.js';
 import preventDefaultPropagation from '#white-room/client/helpers/preventDefaultPropagation.js';
 import { isChromeBrowser } from '#white-room/util/isUserAgentMobileApp.js';
 
@@ -128,7 +127,7 @@ export const validators = {
     return String(value) === String(checkValue) ? 'Values must be different' : undefined;
   },
   dateOfBirth: (dob) => {
-    const dobMoment = dayjs(dob);
+    const dobMoment = dayjsWithDefaultTimezone(dob);
     if (
       dob
       && (
@@ -171,8 +170,8 @@ export const validators = {
     if (!value) {
       return undefined;
     }
-    const nowMoment = dayjsWithAustinTimezone().startOf('day');
-    const valueMoment = dayjsWithAustinTimezone(value);
+    const nowMoment = dayjsWithDefaultTimezone().startOf('day');
+    const valueMoment = dayjsWithDefaultTimezone(value);
     if (valueMoment.isBefore(nowMoment)) {
       return 'Please enter a date in the future.';
     }

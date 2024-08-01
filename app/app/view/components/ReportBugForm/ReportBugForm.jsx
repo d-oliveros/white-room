@@ -14,7 +14,6 @@ import useDispatch from '#white-room/client/hooks/useDispatch.js';
 import FormikField, {
   FIELD_THEME_ADOBE,
 } from '#app/view/components/FormikField/FormikField.jsx';
-import Box from '#app/view/components/Box/Box.jsx';
 import Text from '#app/view/components/Text/Text.jsx';
 import Flex from '#app/view/components/Flex/Flex.jsx';
 import Button, {
@@ -76,7 +75,7 @@ const ReportBugForm = (props) => {
       onSubmit={_onSubmit}
       render={(formikBag) => {
         return (
-          <Box
+          <div
             bgColor='white'
             borderRadius='24px'
             padding='28px 25px 30px'
@@ -100,16 +99,16 @@ const ReportBugForm = (props) => {
               ))}
               <Flex marginTop='20px' gap='33px' justify='between'>
                 {onClose && (
-                  <Box width='100%'>
+                  <div width='100%'>
                     <Button
                       onClick={onClose}
                       theme={BUTTON_THEME_ADOBE_GREY}
                     >
                       Cancel
                     </Button>
-                  </Box>
+                  </div>
                 )}
-                <Box width='100%'>
+                <div width='100%'>
                   <Button
                     type='submit'
                     disabled={!formikBag.isValid || isBusy}
@@ -117,10 +116,10 @@ const ReportBugForm = (props) => {
                   >
                     Submit
                   </Button>
-                </Box>
+                </div>
               </Flex>
             </Form>
-          </Box>
+          </div>
         );
       }}
     />

@@ -12,10 +12,8 @@ import {
   createInitialValues,
 } from '#white-room/client/helpers/formikHelpers.js';
 
-import AuthActions from '#auth/view/actions/index.jsx';
+import signupAction from '#auth/view/actions/signup.js';
 
-import Box from '#app/view/components/Box/Box.jsx';
-import Card from '#app/view/components/Card/Card.jsx';
 import ErrorMessage from '#app/view/components/ErrorMessage/ErrorMessage.jsx';
 import FooterSaveButton from '#app/view/components/FooterSaveButton/FooterSaveButton.jsx';
 import Link from '#app/view/components/Link/Link.jsx';
@@ -69,7 +67,7 @@ const getFormFields = () => {
 
 const SignupForm = ({ referrer, dispatch }) => {
   const { signupApiState = initialApiActionState } = useBranch({
-    signupApiState: ['apiState', API_ACTION_SIGNUP, 'default'],
+    signupApiState: ['apiState', 'API_ACTION_SIGNUP', 'default'],
   });
 
   const location = useLocation();
@@ -78,7 +76,7 @@ const SignupForm = ({ referrer, dispatch }) => {
   const errorMessage = signupApiState.error?.message;
 
   const _onSubmit = (formValues) => {
-    dispatch(AuthActions.Signup, {
+    dispatch(signupAction, {
       ...formValues,
       referrerId: referrer?.id,
     });
@@ -86,37 +84,35 @@ const SignupForm = ({ referrer, dispatch }) => {
 
   return (
     <>
-      <Card>
-        <Formik
-          initialValues={createInitialValues({
-            formFields: getFormFields(),
-          })}
-          validate={createFormValidationFn(getFormFields())}
-          onSubmit={_onSubmit}
-          render={(formikBag) => (
-            <Form>
-              {getFormFields()
-                .map((formField, index) =>
-                  <FormikField
-                    formField={formField}
-                    formikBag={formikBag}
-                    theme={FIELD_THEME_ADOBE}
-                    key={formField.id}
-                    margin={index === 0 ? '0' : null}
-                  />
-                )}
-              <StaticFooter>
-                <FooterSaveButton
-                  isSubmitting={signupApiState.inProgress}
-                  buttonText='Sign up'
+      <Formik
+        initialValues={createInitialValues({
+          formFields: getFormFields(),
+        })}
+        validate={createFormValidationFn(getFormFields())}
+        onSubmit={_onSubmit}
+        render={(formikBag) => (
+          <Form>
+            {getFormFields()
+              .map((formField, index) =>
+                <FormikField
+                  formField={formField}
+                  formikBag={formikBag}
+                  theme={FIELD_THEME_ADOBE}
+                  key={formField.id}
+                  margin={index === 0 ? '0' : null}
                 />
-              </StaticFooter>
-            </Form>
-          )}
-        />
-      </Card>
+              )}
+            <StaticFooter>
+              <FooterSaveButton
+                isSubmitting={signupApiState.inProgress}
+                buttonText='Sign up'
+              />
+            </StaticFooter>
+          </Form>
+        )}
+      />
       {errorMessage && (
-        <Box
+        <div
           marginTop='10px'
           borderRadius='3px'
           overflow='hidden'
@@ -124,9 +120,9 @@ const SignupForm = ({ referrer, dispatch }) => {
           <ErrorMessage>
             {errorMessage}
           </ErrorMessage>
-        </Box>
+        </div>
       )}
-      <Box
+      <div
         marginTop='26px'
         textAlign='center'
       >
@@ -140,7 +136,7 @@ const SignupForm = ({ referrer, dispatch }) => {
             Log In &gt;
           </Link>
         </Text>
-      </Box>
+      </div>
     </>
   );
 };

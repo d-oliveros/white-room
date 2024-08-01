@@ -118,10 +118,12 @@ const loadModule = async (moduleDir) => {
     .filter(result => result.status === 'rejected')
     .map(result => result.reason);
 
-  if (errors.length > 0) {
-    throw new AggregateError(errors, 'One or more modules failed to load');
+  if (errors.length === 1) {
+    throw errors[0];
   }
-
+  if (errors.length > 0) {
+    throw new AggregateError(errors, 'Some modules failed to load.');
+  }
   if (isEqual(module, moduleSkeleton)) {
     return null;
   }

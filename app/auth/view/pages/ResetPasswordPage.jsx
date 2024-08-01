@@ -46,7 +46,7 @@ const ResetPasswordPage = () => {
     });
 
     try {
-      const userExist = await postWithState({
+      const userExist = await dispatch(postWithState, {
         path: '/auth/verifyAccountExists',
         payload: {
           phone: phone,

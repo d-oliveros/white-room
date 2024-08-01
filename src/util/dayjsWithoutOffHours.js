@@ -1,4 +1,4 @@
-import dayjsWithAustinTimezone from '#white-room/util/dayjsWithAustinTimezone.js';
+import dayjsWithDefaultTimezone from '#white-room/util/dayjsWithDefaultTimezone.js';
 import durationSettingsToMsArray from '#white-room/util/durationSettingsToMsArray.js';
 
 export default function dayjsWithoutOffHours({
@@ -7,7 +7,7 @@ export default function dayjsWithoutOffHours({
   cutoffLateHour,
   morningReminderTime,
 }) {
-  const reminderDate = dayjsWithAustinTimezone(startMoment);
+  const reminderDate = dayjsWithDefaultTimezone(startMoment);
 
   if (cutoffEarlyHour && reminderDate.hour() < cutoffEarlyHour) {
     reminderDate.set(morningReminderTime);
@@ -40,7 +40,7 @@ export function getReminderDateOffHours({
       ...reminders,
       {
         date: dayjsWithoutOffHours({
-          startMoment: dayjsWithAustinTimezone(lastReminder.date).add(delayMs, 'ms'),
+          startMoment: dayjsWithDefaultTimezone(lastReminder.date).add(delayMs, 'ms'),
           cutoffEarlyHour,
           cutoffLateHour,
           morningReminderTime,

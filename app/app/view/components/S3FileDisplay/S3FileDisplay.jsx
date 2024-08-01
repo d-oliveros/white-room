@@ -6,7 +6,6 @@ import {
   makeProxiedS3FilePath,
 } from '#white-room/client/lib/fileUploader.js';
 
-import Box from '#app/view/components/Box/Box.jsx';
 
 const S3FileDisplay = ({
   url,
@@ -35,7 +34,7 @@ const S3FileDisplay = ({
       setRotationDegrees(rotationDegrees + 90);
     };
     return (
-      <Box position='relative'>
+      <div position='relative'>
         <img
           src={proxiedS3FilePath}
           alt={proxiedS3FilePath}
@@ -46,7 +45,7 @@ const S3FileDisplay = ({
             rotate
           </div>
         )}
-      </Box>
+      </div>
     );
   }
 

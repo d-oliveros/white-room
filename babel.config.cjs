@@ -7,7 +7,7 @@ module.exports = {
         '@babel/preset-react',
       ],
       plugins: [
-        './babel-plugin-transform-glob-imports',
+        // './babel-plugin-transform-glob-imports',
         ['@babel/plugin-proposal-decorators', { legacy: true }],
         [
           '@dr.pogodin/react-css-modules',

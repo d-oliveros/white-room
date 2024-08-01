@@ -1,4 +1,4 @@
-import dayjsWithAustinTimezone from '#white-room/util/dayjsWithAustinTimezone.js';
+import dayjsWithDefaultTimezone from '#white-room/util/dayjsWithDefaultTimezone.js';
 
 const availableHours = [
   ['08:15', '19:30'], // Sunday
@@ -13,11 +13,11 @@ const START_HOUR_INDEX = 0;
 const END_HOUR_INDEX = 1;
 
 export default function dayjsIsLiveChatAvailable() {
-  const now = dayjsWithAustinTimezone();
+  const now = dayjsWithDefaultTimezone();
   const currentDay = now.day();
 
   return now.isBetween(
-    dayjsWithAustinTimezone(availableHours[currentDay][START_HOUR_INDEX], 'HH:mm'),
-    dayjsWithAustinTimezone(availableHours[currentDay][END_HOUR_INDEX], 'HH:mm')
+    dayjsWithDefaultTimezone(availableHours[currentDay][START_HOUR_INDEX], 'HH:mm'),
+    dayjsWithDefaultTimezone(availableHours[currentDay][END_HOUR_INDEX], 'HH:mm')
   );
 }

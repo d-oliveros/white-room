@@ -3,6 +3,7 @@ import { fileURLToPath } from 'url';
 import startServices from '#white-room/startServices.js';
 import loadModules from '#white-room/loader/loadModules.js';
 import runMigrations from '#white-room/server/db/runMigrations.js';
+import logger from '#white-room/logger.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -14,12 +15,12 @@ const {
   QUEUE_ID,
   RENDERER_PORT,
   RENDERER_ENDPOINT,
-  AUTORUN_MIGRATIONS,
   ENABLE_SERVER,
   ENABLE_RENDERER,
   ENABLE_CRON,
   ENABLE_QUEUE,
   ENABLE_STORYBOOK,
+  ENABLE_MIGRATIONS,
 } = process.env;
 
 // Configuration interface
@@ -36,6 +37,7 @@ interface Config {
   enableCron: boolean;
   enableQueue: boolean;
   enableStorybook: boolean;
+  enableMigrations: boolean;
 }
 
 // Function argument interface
@@ -46,17 +48,23 @@ interface InitArgs {
 
 // Initialize function
 const init = async ({ modulesDir, config }: InitArgs) => {
-  const modules = await loadModules(modulesDir);
+  try {
+    const modules = await loadModules(modulesDir);
 
-  if (AUTORUN_MIGRATIONS === 'true') {
-    const { dataSource } = await import('./data-source.js');
-    await runMigrations(dataSource);
+    if (config.enableMigrations) {
+      const { dataSource } = await import('./data-source.js');
+      await runMigrations(dataSource);
+    }
+
+    return startServices({
+      modules,
+      config,
+    });
   }
-
-  return startServices({
-    modules,
-    config,
-  });
+  catch (error) {
+    logger.error(error);
+    process.exit(0);
+  }
 };
 
 // Initialize with environment variables and __dirname
@@ -75,5 +83,6 @@ init({
     enableCron: ENABLE_CRON === 'true',
     enableQueue: ENABLE_QUEUE === 'true',
     enableStorybook: ENABLE_STORYBOOK === 'true',
+    enableMigrations: ENABLE_MIGRATIONS === 'true',
   },
 });

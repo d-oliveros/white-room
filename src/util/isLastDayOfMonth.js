@@ -1,8 +1,8 @@
-import dayjsWithAustinTimezone from '#white-room/util/dayjsWithAustinTimezone.js';
+import dayjsWithDefaultTimezone from '#white-room/util/dayjsWithDefaultTimezone.js';
 
 export default function isLastDayOfMonth() {
-  const today = dayjsWithAustinTimezone();
-  const tomorrow = dayjsWithAustinTimezone().add(1, 'day');
+  const today = dayjsWithDefaultTimezone();
+  const tomorrow = dayjsWithDefaultTimezone().add(1, 'day');
 
   return today.month() !== tomorrow.month();
 }

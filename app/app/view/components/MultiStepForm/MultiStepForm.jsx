@@ -15,7 +15,6 @@ import {
 
 import logger from '#white-room/logger.js';
 
-import Box from '#app/view/components/Box/Box.jsx';
 // import RouteLeavingGuard from '#app/view/components/RouteLeavingGuard/RouteLeavingGuard.jsx';
 import ErrorMessage from '#app/view/components/ErrorMessage/ErrorMessage.jsx';
 
@@ -433,11 +432,11 @@ class MultiStepForm extends Component {
                 >
                   {currentStepDOM}
                   {submitErrorMessage && isLastStep && (
-                    <Box paddingTop='20px'>
+                    <div paddingTop='20px'>
                       <ErrorMessage>
                         {submitErrorMessage}
                       </ErrorMessage>
-                    </Box>
+                    </div>
                   )}
                   {Footer && (
                     <Footer />

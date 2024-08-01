@@ -1,17 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Link as ReactRouterDomLink } from 'react-router-dom';
-import classnames from 'classnames';
 
 import useBranch from '#white-room/client/hooks/useBranch.js';
 import useDispatch from '#white-room/client/hooks/useDispatch.js';
-import Navigator from '#white-room/client/actions/Navigator/index.jsx';
+import setShouldRestoreScrollPositionAction from '#white-room/client/actions/Navigator/setShouldRestoreScrollPosition.js';
+import goBackAction from '#white-room/client/actions/Navigator/goBack.js';
+import replaceAction from '#white-room/client/actions/Navigator/replace.js';
 
 const hasProtocolRegex = /^https?:\/\//;
-
-const LINK_COLOR_TO_CLASSNAME_MAPPING = {
-  blue300: 'color-blue-300',
-};
 
 const Link = ({
   to,
@@ -27,7 +24,6 @@ const Link = ({
   children,
   className,
   style,
-  color,
 }) => {
   const dispatch = useDispatch();
   const browsingHistory = useBranch('browsingHistory');
@@ -36,14 +32,14 @@ const Link = ({
     const lastPath = browsingHistory[1];
 
     if (restoreScrollPosition) {
-      dispatch(Navigator.setShouldRestoreScrollPosition);
+      dispatch(setShouldRestoreScrollPositionAction);
     }
 
     if (redirectToLastLocation) {
       if (lastPath) {
-        dispatch(Navigator.goBack);
+        dispatch(goBackAction);
       } else {
-        dispatch(Navigator.replace, { to });
+        dispatch(replaceAction, { to });
       }
     }
 
@@ -53,11 +49,6 @@ const Link = ({
   };
 
   const isExternalLink = hasProtocolRegex.test(to);
-  const linkClassName = classnames(
-    'Link',
-    LINK_COLOR_TO_CLASSNAME_MAPPING[color],
-  );
-
   if (isExternalLink) {
     return (
       // eslint-disable-next-line react/jsx-no-target-blank
@@ -120,7 +111,6 @@ Link.propTypes = {
   children: PropTypes.node,
   className: PropTypes.string,
   style: PropTypes.object,
-  color: PropTypes.oneOf(Object.keys(LINK_COLOR_TO_CLASSNAME_MAPPING)),
 };
 
 export default Link;

@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
-import Box from '#app/view/components/Box/Box.jsx';
 import Icon from '#app/view/components/Icon/Icon.jsx';
 
 function _onModalContentClick(event) {
@@ -34,14 +33,14 @@ const ModalContent = ({
     onClick={_onModalContentClick}
   >
     {onCloseIconClick && (
-      <Box
+      <div
         position='absolute'
         zIndex='9999'
         onClick={onCloseIconClick}
         className='closeButton'
       >
         <Icon className='x-close-large-white' />
-      </Box>
+      </div>
     )}
     <div className='inner' style={innerStyle}>
       {children}

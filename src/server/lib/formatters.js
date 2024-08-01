@@ -2,7 +2,7 @@ import dayjs from 'dayjs';
 import pluralize from 'pluralize';
 import typeCheck from '#white-room/util/typeCheck.js';
 import capitalize from '#white-room/util/capitalize.js';
-import dayjsWithAustinTimezone from '#white-room/util/dayjsWithAustinTimezone.js';
+import dayjsWithDefaultTimezone from '#white-room/util/dayjsWithDefaultTimezone.js';
 
 const ONE_DAY_IN_SECONDS = 24 * 60 * 60;
 
@@ -88,8 +88,8 @@ export function roundTwoDecimals(number) {
 }
 
 export function getFormattedFromNowDate({ date, compact }) {
-  const pastDate = dayjsWithAustinTimezone(date);
-  const nowDate = dayjsWithAustinTimezone();
+  const pastDate = dayjsWithDefaultTimezone(date);
+  const nowDate = dayjsWithDefaultTimezone();
   const dateDifference = Math.floor((nowDate.unix() - pastDate.unix()) / ONE_DAY_IN_SECONDS);
 
   if (dateDifference === 0) {
@@ -106,12 +106,12 @@ export function getFormattedFromNowDate({ date, compact }) {
   if (dateDifference === 1) {
     return compact ? '1d' : 'Yesterday';
   }
-  return compact ? `${dateDifference}d` : dayjsWithAustinTimezone(date).format('MMMM Do');
+  return compact ? `${dateDifference}d` : dayjsWithDefaultTimezone(date).format('MMMM Do');
 }
 
 export function getDateRangeDuration({ fromDate, toDate }) {
-  const fromMoment = dayjsWithAustinTimezone(fromDate);
-  const toMoment = dayjsWithAustinTimezone(toDate);
+  const fromMoment = dayjsWithDefaultTimezone(fromDate);
+  const toMoment = dayjsWithDefaultTimezone(toDate);
   const diffInYears = toMoment.diff(fromMoment, 'years');
   if (diffInYears >= 1) {
     const diffInMonths = toMoment.diff(fromMoment, 'months') % 12;
