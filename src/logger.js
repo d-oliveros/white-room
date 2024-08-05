@@ -31,6 +31,12 @@ if (process.browser) {
 
 const logger = pino(pinoConfig);
 
+if (process.browser) {
+  logger.error = (...args) => {
+    console.error(...args);
+  };
+}
+
 const _debugInstances = {};
 
 logger.createDebug = function createDebugWrapped(debugNameSpace) {
@@ -38,7 +44,7 @@ logger.createDebug = function createDebugWrapped(debugNameSpace) {
     return () => {};
   }
 
-  debugNameSpace = `${APP_ID}:${debugNameSpace}`;
+  debugNameSpace = `${APP_ID || 'debug'}:${debugNameSpace}`;
   const debugInstance = createDebug(debugNameSpace);
 
   if (!_debugInstances[debugNameSpace]) {

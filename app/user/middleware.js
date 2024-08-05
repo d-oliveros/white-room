@@ -16,10 +16,6 @@ export default (app) => {
     try {
       let user;
       const { session, initialState } = res.locals;
-      console.log('HERE IS ', initialState);
-
-      console.log('session');
-      console.log(session);
 
       // Load user data from session user ID.
       if (session && session.userId) {

@@ -1,7 +1,7 @@
 import React, { useState, StrictMode } from 'react';
 import PropTypes from 'prop-types';
-import { useNavigate } from 'react-router-dom';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { QueryClientProvider } from '@tanstack/react-query'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
 import StateContext from '#white-room/client/contexts/StateContext.js';
 import ApiClientContext from '#white-room/client/contexts/ApiClientContext.js';
@@ -16,6 +16,7 @@ const AppContextProvider = ({ store, queryClient, apiClient, children }) => {
       <StateContext.Provider value={store}>
         <ApiClientContext.Provider value={apiClient}>
           <QueryClientProvider client={queryClient}>
+            <ReactQueryDevtools initialIsOpen={false} />
             <DispatchContext.Provider value={dispatch}>
               {children}
             </DispatchContext.Provider>

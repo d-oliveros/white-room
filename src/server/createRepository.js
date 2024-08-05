@@ -1,7 +1,7 @@
 import knex from '#white-room/server/db/knex.js';
 
-const createRepository = async (tableName, methods) => {
-  const repository = new Proxy(methods || {}, {
+const createRepository = (tableName, methods = {}) => {
+  const repository = new Proxy(methods, {
     get(target, name) {
       if (name in target) {
         return target[name];

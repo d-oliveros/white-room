@@ -197,7 +197,6 @@ const typeCheckCustomTypes = {
     typeOf: 'Object',
     validate: (x) => !!(
         x
-        && typeof x.id === 'string' && x.id
         && typeof x.path === 'string' && x.path
         && typeof x.handler === 'function'
         && (!x.validate || typeof x.validate === 'function')
