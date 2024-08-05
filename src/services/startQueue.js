@@ -26,6 +26,7 @@ export const getQueueHandlersFromModules = (modules) => {
 
 export const makeProcessServiceJobFn = (queueHandlers) => {
   return async ({ id, name, data }) => {
+    console.log('makeProcessServiceJobFn');
     console.log({ id, name, data });
     console.log(queueHandlers, name);
     const matches = queueHandlers.filter(({ event }) => event === name);

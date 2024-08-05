@@ -14,10 +14,10 @@ import React from 'react';
 import { RouterProvider, createBrowserRouter, matchRoutes } from 'react-router-dom';
 import createDebug from 'debug';
 import { hydrateRoot } from 'react-dom/client';
-import { QueryClient } from '@tanstack/react-query'
 import he from 'he'
 
 import createApiClient from '#white-room/api/createApiClient.js';
+import createReactQueryClient from '#white-room/client/helpers/createReactQueryClient.js';
 import createStore from '#white-room/client/core/createStore.js';
 import initDevelopmentEnv from '#white-room/client/core/developmentEnv.js';
 import initListeners from '#white-room/client/core/initListeners.js';
@@ -48,11 +48,13 @@ if (process.browser) {
     ? parseJSON(he.decode(global.__INITIAL_STATE__))
     : {};
 
+  console.log('Initial Client State', state);
+
   const {
     NODE_ENV,
     COMMIT_HASH,
     APP_URL,
-   } = state.env || {};
+   } = state.client.env || {};
 
   // Get the serialized state
   const store = createStore(state, {
@@ -133,14 +135,8 @@ if (process.browser) {
     console.log('Done...??', Date.now());
   }
 
-  const queryClient = new QueryClient({
-    defaultOptions: {
-      queries: {
-        // With SSR, we usually want to set some default staleTime
-        // above 0 to avoid refetching immediately on the client
-        staleTime: 60 * 1000,
-      },
-    },
+  const queryClient = createReactQueryClient({
+    apiClient,
   });
 
   const router = makeRouter({

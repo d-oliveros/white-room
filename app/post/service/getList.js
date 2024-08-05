@@ -6,7 +6,8 @@ export default {
   //   ROLE_ADMIN,
   //   ROLE_USER,
   // ]),
-  async handler() {
+  async handler({ payload }) {
+    console.log('P IS ', payload);
     const posts = await Post
       .select('*');
 

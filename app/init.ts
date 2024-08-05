@@ -52,7 +52,7 @@ const init = async ({ modulesDir, config }: InitArgs) => {
     const modules = await loadModules(modulesDir);
 
     if (config.enableMigrations) {
-      const { dataSource } = await import('./data-source.js');
+      const { dataSource } = await import('./dataSource.js');
       await runMigrations(dataSource);
     }
 

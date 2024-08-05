@@ -1,11 +1,14 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+import useServiceMutation from '#white-room/client/hooks/useServiceMutation.js';
 
 import { hasRoleAnonymous } from '#user/constants/roles.js';
 import sleepAsync from '#white-room/util/sleepAsync.js';
 import logger from '#white-room/logger.js';
 
 import useBranch from '#white-room/client/hooks/useBranch.js';
+// import useDispatch from '#white-room/client/hooks/useDispatch.js';
 
 import Link from '#app/view/components/Link/Link.jsx';
 
@@ -16,19 +19,39 @@ const debug = logger.createDebug('Homepage');
 const Homepage = ({ user }) => {
   console.log('Rendering Homepage.jsx');
 
+  const getPostsQuery = useQuery({
+    queryKey: ['post/getList'],
+  });
+
+  const createPostMutation = useServiceMutation({
+    serviceId: 'post/create',
+  });
+
   const currentUser = useBranch('currentUser');
   const navigate = useNavigate();
 
   logger.info('Rendering Homepage.jsx');
+
   debug({ user });
 
   return (
-    <div width='80%' margin='0 auto'>
+    <div width='80%' style={{ margin: '0 auto' }}>
       <h1 styleName='testing'>Home Page</h1>
 
       <h1 className='text-3xl font-bold underline'>
         Hello world!
       </h1>
+
+      {getPostsQuery.data?.map((post) => (
+        <div key={post.id}>
+          <h4>{post.title}</h4>
+          <p>{post.content || ''}</p>
+        </div>
+      ))}
+
+      {createPostMutation.data &&
+        <p>NEW POST IS {JSON.stringify(createPostMutation.data, null, 2)}</p>
+      }
 
       <p>
         Hello! Thanks for visiting.
@@ -50,14 +73,25 @@ const Homepage = ({ user }) => {
         <>
           <Link to='/login'>Log In</Link>
 
-          <span onClick={() => navigate('/login')}>
+          <button onClick={() => navigate('/login')}>
             Redirect to Login
-          </span>
+          </button>
         </>
       }
 
       <div>
-        <button onClick={() => console.log('click')}>Button</button>
+        <button
+          onClick={() => createPostMutation.mutate({
+            title: 'My new post',
+            content2: 'This is a new post',
+          })}
+        >
+          Create Post
+        </button>
+
+        {createPostMutation.error && (
+          <pre>{createPostMutation.error.stack}</pre>
+        )}
 
         <h3>Users</h3>
         <Link to='/user/1'>User 1</Link>

@@ -23,7 +23,7 @@ export const dataSource = new DataSource({
   database: POSTGRES_DATABASE,
   synchronize: false,
   logging: true,
-  entities: getEntitySchemas('./**/model/*model.js'),
+  entities: await getEntitySchemas('./**/model/*model.js'),
   migrations: [path.join(__dirname, '../migrations/*.ts')],
   subscribers: [],
 });

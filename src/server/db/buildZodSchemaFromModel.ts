@@ -45,10 +45,12 @@ const mapColumnTypeToZod = (column: any): ZodType<any> => {
   return zodType;
 };
 
-const buildZodSchemaFromModel = (Model: any): ZodObject<any> => {
+const buildZodSchemaFromModel = (Model: any, fieldgroup: string[] | null = null): ZodObject<any> => {
   const shape: any = {};
   for (const [key, column] of Object.entries(Model.columns)) {
-    shape[key] = mapColumnTypeToZod(column as any);
+    if (!fieldgroup || fieldgroup.includes(key)) {
+      mapColumnTypeToZod(column as any);
+    }
   }
   return z.object(shape);
 };

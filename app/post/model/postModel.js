@@ -7,6 +7,10 @@ const postModel = {
       type: 'int',
       generated: 'increment',
     },
+    createdAt: {
+      type: 'timestamp',
+      default: () => 'CURRENT_TIMESTAMP',
+    },
     title: {
       type: 'varchar',
     },
@@ -35,5 +39,10 @@ const postModel = {
     },
   },
 };
+
+export const editableFieldgroup = [
+  'title',
+  'content',
+];
 
 export default postModel;

@@ -18,6 +18,7 @@
     "importHelpers": true,                // Import emit helpers from 'tslib'
     "downlevelIteration": true,           // Provide full support for iterables in ES5/ES3
     "isolatedModules": true,              // Transpile each file as a separate module
+    "allowImportingTsExtensions": true,
 
     /* Strict Type-Checking Options */
     "strict": false,                       // Enable all strict type-checking options
@@ -61,7 +62,7 @@
     "experimentalDecorators": true,       // Enables experimental support for ES7 decorators
     "emitDecoratorMetadata": true         // Enables experimental support for emitting type metadata for decorators
   },
-  "include": ["src"],                     // Include all TypeScript files in the 'src' directory
+  "include": ["src", "app"],              // Include all TypeScript files in the 'src' directory
   "exclude": ["node_modules", "**/*.spec.ts"], // Exclude 'node_modules' and test files
   "ts-node": {
     "esm": true,                          // Enable ESM support in 'ts-node'

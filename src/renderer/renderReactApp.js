@@ -2,7 +2,6 @@ import { parse as parseUrl } from 'url';
 
 import React from 'react';
 import { renderToString } from 'react-dom/server';
-import { QueryClient } from '@tanstack/react-query'
 import {
   createStaticHandler,
   createStaticRouter,
@@ -12,12 +11,13 @@ import {
 import logger from '#white-room/logger.js';
 import typeCheck from '#white-room/util/typeCheck.js';
 import isRedirectResponse from '#white-room/util/isRedirectResponse.js';
+
 import createApiClient from '#white-room/api/createApiClient.js';
-
-import makeInitialState from '#white-room/client/makeInitialState.js';
+import createReactQueryClient from '#white-room/client/helpers/createReactQueryClient.js';
 import createStore from '#white-room/client/core/createStore.js';
-import AppContextProvider from '#white-room/client/contexts/AppContextProvider.jsx';
+import makeInitialState from '#white-room/client/makeInitialState.js';
 
+import AppContextProvider from '#white-room/client/contexts/AppContextProvider.jsx';
 import makeRouter from '#white-room/client/core/makeRouter.jsx';
 import renderLayout from '#white-room/renderer/renderLayout.js';
 
@@ -106,12 +106,9 @@ export default async function renderReactApp({ state: initialStateData, req, res
       sessionTokenName: 'X-Session-Token',
     });
 
-    const queryClient = new QueryClient({
-      defaultOptions: {
-        queries: {
-          staleTime: 60 * 1000,
-        },
-      },
+    // Server-side react query client
+    const queryClient = createReactQueryClient({
+      apiClient,
     });
 
     let redirectUrl = null;
@@ -121,8 +118,8 @@ export default async function renderReactApp({ state: initialStateData, req, res
       // ...(pageMetadata || {}),
     };
 
-    store.set('client.pageMetadata', pageMetadataWithDefaults);
-    store.set('client.pageMetadataDefault', DEFAULT_PAGE_METADATA);
+    store.set(['client', 'pageMetadata'], pageMetadataWithDefaults);
+    store.set(['client', 'pageMetadataDefault'], DEFAULT_PAGE_METADATA);
 
     // TODO: Navigate on fetchPageData
     if (redirectUrl) {
@@ -150,8 +147,9 @@ export default async function renderReactApp({ state: initialStateData, req, res
     console.log('Router', router);
     let handler = createStaticHandler(router);
     let context = await handler.query(fetchRequest);
-    console.log('CONTEXT IS');
-    console.log(context);
+
+    // console.log('CONTEXT IS');
+    // console.log(context);
 
     if (isRedirectResponse(context)) {
       httpStatus = context.statusCode;

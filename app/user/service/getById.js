@@ -34,10 +34,6 @@ const withRoles = ({ res }) => {
 
 export default {
   path: '/user/getById',
-  // auth: withRoles([
-  //   ROLE_ADMIN,
-  //   ROLE_USER,
-  // ]),
   roles: [
     ROLE_ADMIN,
     ROLE_USER,

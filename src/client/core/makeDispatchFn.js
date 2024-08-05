@@ -1,7 +1,7 @@
 import typeCheck from '#white-room/util/typeCheck.js';
 import logger from '#white-room/logger.js';
 
-const debugActions = logger.debug('client:actions');
+const debug = logger.debug('client:actions');
 
 export default function makeDispatchFn({ state, apiClient }) {
   typeCheck('state::Object', state);
@@ -16,7 +16,7 @@ export default function makeDispatchFn({ state, apiClient }) {
       error.name = 'ClientDispatchMissingFunctionError';
       throw error;
     }
-    debugActions(`Dispatching: ${fn.name || 'anonymous'}`, ...args);
+    debug(`Dispatching: ${fn.name || 'anonymous'}`, ...args);
     return fn({ state, apiClient }, ...args);
   };
 }

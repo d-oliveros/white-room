@@ -1,6 +1,9 @@
 import { readdir } from 'fs/promises';
 import { extname, basename, dirname, resolve } from 'path';
-import { cloneDeep, isEqual } from 'lodash-es';
+import cloneDeep from 'lodash/fp/cloneDeep.js';
+import isEqual from 'lodash/fp/isEqual.js';
+
+import withoutLeadingSlash from '#white-room/util/withoutLeadingSlash.js';
 
 import logger from '../logger.js';
 
@@ -22,8 +25,8 @@ export const importServiceModule = async (dirPath) => {
 
       if (typeof moduleObject === 'object') {
         if (typeof moduleObject.handler === 'function') {
-          moduleObject.id = `${basename(dirname(dirPath))}.${file.replace(extname(file), '')}`;
-          moduleObject.path ??= moduleObject.id.replace(/\./g, '/');
+          const filesystemPath = `${basename(dirname(dirPath))}/${file.replace(extname(file), '')}`;
+          moduleObject.path = withoutLeadingSlash(moduleObject.path ?? filesystemPath);
           serviceModules.push(moduleObject);
         }
         else {

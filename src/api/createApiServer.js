@@ -3,6 +3,7 @@ import { Router } from 'express';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import unwrapSessionToken from '#white-room/server/middleware/unwrapSessionToken.js';
+import withoutLeadingSlash from '#white-room/util/withoutLeadingSlash.js';
 
 import { v4 as uuidv4 } from 'uuid';
 import { serializeError } from 'serialize-error';
@@ -16,21 +17,36 @@ import trimStringValues from '#white-room/util/trimStringValues.js';
 
 const debug = logger.createDebug('api');
 
-function rejectApiRequest({ res, error, path }) {
+const anonymousSession = {
+  roles: [],
+  userId: null,
+};
+
+function rejectApiRequest({ res, error }) {
   const serializedError = serializeError(error);
-  debug(`Error "${path}"`, serializedError);
   res.send({
     success: false,
     result: serializedError,
   });
 }
 
+function getPathFromReqParams(params) {
+  return params && params[0] && typeof params[0] === 'string'
+    ? withoutLeadingSlash(params[0])
+    : null;
+}
+
+
+function getSessionFromResLocals(locals, sessionName = 'session') {
+  return locals && locals[sessionName] || anonymousSession;
+}
+
 function authenticateRequest(servicesByPath, options) {
   typeCheck('servicesByPath::NonEmptyObject', servicesByPath);
 
   return function authenticateRequestMiddleware(req, res, next) {
-    const session = res.locals && res.locals[options?.sessionName || 'session'] || null;
-    const path = req.params.path;
+    const session = getSessionFromResLocals(res, options?.sessionName);
+    const path = getPathFromReqParams(req.params);
     const service = servicesByPath[path];
 
     // 404
@@ -47,13 +63,13 @@ function authenticateRequest(servicesByPath, options) {
         userSession: session,
       };
       res.status(404);
-      rejectApiRequest({ res, error, path });
+      rejectApiRequest({ res, error });
       return;
     }
 
     // API_ERROR_NOT_ALLOWED
-    if (Array.isArray(service.roles)) {
-      if (service.roles.length > 0 && !session) {
+    if (Array.isArray(service.roles) && service.roles.length > 0) {
+      if (!session) {
         const error = new Error('User is not logged in.');
         error.name = 'NotAllowed';
         error.source = 'Web';
@@ -61,7 +77,7 @@ function authenticateRequest(servicesByPath, options) {
           path: path,
           userSession: session,
         };
-        rejectApiRequest({ res, error, path });
+        rejectApiRequest({ res, error });
         return;
       }
 
@@ -71,15 +87,15 @@ function authenticateRequest(servicesByPath, options) {
       ];
       if (!session.roles.some((sessionRole) => allowedRoles.includes(sessionRole))) {
         const error = new Error(
-          `Request session roles are not allowed to perform "${service.type}": ` +
-          session.roles
+          `Request session roles are not allowed in "${service.path}": ` +
+          (session.roles.join(', ') || 'n/a')
         );
         error.name = 'NotAllowed';
         error.details = {
           path: path,
           userSession: session,
         };
-        rejectApiRequest({ res, error, path });
+        rejectApiRequest({ res, error });
         return;
       }
     }
@@ -90,43 +106,46 @@ function authenticateRequest(servicesByPath, options) {
 
 function validateActionPayload(servicesByPath) {
   typeCheck('servicesByPath::Object', servicesByPath);
-  return function validateActionPayloadMiddleware(req, res, next) {
-    const session = res.locals && res.locals.session || null;
-    const path = req.params.path;
-    const actionPayload = (req.method === 'GET'
-      ? req.query
-      : req.body
-    );
+  return async function validateActionPayloadMiddleware(req, res, next) {
+    let path;
+    let actionPayload;
+    try {
+      path = getPathFromReqParams(req.params);
+      actionPayload = (req.method === 'GET'
+        ? req.query
+        : req.body
+      );
+      const service = servicesByPath[path];
+      if (service?.validate) {
+        await service.validate(actionPayload);
+      }
 
-    const service = servicesByPath[path];
-    if (!service || typeof service.validate !== 'function') {
+      if (service?.schema?.parseAsync) {
+        console.log('TODO: Fix service?.schema?.parseAsync not throwing an error.');
+        await service.schema.parseAsync(actionPayload);
+      }
       next();
     }
-    else {
-      Promise.resolve()
-        .then(() => service.validate(actionPayload))
-        .then(() => next())
-        .catch((payloadValidationError) => {
-          const error = new Error(`Payload validation failed: ${payloadValidationError.message}`, {
-            cause: payloadValidationError,
-          });
-          error.name = 'PayloadValidationFailed';
-          error.details = {
-            path: path,
-            actionPayload: actionPayload,
-            userSession: session,
-          };
-          rejectApiRequest({ res, error, path });
-        });
+    catch (payloadValidationError) {
+      const error = new Error(`Payload validation failed: ${payloadValidationError.message}`, {
+        cause: payloadValidationError,
+      });
+      error.name = 'PayloadValidationFailed';
+      error.details = {
+        path,
+        actionPayload,
+      };
+      rejectApiRequest({ res, error });
     }
   };
 }
 
-function handleActionRequest(servicesByPath) {
+function handleActionRequest(servicesByPath, options) {
   typeCheck('servicesByPath::Object', servicesByPath);
   return async function handleActionRequestController(req, res) {
-    const session = res.locals && res.locals.session || null;
-    const path = req.params.path;
+    const session = getSessionFromResLocals(res, options?.sessionName);
+
+    const path = getPathFromReqParams(req.params);
     const actionPayload = trimStringValues(req.method === 'GET'
       ? req.query
       : req.body
@@ -140,7 +159,7 @@ function handleActionRequest(servicesByPath) {
       let sendFilePath;
       debug(`Calling "${path}"`, actionPayload);
       const result = await service.handler({
-        session: session,
+        session,
         payload: actionPayload,
         requestIp: req.ip,
         sendFile: (filePath) => {
@@ -204,7 +223,7 @@ function handleActionRequest(servicesByPath) {
       };
 
       logger.error(error);
-      rejectApiRequest({ res, error, path });
+      rejectApiRequest({ res, error });
     }
   };
 }
@@ -234,10 +253,10 @@ export default function createApiServer(services, options = {}) {
     unwrapSessionToken,
   );
 
-  router.all('/:path',
+  router.all('/*',
     authenticateRequest(servicesByPath, options),
     validateActionPayload(servicesByPath),
-    handleActionRequest(servicesByPath),
+    handleActionRequest(servicesByPath, options),
   );
 
   return router;
