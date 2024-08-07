@@ -1,7 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
-import useServiceMutation from '#white-room/client/hooks/useServiceMutation.js';
+import { useServiceQuery, useServiceMutation } from '#white-room/client/hooks/reactQuery.js';
 
 import { hasRoleAnonymous } from '#user/constants/roles.js';
 import sleepAsync from '#white-room/util/sleepAsync.js';
@@ -16,21 +15,28 @@ import './pages.css';
 
 const debug = logger.createDebug('Homepage');
 
+const getPostsQueryParams = {
+  serviceId: 'post/getList',
+  payload: {
+    status: 'active',
+  },
+};
+
+const createPostMutationParams = {
+  serviceId: 'post/create',
+  invalidateOnSuccess: [{
+    serviceId: 'post',
+  }],
+};
+
 const Homepage = ({ user }) => {
-  console.log('Rendering Homepage.jsx');
-
-  const getPostsQuery = useQuery({
-    queryKey: ['post/getList'],
-  });
-
-  const createPostMutation = useServiceMutation({
-    serviceId: 'post/create',
-  });
-
+  const getPostsQuery = useServiceQuery(getPostsQueryParams);
+  const createPostMutation = useServiceMutation(createPostMutationParams);
   const currentUser = useBranch('currentUser');
   const navigate = useNavigate();
 
   logger.info('Rendering Homepage.jsx');
+  console.log('INITIAL getPostsQuery DATA IS', getPostsQuery.data);
 
   debug({ user });
 
@@ -83,7 +89,7 @@ const Homepage = ({ user }) => {
         <button
           onClick={() => createPostMutation.mutate({
             title: 'My new post',
-            content2: 'This is a new post',
+            content: 'This is a new post',
           })}
         >
           Create Post
@@ -116,7 +122,11 @@ Homepage.getMetadata = ({ state, params }) => ({
   pageTitle: 'Homepage | White Room',
 });
 
-Homepage.fetchPageData = async ({ apiClient, queryClient, state, params }) => {
+Homepage.fetchPageData = async ({ apiClient, prefetchQuery, state, params }) => {
+  console.log('CALLING fetchPageData');
+  const data = await prefetchQuery(getPostsQueryParams);
+  console.log('prefetchQuery DATA IS', data);
+
   // await sleepAsync(process.browser ? 3000 : 0);
   console.log('Sleeeeeping');
   await sleepAsync(400);

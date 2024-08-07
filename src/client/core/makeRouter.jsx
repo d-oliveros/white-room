@@ -1,9 +1,11 @@
 import React, { Suspense } from 'react';
 import { Await, Navigate, Outlet, Link, defer, useLoaderData, useAsyncError } from 'react-router-dom';
 import { serializeError } from 'serialize-error';
+import { HydrationBoundary, dehydrate } from '@tanstack/react-query';
 
 import logger from '#white-room/logger.js';
 import isRedirectResponse from '#white-room/util/isRedirectResponse.js';
+import { makePrefetchQueryFn } from '#white-room/client/hooks/reactQuery.js';
 
 import App from '#white-room/client/App.jsx';
 
@@ -18,7 +20,7 @@ const makeLoaderFn = ({ fetchPageData, apiClient, queryClient, store }) => {
 
     let fetchPageDataPromise = fetchPageData({
       apiClient,
-      queryClient,
+      prefetchQuery: makePrefetchQueryFn({ queryClient }),
       store,
       params,
     });
@@ -33,6 +35,7 @@ const makeLoaderFn = ({ fetchPageData, apiClient, queryClient, store }) => {
         data: null,
         promise: fetchPageDataPromise,
         error: null,
+        dehydratedQueryClientState: null,
       });
     }
     return new Promise((resolve) => {
@@ -49,6 +52,7 @@ const makeLoaderFn = ({ fetchPageData, apiClient, queryClient, store }) => {
               data: pageProps,
               promise: null,
               error: null,
+              dehydratedQueryClientState: dehydrate(queryClient),
             });
           }
         })
@@ -65,6 +69,7 @@ const makeLoaderFn = ({ fetchPageData, apiClient, queryClient, store }) => {
             data: null,
             promise: null,
             error: serializeError(fetchPageDataError),
+            dehydratedQueryClientState: null,
           })
         });
     });
@@ -99,9 +104,20 @@ const LoaderTransitionHandler = ({ children }) => {
   console.log('loaderData?', !!loaderData);
   console.log(loaderData);
 
+  const childrenWithProps = (props) => {
+    if (loaderData.dehydratedQueryClientState) {
+      return (
+        <HydrationBoundary state={loaderData.dehydratedQueryClientState}>
+          {children(props || {})}
+        </HydrationBoundary>
+      );
+    }
+    return children(props || {});
+  }
+
   if (!loaderData?.isDeferred && !loaderData?.error) {
     console.log('Rendering normal component');
-    return children(loaderData?.data || {});
+    return childrenWithProps(loaderData?.data);
   }
 
   if (loaderData?.error) {
@@ -116,7 +132,7 @@ const LoaderTransitionHandler = ({ children }) => {
         resolve={loaderData.promise}
         errorElement={<FetchDataErrorFallback />}
       >
-        {(pageProps) => children(pageProps || {})}
+        {(pageProps) => childrenWithProps(pageProps)}
       </Await>
     </Suspense>
   );
