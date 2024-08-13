@@ -3,13 +3,13 @@ import typeCheck from '#white-room/util/typeCheck.js';
 import User from '#user/model/userRepository.js';
 
 export default {
-  validate({ phone }) {
-    typeCheck('phone::Phone', phone);
+  validate({ email }) {
+    typeCheck('email::Email', email);
   },
-  async handler({ payload: { phone } }) {
+  async handler({ payload: { email } }) {
     const user = await User
-      .where('phone', phone)
-      .first();
+      .first('id')
+      .where({ email })
 
     return !!user;
   },

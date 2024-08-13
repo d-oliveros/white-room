@@ -1,4 +1,5 @@
-import React, { Suspense } from 'react';
+import { Suspense } from 'react';
+import PropTypes from 'prop-types';
 import { Await, Navigate, Outlet, Link, defer, useLoaderData, useAsyncError } from 'react-router-dom';
 import { serializeError } from 'serialize-error';
 import { HydrationBoundary, dehydrate } from '@tanstack/react-query';
@@ -105,7 +106,7 @@ const LoaderTransitionHandler = ({ children }) => {
   console.log(loaderData);
 
   const childrenWithProps = (props) => {
-    if (loaderData.dehydratedQueryClientState) {
+    if (loaderData?.dehydratedQueryClientState) {
       return (
         <HydrationBoundary state={loaderData.dehydratedQueryClientState}>
           {children(props || {})}
@@ -136,6 +137,10 @@ const LoaderTransitionHandler = ({ children }) => {
       </Await>
     </Suspense>
   );
+};
+
+LoaderTransitionHandler.propTypes = {
+  children: PropTypes.func.isRequired,
 };
 
 const Layout = () => {

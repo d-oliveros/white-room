@@ -67,7 +67,8 @@ async function requestFCMEndpoint({ method, path, body }) {
       error.details = {
         responseStatus: response.status,
         responseBody: errorBody,
-        responseHeaders: [...response.headers.entries()].reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {})
+        responseHeaders: [...response.headers.entries()]
+          .reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {}),
       };
       throw error;
     }

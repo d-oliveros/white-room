@@ -60,7 +60,10 @@ const plugin = {
 
         logger.info(`${context.commandName}: ${args.input.Key} starts`, metadata);
         const result = await next(args);
-        logger.info(`${context.commandName}: ${args.input.Key} in ${Date.now() - startTimestamp}ms`, metadata);
+        logger.info(
+          `${context.commandName}: ${args.input.Key} in ${Date.now() - startTimestamp}ms`,
+          metadata,
+        );
 
         return result;
       },

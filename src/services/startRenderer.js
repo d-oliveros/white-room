@@ -25,7 +25,7 @@ export const getRoutesFromModules = (modules) => {
   const paths = new Set();
   for (const route of allRoutes) {
     if (paths.has(route.path)) {
-      throw new Error(`Duplicate route path found: ${route.path}. Paths: ${paths}`);
+      throw new Error(`Duplicate route path found: ${route.path}. Paths: ${JSON.stringify(paths)}`);
     }
     paths.add(route.path);
   }

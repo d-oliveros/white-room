@@ -10,11 +10,11 @@ import postWithState from '#white-room/client/actions/postWithState.js';
 
 import AuthActions from '#auth/view/actions/index.jsx';
 
-import PasswordResetSmsForm from '#app/view/components/PasswordResetSmsForm/PasswordResetSmsForm.jsx';
-import SmsSendingIndicator from '#app/view/components/SmsSendingIndicator/SmsSendingIndicator.jsx';
-import Navbar from '#app/view/components/Navbar/Navbar.jsx';
-import Link from '#app/view/components/Link/Link.jsx';
-import ErrorMessage from '#app/view/components/ErrorMessage/ErrorMessage.jsx';
+import PasswordResetSmsForm from '#ui/view/components/PasswordResetSmsForm/PasswordResetSmsForm.jsx';
+import SmsSendingIndicator from '#ui/view/components/SmsSendingIndicator/SmsSendingIndicator.jsx';
+import Navbar from '#ui/view/components/Navbar/Navbar.jsx';
+import Link from '#ui/view/components/Link/Link.jsx';
+import ErrorMessage from '#ui/view/components/ErrorMessage/ErrorMessage.jsx';
 
 const ResetPasswordPage = () => {
   useAllowedRoles({

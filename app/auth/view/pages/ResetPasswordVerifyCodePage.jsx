@@ -9,10 +9,10 @@ import useAllowedRoles from '#white-room/client/hooks/useAllowedRoles.jsx';
 import useApiState from '#white-room/client/hooks/useApiState.jsx';
 import AuthActions from '#auth/view/actions/index.jsx';
 
-import PasswordResetSmsVerifyCode from '#app/view/components/PasswordResetSmsVerifyCode/PasswordResetSmsVerifyCode.jsx';
-import SmsSendingIndicator from '#app/view/components/SmsSendingIndicator/SmsSendingIndicator.jsx';
-import Navbar from '#app/view/components/Navbar/Navbar.jsx';
-import Link from '#app/view/components/Link/Link.jsx';
+import PasswordResetSmsVerifyCode from '#ui/view/components/PasswordResetSmsVerifyCode/PasswordResetSmsVerifyCode.jsx';
+import SmsSendingIndicator from '#ui/view/components/SmsSendingIndicator/SmsSendingIndicator.jsx';
+import Navbar from '#ui/view/components/Navbar/Navbar.jsx';
+import Link from '#ui/view/components/Link/Link.jsx';
 
 const ResetPasswordVerifyCodePage = () => {
   useAllowedRoles({

@@ -1,11 +1,10 @@
-import React from 'react';
 import { Navigate } from 'react-router-dom';
 
 import { hasRoleAnonymous } from '#user/constants/roles.js';
 
 import useBranch from '#white-room/client/hooks/useBranch.js';
 import useDispatch from '#white-room/client/hooks/useDispatch.js';
-import SignupForm from '#app/view/components/SignupForm/SignupForm.jsx';
+import SignupForm from '#ui/view/components/SignupForm/SignupForm.jsx';
 
 import getUserLandingPage from '#auth/view/helpers/getUserLandingPage.js';
 

@@ -179,7 +179,10 @@ const webpackConfig = {
   },
   plugins: [
     new NodePolyfillPlugin({
-      onlyAliases: ['path', 'url', 'fs'],
+      onlyAliases: ['path', 'url', 'fs', 'assert'],
+    }),
+    new webpack.ProvidePlugin({
+      React: 'react',
     }),
     !isProd && new ReactRefreshWebpackPlugin({
       exclude: /node_modules/,

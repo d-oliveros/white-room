@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import parseQueryString from '#white-room/util/parseQueryString.js';
 import { hasRoleAnonymous } from '#user/constants/roles.js';
 
-import Logo from '#app/view/components/Logo/Logo.jsx';
+import Logo from '#ui/view/components/Logo/Logo.jsx';
 
 import logger from '#white-room/logger.js';
 import AuthActions from '#auth/view/actions/index.jsx';

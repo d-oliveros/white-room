@@ -18,32 +18,18 @@ export default {
       typeCheck('autoLoginToken::NonEmptyString', autoLoginToken);
     }
   },
-  async handler({ payload: { phone, password, autoLoginToken }, getCookie, setCookie }) {
-    let userId;
-    if (!autoLoginToken) {
-      // Check if the login credentials are correct.
-      const isValidLoginResults = await User.isValidLogin({ phone, password });
+  async handler({ payload: { phone, password }, getCookie, setCookie }) {
+    const isValidLoginResults = await User.isValidLogin({ phone, password });
 
-      if (!isValidLoginResults.success) {
-        const error = new Error('Invalid username/password.');
-        error.details = isValidLoginResults;
-        throw error;
-      }
-      userId = isValidLoginResults.userId;
+    if (!isValidLoginResults.success) {
+      return {
+        user: null,
+        experimentActiveVariants: null,
+        error: 'Invalid username/password.',
+      };
     }
-    else {
-      const user = await User
-        .first('*')
-        .where('autoLoginToken', autoLoginToken);
 
-      if (!user) {
-        const error = new Error(`User with auto-login token ${autoLoginToken} not found.`);
-        error.name = 'UserLoginTokenNotFoundError';
-        throw error;
-      }
-
-      userId = user.id;
-    }
+    const userId = isValidLoginResults.userId;
 
     // Load user data, track user session visit.
     await User.trackUserVisit({
@@ -93,12 +79,15 @@ export default {
     );
 
     if (changed || cookieAndUserHaveDifferentExperiments) {
-      await User.update({ experimentActiveVariants }).where({ id: user.id });
+      await User
+        .update({ experimentActiveVariants })
+        .where({ id: user.id });
     }
 
     return {
       user: omitExperimentActiveVariants(user),
       experimentActiveVariants: experimentActiveVariants,
+      error: null,
     };
   },
 };

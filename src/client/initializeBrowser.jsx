@@ -10,7 +10,6 @@
  * - Configured as the entry point in Webpack
  */
 // import './style/main.css';
-import React from 'react';
 import { RouterProvider, createBrowserRouter, matchRoutes } from 'react-router-dom';
 import createDebug from 'debug';
 import { hydrateRoot } from 'react-dom/client';
@@ -31,10 +30,11 @@ import analytics from '#white-room/client/analytics/analytics.js';
 // TODO: Implement dynamic loading of routes! Or inject routes object!
 // import routes from '#white-room/client/routes.js';
 import userListeners from '#user/view/listeners.js';
-import HomePage from '#app/view/pages/Homepage.jsx';
-import PdfGeneratorPage from '#app/view/pages/PdfGeneratorPage.jsx';
-import NotFoundPage from '#app/view/pages/NotFoundPage.jsx';
+import HomePage from '#ui/view/pages/HomePage.jsx';
+import SandboxPage from '#ui/view/pages/SandboxPage.jsx';
 import UserPage from '#user/view/pages/UserPage.jsx';
+import PdfGeneratorPage from '#ui/view/pages/PdfGeneratorPage.jsx';
+import NotFoundPage from '#ui/view/pages/NotFoundPage.jsx';
 import './style/main.css';
 
 const debug = createDebug('initializeBrowser');
@@ -103,6 +103,7 @@ if (process.browser) {
   // TODO: Implement dynamic loading of routes! Or inject routes object!
   const routes = [
     { path: '/', exact: true, Component: HomePage },
+    { path: '/sandbox', exact: true, Component: SandboxPage },
     { path: '/user/:userId', Component: UserPage },
     { path: '/pdf-generator/:pdfComponentId', Component: PdfGeneratorPage },
     { path: '*', Component: NotFoundPage },

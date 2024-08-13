@@ -1,4 +1,3 @@
-import React from 'react';
 import { useParams, Navigate } from 'react-router-dom';
 import useBranch from '#white-room/client/hooks/useBranch.js';
 import sleepAsync from '#white-room/util/sleepAsync.js';

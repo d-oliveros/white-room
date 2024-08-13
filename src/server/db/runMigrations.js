@@ -16,7 +16,9 @@ const runMigrations = async (dataSource) => {
     await dataSource.destroy();
   }
   catch (error) {
-    logger.error(new Error(`[runMigrations] Error while running DB migrations: ${error.message}`, { cause: error }));
+    logger.error(new Error(`[runMigrations] Error while running DB migrations: ${error.message}`, {
+      cause: error,
+    }));
     process.exit(1);
   }
 };

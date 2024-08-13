@@ -1,5 +1,4 @@
 import analytics from '#white-room/client/analytics/analytics.js';
-import { ANALYTICS_EVENT_LOGGED_IN } from '#app/constants/eventList.js';
 
 import updateDeviceRegistrationIds from '#user/service/updateDeviceRegistrationIds.js';
 import sendDataToMobileApp, {
@@ -28,7 +27,7 @@ export async function onLogicSuccess({ state, apiClient, user, experimentActiveV
 
   analytics.alias(user.id, analyticsSessionId);
   analytics.identify(user);
-  analytics.track(ANALYTICS_EVENT_LOGGED_IN);
+  // analytics.track(ANALYTICS_EVENT_LOGGED_IN);
 
   if (mobileAppState.isMobileApp) {
     sendDataToMobileApp({

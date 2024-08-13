@@ -17,8 +17,8 @@ import useBranch from '#white-room/client/hooks/useBranch.js';
 import useApiClient from '#white-room/client/hooks/useApiClient.js';
 import useBrowsingHistoryTracker from '#white-room/client/hooks/useBrowsingHistoryTracker.js';
 
-import MobileAppEventListener from '#app/view/components/MobileAppEventListener/MobileAppEventListener.jsx';
-// import EnablePushNotificationsModal from '#app/view/components/EnablePushNotificationsModal/EnablePushNotificationsModal.jsx';
+import MobileAppEventListener from '#ui/view/components/MobileAppEventListener/MobileAppEventListener.jsx';
+// import EnablePushNotificationsModal from '#ui/view/components/EnablePushNotificationsModal/EnablePushNotificationsModal.jsx';
 
 // Interval for checking the app commit hash vs the server commit hash to reload the page when a new version is available.
 const CHECK_APP_VERSION_INTERVAL_MS = 1800000; // 30 minutes.

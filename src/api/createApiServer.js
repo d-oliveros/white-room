@@ -56,7 +56,10 @@ function authenticateRequest(servicesByPath, options) {
     }
 
     if (!service || serviceMethod !== req.method) {
-      const error = new Error(`Action "${path}" not found.`);
+      const errorTitle = !service
+        ? `Action "${path}" not found.`
+        : `Action "${path}" does not support method: ${req.method}`;
+      const error = new Error(errorTitle);
       error.name = 'NotFound';
       error.details = {
         path: path,

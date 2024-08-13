@@ -1,4 +1,3 @@
-import assert from 'assert';
 import lodashGet from 'lodash/fp/get.js';
 
 import {
@@ -314,7 +313,10 @@ export default {
    * @return {boolean}             True if the method was called
    */
   safeAnalyticsCall(methodName, ...args) {
-    assert(methodName, 'methodName is required.');
+    if (!methodName) {
+      const error = new Error('methodName is required.');
+      throw error;
+    }
 
     if (typeof lodashGet(`analytics.${methodName}`, this._window) !== 'function') {
       return false;
