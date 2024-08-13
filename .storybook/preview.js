@@ -1,3 +1,4 @@
+import { MemoryRouter } from 'react-router-dom';
 import '../src/client/style/tailwind.css';
 
 const preview = {
@@ -9,6 +10,13 @@ const preview = {
       },
     },
   },
+  decorators: [
+    (Story) => (
+      <MemoryRouter>
+        <Story />
+      </MemoryRouter>
+    ),
+  ],
 };
 
 export default preview;

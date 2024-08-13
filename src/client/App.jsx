@@ -1,7 +1,6 @@
-import React, { useEffect, useState, useContext, useMemo } from 'react';
-import { Outlet } from 'react-router-dom';
+import React, { useEffect, useState, useMemo } from 'react';
 import classnames from 'classnames';
-import { useLocation, Routes, Route } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 
 import parseQueryString from '#white-room/util/parseQueryString.js';
 import isUserAgentMobileApp, { isUserAgentIphoneApp } from '#white-room/util/isUserAgentMobileApp.js';
@@ -17,7 +16,6 @@ import useBranch from '#white-room/client/hooks/useBranch.js';
 import useApiClient from '#white-room/client/hooks/useApiClient.js';
 import useBrowsingHistoryTracker from '#white-room/client/hooks/useBrowsingHistoryTracker.js';
 
-import MobileAppEventListener from '#ui/view/components/MobileAppEventListener/MobileAppEventListener.jsx';
 // import EnablePushNotificationsModal from '#ui/view/components/EnablePushNotificationsModal/EnablePushNotificationsModal.jsx';
 
 // Interval for checking the app commit hash vs the server commit hash to reload the page when a new version is available.
@@ -33,10 +31,9 @@ const App = () => {
 
   useBrowsingHistoryTracker();
 
-  const { userAgent, currentUser, askPushNotifications } = useBranch({
+  const { userAgent, currentUser } = useBranch({
     userAgent: ['userAgent'],
     currentUser: ['currentUser'],
-    askPushNotifications: ['askPushNotifications'],
   });
 
   const isMobileApp = useMemo(() => isUserAgentMobileApp(userAgent), [userAgent]);
@@ -56,7 +53,7 @@ const App = () => {
       const now = Date.now();
       if (now - checkAppVersionLastRunTimestamp > CHECK_APP_VERSION_INTERVAL_MS) {
         setCheckAppVersionLastRunTimestamp(now);
-        apiClient.post(API_ACTION_GET_APP_COMMIT_HASH);
+        apiClient.post('/admin/getAppCommitHash');
       }
     }, 1000);
     setCheckAppVersionInterval(interval);
@@ -88,7 +85,7 @@ const App = () => {
       global.clearInterval(interval);
       setCheckAppVersionInterval(null);
     };
-  }, [checkAppVersionLastRunTimestamp, apiClient, currentUser, userAgent, location]);
+  }, [checkAppVersionLastRunTimestamp, apiClient, currentUser, userAgent, location, isMobileApp]);
 
   return (
     <div
@@ -100,13 +97,7 @@ const App = () => {
         },
       )}
     >
-      <MobileAppEventListener />
       <Outlet />
-      {askPushNotifications && (null
-        // <EnablePushNotificationsModal
-        //   onClose={() => {}}
-        // />
-      )}
     </div>
   );
 };

@@ -1,7 +1,7 @@
-import Button from "./Button";
+import Button from './Button.jsx';
 
 export default {
-  title: "Button",
+  title: 'Button',
   component: Button,
 };
 
@@ -9,20 +9,20 @@ export const Default = {
   args: {
     disabled: false,
     onClick: () => console.log('Click'),
-    children: "Button",
+    children: 'Button',
   },
 };
 
 export const SignIn = {
   args: {
     ...Default.args,
-    children: "Sign In",
+    children: 'Sign In',
   },
 };
 
 export const Disabled = {
   args: {
     disabled: true,
-    children: "Button"
-  }
+    children: 'Button',
+  },
 };
