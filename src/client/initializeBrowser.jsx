@@ -12,7 +12,7 @@
 import { RouterProvider, createBrowserRouter, matchRoutes } from 'react-router-dom';
 import createDebug from 'debug';
 import { hydrateRoot } from 'react-dom/client';
-import he from 'he'
+import he from 'he';
 
 import createApiClient from '#white-room/api/createApiClient.js';
 import createReactQueryClient from '#white-room/client/helpers/createReactQueryClient.js';

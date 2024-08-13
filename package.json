@@ -58,6 +58,8 @@
     "debug": "^4.3.6",
     "express": "^4.19.2",
     "flatted": "^3.3.1",
+    "flowbite": "^2.5.1",
+    "flowbite-react": "^0.10.1",
     "formidable": "^3.5.1",
     "formik": "^2.4.6",
     "he": "^1.2.0",
