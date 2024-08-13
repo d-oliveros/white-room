@@ -9,6 +9,7 @@ const config: StorybookConfig = {
   addons: [
     '@storybook/addon-webpack5-compiler-swc',
     '@storybook/addon-essentials',
+    '@storybook/addon-actions',
     {
       name: '@storybook/addon-styling-webpack',
       options: {

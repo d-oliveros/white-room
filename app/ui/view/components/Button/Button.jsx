@@ -1,5 +1,4 @@
 import { Button as FlowbiteButton } from 'flowbite-react';
-import PropTypes from 'prop-types';
 
 const Button = (props) => {
   return (
