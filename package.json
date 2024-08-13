@@ -17,7 +17,7 @@
     "build-e2e": "run-p build-babel build-webpack",
     "build-babel": "babel app --out-dir lib --keep-file-extension ",
     "build-webpack": "webpack --config webpack.config.js",
-    "build-storybook": "cross-env NODE_ENV=development storybook build -- -s ./public -c ./.storybook -o ./.storybook/dist",
+    "build-storybook": "storybook build",
     "webpack-analyze-bundle": "pnpm run build-webpack && webpack --config webpack.config.js --profile --json > build/stats.json && webpack-bundle-analyzer build/stats.json build",
     "serve": "node init",
     "lint": "eslint --max-warnings 0 --ignore-path .gitignore . && clear && echo '[lint]: Done.'",
@@ -37,7 +37,7 @@
     "cypress:open": "cypress open --e2e --browser electron",
     "cypress:test": "cypress run",
     "prepush": "pnpm run lint",
-    "storybook": "storybook dev -- -s ./public -p 6006",
+    "storybook": "storybook dev -p 6006",
     "type-check": "tsc --noEmit",
     "precommit": "pnpm run type-check"
   },
@@ -113,11 +113,9 @@
     "@faker-js/faker": "^8.4.1",
     "@node-loader/babel": "^2.1.0",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.15",
-    "@storybook/addon-actions": "^8.2.8",
     "@storybook/addon-essentials": "^8.2.8",
-    "@storybook/addon-links": "^8.2.8",
-    "@storybook/addon-webpack5-compiler-babel": "^3.0.3",
-    "@storybook/react": "^8.2.8",
+    "@storybook/addon-styling-webpack": "^1.0.0",
+    "@storybook/addon-webpack5-compiler-swc": "^1.0.5",
     "@storybook/react-webpack5": "^8.2.8",
     "@tailwindcss/forms": "^0.5.7",
     "@tanstack/react-query-devtools": "^5.51.23",
@@ -160,6 +158,7 @@
     "react-refresh": "^0.14.2",
     "reflect-metadata": "^0.2.2",
     "sinon": "^18.0.0",
+    "storybook": "^8.2.8",
     "style-loader": "^4.0.0",
     "supertest": "^7.0.0",
     "tailwindcss": "^3.4.9",
@@ -204,6 +203,11 @@
     "*.ts": [
       "pnpm run type-check",
       "git add"
+    ]
+  },
+  "eslintConfig": {
+    "extends": [
+      "plugin:storybook/recommended"
     ]
   }
 }

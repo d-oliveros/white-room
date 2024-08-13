@@ -9,7 +9,6 @@
  * - Ensures proper initialization in the browser environment
  * - Configured as the entry point in Webpack
  */
-// import './style/main.css';
 import { RouterProvider, createBrowserRouter, matchRoutes } from 'react-router-dom';
 import createDebug from 'debug';
 import { hydrateRoot } from 'react-dom/client';
@@ -35,7 +34,7 @@ import SandboxPage from '#ui/view/pages/SandboxPage.jsx';
 import UserPage from '#user/view/pages/UserPage.jsx';
 import PdfGeneratorPage from '#ui/view/pages/PdfGeneratorPage.jsx';
 import NotFoundPage from '#ui/view/pages/NotFoundPage.jsx';
-import './style/main.css';
+import './style/tailwind.css';
 
 const debug = createDebug('initializeBrowser');
 
