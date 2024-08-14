@@ -120,7 +120,6 @@
     "@storybook/addon-styling-webpack": "^1.0.0",
     "@storybook/addon-webpack5-compiler-swc": "^1.0.5",
     "@storybook/react-webpack5": "^8.2.8",
-    "@tailwindcss/forms": "^0.5.7",
     "@tanstack/react-query-devtools": "^5.51.23",
     "@types/node": "^22.2.0",
     "@types/react": "^18.3.3",
