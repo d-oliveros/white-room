@@ -88,4 +88,7 @@ FormField.propTypes = {
   }).isRequired,
 };
 
+FormField.typeStories = [
+];
+
 export default FormField;

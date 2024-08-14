@@ -1,41 +1,5 @@
-import { action } from '@storybook/addon-actions';
-import { useForm, FormProvider } from 'react-hook-form';
-import PropTypes from 'prop-types';
+import withStorybookFormProvider from '#white-room/client/helpers/withStorybookFormProvider.jsx';
 import FormField from './FormField.jsx';
-
-const StorybookFormProvider = ({ children }) => {
-  const methods = useForm();
-  return (
-    <FormProvider {...methods}>
-      <form
-        onSubmit={methods.handleSubmit(action('[React Hooks Form] Submit'))}
-      >
-        {children}
-      </form>
-    </FormProvider>
-  );
-};
-
-StorybookFormProvider.propTypes = {
-  children: PropTypes.node,
-}
-
-const withStorybookForm = () => {
-  const StoryWithForm = (Story) => {
-    return (
-      <StorybookFormProvider>
-        <Story />
-      </StorybookFormProvider>
-    );
-  };
-  return StoryWithForm;
-};
-
-export default {
-  title: 'FormField',
-  component: FormField,
-  decorators: [withStorybookForm()],
-};
 
 export const Text = {
   args: {
@@ -87,4 +51,16 @@ export const Checkbox = {
       type: 'checkbox',
     },
   }
+};
+
+export default {
+  title: 'ui/forms/FormField',
+  component: FormField,
+  decorators: [withStorybookFormProvider()],
+  formFieldsList: [
+    Text.args.formField,
+    Email.args.formField,
+    Password.args.formField,
+    Checkbox.args.formField,
+  ],
 };

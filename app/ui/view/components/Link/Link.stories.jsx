@@ -1,7 +1,7 @@
 import Link from './Link.jsx';
 
 export default {
-  title: 'Link',
+  title: 'ui/components/Link',
   component: Link,
 };
 

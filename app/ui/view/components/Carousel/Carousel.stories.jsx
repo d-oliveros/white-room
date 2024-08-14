@@ -1,7 +1,7 @@
 import Carousel from './Carousel.jsx';
 
 export default {
-  title: 'Carousel',
+  title: 'ui/components/Carousel',
   component: Carousel,
 };
 
