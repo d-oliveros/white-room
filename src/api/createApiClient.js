@@ -65,7 +65,7 @@ function makeApiRequestMethod({
       res = await response.json();
 
       if (!response.ok) {
-        error = new Error(res?.message || 'Request failed');
+        error = new Error(res?.result?.message || 'Request failed');
         error.name = API_ERROR_REQUEST_FAILED;
       }
     }

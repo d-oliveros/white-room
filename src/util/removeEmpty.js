@@ -1,8 +1,14 @@
 const removeEmpty = (obj) => {
   if (Array.isArray(obj)) {
     return obj
-      .map(value => (typeof value === 'object' ? removeEmpty(value) : value))
-      .filter(value => value !== null && value !== undefined && !(typeof value === 'object' && Object.keys(value).length === 0));
+      .map((value) => (typeof value === 'object' ? removeEmpty(value) : value))
+      .filter((value) => {
+        return (
+          value !== null
+          && value !== undefined
+          && !(typeof value === 'object' && Object.keys(value).length === 0)
+        );
+      });
   }
   else if (typeof obj === 'object' && obj !== null) {
     return Object.keys(obj).reduce((acc, key) => {

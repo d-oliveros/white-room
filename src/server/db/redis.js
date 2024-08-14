@@ -44,7 +44,9 @@ redis.renewLeadership = async () => {
       redis.isLeader = false;
     }
   } catch (redisError) {
-    const error = new Error(`Redis Error during renewLeadership: ${redisError.message}`, { cause: redisError });
+    const error = new Error(`Redis Error during renewLeadership: ${redisError.message}`, {
+      cause: redisError,
+    });
     logger.error(error);
   }
 };

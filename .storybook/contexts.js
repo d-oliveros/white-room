@@ -26,18 +26,9 @@ export const defaultTreeOptions = {
   immutable: true,
 };
 
-export const loggedOutTree = createTree(
-  makeInitialState(),
-  defaultTreeOptions,
-);
-
 export const dummyApiClient = createApiClient({
   commitHash: COMMIT_HASH,
   apiPath: '/api/v1',
   appUrl: APP_URL,
   sessionTokenName: 'X-Session-Token',
 });
-
-dummyApiClient.get = createLoggerFunc('get');
-dummyApiClient.post = createLoggerFunc('post');
-dummyApiClient.postWithState = createLoggerFunc('postWithState');

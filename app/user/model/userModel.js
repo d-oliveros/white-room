@@ -1,4 +1,4 @@
-const UserModel = {
+const userModel = {
   name: 'User',
   tableName: 'users',
   columns: {
@@ -49,4 +49,13 @@ export const loginFieldgroup = [
   'password',
 ];
 
-export default UserModel;
+export const signupFieldgroup = [
+  'id',
+  'firstName',
+  'lastName',
+  'email',
+  'phone',
+  'password',
+];
+
+export default userModel;

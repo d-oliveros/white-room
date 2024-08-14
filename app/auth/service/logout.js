@@ -8,7 +8,7 @@ export default {
     typeCheck('deviceRegistrationId::Maybe String', deviceRegistrationId);
   },
   async handler({ session, payload: { deviceRegistrationId }, setCookie }) {
-    if (session && session.userId && deviceRegistrationId) {
+    if (session?.userId && deviceRegistrationId) {
       await updateDeviceRegistrationIdsService.handler({
         session: session,
         payload: { oldDeviceRegistrationId: deviceRegistrationId },

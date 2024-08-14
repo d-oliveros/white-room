@@ -27,6 +27,8 @@ export const importServiceModule = async (dirPath) => {
         if (typeof moduleObject.handler === 'function') {
           const filesystemPath = `${basename(dirname(dirPath))}/${file.replace(extname(file), '')}`;
           moduleObject.path = withoutLeadingSlash(moduleObject.path ?? filesystemPath);
+          console.log('moduleObject.path');
+          console.log(moduleObject.path);
           serviceModules.push(moduleObject);
         }
         else {

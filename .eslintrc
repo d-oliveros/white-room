@@ -30,6 +30,11 @@
     "cypress",
     "chai-friendly"
   ],
+  "rules": {
+    "react/react-in-jsx-scope": 0,
+    "max-len": [1, {"ignoreComments": true, "ignorePattern": "^import|className=", "code": 110 }],
+    "no-unused-expressions": 0
+  },
   "settings": {
     "react": {
       "version": "detect"
@@ -42,7 +47,7 @@
         "map": [
           ["#admin", "./app/admin"],
           ["#auth", "./app/auth"],
-          ["#app", "./app/app"],
+          ["#ui", "./app/ui"],
           ["#post", "./app/post"],
           ["#user", "./app/user"],
           ["#white-room", "./src"],

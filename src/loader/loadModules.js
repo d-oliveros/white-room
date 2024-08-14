@@ -37,6 +37,8 @@ const loadModules = async (modulesDir) => {
     throw new AggregateError(errors, 'Some modules failed to import.');
   }
 
+  console.log(JSON.stringify(modules, null, 2));
+
   return modules;
 };
 

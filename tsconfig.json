@@ -45,7 +45,7 @@
     "paths": {
       "#admin/*": ["./app/admin/*"],
       "#auth/*": ["./app/auth/*"],
-      "#app/*": ["./app/app/*"],
+      "#ui/*": ["./app/ui/*"],
       "#user/*": ["./app/user/*"],
       "#post/*": ["./app/post/*"],
       "#white-room/*": ["./src/*"]

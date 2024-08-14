@@ -1,35 +1,22 @@
-import React from 'react';
-import { MemoryRouter } from 'react-router';
-import ReactAppContext from '../src/client/core/ReactAppContext.js';
+import { MemoryRouter } from 'react-router-dom';
+import '../src/client/style/tailwind.css';
 
-import {
-  dummyHistory,
-  dummyApiClient,
-  dummyUtilityApiClient,
-  loggedOutTree,
-} from './contexts';
-
-export const parameters = {
-  actions: { argTypesRegex: "^on[A-Z].*" },
-  controls: {
-    matchers: {
-      color: /(background|color)$/i,
-      date: /Date$/,
+const preview = {
+  parameters: {
+    controls: {
+      matchers: {
+        color: /(background|color)$/i,
+        date: /Date$/i,
+      },
     },
   },
-}
-
-export const decorators = [
-  (Story) => (
-    <ReactAppContext.Provider value={{
-      apiClient: dummyApiClient,
-      utilityApiClient: dummyUtilityApiClient,
-      history: dummyHistory,
-      tree: loggedOutTree,
-    }}>
-      <MemoryRouter initialEntries={['/']}>
+  decorators: [
+    (Story) => (
+      <MemoryRouter>
         <Story />
       </MemoryRouter>
-    </ReactAppContext.Provider>
-  )
-];
+    ),
+  ],
+};
+
+export default preview;

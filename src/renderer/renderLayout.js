@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import escapeHtml from '#white-room/util/escapeHtml.js';
 import encodeURIComponentIfPresent from '#white-room/util/encodeURIComponentIfPresent.js';
 
@@ -96,3 +97,4 @@ const renderLayout = ({
 `;
 
 export default renderLayout;
+/* eslint-enable max-len */

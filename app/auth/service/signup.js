@@ -7,6 +7,7 @@ import { ROLE_USER } from '#user/constants/roles.js';
 import typeCheck from '#white-room/util/typeCheck.js';
 
 import User from '#user/model/userRepository.js';
+import { summaryFieldgroup } from '#user/model/userModel.js';
 
 const {
   JWT_KEY,
@@ -15,47 +16,41 @@ const {
 export default {
   validate({ user }) {
     typeCheck('user::NonEmptyObject', user);
+    typeCheck('user::NonEmptyObject', user);
+    typeCheck('user::NonEmptyObject', user);
     typeCheck('userEmail::Email', user.email);
   },
-  async handler({ payload, requestIp, setCookie }) {
+  async handler({ requestIp, setCookie, payload: { email, firstName, lastName } }) {
     const userSignupData = {
-      ...payload.user,
-      email: payload.user.email
-        ? payload.user.email.trim().toLowerCase()
-        : undefined,
+      email: email ? email.trim().toLowerCase() : null,
+      firstName,
+      lastName,
       signupProvider: 'email',
       roles: [
         ROLE_USER,
       ],
       lastVisitAt: new Date().toISOString(),
+      signupIp: requestIp || null,
     };
 
-    if (requestIp) {
-      userSignupData.signupIp = requestIp;
-    }
-    else {
-      logger.warn(`[api:Auth:signup] Warning: No signup IP available for ${payload.phone}.`);
-    }
-
     const user = await User.signup(userSignupData);
-    if (user) {
-      const userSession = {
-        userId: user.id,
-        roles: user.roles,
-      };
-      const userSessionJwtToken = jwt.sign(userSession, JWT_KEY);
 
-      setCookie(
-        cookiesConfig.session.name,
-        userSessionJwtToken,
-        cookiesConfig.session.settings,
-      );
+    const userSession = {
+      userId: user.id,
+      roles: user.roles,
+    };
+    const userSessionJwtToken = jwt.sign(userSession, JWT_KEY);
 
-      logger.info(`User signed up: ${userSignupData.phone}`);
-    }
+    setCookie(
+      cookiesConfig.session.name,
+      userSessionJwtToken,
+      cookiesConfig.session.settings,
+    );
+
+    logger.info(`User signed up: ${userSignupData.email}`);
 
     return {
-      user: user ? lodashPick(User.fieldgroups.summaryFieldgroup, user) : null,
+      user: user ? lodashPick(summaryFieldgroup, user) : null,
     };
   },
 };

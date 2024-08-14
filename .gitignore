@@ -65,3 +65,5 @@ yarn.lock
 
 # Storybook build files
 storybook-static*
+
+*storybook.log
