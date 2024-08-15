@@ -11,7 +11,7 @@ export const usersFixture = [
       'admin'
     ],
     phone: '1111111111',
-    email: 'admin@yopmail.com',
+    email: 'admin@whiteroom.com',
     slug: 'admin-lastname',
     signupIp: '192.168.79.57',
     signupAnalyticsSessionId: 'e4fbb080-6135-11e7-9f74-512acb0deeaf',
@@ -30,7 +30,7 @@ export const usersFixture = [
       'user'
     ],
     phone: '2222222222',
-    email: 'user@yopmail.com',
+    email: 'user@whiteroom.com',
     slug: 'user-lastname',
     signupIp: '192.168.79.57',
     signupAnalyticsSessionId: 'e4fbb080-2345-11e7-9f74-512acb0deeaf',

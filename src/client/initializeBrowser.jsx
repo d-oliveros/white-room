@@ -18,7 +18,7 @@ import createApiClient from '#white-room/api/createApiClient.js';
 import createReactQueryClient from '#white-room/client/helpers/createReactQueryClient.js';
 import createStore from '#white-room/client/core/createStore.js';
 import initDevelopmentEnv from '#white-room/client/core/developmentEnv.js';
-import initListeners from '#white-room/client/core/initListeners.js';
+import makeDispatchFn from '#white-room/client/core/makeDispatchFn.js';
 import AppContextProvider from '#white-room/client/contexts/AppContextProvider.jsx';
 import makeRouter from '#white-room/client/core/makeRouter.jsx';
 import parseJSON from '#white-room/util/parseJSON.js';
@@ -27,13 +27,7 @@ import { ANALYTICS_EVENT_USER_SESSION } from '#white-room/client/analytics/event
 import analytics from '#white-room/client/analytics/analytics.js';
 
 // TODO: Implement dynamic loading of routes! Or inject routes object!
-// import routes from '#white-room/client/routes.js';
-import userListeners from '#user/view/listeners.js';
-import HomePage from '#ui/view/pages/HomePage.jsx';
-import SandboxPage from '#ui/view/pages/SandboxPage.jsx';
-import UserPage from '#user/view/pages/UserPage.jsx';
-import PdfGeneratorPage from '#ui/view/pages/PdfGeneratorPage.jsx';
-import NotFoundPage from '#ui/view/pages/NotFoundPage.jsx';
+import routes from '#app/routes.js';
 import './style/tailwind.css';
 
 const debug = createDebug('initializeBrowser');
@@ -73,12 +67,7 @@ if (process.browser) {
     sessionTokenName: 'X-Session-Token',
   });
 
-  // TODO: Dynamic listeners loading!
-  initListeners({
-    listeners: userListeners,
-    store,
-    apiClient,
-  });
+  const dispatch = makeDispatchFn({ state: store, apiClient });
 
   // Configure the analytics library
   analytics.configure({
@@ -98,15 +87,6 @@ if (process.browser) {
   const containerNode = global.document.getElementById('react-container');
 
   debug('Hydrating');
-
-  // TODO: Implement dynamic loading of routes! Or inject routes object!
-  const routes = [
-    { path: '/', exact: true, Component: HomePage },
-    { path: '/sandbox', exact: true, Component: SandboxPage },
-    { path: '/user/:userId', Component: UserPage },
-    { path: '/pdf-generator/:pdfComponentId', Component: PdfGeneratorPage },
-    { path: '*', Component: NotFoundPage },
-  ];
 
   // When Serverside-Rendering, the matching rout is already served by the server.
   // However, given that it is lazy, it is possible that the modules are not loaded yet,
@@ -147,7 +127,7 @@ if (process.browser) {
   });
 
   const root = hydrateRoot(containerNode, (
-    <AppContextProvider {...{ store, apiClient, queryClient }}>
+    <AppContextProvider {...{ store, apiClient, queryClient, dispatch }}>
       <RouterProvider router={createBrowserRouter(router)} />
     </AppContextProvider>
   ));
@@ -167,7 +147,7 @@ if (process.browser) {
       });
 
       root.render(
-        <AppContextProvider {...{ store, apiClient, queryClient }}>
+        <AppContextProvider {...{ store, apiClient, queryClient, dispatch }}>
           <RouterProvider router={createBrowserRouter(router)} />
         </AppContextProvider>
       );

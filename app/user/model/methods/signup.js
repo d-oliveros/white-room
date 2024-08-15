@@ -2,7 +2,8 @@ import bcrypt from 'bcrypt';
 import { promisify } from 'util';
 
 import logger from '#white-room/logger.js';
-import knex from '#white-room/server/db/knex.js';
+import knex, { getAvailableSlug } from '#white-room/server/db/knex.js';
+import slugify from '#white-room/util/slugify.js';
 
 const debug = logger.createDebug('models:User:signup');
 
@@ -10,52 +11,49 @@ const SALT_WORK_FACTOR = 8;
 const genSaltAsync = promisify(bcrypt.genSalt.bind(bcrypt));
 const hashAsync = promisify(bcrypt.hash.bind(bcrypt));
 
-export default async function userSignup(userSignupData) {
-  const existingUser = await knex('users')
-    .first(['id'])
-    .where({ phone: userSignupData.phone });
+export default async function signup(userData) {
+  const existingUserQuery = knex('users')
+    .first(['id', 'email', 'phone'])
+    .where({ email: userData.email });
+
+  if (userData.phone) {
+    existingUserQuery.orWhere({ phone: userData.phone });
+  }
+
+  const existingUser = await existingUserQuery;
 
   if (existingUser) {
-    const error = new Error('This user already exists.');
-    error.details = {
-      phone: userSignupData.phone,
+    const message = existingUser.email === userData.email
+      ? `email "${existingUser.email}`
+      : `phone "${existingUser.phone}`;
+
+    return {
+      user: null,
+      error: `User with ${message} already exists.`,
     };
-    logger.warn(error);
-    return null;
   }
 
   const salt = await genSaltAsync(SALT_WORK_FACTOR);
-  const passwordHash = await hashAsync(userSignupData.password, salt);
+  const passwordHash = await hashAsync(userData.password, salt);
 
-  const userRoles = userSignupData.roles || [];
+  const [newUser] = await knex('users')
+    .insert({
+      ...userData,
+      email: userData.email ? userData.email.toLowerCase() : null,
+      password: passwordHash,
+      roles: userData.roles || [],
+      slug: await getAvailableSlug({
+        table: 'users',
+        field: 'slug',
+        value: slugify(`${userData.firstName} ${userData.lastName}`),
+      }),
+    })
+    .returning('*');
 
-  const userData = {
-    ...userSignupData,
-    email: userSignupData.email
-      ? userSignupData.email.toLowerCase()
-      : undefined,
-    password: passwordHash,
-    roles: userRoles,
+  debug('Created new user', newUser);
+
+  return {
+    user: newUser,
+    error: null,
   };
-
-  const user = await knex.transaction(async (trx) => {
-    let createdUser;
-
-    if (existingUser) {
-      [createdUser] = await trx('users')
-        .update(userData)
-        .where('phone', userSignupData.phone)
-        .returning('*');
-    }
-    else {
-      [createdUser] = await trx('users')
-        .insert(userData)
-        .returning('*');
-    }
-    return trx.commit(createdUser);
-  });
-
-  debug('Created new user', user);
-
-  return user;
 }

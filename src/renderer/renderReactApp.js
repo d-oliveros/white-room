@@ -1,4 +1,5 @@
 import { parse as parseUrl } from 'url';
+import lodashMerge from 'lodash/fp/merge.js';
 
 import React from 'react';
 import { renderToString } from 'react-dom/server';
@@ -15,6 +16,7 @@ import isRedirectResponse from '#white-room/util/isRedirectResponse.js';
 import createApiClient from '#white-room/api/createApiClient.js';
 import createReactQueryClient from '#white-room/client/helpers/createReactQueryClient.js';
 import createStore from '#white-room/client/core/createStore.js';
+import makeDispatchFn from '#white-room/client/core/makeDispatchFn.js';
 import makeInitialState from '#white-room/client/makeInitialState.js';
 
 import AppContextProvider from '#white-room/client/contexts/AppContextProvider.jsx';
@@ -76,7 +78,7 @@ const DEFAULT_PAGE_METADATA = {
  * @return {Object}               Object with { type, html, redirectUrl, error }.
  */
 export default async function renderReactApp({ state: initialStateData, req, res, sessionToken, routes }) {
-  const initialState = { ...makeInitialState(), ...initialStateData };
+  const initialState = lodashMerge(makeInitialState(), initialStateData);
   const url = req.originalUrl;
 
   const now = Date.now();
@@ -105,6 +107,8 @@ export default async function renderReactApp({ state: initialStateData, req, res
       appUrl: APP_URL,
       sessionTokenName: 'X-Session-Token',
     });
+
+    const dispatch = makeDispatchFn({ state: store, apiClient });
 
     // Server-side react query client
     const queryClient = createReactQueryClient({
@@ -139,6 +143,7 @@ export default async function renderReactApp({ state: initialStateData, req, res
       routes,
       queryClient,
       apiClient,
+      dispatch,
       store,
     });
 
@@ -173,7 +178,7 @@ export default async function renderReactApp({ state: initialStateData, req, res
     const staticRouter = createStaticRouter(handler.dataRoutes, context);
 
     const renderedReactAppHtml = renderToString(
-      React.createElement(AppContextProvider, { store, apiClient, queryClient },
+      React.createElement(AppContextProvider, { store, apiClient, queryClient, dispatch },
         React.createElement(StaticRouterProvider, { router: staticRouter, context })
       )
     );

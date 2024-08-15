@@ -78,7 +78,7 @@ function makeApiRequestMethod({
     }
 
     if (!error) {
-      if (!res || typeof res !== 'object' || typeof res.result !== 'object') {
+      if (!res || typeof res !== 'object' || typeof res.success !== 'boolean') {
         error = new Error(`Invalid response object: ${JSON.stringify(res)}`);
         error.name = API_ERROR_REQUEST_INVALID_RESPONSE;
         error.details = {

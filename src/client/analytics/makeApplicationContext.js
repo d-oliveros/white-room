@@ -32,7 +32,7 @@ export default function makeApplicationContext({ state, navigationContext, pageV
     experiments: {
       activeVariants,
     },
-  } = state.analytics;
+  } = state.client.analytics;
 
   const user = state.currentUser;
 

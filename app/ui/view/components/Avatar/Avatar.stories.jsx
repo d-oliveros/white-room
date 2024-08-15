@@ -7,8 +7,8 @@ export default {
 
 export const Default = {
   args: {
-    imageSrc: 'https://i.pravatar.cc/50',
-    imageAlt: 'Image Alt',
+    img: 'https://i.pravatar.cc/50',
+    alt: 'Image Alt',
   },
 };
 

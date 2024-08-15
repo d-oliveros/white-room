@@ -127,7 +127,7 @@ export async function getAvailableSlug({ table, field, value, iteration = 0 }) {
 
   const slugExists = await knex(table)
     .first('id')
-    .where({ [field]: slug });
+    .where(field, slug);
 
   if (slugExists) {
     return getAvailableSlug({

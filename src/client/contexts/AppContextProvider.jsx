@@ -1,4 +1,4 @@
-import React, { useState, StrictMode } from 'react';
+import React, { StrictMode } from 'react';
 import PropTypes from 'prop-types';
 import { QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
@@ -6,11 +6,8 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import StateContext from '#white-room/client/contexts/StateContext.js';
 import ApiClientContext from '#white-room/client/contexts/ApiClientContext.js';
 import DispatchContext from '#white-room/client/contexts/DispatchContext.js';
-import makeDispatchFn from '#white-room/client/core/makeDispatchFn.js';
 
-const AppContextProvider = ({ store, queryClient, apiClient, children }) => {
-  const [dispatch] = useState(() => makeDispatchFn({ state: store, apiClient }));
-
+const AppContextProvider = ({ store, queryClient, apiClient, dispatch, children }) => {
   return (
     <StrictMode>
       <StateContext.Provider value={store}>
@@ -31,6 +28,7 @@ AppContextProvider.propTypes = {
   queryClient: PropTypes.object.isRequired,
   apiClient: PropTypes.object.isRequired,
   store: PropTypes.object.isRequired,
+  dispatch: PropTypes.func.isRequired,
   children: PropTypes.node,
 };
 

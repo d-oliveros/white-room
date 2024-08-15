@@ -4,7 +4,7 @@ import typeCheck from '#white-room/util/typeCheck.js';
 
 export const getServicesFromModules = (modules) => {
   return lodashValues(modules)
-    .reduce((memo, { service }) => [ ...memo, ...service ], []);
+    .reduce((memo, { service }) => [ ...memo, ...(service || []) ], []);
 };
 
 export const getMiddlewareFromModules = (modules) => {

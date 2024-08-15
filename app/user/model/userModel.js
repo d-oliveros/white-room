@@ -27,6 +27,7 @@ const userModel = {
   indices: [
     { columns: ['slug'] },
     { columns: ['createdAt'] },
+    { columns: ['email'] },
   ],
 };
 

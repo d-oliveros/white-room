@@ -51,7 +51,6 @@ const importAndAssignModule = (filePath, targetObject, key, promises) => {
 
 const moduleSkeleton = {
   view: {
-    routes: [],
     initialState: null,
   },
   middleware: null,
@@ -87,10 +86,7 @@ const loadModule = async (moduleDir) => {
         for (const viewEntry of viewEntries) {
           const viewFilePath = resolve(filePath, viewEntry.name);
 
-          if (viewEntry.name === 'routes.js') {
-            importAndAssignModule(viewFilePath, module.view, 'routes', promises);
-          }
-          else if (viewEntry.name === 'initialState.js') {
+          if (viewEntry.name === 'initialState.js') {
             importAndAssignModule(viewFilePath, module.view, 'initialState', promises);
           }
         }

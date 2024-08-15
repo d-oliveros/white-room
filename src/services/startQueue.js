@@ -13,7 +13,7 @@ export const getQueueHandlersFromModules = (modules) => {
   // Collect all queue handlers from the modules
   for (const moduleName of Object.keys(modules)) {
     const module = modules[moduleName];
-    for (const service of module.service) {
+    for (const service of (module.service || [])) {
       queueHandlers.push({
         event: service.id,
         handler: service.handler,

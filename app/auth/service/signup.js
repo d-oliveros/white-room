@@ -14,17 +14,31 @@ const {
 } = process.env;
 
 export default {
-  validate({ user }) {
-    typeCheck('user::NonEmptyObject', user);
-    typeCheck('user::NonEmptyObject', user);
-    typeCheck('user::NonEmptyObject', user);
-    typeCheck('userEmail::Email', user.email);
+  validate(user) {
+    typeCheck('firstName::NonEmptyString', user.firstName);
+    typeCheck('lastName::NonEmptyString', user.lastName);
+    typeCheck('email::Email', user.email);
+    typeCheck('phone::Maybe Phone', user.phone);
+    typeCheck('analyticsSessionId::Maybe NonEmptyString', user.analyticsSessionId);
+    typeCheck('password::NonEmptyString', user.password);
+    typeCheck('experimentActiveVariants::Maybe Object', user.experimentActiveVariants);
   },
-  async handler({ requestIp, setCookie, payload: { email, firstName, lastName } }) {
+  async handler({ requestIp, setCookie, payload: {
+    firstName,
+    lastName,
+    email,
+    phone,
+    analyticsSessionId,
+    password,
+    experimentActiveVariants,
+  } }) {
     const userSignupData = {
-      email: email ? email.trim().toLowerCase() : null,
       firstName,
       lastName,
+      email,
+      phone,
+      signupAnalyticsSessionId: analyticsSessionId,
+      experimentActiveVariants,
       signupProvider: 'email',
       roles: [
         ROLE_USER,
@@ -33,7 +47,17 @@ export default {
       signupIp: requestIp || null,
     };
 
-    const user = await User.signup(userSignupData);
+    const { user, error } = await User.signup({
+      ...userSignupData,
+      password,
+    });
+
+    if (error) {
+      return {
+        user: null,
+        error,
+      };
+    }
 
     const userSession = {
       userId: user.id,
@@ -51,6 +75,7 @@ export default {
 
     return {
       user: user ? lodashPick(summaryFieldgroup, user) : null,
+      error: null,
     };
   },
 };

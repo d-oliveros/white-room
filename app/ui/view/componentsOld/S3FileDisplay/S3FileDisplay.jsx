@@ -15,7 +15,7 @@ const S3FileDisplay = ({
 }) => {
   const [rotationDegrees, setRotationDegrees] = useState(0);
   const { appUrl } = useBranch({
-    appUrl: ['env', 'APP_URL'],
+    appUrl: ['client', 'env', 'APP_URL'],
   });
 
   const proxiedS3FilePath = makeProxiedS3FilePath(url, appUrl);

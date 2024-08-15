@@ -14,7 +14,7 @@ import {
 const debug = logger.createDebug('analytics');
 
 function makeUserId(state) {
-  return String(state.currentUser?.id || state.analytics.analyticsSessionId);
+  return String(state.currentUser?.id || state.client.analytics.analyticsSessionId);
 }
 
 /**
@@ -59,7 +59,7 @@ function makeCommonEventParams(state, navigationContext, integrations) {
       APP_TITLE,
       NODE_ENV,
     },
-  } = state;
+  } = state.client;
 
   const user = state.currentUser;
 
@@ -156,8 +156,8 @@ export default {
     const state = this.store.get();
     return (
       process.browser
-      && state.analytics.isEnabled
-      && !state.analytics.userAgent.isCrawler
+      && state.client.analytics.isEnabled
+      && !state.client.analytics.userAgent.isCrawler
     );
   },
 
@@ -289,7 +289,7 @@ export default {
 
       this.safeAnalyticsCall(
         'page',
-        state.analytics.screenId,
+        state.client.analytics.screenId,
         navigationContext.documentTitle,
         applicationContext,
       );

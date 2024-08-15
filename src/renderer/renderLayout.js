@@ -61,6 +61,7 @@ const renderLayout = ({
     ${!bundleStyleSrc ? `
       <style>
         html {
+          display: none;
         }
       </style>
     ` : ''}

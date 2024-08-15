@@ -47,6 +47,7 @@
       "#auth/*": ["./app/auth/*"],
       "#ui/*": ["./app/ui/*"],
       "#user/*": ["./app/user/*"],
+      "#app/*": ["./app/*"],
       "#post/*": ["./app/post/*"],
       "#white-room/*": ["./src/*"]
     },

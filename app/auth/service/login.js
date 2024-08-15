@@ -9,17 +9,12 @@ import { getExperimentActiveVariants } from '#white-room/server/lib/experiments.
 import User from '#user/model/userRepository.js';
 
 export default {
-  validate({ phone, password, autoLoginToken }) {
-    if (!autoLoginToken) {
-      typeCheck('phone::Phone', phone);
-      typeCheck('password::NonEmptyString', password);
-    }
-    else {
-      typeCheck('autoLoginToken::NonEmptyString', autoLoginToken);
-    }
+  validate({ email, password }) {
+    typeCheck('email::Email', email);
+    typeCheck('password::NonEmptyString', password);
   },
-  async handler({ payload: { phone, password }, getCookie, setCookie }) {
-    const isValidLoginResults = await User.isValidLogin({ phone, password });
+  async handler({ payload: { email, password }, getCookie, setCookie }) {
+    const isValidLoginResults = await User.isValidLogin({ email, password });
 
     if (!isValidLoginResults.success) {
       return {
