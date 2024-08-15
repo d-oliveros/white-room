@@ -1,33 +1,60 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import lodashPick from 'lodash/fp/pick.js';
 import { useFormContext, Controller } from 'react-hook-form';
 import { TextInput, Label, Checkbox } from 'flowbite-react';
 
+import validators from './formFieldValidators.js';
+
+const getFormFieldValidations = (formField) => {
+  const validations = [...(formField?.validations || [])];
+
+  switch (formField.type) {
+    case 'email': {
+      validations.push('email');
+      break;
+    }
+    case 'phone': {
+      validations.push('phone');
+      break;
+    }
+  }
+  return validations;
+};
+
 const FormField = ({ formField }) => {
   const { control } = useFormContext();
+  const validations = getFormFieldValidations(formField);
+
+  const validationRules = {
+    validate: validations.length > 0
+      ? lodashPick(validations, validators)
+      : null,
+    // validate: formField.validations
+    //   ? formField.validations.reduce((acc, validationName) => {
+    //       if (validatorsMap[validationName]) {
+    //         acc[validationName] = validatorsMap[validationName];
+    //       }
+    //       return acc;
+    //     }, {})
+    //   : null,
+  };
 
   const labelEl = (
     <Label htmlFor={formField.id} value={formField.title} />
-  )
-
-  // Automatically add email pattern if the type is 'email'
-  const validationRules = {
-    required: formField.required,
-    pattern: formField.type === 'email'
-      ? /.*@.*\..*$/
-      : formField.pattern,
-  };
+  );
 
   const renderField = ({ field, fieldState }) => {
     const commonProps = {
       id: formField.id,
-      required: formField.required,
+      required: validations.includes('required'),
       color: fieldState.invalid ? 'failure' : 'gray',
     };
 
     switch (formField.type) {
       case 'email':
       case 'text':
+      case 'phone':
       case 'password':
         return (
           <TextInput
@@ -35,6 +62,7 @@ const FormField = ({ formField }) => {
             {...commonProps}
             type={formField.type}
             placeholder={formField.properties.placeholder}
+            autoComplete={formField.properties.autocomplete}
             helperText={fieldState.error ? fieldState.error.message : ''}
             shadow
           />
@@ -58,7 +86,7 @@ const FormField = ({ formField }) => {
   };
 
   return (
-    <div className="form-field">
+    <div id={`field-${formField.id}`} className="form-field">
       {formField.type !== 'checkbox' && (
         <div className="mb-2 block">
           {labelEl}
@@ -78,17 +106,15 @@ FormField.propTypes = {
   formField: PropTypes.shape({
     id: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired,
-    type: PropTypes.oneOf(['email', 'text', 'checkbox']).isRequired,
+    type: PropTypes.string.isRequired,
     properties: PropTypes.shape({
       placeholder: PropTypes.string,
+      autocomplete: PropTypes.string,
       label: PropTypes.string,
     }),
     required: PropTypes.bool,
-    pattern: PropTypes.string,
+    validations: PropTypes.arrayOf(PropTypes.string),
   }).isRequired,
 };
-
-FormField.typeStories = [
-];
 
 export default FormField;

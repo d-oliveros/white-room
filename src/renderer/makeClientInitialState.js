@@ -43,7 +43,7 @@ const makeClientInitialState = (req, res) => {
   const initialState = makeInitialState();
 
   // Pass server environment variables.
-  initialState.env = Object.keys(initialState.env).reduce((acc, envKey) => ({
+  initialState.client.env = Object.keys(initialState.client.env).reduce((acc, envKey) => ({
     ...acc,
     [envKey]: env[envKey],
   }), {});
@@ -59,7 +59,7 @@ const makeClientInitialState = (req, res) => {
     );
   }
 
-  initialState.analytics.analyticsSessionId = analyticsSessionId;
+  initialState.client.analytics.analyticsSessionId = analyticsSessionId;
 
   // Set UTM values
   let utmValues = getUtmValuesFromExpressRequestQuery(req);
@@ -94,13 +94,13 @@ const makeClientInitialState = (req, res) => {
         cookiesConfig.utm.options,
       );
     }
-    initialState.analytics.utmValues = utmValues;
+    initialState.client.analytics.utmValues = utmValues;
   }
 
   // Get device information from User Agent
   const uaParsed = new UAParser(req.headers['user-agent']).getResult();
   const mobileDetect = new MobileDetect(req.headers['user-agent']);
-  initialState.analytics.userAgent = {
+  initialState.client.analytics.userAgent = {
     browserName: uaParsed.browser.name,
     browserVersion: uaParsed.browser.version,
     deviceType: uaParsed.device.type,
@@ -119,16 +119,16 @@ const makeClientInitialState = (req, res) => {
   };
 
   // Check if analytics is enabled.
-  initialState.analytics.isEnabled = isAnalyticsEnabled;
+  initialState.client.analytics.isEnabled = isAnalyticsEnabled;
 
   // Set IP and location in analytics store.
   const requestIp = req.ip;
-  initialState.analytics.requestIp = requestIp;
-  initialState.analytics.location = {};
+  initialState.client.analytics.requestIp = requestIp;
+  initialState.client.analytics.location = {};
 
   // Check if it is the mobile app.
-  if (isUserAgentMobileApp(initialState.analytics.userAgent)) {
-    initialState.mobileApp.isMobileApp = true;
+  if (isUserAgentMobileApp(initialState.client.analytics.userAgent)) {
+    initialState.client.mobileApp.isMobileApp = true;
   }
 
   // Check if we should track a new session on browserside, turns the "shouldTrackNewSession" flag on.
@@ -138,7 +138,7 @@ const makeClientInitialState = (req, res) => {
     : req.cookies[cookiesConfig.lastVisit.name];
 
   if (!lastVisit || ((now - lastVisit) / 60000) >= 30) {
-    initialState.analytics.shouldTrackNewSession = true;
+    initialState.client.analytics.shouldTrackNewSession = true;
   }
 
   debug('Extracted initial state from request');
@@ -149,9 +149,7 @@ const makeClientInitialState = (req, res) => {
     cookiesConfig.lastVisit.settings,
   );
 
-  return {
-    client: initialState,
-  };
+  return initialState;
 };
 
 const makeClientInitialStateMiddlewareFactory = ({ initialState = {}} = {}) => {

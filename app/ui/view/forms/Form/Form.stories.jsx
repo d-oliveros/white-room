@@ -15,6 +15,17 @@ export const WithFormFields = {
   },
 };
 
+export const WithDefaults = {
+  args: {
+    ...WithFormFields.args,
+    defaultValues: {
+      firstName: 'David Oliveros',
+      email: 'default_email@dotnet.com',
+      rememberMe: true,
+    },
+  },
+};
+
 export const WithChildren = {
   args: {
     onSubmit: action('Submit'),

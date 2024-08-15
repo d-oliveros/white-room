@@ -23,6 +23,14 @@ export const Default = {
 export const WithBackground = {
   args: {
     ...Default.args,
-    backgroundUrl: 'https://us.123rf.com/450wm/arignx/arignx1611/arignx161100010/68039628-clear-transparent-sea-water-summer-beach-natural-marine-background.jpg?ver=6', // eslint-disable-line max-len
+    backgroundUrl: 'https://wallpaperswide.com/download/natures_mirror-wallpaper-1920x1200.jpg',
+  },
+};
+
+export const WithFooterLink = {
+  args: {
+    ...Default.args,
+    footerLinkUrl: '/forgot-password',
+    footerLinkLabel: 'Forgot password?',
   },
 };

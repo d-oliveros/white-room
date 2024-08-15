@@ -1,6 +1,6 @@
 import { Suspense } from 'react';
 import PropTypes from 'prop-types';
-import { Await, Navigate, Outlet, Link, defer, useLoaderData, useAsyncError } from 'react-router-dom';
+import { Await, Navigate, Outlet, defer, useLoaderData, useAsyncError, useRouteError } from 'react-router-dom';
 import { serializeError } from 'serialize-error';
 import { HydrationBoundary, dehydrate } from '@tanstack/react-query';
 
@@ -10,25 +10,27 @@ import { makePrefetchQueryFn } from '#white-room/client/hooks/reactQuery.js';
 
 import App from '#white-room/client/App.jsx';
 
-const makeLoaderFn = ({ fetchPageData, apiClient, queryClient, store }) => {
+const makeLoaderFn = ({ fetchPageData, apiClient, queryClient, dispatch, store }) => {
   console.log('Making loaderFn');
   return ({ params }) => {
     console.log('loaderFn called');
     const shouldDefer = !!process.browser;
-
-    console.log('shouldDefer');
-    console.log(shouldDefer, fetchPageData);
 
     let fetchPageDataPromise = fetchPageData({
       apiClient,
       prefetchQuery: makePrefetchQueryFn({ queryClient }),
       store,
       params,
+      dispatch,
     });
 
     if (!fetchPageDataPromise?.then) {
       fetchPageDataPromise = Promise.resolve(fetchPageDataPromise || null);
     }
+
+    fetchPageDataPromise = fetchPageDataPromise.then((result) => {
+      return result || null;
+    });
 
     if (shouldDefer) {
       return defer({
@@ -92,13 +94,37 @@ const FetchDataErrorFallback = ({ error }) => {
   );
 };
 
-const LoadingElement = () => {
+FetchDataErrorFallback.propTypes = {
+  error: PropTypes.instanceOf(Error),
+};
+
+const ErrorPage = () => {
+  const error = useRouteError();
+  console.log(error);
+
+  return (
+    <div id="error-page">
+      <h1>Oops!</h1>
+      <p>Sorry, an unexpected error has occurred.</p>
+      <p>
+        <i>{error.statusText || error.message}</i>
+        {error.stack && (
+          <pre>
+            {error.stack}
+          </pre>
+        )}
+      </p>
+    </div>
+  );
+};
+
+const MinimalLoadingComponent = () => {
   return (
     <h1>Loading...</h1>
   );
 };
 
-const LoaderTransitionHandler = ({ children }) => {
+const LoaderTransitionHandler = ({ LoadingComponent = MinimalLoadingComponent, children }) => {
   const loaderData = useLoaderData();
 
   console.log('Rendering: LoaderTransitionHandler');
@@ -128,7 +154,7 @@ const LoaderTransitionHandler = ({ children }) => {
   console.log('Rendering Suspense. Promise:', loaderData.promise);
 
   return (
-    <Suspense fallback={<LoadingElement />}>
+    <Suspense fallback={<LoadingComponent />}>
       <Await
         resolve={loaderData.promise}
         errorElement={<FetchDataErrorFallback />}
@@ -140,83 +166,91 @@ const LoaderTransitionHandler = ({ children }) => {
 };
 
 LoaderTransitionHandler.propTypes = {
+  LoadingComponent: PropTypes.func,
   children: PropTypes.func.isRequired,
 };
 
-const Layout = () => {
+const Layout = ({ PageLayout }) => {
+  if (!PageLayout) {
+    return <Outlet />;
+  }
+
   return (
-    <>
-      <header>
-        <nav>
-          <ul>
-            <li><Link to='/'>Home</Link></li>
-            <li><Link to='/signup'>Sign Up</Link></li>
-            <li><Link to='/login'>Login</Link></li>
-          </ul>
-        </nav>
-      </header>
-      <main>
-        <Outlet />
-      </main>
-    </>
+    <PageLayout>
+      <Outlet />
+    </PageLayout>
   );
 }
 
-const makeRouter = ({ routes, ErrorPage, queryClient, apiClient, store }) => {
+Layout.propTypes = {
+  PageLayout: PropTypes.func,
+};
+
+const makeRouter = ({ routes, LoadingComponent, queryClient, apiClient, dispatch, store }) => {
   const notFoundRoute = routes.find(({ path }) => path === '*');
   const NotFoundComponent = notFoundRoute?.Component || null;
+
+  const renderRoute = (route) => {
+    if (route.children) {
+      return {
+        path: route.path,
+        element: <Layout PageLayout={route.layout} />,
+        children: route.children.map(renderRoute),
+      };
+    }
+
+    const PageComponent = route.Component;
+
+    let routeLoader = null;
+
+    if (PageComponent?.fetchPageData) {
+      routeLoader = makeLoaderFn({
+        fetchPageData: PageComponent.fetchPageData,
+        store,
+        queryClient,
+        apiClient,
+        dispatch,
+      });
+    }
+
+    const routeEl = (
+      <LoaderTransitionHandler LoadingComponent={LoadingComponent}>
+        {(pageProps) => {
+          console.log('pageProps');
+          console.log(pageProps);
+          if (isRedirectResponse(pageProps)) {
+            if (pageProps.status === 404 || pageProps.statusCode === 404) {
+              return (
+                <NotFoundComponent />
+              );
+            }
+            const url = pageProps.headers.get('Location');
+            return (
+              <Navigate to={url} />
+            );
+          }
+
+          return (
+            <PageComponent {...pageProps || {}} />
+          );
+        }}
+      </LoaderTransitionHandler>
+    );
+
+    return {
+      path: route.path,
+      index: route.path === '/',
+      loader: routeLoader,
+      element: routeEl,
+    };
+  };
 
   return [
     {
       path: '/',
       element: <App />,
       errorElement: <ErrorPage />,
-      children: [{
-        path: '/',
-        element: <Layout />,
-        children: routes.map((route) => {
-          const PageComponent = route.Component;
-          let routeLoader = null;
-
-          if (PageComponent.fetchPageData) {
-            routeLoader = makeLoaderFn({
-              fetchPageData: PageComponent.fetchPageData,
-              store,
-              queryClient,
-              apiClient,
-            });
-          }
-
-          return {
-            path: route.path,
-            index: route.path === '/',
-            loader: routeLoader,
-            element: (
-              <LoaderTransitionHandler>
-                {(pageProps) => {
-                  console.log('pageProps');
-                  console.log(pageProps);
-                  if (isRedirectResponse(pageProps)) {
-                    if (pageProps.status === 404 || pageProps.statusCode === 404) {
-                      return (
-                        <NotFoundComponent />
-                      );
-                    }
-                    const url = pageProps.headers.get('Location');
-                    return (
-                      <Navigate to={url} />
-                    );
-                  }
-
-                  return (
-                    <PageComponent {...pageProps || {}} />
-                  );
-                }}
-              </LoaderTransitionHandler>
-            ),
-          };
-        }),
-      }],
+      children: routes.map(renderRoute),
     },
   ];
 };

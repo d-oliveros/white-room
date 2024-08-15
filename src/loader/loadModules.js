@@ -26,6 +26,7 @@ const loadModules = async (modulesDir) => {
       }
     }
     else {
+      console.log(result.reason);
       errors.push(new Error(`Failed to load module "${name}"`, { cause: result.reason }));
     }
   });
@@ -35,6 +36,19 @@ const loadModules = async (modulesDir) => {
   }
   if (errors.length > 0) {
     throw new AggregateError(errors, 'Some modules failed to import.');
+  }
+
+  // Attempt to load the routes file separately
+  try {
+    const routesPath = resolve(modulesDir, 'routes.js');
+    const routes = await import(routesPath);
+
+    if (routes) {
+      modules.routes = routes.default || routes;
+    }
+  }
+  catch (err) {
+    throw new Error('Failed to load routes', { cause: err });
   }
 
   console.log(JSON.stringify(modules, null, 2));

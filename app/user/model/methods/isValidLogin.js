@@ -1,7 +1,7 @@
-import assert from 'assert';
 import bcrypt from 'bcrypt';
 import { promisify } from 'util';
 
+import typeCheck from '#white-room/util/typeCheck.js';
 import knex from '#white-room/server/db/knex.js';
 import {
   loginFieldgroup,
@@ -9,14 +9,14 @@ import {
 
 const compareAsync = promisify(bcrypt.compare);
 
-export default async function isValidUserLogin({ phone, password }) {
-  assert(phone, 'Phone is required.');
-  assert(password, 'Password is required.');
+export default async function isValidUserLogin({ email, password }) {
+  typeCheck('email::Email', email);
+  typeCheck('password::NonEmptyString', password);
 
-  const [user] = await knex('users')
-    .select(...loginFieldgroup)
+  const user = await knex('users')
+    .first(loginFieldgroup)
     .where({
-      phone,
+      email,
     });
 
   if (!user) {
@@ -24,7 +24,7 @@ export default async function isValidUserLogin({ phone, password }) {
       success: false,
       reason: 'User not found.',
       fields: {
-        phone: true,
+        email: true,
         password: false,
       },
       userId: null,
@@ -37,7 +37,7 @@ export default async function isValidUserLogin({ phone, password }) {
       success: false,
       reason: 'Invalid password.',
       fields: {
-        phone: false,
+        email: false,
         password: true,
       },
       userId: null,
@@ -48,7 +48,7 @@ export default async function isValidUserLogin({ phone, password }) {
     success: true,
     reason: 'Ok.',
     field: {
-      phone: false,
+      email: false,
       password: false,
     },
     userId: user.id,

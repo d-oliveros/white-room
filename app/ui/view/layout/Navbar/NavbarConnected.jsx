@@ -1,11 +1,14 @@
+import { hasRoleAnonymous } from '#user/constants/roles.js';
 import useBranch from '#white-room/client/hooks/useBranch.js';
 import Navbar from './Navbar.jsx';
 
 const NavbarConnected = () => {
   const { appTitle, currentUser } = useBranch({
-    appTitle: ['app', 'env', 'APP_TITLE'],
+    appTitle: ['client', 'env', 'APP_TITLE'],
     currentUser: ['currentUser'],
   });
+
+  const isAnonymous = hasRoleAnonymous(currentUser.roles);
 
   const logoUrl = 'https://flowbite.com/images/logo.svg';
 
@@ -13,9 +16,10 @@ const NavbarConnected = () => {
     <Navbar
       logoUrl={logoUrl}
       logoLabel={appTitle}
-      avatarImageUrl={currentUser.profileImage}
-      userName={`${currentUser.firstName} ${currentUser.lastName}`}
-      userEmail={currentUser.email}
+      // avatarImageUrl={currentUser.profileImage}
+      avatarImageUrl={isAnonymous ? null : 'https://i.pravatar.cc/50'}
+      userName={isAnonymous ? null : `${currentUser.firstName} ${currentUser.lastName}`}
+      userEmail={currentUser?.email}
       menu={[
         {
           title: 'Home',
@@ -26,19 +30,26 @@ const NavbarConnected = () => {
           path: '/sandbox',
         },
       ]}
-      dropdownMenu={[
-        {
-          title: 'Settings',
-          path: '/user/settings',
-        },
-        {
-          divider: true,
-        },
-        {
-          title: 'Log Out',
-          path: '/logout',
-        },
-      ]}
+      dropdownMenu={isAnonymous
+        ? [
+          {
+            title: 'Log In',
+            path: '/login',
+          },
+        ]
+        : [
+          {
+            title: 'Settings',
+            path: `/user/${currentUser.id}`,
+          },
+          {
+            divider: true,
+          },
+          {
+            title: 'Log Out',
+            path: '/logout',
+          },
+        ]}
     />
   );
 };

@@ -7,7 +7,7 @@ export default function makeDispatchFn({ state, apiClient }) {
   typeCheck('state::Object', state);
   typeCheck('apiClient::Object', apiClient);
 
-  return function dispatchFn(fn, ...args) {
+  return async function dispatchFn(fn, ...args) {
     if (!fn || typeof fn !== 'function') {
       const error = new Error(
         '[dispatch] Tried dispatching a function, but no function was provided. ' +
@@ -17,6 +17,9 @@ export default function makeDispatchFn({ state, apiClient }) {
       throw error;
     }
     debug(`Dispatching: ${fn.name || 'anonymous'}`, ...args);
-    return fn({ state, apiClient }, ...args);
+    const result = await fn({ state, apiClient }, ...args);
+    state.commit();
+
+    return result;
   };
 }

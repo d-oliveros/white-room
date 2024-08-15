@@ -3,7 +3,7 @@ import logger from './logger.js';
 import { getSitemapGeneratorFromModules } from './server/lib/sitemapController.js';
 
 import startServer, { getMiddlewareFromModules, getServicesFromModules } from './services/startServer.js';
-import startRenderer, { getRoutesFromModules, getInitialStateFromModules } from './services/startRenderer.js';
+import startRenderer, { getInitialStateFromModules } from './services/startRenderer.js';
 import startCron, { getPeriodicFunctionsFromModules } from './services/startCron.js';
 import startQueue, { getQueueHandlersFromModules } from './services/startQueue.js';
 import startUncaughtExceptionHandler from './services/startUncaughtExceptionHandler.js';
@@ -59,13 +59,15 @@ const startServices = async ({ modules, config = {} } = {}) => {
 
   // Start the renderer service
   if (enableRenderer) {
-    const routes = getRoutesFromModules(modules);
+    if (!Array.isArray(modules.routes) || modules.routes.length === 0) {
+      throw new Error('Can not start the renderer without routes.');
+    }
     const middleware = getMiddlewareFromModules(modules);
     const initialState = getInitialStateFromModules(modules);
 
     promises.push(startRenderer({
       port: rendererPort,
-      routes,
+      routes: modules.routes,
       initialState,
       middleware,
       config: {

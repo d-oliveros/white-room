@@ -50,6 +50,7 @@
           ["#ui", "./app/ui"],
           ["#post", "./app/post"],
           ["#user", "./app/user"],
+          ["#app", "./app"],
           ["#white-room", "./src"],
         ],
         "extensions": [".js", ".jsx", ".mjs"]

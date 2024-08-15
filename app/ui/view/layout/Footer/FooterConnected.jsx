@@ -3,7 +3,7 @@ import Footer from './Footer.jsx';
 
 const FooterConnected = () => {
   const { appTitle } = useBranch({
-    appTitle: ['app', 'env', 'APP_TITLE'],
+    appTitle: ['client', 'env', 'APP_TITLE'],
   });
 
   const logoUrl = 'https://flowbite.com/images/logo.svg';

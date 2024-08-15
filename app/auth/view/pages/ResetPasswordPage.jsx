@@ -1,131 +1,41 @@
-import React, { useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 
-import { ROLE_ANONYMOUS } from '#user/constants/roles.js';
+import {
+  hasRoleAnonymous,
+} from '#user/constants/roles.js';
 
-import logger from '#white-room/logger.js';
-import useAllowedRoles from '#white-room/client/hooks/useAllowedRoles.jsx';
-import useApiState from '#white-room/client/hooks/useApiState.jsx';
-import postWithState from '#white-room/client/actions/postWithState.js';
+import getUserLandingPage from '#user/view/helpers/getUserLandingPage.js';
+import useBranch from '#white-room/client/hooks/useBranch.js';
+import PageModal from '#ui/view/layout/PageModal/PageModal.jsx';
 
-import AuthActions from '#auth/view/actions/index.jsx';
-
-import PasswordResetSmsForm from '#ui/view/components/PasswordResetSmsForm/PasswordResetSmsForm.jsx';
-import SmsSendingIndicator from '#ui/view/components/SmsSendingIndicator/SmsSendingIndicator.jsx';
-import Navbar from '#ui/view/components/Navbar/Navbar.jsx';
-import Link from '#ui/view/components/Link/Link.jsx';
-import ErrorMessage from '#ui/view/components/ErrorMessage/ErrorMessage.jsx';
+import ResetPasswordFormConnected from '#auth/view/forms/ResetPasswordForm/ResetPasswordFormConnected.jsx';
 
 const ResetPasswordPage = () => {
-  useAllowedRoles({
-    roles: [
-      ROLE_ANONYMOUS,
-    ],
-    redirectUrl: '/',
-  });
+  const currentUser = useBranch('currentUser');
 
-  const navigate = useNavigate();
-  const location = useLocation();
-
-  const { verifyPhoneApiState } = useApiState({
-    verifyPhoneApiState: { path: '/auth/verifyPhoneSmsCodeRequested' },
-  });
-
-  const [state, setState] = useState({
-    showSmsSending: false,
-    phoneNumberDoesNotExist: false,
-    phone: '',
-  });
-  const { showSmsSending, phoneNumberDoesNotExist, phone } = state;
-
-  const _onRequestVerificationCode = async ({ phone }) => {
-    setState({
-      showSmsSending: false,
-      phoneNumberDoesNotExist: false,
-      phone,
-    });
-
-    try {
-      const userExist = await dispatch(postWithState, {
-        path: '/auth/verifyAccountExists',
-        payload: {
-          phone: phone,
-        },
-      });
-
-      if (userExist) {
-        await AuthActions.resetPasswordSmsCodeRequested({
-          phone,
-        });
-
-        setState((prevState) => ({
-          ...prevState,
-          showSmsSending: true,
-        }));
-
-        setTimeout(() => {
-          setState((prevState) => ({
-            ...prevState,
-            showSmsSending: false,
-          }));
-          navigate(`/reset-password-verify-code${location.search}`);
-        }, 3000);
-      } else {
-        setState((prevState) => ({
-          ...prevState,
-          showSmsSending: false,
-          phoneNumberDoesNotExist: true,
-        }));
-      }
-    } catch (error) {
-      logger.error(error);
-    }
-  };
+  if (!hasRoleAnonymous(currentUser.roles)) {
+    return (
+      <Navigate
+        to={getUserLandingPage(currentUser)}
+      />
+    );
+  }
 
   return (
-    <div className='page-reset-password'>
-      <Navbar
-        redirectLogoTo='/'
-        leftButton={
-          <Link
-            className='link back'
-            redirectToLastLocation
-            restoreScrollPosition
-            to='/login'
-          >
-            Back
-          </Link>
-        }
-      />
-      <div className='resetContainer'>
-        <div className='resetFormContainer'>
-          {phoneNumberDoesNotExist && (
-            <ErrorMessage>
-              Sorry, there is no account with that phone number
-            </ErrorMessage>
-          )}
-          {!verifyPhoneApiState.inProgress
-            && !showSmsSending
-            && (
-              <PasswordResetSmsForm
-                onSubmit={_onRequestVerificationCode}
-              />
-            )
-          }
-          {showSmsSending && (
-            <SmsSendingIndicator
-              phone={phone}
-            />
-          )}
-        </div>
-      </div>
-    </div>
+    <PageModal
+      title="Reset Password"
+      backgroundUrl="https://wallpaperswide.com/download/natures_mirror-wallpaper-1920x1200.jpg"
+    >
+      <ResetPasswordFormConnected />
+    </PageModal>
   );
 };
 
 ResetPasswordPage.getMetadata = () => ({
-  keywords: 'reset password',
-  description: 'Reset your password.',
+  title: 'Reset Password - Whiteroom',
+  keywords: 'whiteroom, keyword',
+  description: 'Reset your whiteroom password.',
+  image: 'https://whiteroom.com/images/metadata/og-house.jpg',
 });
 
 export default ResetPasswordPage;

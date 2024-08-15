@@ -8,7 +8,7 @@ const Avatar = ({ img, alt, rounded = true }) => {
 };
 
 Avatar.propTypes = {
-  img: PropTypes.string.isRequired,
+  img: PropTypes.string,
   alt: PropTypes.string,
   rounded: PropTypes.bool,
 };

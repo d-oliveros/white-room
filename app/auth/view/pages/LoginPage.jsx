@@ -1,16 +1,19 @@
-import { Navigate, Link } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 
 import {
   hasRoleAnonymous,
 } from '#user/constants/roles.js';
 
-import getUserLandingPage from '#auth/view/helpers/getUserLandingPage.js';
+import getUserLandingPage from '#user/view/helpers/getUserLandingPage.js';
 import useBranch from '#white-room/client/hooks/useBranch.js';
-import LoginForm from '#ui/view/components/LoginForm/LoginForm.jsx';
-// import Logo from '#ui/view/components/Logo/Logo.jsx';
+import PageModal from '#ui/view/layout/PageModal/PageModal.jsx';
+
+import LoginFormConnected from '#auth/view/forms/LoginForm/LoginFormConnected.jsx';
 
 const LoginPage = () => {
   const currentUser = useBranch('currentUser');
+  console.log('LOGIN PAGE');
+  console.log(currentUser.roles);
 
   if (!hasRoleAnonymous(currentUser.roles)) {
     return (
@@ -21,14 +24,14 @@ const LoginPage = () => {
   }
 
   return (
-    <div>
-      <div className='loginFormContainer'>
-        <h1>Log In</h1>
-        <LoginForm />
-        <Link to='/signup'>create new account</Link>
-        <Link to='/reset-password'>Forgot Password?</Link>
-      </div>
-    </div>
+    <PageModal
+      title="Login"
+      backgroundUrl="https://wallpaperswide.com/download/natures_mirror-wallpaper-1920x1200.jpg"
+      footerLinkUrl="/signup"
+      footerLinkLabel="Create Account"
+    >
+      <LoginFormConnected />
+    </PageModal>
   );
 };
 
@@ -38,6 +41,5 @@ LoginPage.getMetadata = () => ({
   description: 'whiteroom login page.',
   image: 'https://whiteroom.com/images/metadata/og-house.jpg',
 });
-
 
 export default LoginPage;

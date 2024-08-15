@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
 import { useServiceQuery, useServiceMutation } from '#white-room/client/hooks/reactQuery.js';
 
@@ -28,7 +29,7 @@ const createPostMutationParams = {
   }],
 };
 
-const HomePage = ({ user }) => {
+const HomePage = ({ someServersideData }) => {
   const currentUser = useBranch('currentUser');
   const isFetchPageDataStateSetTest = useBranch('isFetchPageDataStateSetTest');
 
@@ -54,15 +55,15 @@ const HomePage = ({ user }) => {
   console.log('INITIAL getPostsQuery DATA IS', getPostsQuery.data);
   console.log('INITIAL currentUser', currentUser);
 
-  debug({ user });
+  debug({ someServersideData });
 
   return (
-    <div width='80%' style={{ margin: '0 auto' }}>
-      <h1 styleName='testing'>Home Page</h1>
-
-      <h1 className='text-3xl font-bold underline'>
+    <div>
+      <h1 className="text-3xl font-bold underline">
         Hello world!
       </h1>
+
+      <h1 styleName="testing">Testing styleName...</h1>
 
       {getPostsQuery.data?.map((post) => (
         <div key={post.id}>
@@ -77,23 +78,23 @@ const HomePage = ({ user }) => {
 
       <p>
         Hello! Thanks for visiting.
-        Serverside user: {user?.id || 'Loading...'}
+        Serverside data: {someServersideData?.id || 'Loading...'}
         Your user roles: {currentUser.roles}
       </p>
 
       <p>
-        You are {hasRoleAnonymous(currentUser.roles)
+        You are logged in as: {hasRoleAnonymous(currentUser.roles)
           ? '--'
-          : currentUser.firstName}
+          : `${currentUser.firstName} (id: ${currentUser.id})`}
       </p>
 
       {!hasRoleAnonymous(currentUser.roles) &&
-        <Link to='/logout'>Log out</Link>
+        <Link to="/logout">Log out</Link>
       }
 
       {hasRoleAnonymous(currentUser.roles) &&
         <>
-          <Link to='/login'>Log In</Link>
+          <Link to="/login">Log In</Link>
 
           <button onClick={() => navigate('/login')}>
             Redirect to Login
@@ -120,9 +121,9 @@ const HomePage = ({ user }) => {
         </button>
 
         <h3>Users</h3>
-        <Link to='/user/1'>User 1</Link>
-        <Link to='/user/51231'>User NonExistant</Link>
-        <Link to='/t1e1e12'>Link NonExistant</Link>
+        <Link to="/user/1">User 1</Link>
+        <Link to="/user/51231">User NonExistant</Link>
+        <Link to="/t1e1e12">Link NonExistant</Link>
       </div>
 
       <span>
@@ -166,8 +167,8 @@ HomePage.fetchPageData = async ({ apiClient, prefetchQuery, store, params }) => 
   });
 
   // await sleepAsync(process.browser ? 3000 : 0);
-  console.log('Sleeeeeping 400ms');
-  await sleepAsync(400);
+  console.log('Sleeeeeping 300ms');
+  await sleepAsync(300);
 
   // Returns a 404 code.
   //
@@ -198,10 +199,14 @@ HomePage.fetchPageData = async ({ apiClient, prefetchQuery, store, params }) => 
 
   console.log('WAKE UP!');
   return {
-    user: {
+    someServersideData: {
       id: 1,
     },
   };
+};
+
+HomePage.propTypes = {
+  someServersideData: PropTypes.object,
 };
 
 export default HomePage;

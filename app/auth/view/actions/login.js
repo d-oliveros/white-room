@@ -1,28 +1,24 @@
 import analytics from '#white-room/client/analytics/analytics.js';
 
-import updateDeviceRegistrationIds from '#user/service/updateDeviceRegistrationIds.js';
+import updateDeviceRegistrationIds from '#user/view/actions/updateDeviceRegistrationIds.js';
+
 import sendDataToMobileApp, {
   MOBILE_APP_ACTION_TYPE_CURRENT_USER,
 } from '#white-room/client/helpers/sendDataToMobileApp.js';
 
 import anonymousUser from '#user/constants/anonymousUser.js';
 
-export async function onLogicSuccess({ state, apiClient, user, experimentActiveVariants }) {
+export async function loadUserInState({ state, apiClient, user, experimentActiveVariants }) {
   const analyticsSessionId = state.get(['client', 'analytics', 'analyticsSessionId']);
   const mobileAppState = state.get(['client', 'mobileApp']);
   const currentUser = { ...anonymousUser, ...user };
 
-  // Set experiments.
+  // Set experiments
   if (experimentActiveVariants) {
     state.set(['analytics', 'experiments', 'activeVariants'], experimentActiveVariants);
   }
 
-  // Set filters.
-  state.set(['search', 'filters'], {
-    ...currentUser.searchFilters,
-  });
-
-  // Set the new user as the current user in the state.
+  // Set the new user as the current user in the state
   state.set('currentUser', currentUser);
 
   analytics.alias(user.id, analyticsSessionId);
@@ -46,21 +42,22 @@ export async function onLogicSuccess({ state, apiClient, user, experimentActiveV
       { newDeviceRegistrationId: mobileAppState.deviceRegistrationId }
     );
   }
+  return currentUser;
 }
 
-export default async function login({ state, apiClient }, { phone, password, autoLoginToken }) {
-  const { user, experimentActiveVariants, success } = await apiClient.postWithState({
-    action: 'api/auth/login',
-    state: state,
-    payload: {
-      phone,
-      password,
-      autoLoginToken,
-    },
+export default async function login({ state, apiClient }, { email, password, autoLoginToken }) {
+  const { user, experimentActiveVariants, error } = await apiClient.post('auth/login', {
+    email,
+    password,
+    autoLoginToken,
   });
 
-  if (success) {
-    await onLogicSuccess({
+  if (error) {
+    throw new Error(error);
+  }
+
+  if (user) {
+    await loadUserInState({
       state,
       apiClient,
       user,
@@ -68,5 +65,9 @@ export default async function login({ state, apiClient }, { phone, password, aut
     });
   }
 
-  return user;
+  return {
+    user,
+    experimentActiveVariants,
+    error,
+  };
 }

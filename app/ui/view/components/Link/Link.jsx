@@ -1,10 +1,9 @@
 import { Link as ReactRouterDomLink } from 'react-router-dom';
 
 const Link = (props) => {
-  console.log(props);
   return (
      <ReactRouterDomLink
-      className="font-medium text-primary-600 hover:underline dark:text-primary-500"
+      className="font-medium text-blue-600 text-sm dark:text-blue-500 hover:underline"
       {...props}
     />
   );

@@ -62,17 +62,18 @@ const Navbar = ({
             />
           }
         >
-          <DropdownHeader>
-            <span className="block text-sm">{userName}</span>
-            <span className="block truncate text-sm font-medium">{userEmail}</span>
-          </DropdownHeader>
+          {(userName || userEmail) &&
+            <DropdownHeader>
+              <span className="block text-sm">{userName}</span>
+              <span className="block truncate text-sm font-medium">{userEmail}</span>
+            </DropdownHeader>
+          }
           {(dropdownMenu || []).map(({ title, path, onClick, divider }) => {
             const DropdownComponent = divider ? DropdownDivider : DropdownItem;
             return (
               <DropdownComponent
                 key={`${title}-${path}`}
                 onClick={onMenuItemClick({ path, onClick })}
-                href={path}
               >
                 {title}
               </DropdownComponent>
@@ -100,9 +101,9 @@ const Navbar = ({
 Navbar.propTypes = {
   logoUrl: PropTypes.string.isRequired,
   logoLabel: PropTypes.string,
-  avatarImageUrl: PropTypes.string.isRequired,
-  userName: PropTypes.string.isRequired,
-  userEmail: PropTypes.string.isRequired,
+  avatarImageUrl: PropTypes.string,
+  userName: PropTypes.string,
+  userEmail: PropTypes.string,
   withSignOut: PropTypes.bool,
   menu: PropTypes.arrayOf(PropTypes.shape({
     title: PropTypes.string.isRequired,
