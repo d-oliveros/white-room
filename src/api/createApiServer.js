@@ -2,18 +2,18 @@ import assert from 'assert';
 import { Router } from 'express';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
-import unwrapSessionToken from '#white-room/server/middleware/unwrapSessionToken.js';
-import withoutLeadingSlash from '#white-room/util/withoutLeadingSlash.js';
+import unwrapSessionToken from '#whiteroom/server/middleware/unwrapSessionToken.js';
+import withoutLeadingSlash from '#whiteroom/util/withoutLeadingSlash.js';
 
 import { v4 as uuidv4 } from 'uuid';
 import { serializeError } from 'serialize-error';
 import lodashKeyBy from 'lodash/fp/keyBy.js';
 
-import * as cookiesConfig from '#white-room/config/cookies.js';
+import * as cookiesConfig from '#whiteroom/config/cookies.js';
 
-import logger from '#white-room/logger.js';
-import typeCheck from '#white-room/util/typeCheck.js';
-import trimStringValues from '#white-room/util/trimStringValues.js';
+import logger from '#whiteroom/logger.js';
+import typeCheck from '#whiteroom/util/typeCheck.js';
+import trimStringValues from '#whiteroom/util/trimStringValues.js';
 
 const debug = logger.createDebug('api');
 

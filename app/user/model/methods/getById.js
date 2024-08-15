@@ -1,6 +1,6 @@
-import logger from '#white-room/logger.js';
-import typeCheck from '#white-room/util/typeCheck.js';
-import knex from '#white-room/server/db/knex.js';
+import logger from '#whiteroom/logger.js';
+import typeCheck from '#whiteroom/util/typeCheck.js';
+import knex from '#whiteroom/server/db/knex.js';
 
 const debug = logger.createDebug('models:User:getById');
 

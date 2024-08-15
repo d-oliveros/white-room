@@ -1,4 +1,4 @@
-import typeCheck from '#white-room/util/typeCheck.js';
+import typeCheck from '#whiteroom/util/typeCheck.js';
 import { summaryFieldgroup } from '#user/model/userModel.js';
 
 export default async function getById({ state, apiClient }, { userId, refresh }) {

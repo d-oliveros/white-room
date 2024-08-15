@@ -1,8 +1,8 @@
 import typeCheckModule from 'type-check';
 import dayjs from 'dayjs';
 import ipRegex from 'ip-regex';
-import isUrl from '#white-room/util/isUrl.js';
-import extractDateParts from '#white-room/util/extractDateParts.js';
+import isUrl from '#whiteroom/util/isUrl.js';
+import extractDateParts from '#whiteroom/util/extractDateParts.js';
 
 const allNumbersRegex = /^\d+$/;
 const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/; // eslint-disable-line

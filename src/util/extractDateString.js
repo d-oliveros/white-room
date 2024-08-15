@@ -1,5 +1,5 @@
 import lodashPadStart from 'lodash/padStart.js';
-import dayjsWithDefaultTimezone from '#white-room/util/dayjsWithDefaultTimezone.js';
+import dayjsWithDefaultTimezone from '#whiteroom/util/dayjsWithDefaultTimezone.js';
 
 /**
  * Extracts a date string without time in YYYY-MM-DD format,

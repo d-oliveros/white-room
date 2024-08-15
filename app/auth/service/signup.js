@@ -1,10 +1,10 @@
 import jwt from 'jsonwebtoken';
 import lodashPick from 'lodash/fp/pick.js';
 
-import * as cookiesConfig from '#white-room/config/cookies.js';
-import logger from '#white-room/logger.js';
+import * as cookiesConfig from '#whiteroom/config/cookies.js';
+import logger from '#whiteroom/logger.js';
 import { ROLE_USER } from '#user/constants/roles.js';
-import typeCheck from '#white-room/util/typeCheck.js';
+import typeCheck from '#whiteroom/util/typeCheck.js';
 
 import User from '#user/model/userRepository.js';
 import { summaryFieldgroup } from '#user/model/userModel.js';

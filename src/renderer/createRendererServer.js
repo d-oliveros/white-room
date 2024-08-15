@@ -2,14 +2,14 @@ import express from 'express';
 import { serializeError } from 'serialize-error';
 import cookieParser from 'cookie-parser';
 
-import * as cookiesConfig from '#white-room/config/cookies.js';
+import * as cookiesConfig from '#whiteroom/config/cookies.js';
 
-import logger from '#white-room/logger.js';
-import typeCheck from '#white-room/util/typeCheck.js';
+import logger from '#whiteroom/logger.js';
+import typeCheck from '#whiteroom/util/typeCheck.js';
 
-import unwrapSessionToken from '#white-room/server/middleware/unwrapSessionToken.js';
-import makeClientInitialState from '#white-room/renderer/makeClientInitialState.js';
-import renderReactApp from '#white-room/renderer/renderReactApp.js';
+import unwrapSessionToken from '#whiteroom/server/middleware/unwrapSessionToken.js';
+import makeClientInitialState from '#whiteroom/renderer/makeClientInitialState.js';
+import renderReactApp from '#whiteroom/renderer/renderReactApp.js';
 
 /**
  * Renderer server.
@@ -66,9 +66,6 @@ const createRendererServer = ({ routes, initialState, middleware, config = {} } 
     try {
       const state = res.locals.initialState;
       const sessionToken = res.locals.sessionToken;
-
-      console.log('INITAL STATE IS', state);
-
       const result = await renderReactApp({ req, res, state, sessionToken, routes });
 
       typeCheck('result::NonEmptyObject', result, {

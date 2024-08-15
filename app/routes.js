@@ -10,6 +10,7 @@ import SignupPage from '#auth/view/pages/SignupPage.jsx';
 import ForgotPasswordPage from '#auth/view/pages/ForgotPasswordPage.jsx';
 import ResetPasswordPage from '#auth/view/pages/ResetPasswordPage.jsx';
 import ProfilePage from '#user/view/pages/ProfilePage.jsx';
+import AdminDashboardPage from '#admin/view/pages/AdminDashboardPage.jsx';
 
 const routes = [
   {
@@ -20,6 +21,7 @@ const routes = [
       { path: '/sandbox', exact: true, Component: SandboxPage },
       { path: '/pdf-generator/:pdfComponentId', Component: PdfGeneratorPage },
       { path: '/user/:userId', Component: ProfilePage },
+      { path: '/admin', Component: AdminDashboardPage },
     ],
   },
   { path: '/login', exact: true, Component: LoginPage },

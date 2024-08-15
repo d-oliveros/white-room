@@ -1,5 +1,5 @@
-import typeCheck from '#white-room/util/typeCheck.js';
-import { sendVerificationCode } from '#white-room/server/lib/authyClient.js';
+import typeCheck from '#whiteroom/util/typeCheck.js';
+import { sendVerificationCode } from '#whiteroom/server/lib/authyClient.js';
 
 export default {
   validate({ phone }) {

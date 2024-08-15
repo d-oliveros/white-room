@@ -4,12 +4,8 @@ import {
   ROLE_ANONYMOUS,
 } from '#user/constants/roles.js';
 
-import logger from '#white-room/logger.js';
-import makeApplicationContext from '#white-room/client/analytics/makeApplicationContext.js';
-
-import {
-  ANALYTICS_EVENT_PAGE_VIEWED,
-} from '#white-room/client/analytics/eventList.js';
+import logger from '#whiteroom/logger.js';
+import makeApplicationContext from '#whiteroom/client/analytics/makeApplicationContext.js';
 
 const debug = logger.createDebug('analytics');
 
@@ -239,7 +235,6 @@ export default {
     const applicationContext = makeApplicationContext({
       state: state,
       navigationContext: navigationContext,
-      pageViewCount: this.getPageViewCount(),
     });
 
     const eventPayload = { ...applicationContext, ...originalEventProps };
@@ -284,7 +279,6 @@ export default {
       const applicationContext = makeApplicationContext({
         state: state,
         navigationContext: extractNavigationContextFromWindow(this._window),
-        pageViewCount: this.getPageViewCount(),
       });
 
       this.safeAnalyticsCall(
@@ -294,15 +288,6 @@ export default {
         applicationContext,
       );
     }
-
-    this.track(ANALYTICS_EVENT_PAGE_VIEWED);
-  },
-
-  getPageViewCount() {
-    const byPageLoad = ({ event }) => event.type === ANALYTICS_EVENT_PAGE_VIEWED;
-    this._eventLog = this._eventLog || [];
-    const pageViewCount = this._eventLog.filter(byPageLoad).length;
-    return pageViewCount;
   },
 
   /**

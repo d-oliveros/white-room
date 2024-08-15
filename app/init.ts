@@ -1,9 +1,9 @@
 import { dirname } from 'path';
 import { fileURLToPath } from 'url';
-import startServices from '#white-room/startServices.js';
-import loadModules from '#white-room/loader/loadModules.js';
-import runMigrations from '#white-room/server/db/runMigrations.js';
-import logger from '#white-room/logger.js';
+import startServices from '#whiteroom/startServices.js';
+import loadModules from '#whiteroom/loader/loadModules.js';
+import runMigrations from '#whiteroom/server/db/runMigrations.js';
+import logger from '#whiteroom/logger.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 

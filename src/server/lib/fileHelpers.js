@@ -4,8 +4,8 @@ import { v4 as uuidv4 } from 'uuid';
 import fs from 'fs';
 import os from 'os';
 
-import logger from '#white-room/logger.js';
-import typeCheck from '#white-room/util/typeCheck.js';
+import logger from '#whiteroom/logger.js';
+import typeCheck from '#whiteroom/util/typeCheck.js';
 
 const debug = logger.createDebug('fileHelpers');
 

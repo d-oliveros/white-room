@@ -7,14 +7,14 @@ import lodashCompact from 'lodash/fp/compact.js';
 import lodashPickBy from 'lodash/fp/pickBy.js';
 import { setIn } from 'formik';
 
-import typeCheck from '#white-room/util/typeCheck.js';
-import objectDiff from '#white-room/util/objectDiff.js';
+import typeCheck from '#whiteroom/util/typeCheck.js';
+import objectDiff from '#whiteroom/util/objectDiff.js';
 
-import branch from '#white-room/client/core/branch.jsx';
-import configureDecoratedComponent from '#white-room/client/helpers/configureDecoratedComponent.js';
-import withApiState from '#white-room/client/helpers/withApiState.js';
-import withInfiniteScroll from '#white-room/client/helpers/withInfiniteScroll.js';
-import logger from '#white-room/logger.js';
+import branch from '#whiteroom/client/core/branch.jsx';
+import configureDecoratedComponent from '#whiteroom/client/helpers/configureDecoratedComponent.js';
+import withApiState from '#whiteroom/client/helpers/withApiState.js';
+import withInfiniteScroll from '#whiteroom/client/helpers/withInfiniteScroll.js';
+import logger from '#whiteroom/logger.js';
 
 const debug = logger.createDebug('dataTables');
 const ALL_ITEMS_COUNT = 500000;

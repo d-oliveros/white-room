@@ -1,4 +1,4 @@
-import dayjsWithDefaultTimezone from '#white-room/util/dayjsWithDefaultTimezone.js';
+import dayjsWithDefaultTimezone from '#whiteroom/util/dayjsWithDefaultTimezone.js';
 
 export default function isLastDayOfMonth() {
   const today = dayjsWithDefaultTimezone();

@@ -1,5 +1,5 @@
-import typeCheck from '#white-room/util/typeCheck.js';
-import dayjsWithDefaultTimezone from '#white-room/util/dayjsWithDefaultTimezone.js';
+import typeCheck from '#whiteroom/util/typeCheck.js';
+import dayjsWithDefaultTimezone from '#whiteroom/util/dayjsWithDefaultTimezone.js';
 
 export default function dayjsIsOfficeHours(dayjsInstance) {
   typeCheck('dayjsInstance::Dayjs', dayjsInstance);

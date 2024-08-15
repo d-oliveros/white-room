@@ -1,4 +1,4 @@
-import useBranch from '#white-room/client/hooks/useBranch.js';
+import useBranch from '#whiteroom/client/hooks/useBranch.js';
 import Footer from './Footer.jsx';
 
 const FooterConnected = () => {

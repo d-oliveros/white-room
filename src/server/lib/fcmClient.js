@@ -1,11 +1,11 @@
 import { resolve as resolveUrl } from 'url';
 
-import logger from '#white-room/logger.js';
-import typeCheck from '#white-room/util/typeCheck.js';
+import logger from '#whiteroom/logger.js';
+import typeCheck from '#whiteroom/util/typeCheck.js';
 
 import {
   FIREBASE_CLOUD_MESSAGING_ERROR_RESPONSE_NOT_OK,
-} from '#white-room/constants/errorCodes.js';
+} from '#whiteroom/constants/errorCodes.js';
 
 const debug = logger.createDebug('fcm');
 

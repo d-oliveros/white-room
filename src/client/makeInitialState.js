@@ -53,7 +53,6 @@ export default function makeInitialState() {
       },
       analytics: {
         analyticsSessionId: null,
-        shouldTrackNewSession: false,
         isEnabled: false,
         requestIp: null,
         location: {

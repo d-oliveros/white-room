@@ -1,7 +1,7 @@
 import { LambdaClient, InvokeCommand } from '@aws-sdk/client-lambda';
-import logger from '#white-room/logger.js';
-import typeCheck from '#white-room/util/typeCheck.js';
-import parseJSON from '#white-room/util/parseJSON.js';
+import logger from '#whiteroom/logger.js';
+import typeCheck from '#whiteroom/util/typeCheck.js';
+import parseJSON from '#whiteroom/util/parseJSON.js';
 
 const debug = logger.createDebug('awsLambdaClient');
 const lambdaClient = new LambdaClient();

@@ -3,7 +3,7 @@ import { extname, basename, dirname, resolve } from 'path';
 import cloneDeep from 'lodash/fp/cloneDeep.js';
 import isEqual from 'lodash/fp/isEqual.js';
 
-import withoutLeadingSlash from '#white-room/util/withoutLeadingSlash.js';
+import withoutLeadingSlash from '#whiteroom/util/withoutLeadingSlash.js';
 
 import logger from '../logger.js';
 

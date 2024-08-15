@@ -51,7 +51,7 @@
           ["#post", "./app/post"],
           ["#user", "./app/user"],
           ["#app", "./app"],
-          ["#white-room", "./src"],
+          ["#whiteroom", "./src"],
         ],
         "extensions": [".js", ".jsx", ".mjs"]
       }

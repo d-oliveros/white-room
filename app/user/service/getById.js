@@ -1,7 +1,7 @@
-import typeCheck from '#white-room/util/typeCheck.js';
+import typeCheck from '#whiteroom/util/typeCheck.js';
 // import {
 //   API_ERROR_NOT_ALLOWED,
-// } from '#white-room/constants/errorCodes.js';
+// } from '#whiteroom/constants/errorCodes.js';
 
 // import {
 //   hasRoleAdmin,
@@ -10,7 +10,7 @@ import typeCheck from '#white-room/util/typeCheck.js';
 import User from '#user/model/userRepository.js';
 
 /*
-import logger from '#white-room/logger.js';
+import logger from '#whiteroom/logger.js';
 
 const withRoles = ({ res }) => {
   try {

@@ -1,4 +1,4 @@
-import withStorybookFormProvider from '#white-room/client/helpers/withStorybookFormProvider.jsx';
+import withStorybookFormProvider from '#whiteroom/client/helpers/withStorybookFormProvider.jsx';
 import Button from '#ui/view/components/Button/Button.jsx';
 import FormFieldStories from '#ui/view/forms/FormField/FormField.stories.jsx';
 import FormFieldGroup from './FormFieldGroup.jsx';

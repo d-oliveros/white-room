@@ -1,13 +1,13 @@
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
-import { useServiceQuery, useServiceMutation } from '#white-room/client/hooks/reactQuery.js';
+import { useServiceQuery, useServiceMutation } from '#whiteroom/client/hooks/reactQuery.js';
 
 import { hasRoleAnonymous } from '#user/constants/roles.js';
-import sleepAsync from '#white-room/util/sleepAsync.js';
-import logger from '#white-room/logger.js';
+import sleepAsync from '#whiteroom/util/sleepAsync.js';
+import logger from '#whiteroom/logger.js';
 
-import useBranch from '#white-room/client/hooks/useBranch.js';
-import useDispatch from '#white-room/client/hooks/useDispatch.js';
+import useBranch from '#whiteroom/client/hooks/useBranch.js';
+import useDispatch from '#whiteroom/client/hooks/useDispatch.js';
 
 import Link from '#ui/view/components/Link/Link.jsx';
 

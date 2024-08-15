@@ -1,5 +1,5 @@
 import crypto from 'crypto';
-import logger from '#white-room/logger.js';
+import logger from '#whiteroom/logger.js';
 
 const {
   ENCRYPTION_KEY,

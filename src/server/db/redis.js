@@ -1,7 +1,7 @@
 import Redis from 'ioredis';
 import { v4 as uuidv4 } from 'uuid';
-import dbConfig from '#white-room/config/database.js';
-import logger from '#white-room/logger.js';
+import dbConfig from '#whiteroom/config/database.js';
+import logger from '#whiteroom/logger.js';
 
 // Create Redis client using connection details from database configuration
 const redis = new Redis({

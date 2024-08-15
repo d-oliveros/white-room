@@ -1,8 +1,8 @@
 import bcrypt from 'bcrypt';
 import { promisify } from 'util';
 
-import typeCheck from '#white-room/util/typeCheck.js';
-import knex from '#white-room/server/db/knex.js';
+import typeCheck from '#whiteroom/util/typeCheck.js';
+import knex from '#whiteroom/server/db/knex.js';
 import {
   loginFieldgroup,
 } from '#user/model/userModel.js';

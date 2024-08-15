@@ -1,12 +1,12 @@
 import lodashXor from 'lodash/fp/xor.js';
 
 // TODO: Detach experiments config.
-import experimentsConfig from '#white-room/config/experiments.js';
-import * as cookiesConfig from '#white-room/config/cookies.js';
-import jwtSign from '#white-room/util/jwtSign.js';
-import objectIsEqual from '#white-room/util/objectIsEqual.js';
-import omitExperimentActiveVariants from '#white-room/util/omitExperimentActiveVariants.js';
-import { getExperimentActiveVariants } from '#white-room/server/lib/experiments.js';
+import experimentsConfig from '#whiteroom/config/experiments.js';
+import * as cookiesConfig from '#whiteroom/config/cookies.js';
+import jwtSign from '#whiteroom/util/jwtSign.js';
+import objectIsEqual from '#whiteroom/util/objectIsEqual.js';
+import omitExperimentActiveVariants from '#whiteroom/util/omitExperimentActiveVariants.js';
+import { getExperimentActiveVariants } from '#whiteroom/server/lib/experiments.js';
 
 import User from '#user/model/userRepository.js';
 

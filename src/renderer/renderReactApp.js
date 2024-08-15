@@ -9,19 +9,19 @@ import {
   StaticRouterProvider,
 } from 'react-router-dom/server.js';
 
-import logger from '#white-room/logger.js';
-import typeCheck from '#white-room/util/typeCheck.js';
-import isRedirectResponse from '#white-room/util/isRedirectResponse.js';
+import logger from '#whiteroom/logger.js';
+import typeCheck from '#whiteroom/util/typeCheck.js';
+import isRedirectResponse from '#whiteroom/util/isRedirectResponse.js';
 
-import createApiClient from '#white-room/api/createApiClient.js';
-import createReactQueryClient from '#white-room/client/helpers/createReactQueryClient.js';
-import createStore from '#white-room/client/core/createStore.js';
-import makeDispatchFn from '#white-room/client/core/makeDispatchFn.js';
-import makeInitialState from '#white-room/client/makeInitialState.js';
+import createApiClient from '#whiteroom/api/createApiClient.js';
+import createReactQueryClient from '#whiteroom/client/helpers/createReactQueryClient.js';
+import createStore from '#whiteroom/client/core/createStore.js';
+import makeDispatchFn from '#whiteroom/client/core/makeDispatchFn.js';
+import makeInitialState from '#whiteroom/client/makeInitialState.js';
 
-import AppContextProvider from '#white-room/client/contexts/AppContextProvider.jsx';
-import makeRouter from '#white-room/client/core/makeRouter.jsx';
-import renderLayout from '#white-room/renderer/renderLayout.js';
+import AppContextProvider from '#whiteroom/client/contexts/AppContextProvider.jsx';
+import makeRouter from '#whiteroom/client/core/makeRouter.jsx';
+import renderLayout from '#whiteroom/renderer/renderLayout.js';
 
 import {
   assertIdleApiState,
@@ -29,7 +29,7 @@ import {
   serializeState,
   matchRoute,
   createFetchRequest,
-} from '#white-room/renderer/rendererHelpers.js';
+} from '#whiteroom/renderer/rendererHelpers.js';
 
 const {
   NODE_ENV,

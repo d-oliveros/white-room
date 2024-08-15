@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import logger from '#white-room/logger.js';
-import useDispatch from '#white-room/client/hooks/useDispatch.js';
+import logger from '#whiteroom/logger.js';
+import useDispatch from '#whiteroom/client/hooks/useDispatch.js';
 import logoutAction from '#auth/view/actions/logout.js';
 import getUserLandingPage from '#user/view/helpers/getUserLandingPage.js';
 import anonymousUser from '#user/constants/anonymousUser.js';

@@ -1,5 +1,5 @@
 import { useParams } from 'react-router-dom';
-import { useServiceQuery } from '#white-room/client/hooks/reactQuery.js';
+import { useServiceQuery } from '#whiteroom/client/hooks/reactQuery.js';
 
 const getUserQueryParams = (userId) => ({
   serviceId: 'user/getById',

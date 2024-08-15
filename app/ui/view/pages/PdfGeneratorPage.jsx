@@ -1,6 +1,6 @@
 import { useParams } from 'react-router-dom';
-import parseJSON from '#white-room/util/parseJSON.js';
-import logger from '#white-room/logger.js';
+import parseJSON from '#whiteroom/util/parseJSON.js';
+import logger from '#whiteroom/logger.js';
 
 const getPdfComponentFromComponentId = (componentId) => {
   switch (componentId) {

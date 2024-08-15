@@ -1,13 +1,13 @@
 import { serializeError } from 'serialize-error';
-import withoutLeadingSlash from '#white-room/util/withoutLeadingSlash.js';
+import withoutLeadingSlash from '#whiteroom/util/withoutLeadingSlash.js';
 
 import {
   API_ERROR_REQUEST_INVALID_RESPONSE,
   API_ERROR_REQUEST_FAILED,
-} from '#white-room/constants/errorCodes.js';
+} from '#whiteroom/constants/errorCodes.js';
 
-import typeCheck from '#white-room/util/typeCheck.js';
-import logger from '#white-room/logger.js';
+import typeCheck from '#whiteroom/util/typeCheck.js';
+import logger from '#whiteroom/logger.js';
 
 const debug = logger.createDebug('api:client');
 

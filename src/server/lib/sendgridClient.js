@@ -1,27 +1,15 @@
 import { resolve as resolveUrl } from 'url';
 
-import logger from '#white-room/logger.js';
-import typeCheck from '#white-room/util/typeCheck.js';
+import logger from '#whiteroom/logger.js';
+import typeCheck from '#whiteroom/util/typeCheck.js';
 
 import {
   SENDGRID_ERROR_RESPONSE_NOT_OK,
-} from '#white-room/constants/errorCodes.js';
-
-import {
-  ANALYTICS_EVENT_EMAIL_DELIVERED,
-  ANALYTICS_EVENT_EMAIL_OPENED,
-  ANALYTICS_EVENT_EMAIL_CLICKED,
-  ANALYTICS_EVENT_EMAIL_BOUNCED,
-  ANALYTICS_EVENT_EMAIL_DROPPED,
-  ANALYTICS_EVENT_EMAIL_SPAM_REPORT,
-  ANALYTICS_EVENT_EMAIL_UNSUBSCRIBE,
-  ANALYTICS_EVENT_EMAIL_GROUP_UNSUBSCRIBE,
-  ANALYTICS_EVENT_EMAIL_GROUP_RESUBSCRIBE,
-} from '#white-room/client/analytics/eventList.js';
+} from '#whiteroom/constants/errorCodes.js';
 
 import {
   postSlackMessage,
-} from '#white-room/server/lib/slackClient.js';
+} from '#whiteroom/server/lib/slackClient.js';
 
 const {
   APP_URL,
@@ -52,15 +40,15 @@ export const SENDGRID_EVENT_GROUP_UNSUBSCRIBE = 'group_unsubscribe';
 export const SENDGRID_EVENT_GROUP_RESUBSCRIBE = 'group_resubscribe';
 
 export const SENDGRID_EVENT_TO_ANALYTICS_EVENT_MAPPING = {
-  [SENDGRID_EVENT_DELIVERED]: ANALYTICS_EVENT_EMAIL_DELIVERED,
-  [SENDGRID_EVENT_OPENED]: ANALYTICS_EVENT_EMAIL_OPENED,
-  [SENDGRID_EVENT_CLICKED]: ANALYTICS_EVENT_EMAIL_CLICKED,
-  [SENDGRID_EVENT_BOUNCED]: ANALYTICS_EVENT_EMAIL_BOUNCED,
-  [SENDGRID_EVENT_DROPPED]: ANALYTICS_EVENT_EMAIL_DROPPED,
-  [SENDGRID_EVENT_SPAM_REPORT]: ANALYTICS_EVENT_EMAIL_SPAM_REPORT,
-  [SENDGRID_EVENT_UNSUBSCRIBE]: ANALYTICS_EVENT_EMAIL_UNSUBSCRIBE,
-  [SENDGRID_EVENT_GROUP_UNSUBSCRIBE]: ANALYTICS_EVENT_EMAIL_GROUP_UNSUBSCRIBE,
-  [SENDGRID_EVENT_GROUP_RESUBSCRIBE]: ANALYTICS_EVENT_EMAIL_GROUP_RESUBSCRIBE,
+  [SENDGRID_EVENT_DELIVERED]: 'Sendgrid Delivered',
+  [SENDGRID_EVENT_OPENED]: 'Sendgrid Opened',
+  [SENDGRID_EVENT_CLICKED]: 'Sendgrid Clicked',
+  [SENDGRID_EVENT_BOUNCED]: 'Sendgrid Bounced',
+  [SENDGRID_EVENT_DROPPED]: 'Sendgrid Dropped',
+  [SENDGRID_EVENT_SPAM_REPORT]: 'Sendgrid Report',
+  [SENDGRID_EVENT_UNSUBSCRIBE]: 'Sendgrid Unsubscribe',
+  [SENDGRID_EVENT_GROUP_UNSUBSCRIBE]: 'Sendgrid Group Unsubscribe',
+  [SENDGRID_EVENT_GROUP_RESUBSCRIBE]: 'Sendgrid Group Resubscribe',
 };
 
 /**

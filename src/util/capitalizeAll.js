@@ -1,4 +1,4 @@
-import capitalize from '#white-room/util/capitalize.js';
+import capitalize from '#whiteroom/util/capitalize.js';
 
 export default function capitalizeAll(string) {
   if (typeof string !== 'string') {

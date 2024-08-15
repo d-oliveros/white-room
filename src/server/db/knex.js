@@ -5,8 +5,8 @@ import knexPostgis from 'knex-postgis';
 import pg from 'pg';
 import { v4 as uuidv4 } from 'uuid';
 
-import logger from '#white-room/logger.js';
-import slugify from '#white-room/util/slugify.js';
+import logger from '#whiteroom/logger.js';
+import slugify from '#whiteroom/util/slugify.js';
 
 const {
   POSTGRES_HOST = '127.0.0.1',

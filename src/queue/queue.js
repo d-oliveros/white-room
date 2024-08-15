@@ -1,5 +1,5 @@
 import { Queue } from 'bullmq';
-import redisClient from '#white-room/server/db/redis.js';
+import redisClient from '#whiteroom/server/db/redis.js';
 
 const {
   QUEUE_ID = 'queue',

@@ -6,11 +6,11 @@ import makeCookieParser from 'cookie-parser';
 import { createProxyMiddleware } from 'http-proxy-middleware';
 import { fileURLToPath } from 'url';
 
-import logger from '#white-room/logger.js';
-import typeCheck from '#white-room/util/typeCheck.js';
-import * as cookiesConfig from '#white-room/config/cookies.js';
+import logger from '#whiteroom/logger.js';
+import typeCheck from '#whiteroom/util/typeCheck.js';
+import * as cookiesConfig from '#whiteroom/config/cookies.js';
 
-import createApiServer from '#white-room/api/createApiServer.js';
+import createApiServer from '#whiteroom/api/createApiServer.js';
 
 import createSitemapController from './lib/sitemapController.js';
 import sendgridWebhookApi from './lib/sendgridWebhookApi.js';

@@ -2,8 +2,8 @@ import assert from 'assert';
 import { Analytics } from '@segment/analytics-node';
 import { v4 as uuidv4 } from 'uuid';
 
-import logger from '#white-room/logger.js';
-import typeCheck from '#white-room/util/typeCheck.js';
+import logger from '#whiteroom/logger.js';
+import typeCheck from '#whiteroom/util/typeCheck.js';
 import {
   ROLE_ANONYMOUS,
   hasRoleAnonymous,
@@ -11,7 +11,7 @@ import {
 
 import {
   transformUserDataToSegmentIdentifyTraits,
-} from '#white-room/client/analytics/analytics.js';
+} from '#whiteroom/client/analytics/analytics.js';
 
 const {
   SEGMENT_KEY,

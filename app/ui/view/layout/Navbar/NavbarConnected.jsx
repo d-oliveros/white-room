@@ -1,5 +1,5 @@
 import { hasRoleAnonymous } from '#user/constants/roles.js';
-import useBranch from '#white-room/client/hooks/useBranch.js';
+import useBranch from '#whiteroom/client/hooks/useBranch.js';
 import Navbar from './Navbar.jsx';
 
 const NavbarConnected = () => {
@@ -41,6 +41,10 @@ const NavbarConnected = () => {
           {
             title: 'Settings',
             path: `/user/${currentUser.id}`,
+          },
+          {
+            title: 'Admin',
+            path: `/admin`,
           },
           {
             divider: true,

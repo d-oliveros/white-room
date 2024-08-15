@@ -2,7 +2,7 @@
 //   ROLE_ADMIN,
 //   ROLE_USER,
 // } from '#user/constants/roles.js';
-import buildZodSchemaFromModel from '#white-room/server/db/buildZodSchemaFromModel.ts';
+import buildZodSchemaFromModel from '#whiteroom/server/db/buildZodSchemaFromModel.ts';
 import postModel, { editableFieldgroup } from '#post/model/postModel.js';
 import postRepository from '#post/model/postRepository.js';
 

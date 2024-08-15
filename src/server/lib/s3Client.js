@@ -10,15 +10,15 @@ import {
   DeleteObjectCommand,
 } from '@aws-sdk/client-s3';
 
-import logger from '#white-room/logger.js';
-import typeCheck from '#white-room/util/typeCheck.js';
-import parseQueryString from '#white-room/util/parseQueryString.js';
+import logger from '#whiteroom/logger.js';
+import typeCheck from '#whiteroom/util/typeCheck.js';
+import parseQueryString from '#whiteroom/util/parseQueryString.js';
 
 import {
   getFiles,
   unlinkAsync,
   readFileAsync,
-} from '#white-room/server/lib/fileHelpers.js';
+} from '#whiteroom/server/lib/fileHelpers.js';
 
 const debug = logger.createDebug('s3Client');
 

@@ -1,4 +1,4 @@
-import * as cookiesConfig from '#white-room/config/cookies.js';
+import * as cookiesConfig from '#whiteroom/config/cookies.js';
 
 export default {
   async handler({ setCookie }) {

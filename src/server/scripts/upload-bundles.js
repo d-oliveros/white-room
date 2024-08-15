@@ -8,13 +8,13 @@ import {
   PutObjectCommand,
 } from '@aws-sdk/client-s3';
 
-import logger from '#white-room/logger.js';
+import logger from '#whiteroom/logger.js';
 
 import {
   getFiles,
   unlinkAsync,
   checkFileExists,
-} from '#white-room/server/lib/fileHelpers.js';
+} from '#whiteroom/server/lib/fileHelpers.js';
 
 const {
   COMMIT_HASH,

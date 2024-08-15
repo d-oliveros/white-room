@@ -1,4 +1,4 @@
-import experimentsConfig from '#white-room/config/experiments.js';
+import experimentsConfig from '#whiteroom/config/experiments.js';
 
 function isApiResponse(res) {
   return !!(res && res.body && 'success' in res.body && 'result' in res.body);

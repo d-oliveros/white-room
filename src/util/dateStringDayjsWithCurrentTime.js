@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import extractDateParts from '#white-room/util/extractDateParts.js';
+import extractDateParts from '#whiteroom/util/extractDateParts.js';
 
 export default function dateStringDayjsWithCurrentTime(dateString) {
   const dateParts = extractDateParts(dateString);

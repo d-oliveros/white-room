@@ -1,8 +1,8 @@
 import dayjs from 'dayjs';
 import pluralize from 'pluralize';
-import typeCheck from '#white-room/util/typeCheck.js';
-import capitalize from '#white-room/util/capitalize.js';
-import dayjsWithDefaultTimezone from '#white-room/util/dayjsWithDefaultTimezone.js';
+import typeCheck from '#whiteroom/util/typeCheck.js';
+import capitalize from '#whiteroom/util/capitalize.js';
+import dayjsWithDefaultTimezone from '#whiteroom/util/dayjsWithDefaultTimezone.js';
 
 const ONE_DAY_IN_SECONDS = 24 * 60 * 60;
 

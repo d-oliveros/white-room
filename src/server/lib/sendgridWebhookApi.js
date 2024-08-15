@@ -2,15 +2,15 @@ import { Router } from 'express';
 import lodashPick from 'lodash/fp/pick.js';
 import dayjs from 'dayjs';
 
-import logger from '#white-room/logger.js';
-import { trackServersideEvent } from '#white-room/server/lib/serversideAnalytics.js';
+import logger from '#whiteroom/logger.js';
+import { trackServersideEvent } from '#whiteroom/server/lib/serversideAnalytics.js';
 import {
   SENDGRID_EVENT_OPENED,
   SENDGRID_EVENT_CLICKED,
   SENDGRID_EVENT_TO_ANALYTICS_EVENT_MAPPING,
-} from '#white-room/server/lib/sendgridClient.js';
+} from '#whiteroom/server/lib/sendgridClient.js';
 
-import knex from '#white-room/server/db/knex.js';
+import knex from '#whiteroom/server/db/knex.js';
 
 const sendgridWebhookApi = new Router();
 const debug = logger.createDebug('sendgridWebhookApi');

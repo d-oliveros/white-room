@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 
-import DispatchContext from '#white-room/client/contexts/DispatchContext.js';
+import DispatchContext from '#whiteroom/client/contexts/DispatchContext.js';
 
 const useDispatch = () => useContext(DispatchContext);
 

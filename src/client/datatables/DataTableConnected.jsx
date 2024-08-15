@@ -2,7 +2,7 @@ import { Component } from 'react';
 import PropTypes from 'prop-types';
 import {
   dataTableUIControls,
-} from '#white-room/client/helpers/dataTables.js';
+} from '#whiteroom/client/helpers/dataTables.js';
 
 const DEFAULT_COUNT = 10;
 

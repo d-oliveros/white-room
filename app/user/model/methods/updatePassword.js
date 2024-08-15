@@ -1,5 +1,5 @@
-import logger from '#white-room/logger.js';
-import knex from '#white-room/server/db/knex.js';
+import logger from '#whiteroom/logger.js';
+import knex from '#whiteroom/server/db/knex.js';
 
 import makePasswordHash from '#user/model/methods/makePasswordHash.js';
 

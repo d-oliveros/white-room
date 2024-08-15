@@ -1,5 +1,5 @@
 import Baobab from 'baobab';
-import logger from '#white-room/logger.js';
+import logger from '#whiteroom/logger.js';
 
 const debug = logger.createDebug('client:state');
 

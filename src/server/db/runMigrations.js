@@ -1,4 +1,4 @@
-import logger from '#white-room/logger.js';
+import logger from '#whiteroom/logger.js';
 
 const runMigrations = async (dataSource) => {
   try {

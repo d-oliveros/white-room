@@ -2,7 +2,7 @@ import 'reflect-metadata';
 import { DataSource } from 'typeorm';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import getEntitySchemas from '#white-room/loader/getEntitySchemas.js';
+import getEntitySchemas from '#whiteroom/loader/getEntitySchemas.js';
 
 const {
   POSTGRES_HOST = '127.0.0.1',

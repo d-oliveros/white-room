@@ -3,9 +3,9 @@ import PropTypes from 'prop-types';
 import { QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
-import StateContext from '#white-room/client/contexts/StateContext.js';
-import ApiClientContext from '#white-room/client/contexts/ApiClientContext.js';
-import DispatchContext from '#white-room/client/contexts/DispatchContext.js';
+import StateContext from '#whiteroom/client/contexts/StateContext.js';
+import ApiClientContext from '#whiteroom/client/contexts/ApiClientContext.js';
+import DispatchContext from '#whiteroom/client/contexts/DispatchContext.js';
 
 const AppContextProvider = ({ store, queryClient, apiClient, dispatch, children }) => {
   return (

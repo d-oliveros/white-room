@@ -1,9 +1,9 @@
 import bcrypt from 'bcrypt';
 import { promisify } from 'util';
 
-import logger from '#white-room/logger.js';
-import knex, { getAvailableSlug } from '#white-room/server/db/knex.js';
-import slugify from '#white-room/util/slugify.js';
+import logger from '#whiteroom/logger.js';
+import knex, { getAvailableSlug } from '#whiteroom/server/db/knex.js';
+import slugify from '#whiteroom/util/slugify.js';
 
 const debug = logger.createDebug('models:User:signup');
 

@@ -1,4 +1,4 @@
-import withStorybookFormProvider from '#white-room/client/helpers/withStorybookFormProvider.jsx';
+import withStorybookFormProvider from '#whiteroom/client/helpers/withStorybookFormProvider.jsx';
 import FormField from './FormField.jsx';
 
 export const Text = {

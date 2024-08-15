@@ -1,5 +1,5 @@
-import typeCheck from '#white-room/util/typeCheck.js';
-import knex from '#white-room/server/db/knex.js';
+import typeCheck from '#whiteroom/util/typeCheck.js';
+import knex from '#whiteroom/server/db/knex.js';
 
 export default async function getList({ where, fieldgroup } = {}) {
   typeCheck('where::Maybe NonEmptyObject', where);

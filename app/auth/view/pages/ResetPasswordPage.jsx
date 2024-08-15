@@ -5,7 +5,7 @@ import {
 } from '#user/constants/roles.js';
 
 import getUserLandingPage from '#user/view/helpers/getUserLandingPage.js';
-import useBranch from '#white-room/client/hooks/useBranch.js';
+import useBranch from '#whiteroom/client/hooks/useBranch.js';
 import PageModal from '#ui/view/layout/PageModal/PageModal.jsx';
 
 import ResetPasswordFormConnected from '#auth/view/forms/ResetPasswordForm/ResetPasswordFormConnected.jsx';

@@ -1,4 +1,4 @@
-import knex from '#white-room/server/db/knex.js';
+import knex from '#whiteroom/server/db/knex.js';
 
 const createRepository = (tableName, methods = {}) => {
   const repository = new Proxy(methods, {

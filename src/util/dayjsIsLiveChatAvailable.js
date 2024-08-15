@@ -1,4 +1,4 @@
-import dayjsWithDefaultTimezone from '#white-room/util/dayjsWithDefaultTimezone.js';
+import dayjsWithDefaultTimezone from '#whiteroom/util/dayjsWithDefaultTimezone.js';
 
 const availableHours = [
   ['08:15', '19:30'], // Sunday

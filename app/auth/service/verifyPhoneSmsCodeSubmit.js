@@ -1,6 +1,6 @@
-import typeCheck from '#white-room/util/typeCheck.js';
+import typeCheck from '#whiteroom/util/typeCheck.js';
 
-import { checkVerificationCode } from '#white-room/server/lib/authyClient.js';
+import { checkVerificationCode } from '#whiteroom/server/lib/authyClient.js';
 import User from '#user/model/userRepository.js';
 
 const {

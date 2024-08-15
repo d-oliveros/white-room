@@ -1,4 +1,4 @@
-import typeCheck from '#white-room/util/typeCheck.js';
+import typeCheck from '#whiteroom/util/typeCheck.js';
 
 const validators = {
   required: (value) => {

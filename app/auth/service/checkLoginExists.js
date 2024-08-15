@@ -1,7 +1,7 @@
 import assert from 'assert';
 import lodashXor from 'lodash/fp/xor.js';
 
-import typeCheck from '#white-room/util/typeCheck.js';
+import typeCheck from '#whiteroom/util/typeCheck.js';
 import User from '#user/model/userRepository.js';
 
 export default {

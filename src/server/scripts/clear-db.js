@@ -1,5 +1,5 @@
 import assert from 'assert';
-import knex from '#white-room/server/db/knex.js';
+import knex from '#whiteroom/server/db/knex.js';
 
 const {
   NODE_ENV,

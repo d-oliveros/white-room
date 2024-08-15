@@ -200,7 +200,7 @@
     "#user/*": "./app/user/*",
     "#app/*": "./app/*",
     "#post/*": "./app/post/*",
-    "#white-room/*": "./src/*"
+    "#whiteroom/*": "./src/*"
   },
   "lint-staged": {
     "*.ts": [

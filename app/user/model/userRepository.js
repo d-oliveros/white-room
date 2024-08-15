@@ -1,4 +1,4 @@
-import createRepository from '#white-room/server/createRepository.js';
+import createRepository from '#whiteroom/server/createRepository.js';
 import UserModel from './userModel.js';
 import methods from './methods/index.js';
 

@@ -1,16 +1,16 @@
 import os from 'os';
 import { serializeError } from 'serialize-error';
 
-import logger from '#white-room/logger.js';
+import logger from '#whiteroom/logger.js';
 
 import {
   uploadIncomingFile,
   interpolateFilePath,
-} from '#white-room/server/lib/fileHelpers.js';
+} from '#whiteroom/server/lib/fileHelpers.js';
 
 import {
   uploadToS3,
-} from '#white-room/server/lib/s3Client.js';
+} from '#whiteroom/server/lib/s3Client.js';
 
 export default async function fileUploadsController(req, res) {
   try {

@@ -1,5 +1,5 @@
-import typeCheck from '#white-room/util/typeCheck.js';
-import logger from '#white-room/logger.js';
+import typeCheck from '#whiteroom/util/typeCheck.js';
+import logger from '#whiteroom/logger.js';
 
 const debug = logger.createDebug('client:actions');
 

@@ -1,4 +1,4 @@
-import useDispatch from '#white-room/client/hooks/useDispatch.js';
+import useDispatch from '#whiteroom/client/hooks/useDispatch.js';
 import signupAction from '#auth/view/actions/signup.js';
 import SignupForm from './SignupForm.jsx';
 

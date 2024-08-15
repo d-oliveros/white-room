@@ -1,6 +1,6 @@
 /* eslint-disable max-len */
-import escapeHtml from '#white-room/util/escapeHtml.js';
-import encodeURIComponentIfPresent from '#white-room/util/encodeURIComponentIfPresent.js';
+import escapeHtml from '#whiteroom/util/escapeHtml.js';
+import encodeURIComponentIfPresent from '#whiteroom/util/encodeURIComponentIfPresent.js';
 
 const renderLayout = ({
   metaData = {},

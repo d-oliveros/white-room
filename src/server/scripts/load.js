@@ -1,5 +1,5 @@
 import fs from 'fs';
-import logger from '#white-room/logger.js';
+import logger from '#whiteroom/logger.js';
 
 const scriptName = process.argv[2];
 

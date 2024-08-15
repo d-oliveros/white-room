@@ -1,5 +1,5 @@
-import transformStringToBoolean from '#white-room/util/transformStringToBoolean.js';
-import capitalize from '#white-room/util/capitalize.js';
+import transformStringToBoolean from '#whiteroom/util/transformStringToBoolean.js';
+import capitalize from '#whiteroom/util/capitalize.js';
 
 const transformBooleanToYesNo = (booleanOrString, shouldCapitalize) => {
   const boolean = transformStringToBoolean(booleanOrString);

@@ -1,5 +1,5 @@
-import dayjsWithDefaultTimezone from '#white-room/util/dayjsWithDefaultTimezone.js';
-import durationSettingsToMsArray from '#white-room/util/durationSettingsToMsArray.js';
+import dayjsWithDefaultTimezone from '#whiteroom/util/dayjsWithDefaultTimezone.js';
+import durationSettingsToMsArray from '#whiteroom/util/durationSettingsToMsArray.js';
 
 export default function dayjsWithoutOffHours({
   startMoment,

@@ -1,7 +1,7 @@
 import assert from 'assert';
 import lodashCloneDeep from 'lodash/fp/cloneDeep.js';
 
-import logger from '#white-room/logger.js';
+import logger from '#whiteroom/logger.js';
 
 const {
   APP_TITLE,

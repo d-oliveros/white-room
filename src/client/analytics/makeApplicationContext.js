@@ -9,17 +9,16 @@ import {
 import isUserAgentMobileApp, {
   isUserAgentIphoneApp,
   isUserAgentAndroidApp,
-} from '#white-room/util/isUserAgentMobileApp.js';
+} from '#whiteroom/util/isUserAgentMobileApp.js';
 
 /**
  * Extracts application-specific contextual data from a state object.
  *
  * @param {Object} options.state               Application state.
  * @param {Object} options.navigationContext   Navigation context object.
- * @param {Object} options.state pageViewCount Page view count.
  * return {Object}
  */
-export default function makeApplicationContext({ state, navigationContext, pageViewCount }) {
+export default function makeApplicationContext({ state, navigationContext }) {
   const applicationContext = {};
 
   const {
@@ -76,9 +75,6 @@ export default function makeApplicationContext({ state, navigationContext, pageV
     const activeVariant = activeVariants[experimentName];
     applicationContext[`experiment-${experimentName}`] = activeVariant;
   });
-
-  // "Consecutive Page View Count" means page views without reloading the page (aka refreshing the browser).
-  applicationContext.consecutivePageViewCount = pageViewCount;
 
   // Location values.
   applicationContext.requestIp = requestIp;

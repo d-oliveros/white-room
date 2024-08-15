@@ -1,4 +1,4 @@
-import analytics from '#white-room/client/analytics/analytics.js';
+import analytics from '#whiteroom/client/analytics/analytics.js';
 
 import login from '#auth/view/actions/login.js';
 

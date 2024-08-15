@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { useQueryClient, useQuery, useMutation } from '@tanstack/react-query';
-import useApiClient from '#white-room/client/hooks/useApiClient.js';
+import useApiClient from '#whiteroom/client/hooks/useApiClient.js';
 
 const getQueryKeyFromServiceOptions = (options = {}) => {
   const payload = typeof options.payload === 'object' && Object.keys(options.payload || {}).length > 0

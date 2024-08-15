@@ -14,17 +14,16 @@ import createDebug from 'debug';
 import { hydrateRoot } from 'react-dom/client';
 import he from 'he';
 
-import createApiClient from '#white-room/api/createApiClient.js';
-import createReactQueryClient from '#white-room/client/helpers/createReactQueryClient.js';
-import createStore from '#white-room/client/core/createStore.js';
-import initDevelopmentEnv from '#white-room/client/core/developmentEnv.js';
-import makeDispatchFn from '#white-room/client/core/makeDispatchFn.js';
-import AppContextProvider from '#white-room/client/contexts/AppContextProvider.jsx';
-import makeRouter from '#white-room/client/core/makeRouter.jsx';
-import parseJSON from '#white-room/util/parseJSON.js';
+import createApiClient from '#whiteroom/api/createApiClient.js';
+import createReactQueryClient from '#whiteroom/client/helpers/createReactQueryClient.js';
+import createStore from '#whiteroom/client/core/createStore.js';
+import initDevelopmentEnv from '#whiteroom/client/core/developmentEnv.js';
+import makeDispatchFn from '#whiteroom/client/core/makeDispatchFn.js';
+import AppContextProvider from '#whiteroom/client/contexts/AppContextProvider.jsx';
+import makeRouter from '#whiteroom/client/core/makeRouter.jsx';
+import parseJSON from '#whiteroom/util/parseJSON.js';
 
-import { ANALYTICS_EVENT_USER_SESSION } from '#white-room/client/analytics/eventList.js';
-import analytics from '#white-room/client/analytics/analytics.js';
+import analytics from '#whiteroom/client/analytics/analytics.js';
 
 // TODO: Implement dynamic loading of routes! Or inject routes object!
 import routes from '#app/routes.js';
@@ -77,11 +76,6 @@ if (process.browser) {
 
   // Track user visit
   analytics.identify();
-
-  if (store.get(['analytics', 'shouldTrackNewSession'])) {
-    analytics.track(ANALYTICS_EVENT_USER_SESSION);
-    store.set(['analytics', 'shouldTrackNewSession'], false);
-  }
 
   // Get the container node where the app  will be mounted
   const containerNode = global.document.getElementById('react-container');

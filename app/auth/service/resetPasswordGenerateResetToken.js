@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 
-import typeCheck from '#white-room/util/typeCheck.js';
+import typeCheck from '#whiteroom/util/typeCheck.js';
 import User from '#user/model/userRepository.js';
 
 const { JWT_KEY } = process.env;

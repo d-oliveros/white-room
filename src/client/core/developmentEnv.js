@@ -1,6 +1,6 @@
 import debug from 'debug';
-import objectDiff from '#white-room/util/objectDiff.js';
-import safeLocalStorage from '#white-room/client/lib/safeLocalStorage.js';
+import objectDiff from '#whiteroom/util/objectDiff.js';
+import safeLocalStorage from '#whiteroom/client/lib/safeLocalStorage.js';
 
 export default function developmentEnvironment(state) {
 

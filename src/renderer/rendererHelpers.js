@@ -1,7 +1,7 @@
 import jsesc from 'jsesc';
 import assert from 'assert';
 
-import typeCheck from '#white-room/util/typeCheck.js';
+import typeCheck from '#whiteroom/util/typeCheck.js';
 
 const {
   APP_URL,
@@ -44,6 +44,70 @@ export function makeRendererResponse({ status, html, redirectUrl, error }) {
     error: error || null,
   };
 }
+
+export const flattenRoutes = (routes) => {
+  return routes.reduce((memo, route) => {
+    if (Array.isArray(route.children)) {
+      const childRoutes = flattenRoutes(route.children);
+      memo.push(...childRoutes.map((childRoute) => ({
+        ...childRoute,
+        path: `${route.path === '/' ? '' : route.path}${childRoute.path}`,
+      })));
+    }
+    else {
+      memo.push(route);
+    }
+    return memo;
+  }, []);
+};
+
+/**
+ * Match the route against the routes array, including dynamic segments.
+ *
+ * @param {Array} routes Array of route objects.
+ * @param {string} pathname URL pathname to match.
+ *
+ * @return {Object} The matched route and params.
+ */
+export const matchRoute = (routes, pathname) => {
+  const flattenedRoutes = flattenRoutes(routes);
+  let notFoundRoute = null;
+
+  for (const route of flattenedRoutes) {
+    const { path } = route;
+    if (path === '*') {
+      notFoundRoute = route;
+      continue;
+    }
+    const paramNames = [];
+    const regexPath = path.replace(/:([^/]+)/g, (_, paramName) => {
+      paramNames.push(paramName);
+      return '([^/]+)';
+    });
+
+    const regex = new RegExp(`^${regexPath}$`);
+    const match = pathname.match(regex);
+
+    if (match) {
+      const params = match.slice(1).reduce((acc, value, index) => {
+        acc[paramNames[index]] = value;
+        return acc;
+      }, {});
+
+      return {
+        route,
+        params,
+        isNotFound: false,
+      };
+    }
+  }
+
+  return {
+    route: notFoundRoute || null,
+    params: {},
+    isNotFound: true,
+  };
+};
 
 /**
  * Serializes the application state, removing any Baobab "monkeys" from the state tree.
@@ -109,55 +173,3 @@ export const createFetchRequest = (req, res) => {
 
   return new Request(url.href, init);
 }
-
-/**
- * Match the route against the routes array, including dynamic segments.
- *
- * @param {Array} routes Array of route objects.
- * @param {string} pathname URL pathname to match.
- *
- * @return {Object} The matched route and params.
- */
-export const matchRoute = (routes, pathname) => {
-  console.log('pathname');
-  console.log(pathname);
-  let notFoundRoute = null;
-
-  for (const route of routes) {
-    const { path } = route;
-    if (path === '*') {
-      notFoundRoute = route;
-      continue;
-    }
-    const paramNames = [];
-    const regexPath = path.replace(/:([^/]+)/g, (_, paramName) => {
-      paramNames.push(paramName);
-      return '([^/]+)';
-    });
-
-    const regex = new RegExp(`^${regexPath}$`);
-    const match = pathname.match(regex);
-
-    if (match) {
-      const params = match.slice(1).reduce((acc, value, index) => {
-        acc[paramNames[index]] = value;
-        return acc;
-      }, {});
-
-      return {
-        route,
-        params,
-        isNotFound: false,
-      };
-    }
-  }
-  if (notFoundRoute) {
-    return {
-      route: notFoundRoute,
-      params: {},
-      isNotFound: true,
-    };
-  }
-
-  return null;
-};

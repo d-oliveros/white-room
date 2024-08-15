@@ -2,14 +2,14 @@ import { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import assert from 'assert';
 
-import parseQueryString from '#white-room/util/parseQueryString.js';
-import typeCheck from '#white-room/util/typeCheck.js';
-import useBranch from '#white-room/client/hooks/useBranch.js';
-import logger from '#white-room/logger.js';
+import parseQueryString from '#whiteroom/util/parseQueryString.js';
+import typeCheck from '#whiteroom/util/typeCheck.js';
+import useBranch from '#whiteroom/client/hooks/useBranch.js';
+import logger from '#whiteroom/logger.js';
 
 const debug = logger.createDebug('hooks:useAllowedRoles');
 
-export default function useAllowedRoles({ roles, redirectUrl, addRedirectQueryParam = true }) {
+export default function useAllowedRoles({ roles, redirectUrl, addRedirectQueryParam = false }) {
   typeCheck('roles::NonEmptyArray', roles);
 
   assert(

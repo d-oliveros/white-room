@@ -1,4 +1,4 @@
-import useDispatch from '#white-room/client/hooks/useDispatch.js';
+import useDispatch from '#whiteroom/client/hooks/useDispatch.js';
 import LoginForm from './LoginForm.jsx';
 import loginAction from '#auth/view/actions/login.js';
 

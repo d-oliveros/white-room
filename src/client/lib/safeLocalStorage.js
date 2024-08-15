@@ -1,5 +1,5 @@
-import logger from '#white-room/logger.js';
-import checkLocalStorage from '#white-room/util/checkLocalStorage.js';
+import logger from '#whiteroom/logger.js';
+import checkLocalStorage from '#whiteroom/util/checkLocalStorage.js';
 
 const hasLocalStorage = checkLocalStorage();
 const debug = logger.createDebug('client:safeLocalStorage');

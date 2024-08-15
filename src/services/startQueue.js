@@ -1,6 +1,6 @@
 import { Worker } from 'bullmq';
-import logger from '#white-room/logger.js';
-import redisClient from '#white-room/server/db/redis.js';
+import logger from '#whiteroom/logger.js';
+import redisClient from '#whiteroom/server/db/redis.js';
 
 /**
  * Extracts queue handlers from the provided modules.

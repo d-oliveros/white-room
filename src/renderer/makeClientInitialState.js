@@ -3,11 +3,11 @@ import UAParser from 'ua-parser-js';
 import MobileDetect from 'mobile-detect';
 import { isbot } from 'isbot';
 
-import * as cookiesConfig from '#white-room/config/cookies.js';
+import * as cookiesConfig from '#whiteroom/config/cookies.js';
 
-import logger from '#white-room/logger.js';
-import isUserAgentMobileApp from '#white-room/util/isUserAgentMobileApp.js';
-import makeInitialState from '#white-room/client/makeInitialState.js';
+import logger from '#whiteroom/logger.js';
+import isUserAgentMobileApp from '#whiteroom/util/isUserAgentMobileApp.js';
+import makeInitialState from '#whiteroom/client/makeInitialState.js';
 
 const debug = logger.createDebug('renderer:extractInitialState');
 const env = process.env;
@@ -134,8 +134,6 @@ const makeClientInitialState = (req, res) => {
   // Check if we should track a new session on browserside, turns the "shouldTrackNewSession" flag on.
   const now = Date.now();
   let lastVisit = isNaN(req.cookies[cookiesConfig.lastVisit.name])
-    ? null
-    : req.cookies[cookiesConfig.lastVisit.name];
 
   if (!lastVisit || ((now - lastVisit) / 60000) >= 30) {
     initialState.client.analytics.shouldTrackNewSession = true;

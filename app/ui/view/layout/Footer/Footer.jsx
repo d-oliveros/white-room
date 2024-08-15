@@ -30,7 +30,7 @@ const Footer = ({ logoUrl, logoLabel, menu }) => {
       <div className="w-full text-center">
         <div className="w-full justify-between sm:flex sm:items-center sm:justify-between">
           <FooterBrand
-            href="https://flowbite.com"
+            href="/"
             src={logoUrl}
             alt="Logo"
             name={logoLabel || ''}

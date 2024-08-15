@@ -1,6 +1,6 @@
 import { promisify } from 'util';
 import lodashValues from 'lodash/fp/values.js';
-import typeCheck from '#white-room/util/typeCheck.js';
+import typeCheck from '#whiteroom/util/typeCheck.js';
 
 export const getServicesFromModules = (modules) => {
   return lodashValues(modules)

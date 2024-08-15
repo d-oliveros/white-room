@@ -1,6 +1,6 @@
-import logger from '#white-room/logger.js';
-import typeCheck from '#white-room/util/typeCheck.js';
-import { runPeriodicService } from '#white-room/server/cron/cron.js';
+import logger from '#whiteroom/logger.js';
+import typeCheck from '#whiteroom/util/typeCheck.js';
+import { runPeriodicService } from '#whiteroom/server/cron/cron.js';
 
 import {
   ROLE_ADMIN,
@@ -8,7 +8,7 @@ import {
 
 import {
   postSlackMessage,
-} from '#white-room/server/lib/slackClient.js';
+} from '#whiteroom/server/lib/slackClient.js';
 
 export default {
   roles: [

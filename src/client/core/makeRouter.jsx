@@ -4,11 +4,11 @@ import { Await, Navigate, Outlet, defer, useLoaderData, useAsyncError, useRouteE
 import { serializeError } from 'serialize-error';
 import { HydrationBoundary, dehydrate } from '@tanstack/react-query';
 
-import logger from '#white-room/logger.js';
-import isRedirectResponse from '#white-room/util/isRedirectResponse.js';
-import { makePrefetchQueryFn } from '#white-room/client/hooks/reactQuery.js';
+import logger from '#whiteroom/logger.js';
+import isRedirectResponse from '#whiteroom/util/isRedirectResponse.js';
+import { makePrefetchQueryFn } from '#whiteroom/client/hooks/reactQuery.js';
 
-import App from '#white-room/client/App.jsx';
+import App from '#whiteroom/client/App.jsx';
 
 const makeLoaderFn = ({ fetchPageData, apiClient, queryClient, dispatch, store }) => {
   console.log('Making loaderFn');
@@ -216,8 +216,6 @@ const makeRouter = ({ routes, LoadingComponent, queryClient, apiClient, dispatch
     const routeEl = (
       <LoaderTransitionHandler LoadingComponent={LoadingComponent}>
         {(pageProps) => {
-          console.log('pageProps');
-          console.log(pageProps);
           if (isRedirectResponse(pageProps)) {
             if (pageProps.status === 404 || pageProps.statusCode === 404) {
               return (

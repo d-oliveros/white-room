@@ -1,8 +1,8 @@
 import { SitemapStream, streamToPromise } from 'sitemap';
 import lodashValues from 'lodash/fp/values.js';
 
-import typeCheck from '#white-room/util/typeCheck.js';
-import redis from '#white-room/server/db/redis.js';
+import typeCheck from '#whiteroom/util/typeCheck.js';
+import redis from '#whiteroom/server/db/redis.js';
 
 const {
   APP_URL,
