@@ -28,10 +28,6 @@ const Form = ({ onSubmit, defaultValues = {}, mode = 'onBlur', formFields, child
     }
   }
 
-  console.log('Form submissionError: ' + submissionError);
-  console.log('Form errors', methods.formState.errors);
-  console.log(methods);
-
   return (
     <FormProvider {...methods}>
       <form onSubmit={onSubmitHandled}>

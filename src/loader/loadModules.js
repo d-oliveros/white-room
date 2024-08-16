@@ -4,8 +4,6 @@ import { resolve } from 'path';
 import loadModule from './loadModule.js';
 
 const loadModules = async (modulesDir) => {
-  console.log(`Loading modules: ${modulesDir}`);
-
   const entries = await readdir(modulesDir, { withFileTypes: true });
   const directoryEntries = entries.filter((entry) => entry.isDirectory());
 
@@ -26,7 +24,6 @@ const loadModules = async (modulesDir) => {
       }
     }
     else {
-      console.log(result.reason);
       errors.push(new Error(`Failed to load module "${name}"`, { cause: result.reason }));
     }
   });
@@ -50,8 +47,6 @@ const loadModules = async (modulesDir) => {
   catch (err) {
     throw new Error('Failed to load routes', { cause: err });
   }
-
-  console.log(JSON.stringify(modules, null, 2));
 
   return modules;
 };

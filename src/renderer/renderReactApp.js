@@ -149,7 +149,6 @@ export default async function renderReactApp({ state: initialStateData, req, res
 
     let fetchRequest = createFetchRequest(req, res);
 
-    console.log('Router', router);
     let handler = createStaticHandler(router);
     let context = await handler.query(fetchRequest);
 
@@ -159,10 +158,7 @@ export default async function renderReactApp({ state: initialStateData, req, res
     if (isRedirectResponse(context)) {
       httpStatus = context.statusCode;
 
-      if (httpStatus === 404) {
-        console.log('IS 404');
-      }
-      else {
+      if (httpStatus !== 404) {
         const url = context.headers.get('Location');
         store.release();
 

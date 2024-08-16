@@ -10,7 +10,7 @@ const formFields = [
       placeholder: 'someone@whiteroom.com',
       autocomplete: 'username',
     },
-    required: true,
+    validations: ['required'],
   },
   {
     id: 'password',
@@ -20,7 +20,7 @@ const formFields = [
       placeholder: 'Write here...',
       autocomplete: 'current-password',
     },
-    required: true,
+    validations: ['required'],
   },
 ];
 

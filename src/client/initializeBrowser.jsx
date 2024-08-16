@@ -40,8 +40,6 @@ if (process.browser) {
     ? parseJSON(he.decode(global.__INITIAL_STATE__))
     : {};
 
-  console.log('Initial Client State', state);
-
   const {
     NODE_ENV,
     COMMIT_HASH,

@@ -25,10 +25,7 @@ export const getQueueHandlersFromModules = (modules) => {
 };
 
 export const makeProcessServiceJobFn = (queueHandlers) => {
-  return async ({ id, name, data }) => {
-    console.log('makeProcessServiceJobFn');
-    console.log({ id, name, data });
-    console.log(queueHandlers, name);
+  return async ({ /* id, */ name, data }) => {
     const matches = queueHandlers.filter(({ event }) => event === name);
     if (matches.length > 0) {
       logger.info(`Started queue handler for: ${name}`);

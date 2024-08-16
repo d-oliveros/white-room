@@ -10,10 +10,12 @@ import useBranch from '#whiteroom/client/hooks/useBranch.js';
 import useDispatch from '#whiteroom/client/hooks/useDispatch.js';
 
 import Link from '#ui/view/components/Link/Link.jsx';
+import Card from '#ui/view/components/Card/Card.jsx';
+import Button from '#ui/view/components/Button/Button.jsx';
 
 import './pages.css';
 
-const debug = logger.createDebug('HomePage');
+const debug = logger.createDebug('SandboxPage');
 
 const getPostsQueryParams = {
   serviceId: 'post/getList',
@@ -29,7 +31,7 @@ const createPostMutationParams = {
   }],
 };
 
-const HomePage = ({ someServersideData }) => {
+const SandboxPage = ({ someServersideData }) => {
   const currentUser = useBranch('currentUser');
   const isFetchPageDataStateSetTest = useBranch('isFetchPageDataStateSetTest');
 
@@ -38,8 +40,6 @@ const HomePage = ({ someServersideData }) => {
   const createPostMutation = useServiceMutation(createPostMutationParams);
 
   const navigate = useNavigate();
-
-  console.log({ isFetchPageDataStateSetTest });
 
   const onTestDispatch = () => {
     dispatch(({ apiClient, state }, payload) => {
@@ -51,36 +51,41 @@ const HomePage = ({ someServersideData }) => {
     });
   };
 
-  logger.info('Rendering HomePage.jsx');
+  logger.info('Rendering SandboxPage.jsx');
+
   console.log('INITIAL getPostsQuery DATA IS', getPostsQuery.data);
   console.log('INITIAL currentUser', currentUser);
+  console.log('INITIAL isFetchPageDataStateSetTest', isFetchPageDataStateSetTest);
 
   debug({ someServersideData });
 
   return (
     <div>
-      <h1 className="text-3xl font-bold underline">
-        Hello world!
+      <h1 className="text-3xl">
+        Sandbox Page
       </h1>
 
-      <h1 styleName="testing">Testing styleName...</h1>
+      <h1 styleName="testing">Testing styleName (should be red)...</h1>
 
-      {getPostsQuery.data?.map((post) => (
-        <div key={post.id}>
-          <h4>{post.title}</h4>
-          <p>{post.content || ''}</p>
-        </div>
-      ))}
+      {getPostsQuery.data && (
+        <>
+          <h3  className="text-2xl">Posts</h3>
+          {getPostsQuery.data.map((post) => (
+            <Card key={post.id}>
+              <h4>{post.title}</h4>
+              <p>{post.content || ''}</p>
+            </Card>
+          ))}
+        </>
+      )}
 
       {createPostMutation.data &&
         <p>NEW POST IS {JSON.stringify(createPostMutation.data, null, 2)}</p>
       }
 
-      <p>
-        Hello! Thanks for visiting.
-        Serverside data: {someServersideData?.id || 'Loading...'}
-        Your user roles: {currentUser.roles}
-      </p>
+      <p>Hello! Thanks for visiting.</p>
+      <p>Serverside data: {someServersideData?.id || 'Loading...'}</p>
+      <p>Your user roles: {currentUser.roles}</p>
 
       <p>
         You are logged in as: {hasRoleAnonymous(currentUser.roles)
@@ -103,43 +108,33 @@ const HomePage = ({ someServersideData }) => {
       }
 
       <div>
-        <button
+        <Button
           onClick={() => createPostMutation.mutate({
             title: 'My new post',
             content: 'This is a new post',
           })}
         >
           Create Post
-        </button>
+        </Button>
 
         {createPostMutation.error && (
           <pre>{createPostMutation.error.stack}</pre>
         )}
 
-        <button onClick={onTestDispatch}>
+        <Button onClick={onTestDispatch}>
           Test dispatch
-        </button>
+        </Button>
 
-        <h3>Users</h3>
+        <h3  className="text-2xl">Users</h3>
         <Link to="/user/1">User 1</Link>
         <Link to="/user/51231">User NonExistant</Link>
         <Link to="/t1e1e12">Link NonExistant</Link>
       </div>
-
-      <span>
-        Hello! Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque gravida sem ac
-        tellus auctor, eget interdum erat sagittis. Sed rutrum erat et tortor venenatis
-        ullamcorper ut in augue. Sed sed metus erat. Sed mauris enim, condimentum ac pulvinar
-        eu, egestas imperdiet orci. Etiam tempus risus eu lacus tincidunt accumsan. Ut consequat
-        massa sed eros facilisis dictum nec sit amet lorem. Sed lacinia risus ut efficitur
-        vulputate. Donec elementum nisl eget nibh condimentum dapibus. Cras aliquam quis augue
-        eget posuere. Phasellus orci enim, luctus ac laoreet vitae, tincidunt eget lacus.
-      </span>
     </div>
   );
 };
 
-HomePage.getMetadata = ({ state, params }) => {
+SandboxPage.getMetadata = ({ state, params }) => {
   const currentUser = state.get(['currentUser']);
 
   return {
@@ -147,7 +142,7 @@ HomePage.getMetadata = ({ state, params }) => {
   };
 };
 
-HomePage.fetchPageData = async ({ apiClient, prefetchQuery, store, params }) => {
+SandboxPage.fetchPageData = async ({ apiClient, prefetchQuery, store, params }) => {
   console.log('CALLING fetchPageData');
   console.log('STATE IS', store);
   console.log('PARAMS ARE', params);
@@ -205,8 +200,8 @@ HomePage.fetchPageData = async ({ apiClient, prefetchQuery, store, params }) => 
   };
 };
 
-HomePage.propTypes = {
+SandboxPage.propTypes = {
   someServersideData: PropTypes.object,
 };
 
-export default HomePage;
+export default SandboxPage;

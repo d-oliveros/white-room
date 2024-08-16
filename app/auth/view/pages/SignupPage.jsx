@@ -1,7 +1,7 @@
-import { Navigate } from 'react-router-dom';
+import useAllowedRoles from '#whiteroom/client/hooks/useAllowedRoles.js';
 
 import {
-  hasRoleAnonymous,
+  ROLE_ANONYMOUS,
 } from '#user/constants/roles.js';
 
 import getUserLandingPage from '#user/view/helpers/getUserLandingPage.js';
@@ -13,13 +13,10 @@ import SignupFormConnected from '#auth/view/forms/SignupForm/SignupFormConnected
 const SignupPage = () => {
   const currentUser = useBranch('currentUser');
 
-  if (!hasRoleAnonymous(currentUser.roles)) {
-    return (
-      <Navigate
-        to={getUserLandingPage(currentUser)}
-      />
-    );
-  }
+  useAllowedRoles({
+    roles: [ROLE_ANONYMOUS],
+    redirectUrl: getUserLandingPage(currentUser),
+  });
 
   return (
     <PageModal

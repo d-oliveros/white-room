@@ -5,8 +5,6 @@ import loadModules from '#whiteroom/loader/loadModules.js';
 import runMigrations from '#whiteroom/server/db/runMigrations.js';
 import logger from '#whiteroom/logger.js';
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
-
 const {
   NODE_ENV,
   SEGMENT_LIB_PROXY_URL,
@@ -23,31 +21,8 @@ const {
   ENABLE_MIGRATIONS,
 } = process.env;
 
-// Configuration interface
-interface Config {
-  useHelmet: boolean;
-  segmentLibProxyUrl: string | null;
-  commitHash: string | null;
-  port: string;
-  rendererPort?: string;
-  rendererEndpoint?: string;
-  queueId?: string;
-  enableServer: boolean;
-  enableRenderer: boolean;
-  enableCron: boolean;
-  enableQueue: boolean;
-  enableStorybook: boolean;
-  enableMigrations: boolean;
-}
-
-// Function argument interface
-interface InitArgs {
-  modulesDir: string;
-  config: Config;
-}
-
 // Initialize function
-const init = async ({ modulesDir, config }: InitArgs) => {
+const init = async ({ modulesDir, config }) => {
   try {
     const modules = await loadModules(modulesDir);
 
@@ -69,7 +44,7 @@ const init = async ({ modulesDir, config }: InitArgs) => {
 
 // Initialize with environment variables and __dirname
 init({
-  modulesDir: __dirname,
+  modulesDir: dirname(fileURLToPath(import.meta.url)),
   config: {
     useHelmet: NODE_ENV !== 'development',
     segmentLibProxyUrl: SEGMENT_LIB_PROXY_URL || null,

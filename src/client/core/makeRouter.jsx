@@ -11,9 +11,7 @@ import { makePrefetchQueryFn } from '#whiteroom/client/hooks/reactQuery.js';
 import App from '#whiteroom/client/App.jsx';
 
 const makeLoaderFn = ({ fetchPageData, apiClient, queryClient, dispatch, store }) => {
-  console.log('Making loaderFn');
   return ({ params }) => {
-    console.log('loaderFn called');
     const shouldDefer = !!process.browser;
 
     let fetchPageDataPromise = fetchPageData({
@@ -44,8 +42,6 @@ const makeLoaderFn = ({ fetchPageData, apiClient, queryClient, dispatch, store }
     return new Promise((resolve) => {
       fetchPageDataPromise
         .then((pageProps) => {
-          console.log('pageProps');
-          console.log(pageProps);
           if (isRedirectResponse(pageProps)) {
             resolve(pageProps);
           }
@@ -82,7 +78,6 @@ const makeLoaderFn = ({ fetchPageData, apiClient, queryClient, dispatch, store }
 const FetchDataErrorFallback = ({ error }) => {
   const asyncError = useAsyncError();
   error = error || asyncError;
-  console.log({ error, asyncError });
 
   return (
     <div>
@@ -100,7 +95,6 @@ FetchDataErrorFallback.propTypes = {
 
 const ErrorPage = () => {
   const error = useRouteError();
-  console.log(error);
 
   return (
     <div id="error-page">
@@ -127,10 +121,6 @@ const MinimalLoadingComponent = () => {
 const LoaderTransitionHandler = ({ LoadingComponent = MinimalLoadingComponent, children }) => {
   const loaderData = useLoaderData();
 
-  console.log('Rendering: LoaderTransitionHandler');
-  console.log('loaderData?', !!loaderData);
-  console.log(loaderData);
-
   const childrenWithProps = (props) => {
     if (loaderData?.dehydratedQueryClientState) {
       return (
@@ -143,15 +133,12 @@ const LoaderTransitionHandler = ({ LoadingComponent = MinimalLoadingComponent, c
   }
 
   if (!loaderData?.isDeferred && !loaderData?.error) {
-    console.log('Rendering normal component');
     return childrenWithProps(loaderData?.data);
   }
 
   if (loaderData?.error) {
     return <FetchDataErrorFallback error={loaderData?.error}/>;
   }
-
-  console.log('Rendering Suspense. Promise:', loaderData.promise);
 
   return (
     <Suspense fallback={<LoadingComponent />}>

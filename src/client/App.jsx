@@ -11,8 +11,6 @@ import useApiClient from '#whiteroom/client/hooks/useApiClient.js';
 const CHECK_APP_VERSION_INTERVAL_MS = 1800000; // 30 minutes.
 
 const App = () => {
-  console.log('Rendering App.jsx');
-
   const apiClient = useApiClient();
   const [, setCheckAppVersionInterval] = useState(null);
   const [checkAppVersionLastRunTimestamp, setCheckAppVersionLastRunTimestamp] = useState(Date.now());

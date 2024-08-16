@@ -4,15 +4,15 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import getEntitySchemas from '#whiteroom/loader/getEntitySchemas.js';
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 const {
   POSTGRES_HOST = '127.0.0.1',
   POSTGRES_USER = 'postgres',
   POSTGRES_PASSWORD = 'postgres',
   POSTGRES_DATABASE = 'whiteroom_dev',
 } = process.env;
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 export const dataSource = new DataSource({
   type: 'postgres',
