@@ -10,7 +10,7 @@
   "scripts": {
     "start": "pnpm run dev",
     "dev": "run-p dev-node dev-webpack",
-    "dev-node": "clear && node --watch-path=./src --watch-path=./app --env-file=.env --env-file=.env.default --import 'data:text/javascript,import { register } from \"node:module\"; import { pathToFileURL } from \"node:url\"; register(\"ts-node/esm\", pathToFileURL(\"./\")); register(\"./babel-esm-loader.js\", pathToFileURL(\"./\")); ' app/init.js",
+    "dev-node": "clear && dotenv -e .env -e .env.default -- node --watch-path=./src --watch-path=./app --env-file=.env --env-file=.env.default --import 'data:text/javascript,import { register } from \"node:module\"; import { pathToFileURL } from \"node:url\"; register(\"ts-node/esm\", pathToFileURL(\"./\")); register(\"./babel-esm-loader.js\", pathToFileURL(\"./\")); ' app/init.js",
     "dev-webpack": "clear && dotenv -e .env -e .env.default webpack serve",
     "dev-debug": "cross-env DEBUG=white-room* pnpm run dev",
     "build": "run-p build-babel build-webpack storybook build",
