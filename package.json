@@ -27,7 +27,7 @@
     "test-watch": "pnpm run test -- --watch",
     "script": "node src/scripts/load",
     "db-generate-migration": "typeorm-ts-node-esm migration:generate -d app/dataSource.js migrations/$npm_config_name && pnpm run db-migrate-latest",
-    "db-migrate-latest": "typeorm-ts-node-esm migration:run -d app/dataSource.js",
+    "db-migrate-latest": "dotenv -e .env -e .env.default -- typeorm-ts-node-esm migration:run -d app/dataSource.js",
     "db-drop": "docker compose down && docker compose up -d && pnpm run wait-for-db",
     "db-reset": "pnpm run db-drop && pnpm run db-migrate-latest && pnpm run knex-load-seeds",
     "db-clear": "echo \"TBD: Implement using clear-db.js\"",

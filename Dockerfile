@@ -1,4 +1,4 @@
-FROM node:22.2.0-alpine3.19
+FROM node:22.6.0-alpine3.19
 
 # Maintainer
 # LABEL maintainer="David Oliveros<dato.oliveros@gmail.com>"
@@ -25,7 +25,7 @@ COPY . /app
 RUN npm run build
 
 # Upload bundle files to CDN and delete bundles locally
-RUN npm run upload-bundles
+# RUN npm run upload-bundles
 
 # Expose Node port
 EXPOSE 3000
