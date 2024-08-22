@@ -1,27 +1,23 @@
 # White Room
 
-Modern, SSR-first, isomorphic React/Express full-stack application starter kit.
+SSR-first, full-stack Application starter kit.
 
 
 ## Features
 
 * React + [Baobab](http://christianalfoni.github.io/javascript/2015/02/06/plant-a-baobab-tree-in-your-flux-application.html) frontend. A minimal, zero-boilerplate flux variant. [Read more here.](http://christianalfoni.github.io/javascript/2015/02/06/plant-a-baobab-tree-in-your-flux-application.html)
-* RPC-Based API server.
+* API server.
 * ESM-first, async/await native, SSR/HMR native.
 * Websockets with Socket.io.
-* Auth layer
-* Postgres backend with [Prisma](https://www.prisma.io/).
-* User Model with auth included.
-* Server-side, cron-like periodic tasks.
-* A priority job Worker Queue, powered by [Bull](https://github.com/taskforcesh/bullmq) + [Redis](http://redis.io/).
+* Role-Based Auth Layer
+* Postgres backend with [TypeORM](https://typeorm.io/) for schema management and [Knex](https://knexjs.org/) for querying the DB.
+* User Model
+* Signup/Login flows
+* Cron/Periodic functions.
+* Priority job Worker Queue, powered by [Bull](https://github.com/taskforcesh/bullmq) + [Redis](http://redis.io/).
 * AWS S3 integration for uploads.
-* Unit Tests with Chai, Mocha
-* E2E Tests with Chai, Mocha
-* Integrations
-  * Segment
-  * Slack
-  * Sendgrid
-  * ...(TBD: fill)
+* Unit Tests with Jest
+* E2E Tests with Playwright
 
 
 ## Dependencies
