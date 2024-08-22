@@ -1,4 +1,4 @@
-import bcrypt from 'bcrypt';
+import { randomBytes, pbkdf2 } from 'crypto';
 import { promisify } from 'util';
 
 import logger from '#whiteroom/logger.js';
@@ -7,9 +7,12 @@ import slugify from '#whiteroom/util/slugify.js';
 
 const debug = logger.createDebug('models:User:signup');
 
-const SALT_WORK_FACTOR = 8;
-const genSaltAsync = promisify(bcrypt.genSalt.bind(bcrypt));
-const hashAsync = promisify(bcrypt.hash.bind(bcrypt));
+const SALT_SIZE = 16;
+const HASH_ITERATIONS = 100000;
+const KEY_LENGTH = 64;
+const DIGEST = 'sha512';
+
+const pbkdf2Async = promisify(pbkdf2);
 
 export default async function signup(userData) {
   const existingUserQuery = knex('users')
@@ -33,14 +36,17 @@ export default async function signup(userData) {
     };
   }
 
-  const salt = await genSaltAsync(SALT_WORK_FACTOR);
-  const passwordHash = await hashAsync(userData.password, salt);
+  // Generate a random salt
+  const salt = randomBytes(SALT_SIZE).toString('hex');
+
+  // Hash the password with the generated salt
+  const passwordHash = await pbkdf2Async(userData.password, salt, HASH_ITERATIONS, KEY_LENGTH, DIGEST);
 
   const [newUser] = await knex('users')
     .insert({
       ...userData,
       email: userData.email ? userData.email.toLowerCase() : null,
-      password: passwordHash,
+      password: `${salt}:${passwordHash.toString('hex')}`, // Store salt and hash together
       roles: userData.roles || [],
       slug: await getAvailableSlug({
         table: 'users',

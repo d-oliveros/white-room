@@ -1,4 +1,4 @@
-import bcrypt from 'bcrypt';
+import { pbkdf2 } from 'crypto';
 import { promisify } from 'util';
 
 import typeCheck from '#whiteroom/util/typeCheck.js';
@@ -7,7 +7,11 @@ import {
   loginFieldgroup,
 } from '#user/model/userModel.js';
 
-const compareAsync = promisify(bcrypt.compare);
+const pbkdf2Async = promisify(pbkdf2);
+
+const HASH_ITERATIONS = 100000;
+const KEY_LENGTH = 64;
+const DIGEST = 'sha512';
 
 export default async function isValidUserLogin({ email, password }) {
   typeCheck('email::Email', email);
@@ -30,7 +34,15 @@ export default async function isValidUserLogin({ email, password }) {
       userId: null,
     };
   }
-  const passwordIsValid = await compareAsync(password, user.password);
+
+  // Extract the salt and hash from the stored password
+  const [salt, storedHash] = user.password.split(':');
+
+  // Hash the provided password using the extracted salt
+  const derivedHash = await pbkdf2Async(password, salt, HASH_ITERATIONS, KEY_LENGTH, DIGEST);
+
+  // Convert derived hash to hex and compare with the stored hash
+  const passwordIsValid = derivedHash.toString('hex') === storedHash;
 
   if (!passwordIsValid) {
     return {

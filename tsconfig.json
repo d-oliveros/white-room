@@ -11,14 +11,15 @@
     "declarationMap": true,               // Generates a source map for each corresponding '.d.ts' file
     "sourceMap": true,                    // Generates corresponding '.map' file
     "outDir": "./dist",                   // Redirect output structure to the directory
-    "rootDir": "./src",                   // Specify the root directory of input files
+    "rootDir": "./",                      // Specify the root directory of input files
     "composite": false,                   // Enable project compilation
-    "removeComments": true,               // Do not emit comments to output
-    "noEmit": false,                      // Do not emit outputs
+    "removeComments": false,              // Do not emit comments to output
+    "noEmit": true,                       // Do not emit outputs
     "importHelpers": true,                // Import emit helpers from 'tslib'
     "downlevelIteration": true,           // Provide full support for iterables in ES5/ES3
     "isolatedModules": true,              // Transpile each file as a separate module
     "allowImportingTsExtensions": true,
+    "preserveConstEnums": true,
 
     /* Strict Type-Checking Options */
     "strict": false,                       // Enable all strict type-checking options
@@ -40,16 +41,13 @@
     "moduleResolution": "Node",           // Specify module resolution strategy: 'Node' for Node.js, 'Classic' for TypeScript pre-1.6
     "baseUrl": "./",                      // Base directory to resolve non-relative module names
     "paths": {
-      "@src/*": ["src/*"],                 // Base URL to match 'src' paths
-    },
-    "paths": {
       "#admin/*": ["./app/admin/*"],
       "#auth/*": ["./app/auth/*"],
       "#ui/*": ["./app/ui/*"],
       "#user/*": ["./app/user/*"],
       "#app/*": ["./app/*"],
       "#post/*": ["./app/post/*"],
-      "#whiteroom/*": ["./src/*"]
+      "#whiteroom/*": ["./whiteroom/*"]
     },
     "esModuleInterop": true,              // Enables emit interoperability between CommonJS and ES Modules
     "preserveSymlinks": true,             // Do not resolve the real path of symlinked files

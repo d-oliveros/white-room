@@ -8,7 +8,7 @@ import NodePolyfillPlugin from 'node-polyfill-webpack-plugin';
 import ReactRefreshWebpackPlugin from '@pmmmwh/react-refresh-webpack-plugin';
 
 const {
-  NODE_ENV,
+  NODE_ENV = 'development',
   COMMIT_HASH,
   WEBPACK_DEVELOPMENT_SERVER_PORT,
 } = process.env;
@@ -16,8 +16,9 @@ const {
 const isProd = NODE_ENV === 'production';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const buildPath = path.resolve(__dirname, 'public', isProd ? 'dist' : 'build');
-const srcPath = path.resolve(__dirname, 'src');
+const buildPath = path.resolve(__dirname, 'public', 'dist');
+
+const whiteroomPath = path.resolve(__dirname, 'whiteroom');
 const webpackDevServerPort = parseInt(WEBPACK_DEVELOPMENT_SERVER_PORT, 10) || 8001;
 
 const webpackConfig = {
@@ -28,8 +29,8 @@ const webpackConfig = {
   devtool: isProd ? 'source-map' : 'cheap-module-source-map',
   target: 'web',
   entry: [
-    path.resolve(srcPath, 'client', 'initializeBrowser.jsx'),
-  ].filter(Boolean),
+    path.resolve(whiteroomPath, 'client', 'initializeBrowser.jsx'),
+  ],
   output: {
     path: buildPath,
     filename: `bundle${COMMIT_HASH ? '-' + COMMIT_HASH : ''}.js`,
@@ -39,14 +40,11 @@ const webpackConfig = {
     // filename: isProd
     //   ? '[name].[contenthash].js'
     //   : '[name].bundle.js',
-    publicPath: isProd ? '/' : `http://localhost:${webpackDevServerPort}/build/`,
+    publicPath: isProd ? '/' : `http://localhost:${webpackDevServerPort}/dist/`,
     clean: true,
   },
   resolve: {
-    modules: [srcPath, 'node_modules'],
-    alias: {
-      '@src': srcPath,
-    },
+    modules: [whiteroomPath, 'node_modules']
   },
   optimization: {
     minimize: isProd,
@@ -61,76 +59,16 @@ const webpackConfig = {
       new CssMinimizerPlugin(),
     ],
     splitChunks: false,
-
-    // splitChunks: {
-    //   chunks: 'all',
-    //   minSize: 20000,
-    //   maxSize: 70000,
-    //   minChunks: 1,
-    //   automaticNameDelimiter: '~',
-    //   cacheGroups: {
-    //     defaultVendors: {
-    //       test: /[\\/]node_modules[\\/]/,
-    //       name: 'vendors',
-    //       chunks: 'all',
-    //       priority: -10,
-    //       reuseExistingChunk: true,
-    //     },
-    //     default: {
-    //       minChunks: 2,
-    //       priority: -20,
-    //       reuseExistingChunk: true,
-    //     },
-    //   },
-    // },
-    // runtimeChunk: 'single',
-
-    // splitChunks: {
-    //   chunks: 'all',
-    //   minSize: 20000,
-    //   maxSize: 70000,
-    //   minChunks: 1,
-    //   automaticNameDelimiter: '~',
-    //   cacheGroups: {
-    //     styles: {
-    //       name: 'styles',
-    //       test: /\.css$/,
-    //       chunks: 'all',
-    //       enforce: true,
-    //       priority: 20,
-    //     },
-    //     scripts: {
-    //       name: 'scripts',
-    //       test: /\.jsx?$/,
-    //       chunks: 'all',
-    //       enforce: true,
-    //       priority: 10,
-    //     },
-    //     vendors: {
-    //       test: /[\\/]node_modules[\\/]/,
-    //       name: 'vendors',
-    //       chunks: 'all',
-    //       priority: -10,
-    //       reuseExistingChunk: true,
-    //     },
-    //     default: {
-    //       minChunks: 2,
-    //       priority: -20,
-    //       reuseExistingChunk: true,
-    //     },
-    //   },
-    // },
   },
   module: {
     rules: [
       {
-        test: /\.jsx?$/,
+        test: /\.(j|t)sx?$/,
         exclude: /node_modules/,
         use: {
           loader: 'babel-loader',
           options: {
             configFile: path.resolve(__dirname, 'babel.web.config.cjs'),
-            plugins: [!isProd && 'react-refresh/babel'].filter(Boolean),
           },
         },
       },
@@ -148,10 +86,9 @@ const webpackConfig = {
       // TailwindCSS
       {
         test: /\.css$/,
-        exclude: /app/,
+        include: /tailwind\.css$/,
         use: [
-          // isProd ? MiniCssExtractPlugin.loader : 'style-loader',
-          'style-loader',
+          isProd ? MiniCssExtractPlugin.loader : 'style-loader',
           'css-loader',
           'postcss-loader',
         ],
@@ -159,10 +96,9 @@ const webpackConfig = {
       // CSS Modules
       {
         test: /\.css$/,
-        exclude: /src/,
+        exclude: /tailwind\.css$/,
         use: [
-          // isProd ? MiniCssExtractPlugin.loader : 'style-loader',
-          'style-loader',
+          isProd ? MiniCssExtractPlugin.loader : 'style-loader',
           {
             loader: 'css-loader',
             options: {
@@ -193,17 +129,18 @@ const webpackConfig = {
     }),
     new webpack.DefinePlugin({
       'process.browser': JSON.stringify(true),
-      'process.env': JSON.stringify({}),
-      'process.env.NODE_ENV': JSON.stringify(NODE_ENV),
+      'process.env': JSON.stringify({
+        NODE_ENV,
+      }),
       'global': 'window',
     }),
   ].filter(Boolean),
-  devServer: isProd ? null : {
+  devServer: isProd ? false : {
     host: 'localhost',
     port: webpackDevServerPort,
     static: {
       directory: buildPath,
-      publicPath: `http://localhost:${webpackDevServerPort}/build/`,
+      publicPath: `http://localhost:${webpackDevServerPort}/dist/`,
     },
     headers: {
       'Access-Control-Allow-Origin': '*',

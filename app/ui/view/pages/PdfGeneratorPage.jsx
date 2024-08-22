@@ -22,7 +22,7 @@ const PdfGeneratorPage = () => {
     props = parseJSON(global.atob(/* locationQuery.props */));
   }
   catch (error) {
-    log.warn(`Failed to parse props object: ${props}`);
+    logger.warn(`Failed to parse props object: ${props}`);
   }
 
   return (

@@ -3,10 +3,7 @@
   "parserOptions": {
     "ecmaVersion": 2024,
     "sourceType": "module",
-    "requireConfigFile": false,
-    "babelOptions": {
-      "presets": ["@babel/preset-react"]
-    }
+    "requireConfigFile": true
   },
   "env": {
     "browser": true,
@@ -31,9 +28,12 @@
     "chai-friendly"
   ],
   "rules": {
-    "react/react-in-jsx-scope": 0,
+    "no-unused-expressions": 0,
     "max-len": [1, {"ignoreComments": true, "ignorePattern": "^import|className=", "code": 110 }],
-    "no-unused-expressions": 0
+    "react/react-in-jsx-scope": 0,
+    "react/no-unknown-property": ["error", {
+      ignore: ["styleName"]
+    }]
   },
   "settings": {
     "react": {
@@ -41,7 +41,7 @@
     },
     "import/resolver": {
       "node": {
-        "extensions": [".js", ".jsx", ".mjs"]
+        "extensions": [".js", ".jsx", ".ts", ".tsx", ".mjs"]
       },
       "alias": {
         "map": [
@@ -51,10 +51,23 @@
           ["#post", "./app/post"],
           ["#user", "./app/user"],
           ["#app", "./app"],
-          ["#whiteroom", "./src"],
+          ["#whiteroom", "./whiteroom"]
         ],
-        "extensions": [".js", ".jsx", ".mjs"]
+        "extensions": [".js", ".jsx", ".ts", ".tsx", ".mjs"]
       }
     }
-  }
+  },
+  "overrides": [
+    {
+      "files": ["*.ts", "*.tsx"],
+      "parser": "@typescript-eslint/parser",
+      "parserOptions": {
+        "project": "./tsconfig.json"
+      },
+      "plugins": ["@typescript-eslint"],
+      "extends": [
+        "plugin:@typescript-eslint/recommended"
+      ]
+    }
+  ]
 }

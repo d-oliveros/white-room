@@ -12,6 +12,10 @@ import ResetPasswordPage from '#auth/view/pages/ResetPasswordPage.jsx';
 import ProfilePage from '#user/view/pages/ProfilePage.jsx';
 import AdminDashboardPage from '#admin/view/pages/AdminDashboardPage.jsx';
 
+import someTsFile from './someTsFile.ts';
+import someTsComponent from './someTsComponent.tsx';
+// import someTsFile from './someJsFile.js';
+
 const routes = [
   {
     path: '/',
@@ -30,7 +34,12 @@ const routes = [
   { path: '/password-forget', exact: true, Component: ForgotPasswordPage },
   { path: '/password-reset', exact: true, Component:  ResetPasswordPage },
   { path: '*', Component: NotFoundPage },
+
+  { path: '/removeme', Component: someTsComponent },
 ];
+
+console.log('TESTING TS FILE: (should be 6)');
+console.log(someTsFile(5));
 
 export default routes;
 

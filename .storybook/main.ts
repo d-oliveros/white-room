@@ -3,7 +3,7 @@ import webpack from 'webpack';
 
 const config: StorybookConfig = {
   stories: [
-    '../src/**/*.mdx', '../src/**/*.stories.@(js|jsx|mjs|ts|tsx)',
+    '../whiteroom/**/*.mdx', '../whiteroom/**/*.stories.@(js|jsx|mjs|ts|tsx)',
     '../app/**/*.mdx', '../app/**/*.stories.@(js|jsx|mjs|ts|tsx)',
   ],
   addons: [

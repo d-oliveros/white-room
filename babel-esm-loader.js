@@ -2,6 +2,8 @@ import path from 'path';
 import { fileURLToPath, pathToFileURL } from 'url';
 import babel from '@babel/core';
 
+const allowedExtensionsRegex = /\.(jsx|tsx|ts)$/;
+
 function isNodeModules(filePath) {
   return filePath.includes('node_modules');
 }
@@ -137,7 +139,7 @@ export async function transformSource(source, context) {
  * @returns {Promise<object>} - The loaded module.
  */
 export async function load(url, context, nextLoad) {
-  if (!url.endsWith('.jsx')) {
+  if (!allowedExtensionsRegex.test(url)) {
     return nextLoad(url, context);
   }
 

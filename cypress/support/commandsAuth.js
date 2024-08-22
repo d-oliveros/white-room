@@ -1,19 +1,14 @@
 import typeCheck from '#whiteroom/util/typeCheck.js';
 
 function makeSignupFormData(signupData) {
-  const phone = signupData.phone;
-
   return {
     user: {
       firstName: signupData.firstName || 'Test',
       lastName: signupData.lastName || 'User',
       password: '1234',
-      phone: phone,
-      phoneVerified: true,
+      email: signupData.email || 'someone@whiteroom.com',
+      phone: signupData.phone || '1235551234',
       signupAnalyticsSessionId: '',
-    },
-    userAgent: {
-      deviceType: 'mobile',
     },
   };
 }
@@ -56,28 +51,4 @@ Cypress.Commands.add('logout', () => {
   return cy.apiRequest({
     path: '/auth/logout',
   });
-});
-
-Cypress.Commands.add('autocompleteDataTimeInput', (date, inputName) => {
-  typeCheck('options::Moment', date);
-  return cy.get(`input[name="${inputName}"]`)
-    .click()
-    .parent()
-    .within(() => {
-      cy
-        .get('.rdtSwitch')
-        .click({ force: true })
-        .get('.rdtSwitch')
-        .click({ force: true })
-        .get('td')
-        .contains(`${date.format('YYYY')}`)
-        .click({ force: true })
-        .get('td')
-        .contains(`${date.format('MMM')}`)
-        .click({ force: true })
-        .get('td')
-        .not('.rdtOld')
-        .contains(`${date.format('D')}`)
-        .click({ force: true });
-    });
 });

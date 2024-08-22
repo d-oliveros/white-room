@@ -78,6 +78,7 @@ const validators = {
   },
 };
 
+/*
 export function validateFormField({ validations, properties, value, values }) {
   for (const validation of validations || []) {
     const [validatorDef, errorMessage] = validation.split('::');
@@ -130,6 +131,8 @@ export function createFormValidationFn(formFields) {
     return errors;
   };
 }
+
+*/
 
 export function hideFieldIf(condition, formField) {
   if (!condition) {

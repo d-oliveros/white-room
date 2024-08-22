@@ -7,7 +7,7 @@ const ForgotPasswordFormConnected = () => {
 
   return (
     <ForgotPasswordForm
-      onSubmit={(formValues) => {
+      onSubmit={(/* formValues */) => {
         // dispatch(signupAction, formValues);
       }}
     />

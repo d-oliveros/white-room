@@ -1,5 +1,5 @@
 import { MemoryRouter } from 'react-router-dom';
-import '../src/client/style/tailwind.css';
+import '../whiteroom/client/style/tailwind.css';
 
 const preview = {
   parameters: {

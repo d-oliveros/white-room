@@ -13,7 +13,7 @@ import Link from '#ui/view/components/Link/Link.jsx';
 import Card from '#ui/view/components/Card/Card.jsx';
 import Button from '#ui/view/components/Button/Button.jsx';
 
-import './pages.css';
+// import './pages.css';
 
 const debug = logger.createDebug('SandboxPage');
 
@@ -65,7 +65,7 @@ const SandboxPage = ({ someServersideData }) => {
         Sandbox Page
       </h1>
 
-      <h1 styleName="testing">Testing styleName (should be red)...</h1>
+      {/*<h1 styleName="testing">Testing styleName (should be red)...</h1>*/}
 
       {getPostsQuery.data && (
         <>

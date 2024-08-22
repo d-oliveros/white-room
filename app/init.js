@@ -1,63 +1,41 @@
 import { dirname } from 'path';
 import { fileURLToPath } from 'url';
-import startServices from '#whiteroom/startServices.js';
+import run from '#whiteroom/runner/run.js';
 import loadModules from '#whiteroom/loader/loadModules.js';
 import runMigrations from '#whiteroom/server/db/runMigrations.js';
 import logger from '#whiteroom/logger.js';
 
-const {
-  NODE_ENV,
-  SEGMENT_LIB_PROXY_URL,
-  COMMIT_HASH,
-  APP_PORT,
-  QUEUE_ID,
-  RENDERER_PORT,
-  RENDERER_ENDPOINT,
-  ENABLE_SERVER,
-  ENABLE_RENDERER,
-  ENABLE_CRON,
-  ENABLE_QUEUE,
-  ENABLE_STORYBOOK,
-  ENABLE_MIGRATIONS,
-} = process.env;
+const env = process.env;
+const modulesDir = dirname(fileURLToPath(import.meta.url));
+const enableMigrations = env.ENABLE_MIGRATIONS === 'true';
 
-// Initialize function
-const init = async ({ modulesDir, config }) => {
-  try {
-    const modules = await loadModules(modulesDir);
+try {
+  const modules = await loadModules(modulesDir);
 
-    if (config.enableMigrations) {
-      const { dataSource } = await import('./dataSource.js');
-      await runMigrations(dataSource);
-    }
-
-    return startServices({
-      modules,
-      config,
-    });
+  if (enableMigrations) {
+    const { dataSource } = await import('./dataSource.js');
+    await runMigrations(dataSource);
   }
-  catch (error) {
-    logger.error(error);
-    process.exit(0);
-  }
-};
 
-// Initialize with environment variables and __dirname
-init({
-  modulesDir: dirname(fileURLToPath(import.meta.url)),
-  config: {
-    useHelmet: NODE_ENV !== 'development',
-    segmentLibProxyUrl: SEGMENT_LIB_PROXY_URL || null,
-    commitHash: COMMIT_HASH || null,
-    port: APP_PORT || '3000',
-    rendererPort: RENDERER_PORT,
-    rendererEndpoint: RENDERER_ENDPOINT,
-    queueId: QUEUE_ID,
-    enableServer: ENABLE_SERVER === 'true',
-    enableRenderer: ENABLE_RENDERER === 'true',
-    enableCron: ENABLE_CRON === 'true',
-    enableQueue: ENABLE_QUEUE === 'true',
-    enableStorybook: ENABLE_STORYBOOK === 'true',
-    enableMigrations: ENABLE_MIGRATIONS === 'true',
-  },
-});
+  await run({
+    modules,
+    config: {
+      useHelmet: env.NODE_ENV !== 'development',
+      segmentLibProxyUrl: env.SEGMENT_LIB_PROXY_URL || null,
+      commitHash: env.COMMIT_HASH || null,
+      port: env.APP_PORT || '3000',
+      rendererPort: env.RENDERER_PORT,
+      rendererEndpoint: env.RENDERER_ENDPOINT,
+      queueId: env.QUEUE_ID,
+      enableServer: env.ENABLE_SERVER === 'true',
+      enableRenderer: env.ENABLE_RENDERER === 'true',
+      enableCron: env.ENABLE_CRON === 'true',
+      enableQueue: env.ENABLE_QUEUE === 'true',
+      enableStorybook: env.ENABLE_STORYBOOK === 'true',
+    },
+  });
+}
+catch (error) {
+  logger.error(error);
+  process.exit(0);
+}
