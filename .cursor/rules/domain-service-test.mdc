@@ -1,0 +1,295 @@
+---
+description: Describes the patterns used in domain service test files
+globs: domain/test/**/*.spec.ts
+---
+ # Domain Service Test Patterns
+
+## File Structure
+- Tests are organized in `/core/domain/test/` directory
+- Each service has a corresponding test file ending in `.spec.ts`
+- Test factories are in `/core/domain/test/factories/`
+- Test utilities are in `/core/domain/test/lib/`
+
+## Core Patterns
+
+### Test Setup
+- Tests use Jest as the testing framework
+- Each test file uses `TestService` for setup and teardown
+- Service tests initialize a TestService instance, connect to the datasource and reset the data in beforeAll, and destroy the connection in afterAll
+- Common setup pattern:
+  - Initialize data source
+  - Reset test data
+  - Create test dependencies
+  - Clean up after tests
+
+```typescript
+describe('EntityName Service', () => {
+  const testService = new TestService({ context: 'domain' });
+
+  beforeAll(async () => {
+    await testService.initDataSource();
+    await testService.resetData();
+  });
+
+  afterAll(async () => {
+    await testService.destroyDataSource();
+  });
+});
+```
+
+### Test Organization
+- Tests are grouped by functionality using `describe` blocks
+- Test cases use descriptive names that explain the scenario
+- Common test groups:
+  - CRUD operations
+  - Business rules
+  - Error cases
+  - Edge cases
+
+```typescript
+describe('User', () => {
+  describe('User Creation', () => {
+    test('should create new user', async () => {});
+    test('should throw error for duplicate user', async () => {});
+  });
+});
+```
+
+### Test Factories
+- Each entity has a corresponding factory class
+- Factories are available in tests via `testService.factories`
+- Factories can create individual or multiple entities using random data
+
+```typescript
+describe('User Getters', () => {
+  test('should get user by id', async () => {
+    const {
+      services: { userService },
+      factories: { userFactory },
+    } = testService;
+
+    const user = await userFactory.create({
+      firstName: 'John',
+      lastName: 'Doe',
+      email: 'john@example.com',
+      phone: '1234567890',
+      status: UserStatus.ACTIVE,
+      roles: [UserRole.RENTER],
+      // properties not defined here will be randomized. Only define properties that are going to be used in the tests, or with unique IDs like email or phone to not collide with other tests
+    });
+
+    const result = await userService.getById(user.id);
+
+    expect(result).toBeDefined();
+    expect(result.id).toBe(user.id);
+    expect(result.email).toBe(user.email);
+    expect(result.phone).toBe(user.phone);
+  });
+});
+```
+
+### Test Data Setup
+- Use factories to create test data
+- Create minimal data needed for each test
+- Use descriptive variable names for test entities
+- Clean up data between tests, only if needed. Try not to clean data between tests unless really needed. Ideally you can use different data when creating entities
+
+```typescript
+import { resetDbData } from '../testHelpers';
+...
+after(() => resetDbData());
+```
+
+### Assertions
+- Use Jest's expect assertions
+- Test both positive and negative cases
+- Verify all relevant properties and states
+- Test error conditions and messages
+
+```typescript
+expect(result).toBeDefined();
+expect(result.id).toBe(user.id);
+expect(result.email).toBe(user.email);
+await expect(invalidOperation()).rejects.toThrow(SpecificError);
+```
+
+### Error Testing
+- Test all error conditions
+- Verify correct error types are thrown
+- Test error messages when relevant
+- Test error handling in edge cases
+
+```typescript
+test('should throw UserNotFoundError', async () => {
+  await expect(userService.getById(999)).rejects.toThrow(UserNotFoundError);
+});
+```
+
+### Integration Testing
+- Test interactions between services
+- Test database operations
+- Test event handling
+- Test complete business workflows
+
+### Test Utilities
+- Use `TestService` for common setup/teardown
+- Use helper functions for repeated operations
+- Use constants for common test values
+- Use typed test data builders
+
+### Documentation
+- Each test file starts with relevant imports
+- Test groups have clear descriptions
+- Test cases have descriptive names
+- Complex test setups are documented
+
+### Best Practices
+- Keep tests focused and atomic
+- Follow Arrange-Act-Assert pattern
+- Clean up test data after use
+- Use meaningful test data
+- Test edge cases and error conditions
+- Avoid test interdependence
+
+# Examples
+```typescript
+// user.spec.ts
+import type { UserCreateDto, UserUpdateDto } from '@domain/user/user.schemas';
+import { describe, expect, test, beforeAll } from '@jest/globals';
+import { UserAlreadyExistsError } from '@domain/user/user.errors';
+import { TestService } from './lib/TestService';
+
+describe('UserService', () => {
+  const testService = new TestService({ context: 'domain' });
+
+  beforeAll(async () => {
+    await testService.initDataSource();
+    await testService.resetData();
+  });
+
+  afterAll(async () => {
+    await testService.destroyDataSource();
+  });
+
+  test('should create a new user', async () => {
+    const {
+      services: { userService },
+    } = testService;
+
+    const userData = {
+      email: 'newuse1r@example.com',
+      phone: '1115551111',
+      password: 'password123',
+      firstName: 'John',
+      lastName: 'Doe',
+    } as UserCreateDto;
+
+    const createdUser = await userService.createUser(userData);
+
+    expect(createdUser).toBeDefined();
+    expect(createdUser.email).toBe(userData.email);
+    expect(createdUser.firstName).toBe(userData.firstName);
+    expect(createdUser.lastName).toBe(userData.lastName);
+    expect(createdUser.password).toBeUndefined(); // Password should not be returned
+  });
+
+  test('should get a user by id', async () => {
+    const {
+      services: { userService },
+    } = testService;
+
+    const userData = {
+      email: 'newUser2@example.com',
+      phone: '1115551112',
+      password: 'password123',
+      firstName: 'Jane',
+      lastName: 'Doe',
+    } as UserCreateDto;
+
+    const createdUser = await userService.createUser(userData);
+    const fetchedUser = await userService.getById(createdUser.id);
+
+    expect(fetchedUser).toBeDefined();
+    expect(fetchedUser?.id).toBe(createdUser.id);
+    expect(fetchedUser?.email).toBe(userData.email);
+  });
+
+  test('should update a user', async () => {
+    const {
+      services: { userService },
+    } = testService;
+
+    const userData = {
+      email: 'newUser3@example.com',
+      phone: '1115551113',
+      password: 'password123',
+      firstName: 'Jane',
+      lastName: 'Doe',
+    } as UserCreateDto;
+
+    const user = await userService.createUser(userData);
+
+    const updatedData = {
+      firstName: 'Updated',
+      lastName: 'Name',
+    } as UserUpdateDto;
+
+    const updatedUser = await userService.updateUser(user.id, updatedData);
+
+    expect(updatedUser).toBeDefined();
+    expect(updatedUser.firstName).toBe(updatedData.firstName);
+    expect(updatedUser.lastName).toBe(updatedData.lastName);
+    expect(updatedUser.email).toBe(user.email);
+  });
+
+  test('should throw error when creating user with existing email', async () => {
+    const {
+      services: { userService },
+    } = testService;
+
+    const userData = {
+      email: 'newUser4@example.com',
+      phone: '1115551114',
+      password: 'password123',
+      firstName: 'Duplicate',
+      lastName: 'User',
+    } as UserCreateDto;
+
+    await userService.createUser(userData);
+
+    const duplicateEmailUserData = {
+      ...userData,
+      phone: '1115551115',
+    };
+
+    await expect(userService.createUser(duplicateEmailUserData)).rejects.toThrow(
+      UserAlreadyExistsError,
+    );
+  });
+
+  test('should throw error when creating user with existing phone', async () => {
+    const {
+      services: { userService },
+    } = testService;
+
+    const userData = {
+      email: 'newUser5@example.com',
+      phone: '1115551115',
+      password: 'password123',
+      firstName: 'Duplicate',
+      lastName: 'User',
+    } as UserCreateDto;
+
+    await userService.createUser(userData);
+
+    const duplicatePhoneUserData = {
+      ...userData,
+      email: 'newUser6@example.com',
+    };
+
+    await expect(userService.createUser(duplicatePhoneUserData)).rejects.toThrow(
+      UserAlreadyExistsError,
+    );
+  });
+});
+```

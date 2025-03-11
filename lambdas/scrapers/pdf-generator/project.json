@@ -1,0 +1,58 @@
+{
+  "name": "pdf-generator",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "lambdas/scrapers/pdf-generator/src",
+  "projectType": "application",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "platform": "node",
+        "outputPath": "dist/lambdas/scrapers/pdf-generator",
+        "format": ["cjs"],
+        "bundle": false,
+        "main": "lambdas/scrapers/pdf-generator/src/main.ts",
+        "tsConfig": "lambdas/scrapers/pdf-generator/tsconfig.app.json",
+        "assets": [],
+        "generatePackageJson": true,
+        "esbuildOptions": {
+          "sourcemap": true,
+          "outExtension": {
+            ".js": ".js"
+          }
+        }
+      },
+      "configurations": {
+        "development": {},
+        "production": {
+          "esbuildOptions": {
+            "sourcemap": false,
+            "outExtension": {
+              ".js": ".js"
+            }
+          }
+        }
+      }
+    },
+    "npm-install": {
+      "dependsOn": ["build"],
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npm ci --omit=optional",
+        "cwd": "dist/lambdas/scrapers/pdf-generator"
+      }
+    },
+    "test": {
+      "executor": "nx:noop"
+    },
+    "scrape": {
+      "executor": "@nx/jest:jest",
+      "options": {
+        "jestConfig": "{projectRoot}/jest.config.ts"
+      }
+    }
+  }
+}

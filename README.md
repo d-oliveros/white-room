@@ -1,192 +1,170 @@
-# White Room
+# Namespace Monorepo
 
-SSR-first, full-stack Application starter kit.
+## Requirements
 
+- Node 22.9.0
+- Postgres 16
 
-## Features
+## Install
 
-* React + [Baobab](http://christianalfoni.github.io/javascript/2015/02/06/plant-a-baobab-tree-in-your-flux-application.html) frontend. A minimal, zero-boilerplate flux variant. [Read more here.](http://christianalfoni.github.io/javascript/2015/02/06/plant-a-baobab-tree-in-your-flux-application.html)
-* API server.
-* ESM-first, async/await native, SSR/HMR native.
-* Websockets with Socket.io.
-* Role-Based Auth Layer
-* Postgres backend with [TypeORM](https://typeorm.io/) for schema management and [Knex](https://knexjs.org/) for querying the DB.
-* User Model
-* Signup/Login flows
-* Cron/Periodic functions.
-* Priority job Worker Queue, powered by [Bull](https://github.com/taskforcesh/bullmq) + [Redis](http://redis.io/).
-* AWS S3 integration for uploads.
-* Unit Tests with Jest
-* E2E Tests with Playwright
-
-
-## Dependencies
-
-* Node.js v22.6.0
-* Docker
-
-
-## Setup
-
-#### Install Dependencies
-
-##### Install Node v22.6.0
-```
-> curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.8/install.sh | bash
-> nvm install 22.6.0
-> nvm alias default 22.6.0
-```
-
-##### Start PostgreSQL and Redis with Docker Compose:
-```bash
-$ docker compose up -d
-```
-
-##### You can stop/restart the services using docker-compose as well
-
-```bash
-$ docker compose stop
-$ docker compose restart
-```
-
-#### Install the application's modules
-```bash
-$ npm install
-```
-
-
-#### Create the development WhiteRoom database
-
-If Postgres is installed locally and is accessible via the command line:
-```
-> psql --username=postgres --password -c "CREATE DATABASE whiteroom_dev;"
-```
-
-If you're running postgres locally in a docker container:
-```
-> docker exec -ti postgres psql --username=postgres --password -c "CREATE DATABASE whiteroom_dev;"
-```
-
-
-#### Evolve your development WhiteRoom database with the latest schema
-```
-npm run knex-migrate-latest  # Evolves your local database to the latest schema
-npm run knex-load-seeds      # Creates initial development data in your database
-```
-
-
-#### Configure your environment
-A predefined set of default environmental variables is located in `/.env.default`. This environment file does not have any public-facing keys. You will need to configure your environment with development keys in order to enable all application features.
-
-Copy the file `/environments/.env.local` from the engineering Google Drive folder into a file called `.env` in your web repository's root. This should be enough to enable all features when running the application locally. Do *NOT* update the `.env.default`. This file will be committed to Git, if updated.
-
-
-#### Run tests
-`npm run test`
-
-
-#### Run E2E tests
-If you haven't installed cypress yet, you can install it via `npm run cypress:install`.
-
-Run `npm run cypress:open` to open the E2E test runner. Make sure you are running the app in another terminal with `npm run dev`. All E2E tests should pass.
-
-
-#### Start the app
-`npm run dev`
-
-Then go to `http://localhost:3000`. These users are created initially on `npm run knex-load-seeds`.
-
-
-## Configuration
-
-Copy the `.env.default` file located in the application's root to a file called `.env`, and modify the values according to the instance's purpose.
-
-This will let you configure the instance's database connections, and start app instances with a single purpose, for example if you need to increase the number of client renderer servers while keeping a minimum amount of API servers, or if you need to scale the application but just want a single instance running periodic tasks (cron), or if you want to add queue workers, etc.
-
-
-## Commands
-
-#### Starts the development server
-```
-npm run dev
-// Now visit http://localhost:3000
-```
-
-#### Evolve the DB schema to the latest evolution file
-`npm run knex-migrate-latest`
-
-
-#### Roll the DB schema back to the previous evolution file
-`npm run knex-migrate-rollback`
-
-
-#### Run a cron task
-`npm run cron-task [cronTaskName]`
-
-
-#### Run the tests
-`npm run test`
-
-
-#### Run the tests and restart the tests live when changing files in the codebase
-`npm run test-watch`
-
-
-#### Lint the codebase
-`npm run lint`
-
-
-#### Analyze the webpack bundle
-`npm run webpack-analyze-bundle script`
-
-
-#### Runs any script file located at `/util/[scriptName]`
-```
-npm run script               # To list all available scripts
-npm run script [scriptName]  # To run the script [scriptName]
-```
-
-### Docker
-
-Build the image
-```
-docker build -t app-dev .
-```
-
-Run the image in interactive mode
-```
-docker run -i --net="host" --name="app" --env-file=.env -e USE_BUILD=true app-dev
-```
-
-
-## Docs
-
-#### Server-side Rendering
-
-Server-side rendering can get quite CPU-intensive sometimes, affecting the performance of the API server. That's why you should separate the main API server from the Renderer server.
-
-To separate the renderer server from the main API server, start two instances of your app, and modify your `.env` files accordingly.
-
-To start a Renderer server instance, change your .env to:
-```
-ENABLE_SERVER = "false"
-ENABLE_RENDERER = "true"
-```
-
-To start an API server instance, change your .env to:
-```
-ENABLE_SERVER = "true"
-ENABLE_RENDERER = "false"
-```
-
-Remember to change these lines as well
+Make sure you are using the correct Node version
 
 ```
-RENDERER_PORT = "3001"                      # Port to listen in.
-RENDERER_ENDPOINT = "http://localhost:3001" # Renderer microservice endpoint.
+nvm use
 ```
 
-Please see `.env.default` in the project's root for more info.
+Install the dependencies
 
+```
+npm i
+```
 
-Cheers.
+Install the Nx CLI globally
+
+```
+npm i -g nx
+```
+
+Configure your environment by creating `.env` file in the monorepo root. Start by copying the `.env.default` file, which contains default variables. You can then customize these files by adding or modifying variables as needed. The final configuration will be a combination of the default variables from `.env.default` and any additional variables you define in `.env`.
+
+Refrain from using custom `.env` files in project directories, unless there is a good reason to do so.
+
+## Start the API, Web Server, and the Lambda Development Server
+
+```
+npm start
+```
+
+## Start the API only
+
+```
+nx serve api
+```
+
+## Start the Web Server only
+
+```
+nx serve web
+```
+
+## Deploy to dev/staging/prod
+
+Push to the `dev`/`staging`/`prod` branches.
+
+CI will build the app and deploy it to the corresponding environment. It will also synthesize the CloudFormation stack defined in `/infra/cdk/bin` using CDK, and run the commands to deploy the stack on the corresponding environments.
+
+## Infrastructure
+
+The infrastructure for our project is defined using AWS Cloud Development Kit (CDK), which generates CloudFormation templates. The CDK code can be found in the `/infra/cdk` directory and defines all infrastructure components including:
+
+1. Server infrastructure: This includes the ECS cluster resources that the core API needs, such as Route53 DNS records, ECR repositories, ECS task definitions, Application Load Balancers, Fargate services, target groups and other supporting resources.
+
+2. Serverless infrastructure: This includes Lambda functions, API Gateway endpoints, SQS queues, and other serverless components.
+
+The infrastructure is deployed to the corresponding environments (dev/staging/prod) using Github Actions, which is defined in the `.github/workflows` folder. Lambda functions are automatically deployed and can be consumed via HTTP or SQS using the `/lib/lambda` package.
+
+## Test/Lint/Build
+
+To test/lint/build a single package:
+
+```
+nx lint [packageName]
+nx test [packageName]
+nx build [packageName]
+```
+
+To test/lint all the packages:
+
+```
+npm run test
+npm run lint
+npm run build
+
+// The command that gets run is:
+nx run-many --target=test --all
+nx run-many --target=lint --all
+nx run-many --target=build --all
+```
+
+## Dependency graph
+
+Run `nx graph` to show the graph of the workspace.
+It will show tasks that you can run with Nx, and the modules with their dependencies in a nice graph.
+
+## Code structure
+
+The packages are divided into the following folders:
+
+- `/core`: This includes the fastify API, the TypeORM domain models/services, and (eventually) the web app and other core packages.
+- `/libs`: Contains shared libraries that can be used across multiple packages.
+- `/infra`: Contains the infrastructure as code for the project, including the CDK code, and some development tools like the lambda dev server.
+- `/lambdas`: These are deployed to AWS Lambda and provide isolated functionalities.
+- `/lambdas/scrapers`: Contains Playwright scrapers that are deployed to AWS Lambda.
+
+## Bundling
+
+When building the packages, the compiled output will contain a generated `package.json` and `package-lock.json` containing only the modules that are needed for each package. We do not have to add manual `package.json` files or manually set the required `node_modules`, this is handled by NX automatically.
+
+When importing local libraries, the lib codes are included in the final bundle, so we don't need to publish each package individually to get the codes contained into production builds.
+
+## Create new library:
+
+```
+nx generate @nx/node:library lib/my-new-lib
+```
+
+## Create new module:
+
+```
+nx generate @nx/node:app (folder)/my-new-module
+
+# e.g. create a new lambda
+nx generate @nx/node:app lambdas/my-lambda-function
+```
+
+## Library packages
+
+`/lib` packages can be required from other packages in the monorepo. You can import them using path aliases, for example:
+
+```
+import { myFunction } from '@namespace/util';
+import { normalizeAddress } from '@namespace/address-helpers';
+```
+
+When generating libs, a path alias is created automatically in `tsconfig.base.json`.
+
+## Configurations
+
+Please do not define custom TypeScript/Jest/Eslint configurations in the package's config files, unless there is a good reason to do so, and let's try to always use the `esbuild` transpiler/bundler.
+
+Valid reasons to use a different bundler:
+
+- If you need decorator support (esbuild does not support decorators)
+
+If you really want to change eslint/jest/typescript configurations, try to do it from the root config files. Keep in mind this will affect the whole monorepo, so try to discuss the changes with the team first.
+
+## Running tasks
+
+To execute tasks with Nx use the following syntax:
+
+```
+nx <target> <project> <...options>
+```
+
+You can also run multiple targets:
+
+```
+nx run-many -t <target1> <target2>
+```
+
+..or add `-p` to filter specific projects
+
+```
+nx run-many -t <target1> <target2> -p <proj1> <proj2>
+```
+
+Targets can be defined in the `package.json` or `projects.json`. Learn more [in the docs](https://nx.dev/features/run-tasks).
+
+## Licence
+
+This software is NOT licensed for public use. No permissions are granted for modification, distribution, or usage.

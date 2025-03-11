@@ -1,0 +1,228 @@
+---
+description: Describes the patterns used in domain repository files
+globs: *.repository.ts
+---
+# Domain Repository Patterns
+
+## File Structure
+- Repositories are organized in `/core/domain/src/{domain}/` directories
+- Each model has a corresponding repository
+- File names should be in camelCase and end with `.repository.ts` (e.g., `address.repository.ts`)
+- Related files:
+  - `.model.ts` - Domain model
+  - `.service.ts` - Business logic
+  - `.errors.ts` - Repository-specific errors
+
+## Core Patterns
+
+### Repository Class
+- Repositories extend TypeORM's `Repository<T>`
+- Each repository is specific to one entity type
+- Repositories are instantiated with a DataSource
+- Repositories are only used to fetch data
+- Repositories should NOT implement "insert" or "update" queries
+- To update an object, services should load an object from a repository, mutate the object, and persist the object with the `repository.save()` method
+- Repositories should only return instances of the Entity, not child of Entities or any of their related entities directly
+- Basic pattern:
+
+```typescript
+export class EntityRepository extends Repository<Entity> {
+  constructor(dataSource: DataSource) {
+    super(Entity, dataSource.createEntityManager());
+  }
+}
+```
+
+### Query Building
+- Use TypeORM's QueryBuilder for complex queries
+- Common query patterns:
+  - Basic CRUD operations
+  - Filtering and searching
+  - Relationship loading
+  - Custom joins and conditions
+
+```typescript
+async search(params: SearchParams): Promise<Entity[]> {
+  const query = this.createQueryBuilder('entity')
+    .where('entity.field = :value', { value: params.value })
+    .orderBy('entity.createdAt', 'DESC');
+  return query.getMany();
+}
+```
+
+### Relationship Handling
+- Use TypeORM relations for entity relationships
+- Common relationship patterns:
+  - Eager loading with relations option
+  - Lazy loading with Promise properties
+  - Join queries for complex relationships
+  - Cascading operations
+
+```typescript
+async getWithRelations(id: number): Promise<Entity | null> {
+  return this.findOne({
+    where: { id },
+    relations: ['relatedEntity', 'otherEntity']
+  });
+}
+```
+
+### Error Handling
+- Throw domain-specific errors for common cases
+- Use descriptive error types
+- Handle database-specific errors
+- Common error patterns:
+  - NotFoundError
+  - DuplicateError
+  - ValidationError
+
+### Type Safety
+- Use TypeScript types for all parameters and returns
+- Define DTOs for complex query parameters
+- Use type inference where possible
+- No `any` types allowed
+
+### Query Methods
+- Use descriptive method names
+- Do not include methods that are part of the TypeORM Repository class
+- Common method types:
+  - getById
+  - search
+  - custom complex queries, if needed
+
+```typescript
+async findByCustomCriteria(criteria: Criteria): Promise<Entity[]> {
+  return this.createQueryBuilder('entity')
+    .where('entity.field IN (:...values)', { values: criteria.values })
+    .getMany();
+}
+```
+
+### Raw Queries
+- Use raw queries sparingly
+- Prefer QueryBuilder when possible
+- Use parameterized queries for safety
+- Document complex SQL queries
+
+```typescript
+async complexQuery(): Promise<Result> {
+  return this.manager.query(`
+    WITH RECURSIVE cte AS (...)
+    SELECT * FROM ...
+  `, [param1, param2]);
+}
+```
+
+### Best Practices
+- Keep repositories focused on data access
+- Do not include methods for storing data
+- Move business logic to services
+- Use meaningful parameter names
+- Document complex queries
+- Follow consistent naming patterns
+- Use appropriate TypeORM features
+- Handle edge cases appropriately
+
+# Examples
+```typescript
+// project.repository.ts
+import type { DataSource } from 'typeorm';
+import { Repository } from 'typeorm';
+import { UserSummarySchema } from '@domain/user/user.schemas';
+import { ProjectStatus } from './project.enums';
+import { Project } from './project.model';
+
+export class ProjectRepository extends Repository<Project> {
+  constructor(dataSource: DataSource) {
+    super(Project, dataSource.createEntityManager());
+  }
+
+  async findActiveByAddressOrFileNumber(
+    addressId?: string,
+    fileNumber?: string,
+  ): Promise<Project | null> {
+    if (!addressId && !fileNumber) {
+      throw new Error('Either addressId or fileNumber must be provided');
+    }
+    return this.findOne({
+      where: [
+        ...(addressId ? [{ addressId, status: ProjectStatus.Active }] : []),
+        ...(fileNumber ? [{ fileNumber, status: ProjectStatus.Active }] : []),
+      ],
+      relations: {
+        user: true,
+        assets: true,
+        address: true,
+      },
+      select: {
+        user: Object.fromEntries(Object.keys(UserSummarySchema.shape).map((key) => [key, true])),
+      },
+    });
+  }
+
+  async findProjectByAssetId(assetId: string): Promise<Project | null> {
+    const project = await this.createQueryBuilder('project')
+      .where((qb) => {
+        const subQuery = qb
+          .subQuery()
+          .select('subAsset.projectId')
+          .from('assets', 'subAsset')
+          .where('subAsset.id = :assetId')
+          .getQuery();
+        return 'project.id IN ' + subQuery;
+      })
+      .setParameter('assetId', assetId)
+      .leftJoinAndSelect('project.assets', 'assets')
+      .leftJoinAndSelect('assets.files', 'files')
+      .leftJoinAndSelect('project.user', 'user')
+      .select([
+        'project',
+        'assets',
+        'files',
+        ...Object.keys(UserSummarySchema.shape).map((key) => `user.${key}`),
+      ])
+      .getOne();
+
+    return project;
+  }
+
+  async findProjectByFileId(fileId: string): Promise<Project | null> {
+    const project = await this.createQueryBuilder('project')
+      .where((qb) => {
+        const subQuery = qb
+          .subQuery()
+          .select('subAsset.projectId')
+          .from('assets', 'subAsset')
+          .innerJoin('subAsset.files', 'subFile')
+          .where('subFile.id = :fileId')
+          .getQuery();
+        return 'project.id IN ' + subQuery;
+      })
+      .setParameter('fileId', fileId)
+      .leftJoinAndSelect('project.assets', 'asset')
+      .leftJoinAndSelect('asset.files', 'file')
+      .leftJoinAndSelect('project.user', 'user')
+      .select([
+        'project',
+        'asset',
+        'file',
+        ...Object.keys(UserSummarySchema.shape).map((key) => `user.${key}`),
+      ])
+      .getOne();
+
+    return project;
+  }
+
+  async findProjects(): Promise<Project[]> {
+    return this.find({
+      order: { createdAt: 'DESC' },
+      relations: {
+        user: true,
+      },
+      select: {
+        user: Object.fromEntries(Object.keys(UserSummarySchema.shape).map((key) => [key, true])),
+      },
+    });
+  }
+}
+```

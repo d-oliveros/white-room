@@ -1,0 +1,40 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "rootDir": ".",
+    "sourceMap": true,
+    "declaration": false,
+    "moduleResolution": "node",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "importHelpers": true,
+    "target": "es2022",
+    "module": "commonjs",
+    "lib": ["es2022"],
+    "strict": true,
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+    "baseUrl": ".",
+    "paths": {
+      "@api/*": ["core/api/src/*"],
+      "@domain": ["core/domain/src/domain.module.ts"],
+      "@domain/*": ["core/domain/src/*"],
+      "@domain/test/*": ["core/domain/test/*"],
+      "@namespace/address-helpers": ["lib/address-helpers/src/index.ts"],
+      "@namespace/api-client": ["lib/api-client/src/index.ts"],
+      "@namespace/crypto": ["lib/crypto/src/index.ts"],
+      "@namespace/google-client": ["lib/google-client/src/index.ts"],
+      "@namespace/image-helpers": ["lib/image-helpers/src/index.ts"],
+      "@namespace/lambda": ["lib/lambda/src/index.ts"],
+      "@namespace/lambda-handler": ["lib/lambda-handler/src/index.ts"],
+      "@namespace/logger": ["lib/logger/src/index.ts"],
+      "@namespace/redis-client": ["lib/redis-client/src/index.ts"],
+      "@namespace/s3-client": ["lib/s3-client/src/index.ts"],
+      "@namespace/scraper-helpers": ["lib/scraper-helpers/src/index.ts"],
+      "@namespace/shared": ["lib/shared/src/index.ts"],
+      "@namespace/util": ["lib/util/src/index.ts"],
+      "@web/*": ["core/web/src/*"]
+    }
+  },
+  "exclude": ["node_modules", "tmp"]
+}

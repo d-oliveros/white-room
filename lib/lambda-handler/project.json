@@ -1,0 +1,9 @@
+{
+  "name": "lambda-handler",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "lib/lambda-handler/src",
+  "projectType": "library",
+  "tags": [],
+  "// targets": "to see all targets run: nx show project lambda-handler --web",
+  "targets": {}
+}

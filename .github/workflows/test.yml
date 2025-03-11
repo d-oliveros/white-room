@@ -1,0 +1,114 @@
+name: Test + Lint
+
+on:
+  push:
+    branches:
+      - '*'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref_name }}
+  cancel-in-progress: true
+
+env:
+  NXCACHE_S3_BUCKET: ${{ vars.NXCACHE_S3_BUCKET }}
+
+jobs:
+  test-unit:
+    name: Run Unit Tests
+    runs-on: ubuntu-latest
+    environment: ${{ contains('dev,staging,prod', github.ref_name) && github.ref_name || 'dev' }}
+
+    services:
+      postgres:
+        image: postgis/postgis:16-3.4
+        env:
+          POSTGRES_DB: namespace_test_domain
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Environment
+        uses: ./.github/actions/setup
+        with:
+          aws-access-key: ${{ vars.AWS_ACCESS_KEY_ID }}
+          aws-secret-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      - name: Check affected projects
+        id: nx-affected
+        run: |
+          echo "api=$(npx nx show projects --affected --base=origin/main | grep '^api$')" >> $GITHUB_OUTPUT
+          echo "domain=$(npx nx show projects --affected --base=origin/main | grep '^domain$')" >> $GITHUB_OUTPUT
+
+      - name: Run Domain DB Migrations
+        if: ${{ steps.nx-affected.outputs.domain != '' }}
+        run: npx nx run migrations:run --verbose
+        env:
+          CORE_DB_HOST: localhost
+          CORE_DB_USER: postgres
+          CORE_DB_PASSWORD: postgres
+          CORE_DB_NAME: namespace_test_domain
+          DB_DISABLE_SSL: 'true'
+          ORM_LOGGING: 'false'
+
+      - name: Run API DB Migrations
+        if: ${{ steps.nx-affected.outputs.api != '' }}
+        run: |
+          # Wait for the Postgres service to be ready
+          until pg_isready -h localhost -p 5432 -U postgres; do
+            echo "Waiting for Postgres..."
+            sleep 1
+          done
+
+          # Create the database
+          PGPASSWORD=postgres psql -h localhost -U postgres -c "CREATE DATABASE namespace_test_api;"
+
+          # Run migrations
+          npx nx run migrations:run --verbose
+        env:
+          CORE_DB_HOST: localhost
+          CORE_DB_USER: postgres
+          CORE_DB_PASSWORD: postgres
+          CORE_DB_NAME: namespace_test_api
+          DB_DISABLE_SSL: 'true'
+          ORM_LOGGING: 'false'
+
+      - name: Run Tests for packages
+        run: npx nx affected -t test --base=origin/main --parallel --verbose
+        env:
+          CORE_DB_HOST: localhost
+          CORE_DB_USER: postgres
+          CORE_DB_PASSWORD: postgres
+          DB_DISABLE_SSL: 'true'
+          ORM_LOGGING: 'false'
+
+  test-lint:
+    name: Run Lint
+    runs-on: ubuntu-latest
+    environment: ${{ contains('dev,staging,prod', github.ref_name) && github.ref_name || 'dev' }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Environment
+        uses: ./.github/actions/setup
+        with:
+          aws-access-key: ${{ vars.AWS_ACCESS_KEY_ID }}
+          aws-secret-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      - name: Lint the codebase
+        run: npx nx affected -t lint --base=origin/main --parallel --verbose

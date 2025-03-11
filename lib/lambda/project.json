@@ -1,0 +1,13 @@
+{
+  "name": "lambda",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "lib/lambda/src",
+  "projectType": "library",
+  "tags": [],
+  "// targets": "to see all targets run: nx show project lambda --web",
+  "targets": {
+    "test": {
+      "executor": "nx:noop"
+    }
+  }
+}

@@ -1,0 +1,250 @@
+---
+description: Describes the patterns used in domain model files
+globs: *.model.ts
+---
+# Domain Model Patterns
+
+## File Structure
+- Models are organized in `/core/domain/src/{domain}/` directories
+- Each model represents a database entity
+- File names should be in camelCase and end with `.model.ts` (e.g., `user.model.ts`)
+- Related files:
+  - `.schemas.ts` - Zod schemas for validation
+  - `.repository.ts` - TypeORM repository
+  - `.service.ts` - Business logic
+  - `.errors.ts` - Domain-specific errors
+  - `.constants.ts` - Constants and enums
+  - `.events.ts` - Domain events
+
+## Core Patterns
+
+### TypeORM Entity
+- Models use TypeORM decorators for ORM mapping
+- Each model is decorated with `@Entity` with the table name in camelCase
+- Primary key is a bigint number using `@PrimaryColumn('bigint')` of type `string`
+- The static `create` model method generates the ID using `generateSnowflakeId()` from `import { generateSnowflakeId } from '@domain/lib/snowflake';`
+- Common columns have appropriate TypeORM decorators:
+  - `@Column()` for regular columns
+  - `@CreateDateColumn()` for creation timestamps
+  - `@UpdateDateColumn()` for update timestamps
+  - `@Index()` for indexed columns
+  - `@ManyToOne()`, `@OneToMany()`, `@ManyToMany()` for relationships
+
+```typescript
+@Entity('tableName')
+export class ModelName {
+  @PrimaryColumn('bigint')
+  id!: string;
+
+  @Index()
+  @CreateDateColumn()
+  createdAt!: Date;
+
+  @Column()
+  field!: string;
+
+  static create(data: EntityDto) {
+    const entity = new ModelName();
+    entity.id = generateSnowflakeId();
+    entity.createdAt = new Date();
+    Object.assign(entity, data);
+    return entity;
+  }
+}
+```
+
+### Relationships
+- Use TypeORM relationship decorators
+- In addition to defining the relationship columns, also include and index the ID field. For example, include both `relatedModelId` and `relatedModel` when adding a relationship
+- Relationships are typically defined using string literals for lazy loading, for example `@OneToMany('ActivationItem', ...)` instead of `@OneToMany(ActivationItem, ...)`
+- Common patterns:
+  - `@ManyToOne()` with `@JoinColumn()`
+  - `@OneToMany()` with inverse relation
+  - `@ManyToMany()` with `@JoinTable()`
+
+```typescript
+@Index()
+@Column()
+relatedModelId!: number;
+
+@ManyToOne('RelatedModel')
+@JoinColumn({ name: 'relatedModelId' })
+relatedModel!: RelatedModel;
+
+@OneToMany('ChildModel', (child: ChildModel) => child.parent)
+children!: ChildModel[];
+```
+
+```typescript
+// Good: Relationship decorator specify the related model using string
+@ManyToOne('RelatedModel')
+
+// Bad: Relationship decorator specify the related model using the actual model
+@ManyToOne(RelatedModel)
+
+// Bad: Relationship decorator specify the related model using a function
+@ManyToOne(() => RelatedModel)
+```
+
+### Column Types
+- Use TypeScript strict types (no `any`)
+- Common column types:
+  - `string` for text
+  - `number` for integers and floats
+  - `Date` for timestamps
+  - `boolean` for flags
+  - `Record<string, unknown>` for JSON columns
+  - Array types for array columns
+- Use nullable types with `?` when appropriate
+- Use union types for specific value sets
+- Include @Index() for columns that would benefit from being indexed, like foreign key columns.
+- Nullable columns should not use `!`, and be typed as `| null`
+- Nullable columns should default to `null`: `{var}: {type} | null = null`
+
+```typescript
+// Good: Nullable column is typed as `?: {type} | null = null`
+@Column({ nullable: true, type: 'timestamp' })
+processingStartedAt?: Date | null = null;
+
+// Bad: Nullable column is typed as `!: {type}`
+@Column({ nullable: true, type: 'timestamp' })
+processingStartedAt!: Date;
+```
+
+### Factory Methods
+- Static `create()` method for instantiation with defaults
+- Methods follow command pattern for specific operations
+
+```typescript
+static create(data: Partial<Model>): Model {
+  const instance = new Model();
+  // Set defaults
+  Object.assign(instance, data);
+  return instance;
+}
+
+update(data: UpdateDto): void {
+  Object.assign(this, data);
+}
+```
+
+### Domain Logic
+- Include domain-specific methods in the model
+- Validate business rules
+- Throw domain-specific errors
+- Emit domain events when significant state changes occur
+- For "Created" domain events, use @AfterInsert() in order to create the domain event after obtaining the entity ID from the db
+- Domain events are usually stored in a `domainEvents: DomainEvent[] = [];` property
+
+### Type Safety
+- Use TypeScript strict mode
+- Define DTOs using Zod schemas
+- Use type imports for related models
+- Mark required properties with `!` and optional with `?`. Optional properties should be typed with `| null`
+- Use precise types for enums and constants
+
+### Patterns
+- We are loosely following domain-driven design and clean architecture principles
+- Domain models are rich domain objects, including DB fields and methods to mutate the object, but not including methods to persist or fetch entities
+- To mutate an object, services should fetch an object from the repository, mutate the object with model methods, and then persist the object with the repository's `repository.save(entity)` method
+
+### Naming Conventions
+- Class names are PascalCase
+- Properties are camelCase
+- Database columns are snake_case
+- Methods are descriptive verbs
+- DTOs end with `Dto` suffix
+- Errors end with `Error` suffix
+- Events end with `Event` suffix
+
+## Imports
+- Try not to fully import other models, unless the models are being instanciated by the current model. Instead of importing other full models, only import the type of the model being used with `import type { OtherModel } from ...`
+
+# Examples
+
+```typescript
+// address.model.ts
+import type { AddressLocationPointDto, AddressPartialDto } from '@namespace/address-helpers';
+import type { Coordinates } from '@namespace/shared';
+
+import { State } from '@namespace/address-helpers';
+import { generateSnowflakeId } from '@domain/lib/snowflake';
+import { Entity, PrimaryColumn, Column, CreateDateColumn, BeforeInsert, Index } from 'typeorm';
+
+@Entity('address')
+export class Address {
+  @PrimaryColumn('bigint')
+  id!: string;
+
+  @Index()
+  @CreateDateColumn()
+  createdAt!: Date;
+
+  @Column()
+  streetName!: string;
+
+  @Column()
+  streetNumber!: string;
+
+  @Column({ type: 'varchar', nullable: true })
+  streetPrefix: string | null = null;
+
+  @Column({ type: 'varchar', nullable: true })
+  streetSuffix: string | null = null;
+
+  @Column({ type: 'varchar', nullable: true })
+  unitNumber: string | null = null;
+
+  @Column()
+  city!: string;
+
+  @Column({ type: 'enum', enum: State })
+  stateCode!: State;
+
+  @Column({ default: 'US' })
+  countryCode!: 'US';
+
+  @Column()
+  zip!: string;
+
+  @Column({ type: 'float' })
+  latitude!: number;
+
+  @Column({ type: 'float' })
+  longitude!: number;
+
+  @Column()
+  streetDisplay!: string;
+
+  @Column()
+  display!: string;
+
+  @Column('geometry', {
+    spatialFeatureType: 'Point',
+    srid: 4326,
+  })
+  locationPoint!: AddressLocationPointDto;
+
+  static create(data: AddressPartialDto) {
+    const address = new Address();
+    address.id = generateSnowflakeId();
+    address.createdAt = new Date();
+    Object.assign(address, data);
+    return address;
+  }
+
+  getCoordinates(): Coordinates {
+    return { lat: this.latitude, lon: this.longitude };
+  }
+
+  @BeforeInsert()
+  createLocationPoint() {
+    if (this.latitude && this.longitude) {
+      this.locationPoint = {
+        type: 'Point',
+        coordinates: [this.longitude, this.latitude],
+      };
+    }
+  }
+}
+```

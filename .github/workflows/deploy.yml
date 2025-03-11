@@ -1,0 +1,45 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - 'dev'
+      - 'staging'
+      - 'prod'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref_name }}
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    name: Deploy to Environment
+    runs-on: ubuntu-latest
+    environment: ${{ github.ref_name }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Environment
+        uses: ./.github/actions/setup
+        with:
+          aws-access-key: ${{ vars.AWS_ACCESS_KEY_ID }}
+          aws-secret-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      - name: Deploy CDK Infrastructure
+        run: npx nx run-many --target=deploy-cdk --all
+        env:
+          NODE_ENV: production
+          APP_ID: ${{ vars.APP_ID }}
+          AWS_ACCOUNT_ID: ${{ vars.AWS_ACCOUNT_ID }}
+          AWS_REGION: ${{ vars.AWS_REGION }}
+          ENVIRONMENT: ${{ github.ref_name }}
+          CORE_API_URL: ${{ vars.CORE_API_URL }}
+          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+          JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
+          NXCACHE_S3_BUCKET: ${{ vars.NXCACHE_S3_BUCKET }}
+          SLACK_ENDPOINT: ${{ secrets.SLACK_ENDPOINT }}
+          SLACK_REDIRECT_MESSAGES_CHANNEL: ${{ vars.SLACK_REDIRECT_MESSAGES_CHANNEL }}
+          SCRAPER_PROXY: ${{ secrets.SCRAPER_PROXY }}

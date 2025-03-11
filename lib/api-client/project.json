@@ -1,0 +1,59 @@
+{
+  "name": "api-client",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "lib/api-client/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "orval": {
+      "executor": "nx:run-commands",
+      "dependsOn": [
+        {
+          "target": "swagger",
+          "projects": "api"
+        }
+      ],
+      "options": {
+        "command": "rm -rf {projectRoot}/src/orval && npx orval --config {projectRoot}/orval.config.ts"
+      }
+    },
+    "build": {
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "platform": "node",
+        "outputPath": "dist/lib/api-client",
+        "format": ["cjs"],
+        "bundle": false,
+        "main": "lib/api-client/src/index.ts",
+        "tsConfig": "lib/api-client/tsconfig.lib.json",
+        "assets": [],
+        "generatePackageJson": false,
+        "esbuildOptions": {
+          "sourcemap": true,
+          "outExtension": {
+            ".js": ".js"
+          }
+        }
+      },
+      "configurations": {
+        "development": {},
+        "production": {
+          "esbuildOptions": {
+            "sourcemap": false,
+            "outExtension": {
+              ".js": ".js"
+            }
+          }
+        }
+      }
+    },
+    "lint": {
+      "executor": "nx:noop"
+    },
+    "test": {
+      "executor": "nx:noop"
+    }
+  }
+}

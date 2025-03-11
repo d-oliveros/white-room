@@ -1,0 +1,78 @@
+{
+  "name": "api",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "core/api/src",
+  "projectType": "application",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "platform": "node",
+        "outputPath": "dist/core/api",
+        "format": ["cjs"],
+        "bundle": false,
+        "main": "core/api/src/main.ts",
+        "tsConfig": "core/api/tsconfig.app.json",
+        "assets": ["core/api/Dockerfile"],
+        "generatePackageJson": true,
+        "esbuildConfig": "core/api/esbuild.config.js"
+      },
+      "configurations": {
+        "development": {},
+        "production": {
+          "esbuildConfig": "core/api/esbuild.config.js"
+        },
+        "swagger": {
+          "main": "core/api/src/util/generateSwaggerDocs.ts",
+          "outputPath": "dist/core/api-swagger"
+        }
+      }
+    },
+    "npm-install": {
+      "executor": "nx:run-commands",
+      "outputs": ["{options.outputPath}"],
+      "dependsOn": ["build"],
+      "options": {
+        "command": "npm ci --omit=optional",
+        "cwd": "dist/core/api"
+      }
+    },
+    "serve": {
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "api:build",
+        "runBuildTargetDependencies": false
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "api:build:development"
+        },
+        "production": {
+          "buildTarget": "api:build:production"
+        },
+        "swagger": {
+          "main": "core/api/src/util/generateSwaggerDocs.ts"
+        }
+      }
+    },
+    "swagger": {
+      "executor": "nx:run-commands",
+      "options": {
+        "parallel": false,
+        "commands": [
+          {
+            "command": "nx run api:build --configuration=swagger",
+            "forwardAllArgs": false
+          },
+          {
+            "command": "node dist/core/api-swagger/generateSwaggerDocs.js"
+          }
+        ]
+      }
+    }
+  }
+}

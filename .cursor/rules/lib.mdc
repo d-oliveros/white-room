@@ -1,0 +1,167 @@
+---
+description: Describes the patterns used in lib files
+globs: lib/**/src/**/*.ts
+---
+# Library Utility Patterns
+
+## File Structure
+
+- Utility libraries are organized in `/lib/*/src/` directories
+- Each library has a specific purpose (e.g., `address-helpers`, `validators`, `lambda-handler`)
+- Libraries export their functionality through an `index.ts` file
+- Related files are grouped by functionality within each library
+- Test files end with `.spec.ts`
+
+## Core Patterns
+
+### Library Organization
+
+- Each library should focus on a specific domain or functionality
+- Common library types:
+  - Util helpers (e.g., `address-helpers`, `scraper-helpers`)
+  - External service integrations, like Google Client or Algolia Client
+  - Shared utilities
+
+### Module Exports
+
+- Use named exports for individual utilities
+- Export all public functionality through `index.ts`
+- Group related functionality in separate files
+- Re-export types and interfaces as needed
+
+```typescript
+// index.ts
+export * from './helpers';
+export * from './constants';
+export * from './types';
+```
+
+### Function Design
+
+- Functions should be pure and focused
+- Use TypeScript for type safety
+- Handle edge cases and invalid inputs
+- Return consistent types (including null/undefined)
+- Use environment variables for configuration as needed
+- Document complex functions with JSDoc
+
+```typescript
+/**
+ * Normalizes a string by removing special characters and spaces
+ * @param input The string to normalize
+ * @returns The normalized string or null if input is invalid
+ */
+export function normalizeString(input: string | null | undefined): string | null {
+  if (!input || typeof input !== 'string') {
+    return null;
+  }
+  return input.replace(/[^A-Za-z0-9]/g, '').trim();
+}
+```
+
+### Error Handling
+
+- Define custom error classes for specific scenarios
+- Extend base error classes for consistency
+- Include helpful error messages and details
+- Support error chaining with `cause`
+
+```typescript
+export class CustomError extends BaseError {
+  constructor(message: string, details?: object) {
+    super({
+      name: 'CustomError',
+      message,
+      details,
+    });
+  }
+}
+```
+
+### Type Safety
+
+- Use strict TypeScript configuration
+- Define interfaces and types for all structures
+- Use generics for reusable utilities
+- Avoid `any` type
+- Use type guards for runtime checks
+
+```typescript
+interface DataType {
+  value: string;
+}
+
+function isDataType(value: unknown): value is DataType {
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    'value' in value &&
+    typeof value.value === 'string'
+  );
+}
+```
+
+### Testing
+
+- Test files should mirror the structure of source files
+- Test files should be placed within the non test files in /src
+- Test all edge cases and error conditions
+- Use descriptive test names
+- Group related tests with `describe`
+- Test async functions properly
+
+```typescript
+describe('utilityFunction', () => {
+  test('should handle valid input', () => {
+    expect(utilityFunction('valid')).toBe('expected');
+  });
+
+  test('should handle invalid input', () => {
+    expect(utilityFunction(null)).toBeNull();
+  });
+});
+```
+
+### Constants and Configuration
+
+- Define constants in separate .enums.ts files
+- Use enums for fixed sets of values
+- Support environment-based configuration
+- Use meaningful constant names
+
+```typescript
+export enum Status {
+  ACTIVE = 'ACTIVE',
+  INACTIVE = 'INACTIVE',
+}
+
+export const CONFIG = {
+  maxRetries: 3,
+  timeout: 5000,
+} as const;
+```
+
+### Best Practices
+
+- Keep functions small and focused
+- Use meaningful variable and function names
+- Document complex logic and algorithms
+- Handle all edge cases gracefully
+- Write comprehensive tests
+- Follow consistent naming conventions
+- Use TypeScript features appropriately
+- Maintain backward compatibility
+- Consider performance implications
+
+## Example Library Structure
+
+```
+lib/
+  my-utility/
+    src/
+      index.ts            # Main exports
+      myUtility.ts        # Helper functions
+      myUtility.errors.ts # Custom error classes
+      myUtility.enums.ts  # Enums
+      myUtility.spec.ts   # Tests for the helper functions
+```

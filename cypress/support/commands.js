@@ -1,2 +1,0 @@
-import './commandsUtils';
-import './commandsAuth';

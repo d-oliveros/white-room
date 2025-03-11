@@ -1,0 +1,93 @@
+---
+description: Describes the patterns used in zod schema files
+globs: **/*.schemas.ts
+---
+# Schema Rules
+
+## File Structure
+- Schema files should be located in `/core/domain/src/{domain}/` or `/core/api/src/{domain}/` directories
+- Files should be named in camelCase and end with `.schemas.ts`
+- Each domain entity should have its own schema file
+- Import Zod from 'zod' as the schema validation library
+- Import shared utilities and types from '@namespace/shared'
+- Import domain-specific enums and constants from local files
+
+## Core Patterns
+
+### Schema Definition
+- Use Zod's `z.object()` to define schemas
+- Export schemas as constants using PascalCase naming
+- Include TypeScript type exports using Zod's `z.infer<typeof SchemaName>` only for `/core/domain/src/{domain}/` files, but not for `/core/api/src/{domain}` files.
+- Follow a consistent naming pattern for different schema types:
+  - Base schema: `{Entity}Schema`
+  - Create schema: `{Entity}CreateSchema`
+  - Update schema: `{Entity}UpdateSchema`
+
+### Field Types and Validation
+- Use appropriate Zod validators for each field type:
+  - Strings: `z.string()`
+  - Numbers: `z.number()`
+  - Booleans: `z.boolean()`
+  - Dates: Use `isoStringParsed()` from shared utilities
+  - Enums: `z.nativeEnum(EnumType)`
+  - Arrays: `z.array(z.type())`
+  - Nullable fields: `.nullable()`
+  - Optional fields: `.optional()`
+- Add validation rules using Zod's chain methods:
+  - `.min()` for minimum length/value
+  - `.email()` for email validation
+  - `.url()` for URL validation
+  - `.positive()` for positive numbers
+  - Custom validation using `.refine()`
+
+### Schema Composition
+- Use Zod's composition methods to build related schemas:
+  - `.extend()` to add fields to an existing schema
+  - `.pick()` to select specific fields
+  - `.partial()` to make all fields optional
+  - `.omit()` to exclude specific fields
+
+### Schema File Organization
+- Domain-specific schemas belong in /core/domain/src/{domain}/**/{domain}.schemas.ts files
+- API Request/response schemas belong in /core/api/src/schemas/{domain}.schemas.ts files
+
+### Error Messages
+- Provide clear, descriptive error messages for validation rules
+- Use consistent error message formatting
+- Include field-specific context in error messages
+
+### Type Safety
+- Export TypeScript types for all schemas using `z.infer<>` for `/core/domain/src/{domain}/` files
+- Name types with `Dto` suffix: `{Entity}Dto`
+- Ensure all schema types are properly exported
+- Avoid using `any` or `unknown` types
+
+### Best Practices
+- Keep schemas focused and single-purpose
+- Use shared utilities for common validations (e.g., phone numbers)
+- Group related schemas in the same file
+- Document complex validation rules or business logic
+- Use consistent formatting and organization within schema files
+- Consider performance implications of complex validation rules
+
+## Example Schema Structure
+```typescript
+import { z } from 'zod';
+import { SharedUtility } from '@namespace/shared';
+import { DomainEnum } from './domain.enums';
+
+export const EntitySchema = z.object({
+  id: z.number().positive(),
+  name: z.string().min(1, 'Name is required'),
+  status: z.nativeEnum(DomainEnum),
+  optionalField: z.string().nullable().optional(),
+});
+
+export const EntityCreateSchema = EntitySchema.omit({ id: true });
+
+export const EntityUpdateSchema = EntityCreateSchema.partial();
+
+export type EntityDto = z.infer<typeof EntitySchema>;
+export type EntityCreateDto = z.infer<typeof EntityCreateSchema>;
+export type EntityUpdateDto = z.infer<typeof EntityUpdateSchema>;
+```

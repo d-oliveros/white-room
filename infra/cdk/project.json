@@ -1,0 +1,93 @@
+{
+  "name": "cdk",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "infra/cdk/bin",
+  "projectType": "application",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "platform": "node",
+        "outputPath": "dist/infra/cdk",
+        "format": ["cjs"],
+        "bundle": false,
+        "main": "infra/cdk/bin/main.ts",
+        "tsConfig": "infra/cdk/tsconfig.app.json",
+        "assets": [
+          "infra/cdk/cdk.json",
+          {
+            "glob": "**/*.zip",
+            "input": "infra/cdk/assets",
+            "output": "infra/cdk/assets"
+          }
+        ],
+        "generatePackageJson": true,
+        "esbuildOptions": {
+          "sourcemap": true,
+          "outExtension": {
+            ".js": ".js"
+          }
+        }
+      },
+      "configurations": {
+        "development": {},
+        "production": {
+          "esbuildOptions": {
+            "sourcemap": false,
+            "outExtension": {
+              ".js": ".js"
+            }
+          }
+        }
+      },
+      "dependsOn": [
+        {
+          "target": "npm-install",
+          "projects": ["api", "slack-message", "pdf-generator"]
+        },
+        {
+          "target": "build",
+          "projects": ["web"]
+        }
+      ]
+    },
+    "test": {
+      "executor": "nx:noop"
+    },
+    "deploy-cdk": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["build"],
+      "options": {
+        "command": "cdk deploy --all --concurrency 10 --require-approval never --ci",
+        "cwd": "dist/infra/cdk"
+      }
+    },
+    "synth-cdk": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["build"],
+      "options": {
+        "command": "cdk synth --all",
+        "cwd": "dist/infra/cdk"
+      }
+    },
+    "destroy-cdk": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["build"],
+      "options": {
+        "command": "cdk destroy --all --force",
+        "cwd": "dist/infra/cdk"
+      }
+    },
+    "bootstrap-cdk": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["build"],
+      "options": {
+        "command": "cdk bootstrap",
+        "cwd": "dist/infra/cdk"
+      }
+    }
+  }
+}
