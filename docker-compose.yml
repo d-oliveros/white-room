@@ -5,10 +5,11 @@ services:
     shm_size: 2g
     restart: always
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: namespace_dev
+      POSTGRES_USER: ${CORE_DB_USER}
+      POSTGRES_PASSWORD: ${CORE_DB_PASSWORD}
+      POSTGRES_DB: ${CORE_DB_NAME}
     ports:
-      - 5434:5432
+      - ${CORE_DB_PORT}:5432
     volumes:
       - ./.docker-db:/docker-entrypoint-initdb.d
+#
