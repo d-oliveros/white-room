@@ -1,4 +1,4 @@
-# Namespace Monorepo
+# White Room Monorepo
 
 ## Requirements
 
@@ -127,8 +127,8 @@ nx generate @nx/node:app lambdas/my-lambda-function
 `/lib` packages can be required from other packages in the monorepo. You can import them using path aliases, for example:
 
 ```
-import { myFunction } from '@namespace/util';
-import { normalizeAddress } from '@namespace/address-helpers';
+import { myFunction } from '@whiteroom/util';
+import { normalizeAddress } from '@whiteroom/address-helpers';
 ```
 
 When generating libs, a path alias is created automatically in `tsconfig.base.json`.
