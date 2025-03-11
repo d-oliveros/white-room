@@ -1,0 +1,89 @@
+{
+  "name": "migrations",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "infra/migrations/migrations",
+  "projectType": "application",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "platform": "node",
+        "outputPath": "dist/infra/migrations",
+        "format": ["cjs"],
+        "bundle": false,
+        "main": "infra/migrations/src/main.ts",
+        "tsConfig": "infra/migrations/tsconfig.app.json",
+        "assets": [
+          {
+            "glob": "**/*.js",
+            "input": "infra/migrations/list",
+            "output": "infra/migrations/list"
+          }
+        ],
+        "generatePackageJson": true,
+        "esbuildConfig": "infra/migrations/esbuild.config.js"
+      },
+      "configurations": {
+        "development": {},
+        "production": {
+          "esbuildConfig": "infra/migrations/esbuild.config.js"
+        }
+      }
+    },
+    "test": {
+      "executor": "nx:noop"
+    },
+    "run": {
+      "executor": "@nx/js:node",
+      "options": {
+        "buildTarget": "migrations:build",
+        "args": ["run"],
+        "watch": false
+      }
+    },
+    "generate": {
+      "executor": "@nx/js:node",
+      "options": {
+        "buildTarget": "migrations:build",
+        "args": ["generate"],
+        "watch": false
+      }
+    },
+    "seed": {
+      "executor": "@nx/js:node",
+      "options": {
+        "buildTarget": "migrations:build",
+        "args": ["seed"],
+        "watch": false
+      },
+      "configurations": {
+        "admin": {
+          "args": ["seed", "--seed=Admin"]
+        }
+      }
+    },
+    "reset-db": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "docker compose down namespace-postgres",
+          "docker compose up -d namespace-postgres",
+          "until docker compose exec namespace-postgres pg_isready -U postgres; do sleep 1; done",
+          "echo 'Database is ready'"
+        ],
+        "parallel": false
+      }
+    },
+    "reset-data": {
+      "executor": "@nx/js:node",
+      "options": {
+        "buildTarget": "migrations:build",
+        "args": ["reset-data"],
+        "watch": false
+      }
+    }
+  }
+}

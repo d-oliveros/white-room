@@ -1,0 +1,9 @@
+{
+  "name": "google-client",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "lib/google-client/src",
+  "projectType": "library",
+  "tags": [],
+  "// targets": "to see all targets run: nx show project google-client --web",
+  "targets": {}
+}

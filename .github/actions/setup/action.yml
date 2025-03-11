@@ -1,0 +1,59 @@
+name: Setup Environment
+description: 'Sets up the environment with Node.js, Python, and AWS credentials'
+
+inputs:
+  aws-access-key:
+    description: 'AWS access key ID'
+    required: true
+    secret: true
+  aws-secret-key:
+    description: 'AWS secret access key'
+    required: true
+    secret: true
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '22.9.0'
+
+    - name: Cache Node.js modules
+      id: cache-node-modules
+      uses: actions/cache@v4
+      with:
+        path: node_modules
+        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-node-
+
+    - name: Install dependencies (if needed)
+      if: ${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
+      shell: bash
+      run: npm ci
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+
+    - name: Cache Poetry installation
+      uses: actions/cache@v4
+      with:
+        path: ~/.local/bin/poetry
+        key: ${{ runner.os }}-poetry-${{ hashFiles('**/poetry.lock') }}-1.7.1
+
+    - name: Install Poetry
+      if: steps.cache-poetry-installation.outputs.cache-hit != 'true'
+      shell: bash
+      run: |
+        curl -sSL https://install.python-poetry.org | python3 -
+        echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ inputs.aws-access-key }}
+        aws-secret-access-key: ${{ inputs.aws-secret-key }}
+        aws-region: us-east-1

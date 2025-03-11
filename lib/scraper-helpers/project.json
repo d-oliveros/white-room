@@ -1,0 +1,13 @@
+{
+  "name": "scraper-helpers",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "lib/scraper-helpers/src",
+  "projectType": "library",
+  "tags": [],
+  "// targets": "to see all targets run: nx show project scraper-helpers --web",
+  "targets": {
+    "test": {
+      "executor": "nx:noop"
+    }
+  }
+}

@@ -1,0 +1,47 @@
+/* Custom dropdown styles */
+.custom-dropdown-container {
+    position: relative;
+}
+
+.custom-dropdown-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+}
+
+.custom-dropdown-menu {
+    position: absolute;
+    right: 0;
+    top: calc(100% - 5px);
+    /* Move up by 5px to reduce the gap */
+    z-index: 50;
+    min-width: 220px;
+    background-color: white;
+    border-radius: 0.5rem;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    margin-top: 0.5rem;
+    overflow: hidden;
+}
+
+/* Create an invisible bridge between the avatar and dropdown menu */
+.custom-dropdown-menu::before {
+    content: '';
+    position: absolute;
+    top: -10px;
+    /* Height of the invisible bridge */
+    left: 0;
+    right: 0;
+    height: 10px;
+    background-color: transparent;
+    /* Invisible */
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+    .custom-dropdown-menu {
+        background-color: #1f2937;
+        border-color: #374151;
+    }
+}

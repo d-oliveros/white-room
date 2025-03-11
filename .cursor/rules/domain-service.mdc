@@ -1,0 +1,226 @@
+---
+description: Describes the patterns used in domain service files
+globs: domain/src/**/*.service.ts
+alwaysApply: false
+---
+# Domain Service Patterns
+
+## File Structure
+- Services are organized in `/core/domain/src/{domain}/` directories
+- Each service handles business logic for a specific domain entity
+- File names should be in camelCase and end with `.service.ts` (e.g., `user.service.ts`)
+- Related files:
+  - `.model.ts` - Domain model
+  - `.repository.ts` - Data access
+  - `.schemas.ts` - DTOs and validation
+  - `.errors.ts` - Domain-specific errors
+  - `.events.ts` - Domain events
+  - `.handlers.ts` - Event handlers
+
+## Core Patterns
+
+### Service Class
+- Services are named with PascalCase and end with `Service` (e.g., `UserService`)
+- Services typically take repositories and other services as dependencies
+- Dependencies are injected through constructor
+- Services are instantiated by `DomainModule` in [domain.module.ts](mdc:NAMESPACE/NAMESPACE/core/domain/src/domain.module.ts)
+
+```typescript
+export class UserService {
+  constructor(private userRepository: UserRepository) {}
+}
+```
+
+### Dependency Injection
+- Services follow the dependency injection pattern
+- Dependencies are declared in constructor parameters
+- Dependencies are typically other services or repositories
+- Services are wired up in `DomainServices`
+
+### Method Patterns
+- Methods are async by default, unless no async operations are needed
+- Methods use descriptive names that reflect business operations
+- Common method types:
+  - CRUD operations (create, read, update, delete)
+  - Domain-specific operations
+  - Query operations
+  - Business logic operations
+
+```typescript
+async getById(id: number): Promise<User> {
+  const user = await this.userRepository.findOne({ where: { id } });
+  if (!user) throw new UserNotFoundError();
+  return user;
+}
+```
+
+### Error Handling
+- Services throw domain-specific errors
+- All methods starting with "get" like "getById" throw errors.
+- Errors should be defined in corresponding `.errors.ts` files
+- Common error patterns:
+  - NotFoundError
+  - ValidationError
+  - BusinessRuleError
+  - AlreadyExistsError
+
+### Data Transfer Objects (DTOs)
+- Input/output data is defined using DTOs
+- DTOs are validated using Zod schemas
+- DTOs are imported from `.schemas.ts` files
+- DTOs follow naming convention:
+  - Input DTOs: `CreateDto`, `UpdateDto`, `SearchDto`
+  - Output DTOs: `ResponseDto`, `SummaryDto`
+
+### Business Logic
+- Services encapsulate business logic
+- Business rules are enforced at the service layer
+- Complex operations are broken down into smaller methods
+- Services coordinate between multiple repositories/models
+
+### Event Handling
+- Services can emit domain events originating from the domain models
+- Events are handled by dedicated handlers
+- Event handlers are registered in `ServiceFactory`
+- Events follow the publish-subscribe pattern
+
+### Type Safety
+- Services use TypeScript strict mode
+- Method parameters and return types are explicitly typed
+- Generic types are used where appropriate
+- No `any` types allowed
+
+### Documentation
+- Services include JSDoc comments for public methods
+- Comments describe:
+  - Method purpose
+  - Parameters
+  - Return values
+  - Thrown errors
+  - Business rules
+
+```typescript
+/**
+ * Updates a user's roles.
+ * @param {number} userId - The ID of the user to update.
+ * @param {UserRole[]} roles - The new roles to apply.
+ * @throws {UserNotFoundError} If the user is not found.
+ * @returns {Promise<User>} The updated user.
+ */
+```
+
+### Testing
+- Services are designed to be testable
+- Business logic is isolated from infrastructure concerns
+- Each service has corresponding test files in `/test` directory
+- When updating or adding new service methods, also add or update the corresponding test files for the service in the `/core/domain/test` folder.
+
+# Examples
+```typescript
+// asset.service.ts
+import type { FileDto } from '@namespace/shared';
+import type { AddressPartialDto } from '@namespace/address-helpers';
+import type { IEventBus } from '@domain/lib/EventBus';
+import type { AddressService } from '../address/address.service';
+import type { ProjectRepository } from './project/project.repository';
+import type { AssetUpdateParams } from './asset/asset.model';
+
+import { AssetStatus } from '@namespace/shared';
+import { ProjectStatus } from './project/project.enums';
+import { ProjectNotFoundError } from './project/project.errors';
+import { Project } from './project/project.model';
+
+export class AssetService {
+  constructor(
+    private readonly addressService: AddressService,
+    private readonly projectRepository: ProjectRepository,
+    private readonly eventBus: IEventBus,
+  ) {}
+
+  async getProject(projectId: string): Promise<Project> {
+    const project = await this.projectRepository.findOne({ where: { id: projectId } });
+    if (!project) {
+      throw new ProjectNotFoundError();
+    }
+    return project;
+  }
+  async getProjectByAssetId(assetId: string): Promise<Project> {
+    const project = await this.projectRepository.findProjectByAssetId(assetId);
+    if (!project) {
+      throw new ProjectNotFoundError();
+    }
+    return project;
+  }
+  async getProjectByFileId(fileId: string): Promise<Project> {
+    const project = await this.projectRepository.findProjectByFileId(fileId);
+    if (!project) {
+      throw new ProjectNotFoundError();
+    }
+    return project;
+  }
+
+  async findProjects(): Promise<Project[]> {
+    return this.projectRepository.findProjects();
+  }
+
+  async createProject(
+    userId: string,
+    addressFields: AddressPartialDto,
+    fileNumber: string,
+  ): Promise<Project> {
+    const address = await this.addressService.getOrCreate(addressFields);
+
+    const project = Project.create(userId, address, fileNumber);
+
+    await this.projectRepository.save(project);
+    this.eventBus.publish(project.domainEvents);
+
+    return this.getProject(project.id);
+  }
+
+  async deleteProject(projectId: string): Promise<void> {
+    const project = await this.getProject(projectId);
+    project.delete();
+    await this.projectRepository.save(project);
+    this.eventBus.publish(project.domainEvents);
+  }
+
+  async updateAsset(assetId: string, updates: AssetUpdateParams): Promise<void> {
+    const project = await this.getProjectByAssetId(assetId);
+    project.updateAsset(assetId, updates);
+    await this.projectRepository.save(project);
+  }
+
+  async deleteAsset(assetId: string): Promise<void> {
+    const project = await this.getProjectByAssetId(assetId);
+    project.deleteAsset(assetId);
+    await this.projectRepository.save(project);
+  }
+
+  async deleteAssetFile(fileId: string): Promise<void> {
+    const project = await this.getProjectByFileId(fileId);
+    project.deleteAssetFile(fileId);
+    await this.projectRepository.save(project);
+  }
+
+  async handleAssetGenerationJobCompleted(
+    assetId: string,
+    files: FileDto[],
+    errorMessage?: string | null,
+  ) {
+    const project = await this.getProjectByAssetId(assetId);
+    if (project.status !== ProjectStatus.Active) return;
+
+    const asset = project.getAsset(assetId);
+    if (asset.status !== AssetStatus.Generating) return;
+
+    if (errorMessage) {
+      asset.markAsError(errorMessage);
+    } else {
+      asset.markAsGenerated(files);
+    }
+
+    await this.projectRepository.save(project);
+  }
+}
+```

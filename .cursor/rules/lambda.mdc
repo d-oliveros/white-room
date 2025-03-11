@@ -1,0 +1,181 @@
+---
+description: Describes the patterns used in lambda function files
+globs: lambdas/**/src/**/*.ts
+---
+# Lambda Function Patterns
+
+## File Structure
+
+- Lambda functions are organized in `/lambdas/` directory
+- Each Lambda has its own directory with a descriptive name
+- Standard files:
+  - `src/main.ts` - Main handler
+  - `src/*.spec.ts` - Test files
+
+## Core Patterns
+
+### Lambda Handler
+
+- Use `lambdaHandler` from `@namespace/lambda-handler`
+- Type handler with input and output types
+- Keep handler functions focused and small
+- The `main.ts` exports the lambda handler, which usually imports and use local lib functions
+- The return of a lambdaHandler should be the result of the local lib functions or else, but do not contain HTTP or Lambda-specific data
+- Input is parsed with Zod
+- Handle errors appropriately
+
+```typescript
+import { lambdaHandler } from '@namespace/lambda-handler';
+
+type Input = {
+  param1: string;
+  param2: number;
+};
+
+type Output = {
+  result: string;
+};
+
+export const handler = lambdaHandler<Input, Output>(async (event) => {
+  // Handler implementation
+  return { someData: true, any: any };
+});
+```
+
+### Event Types
+
+- Define clear input/output types
+- Use Zod schemas for validation
+
+```typescript
+// mylambda.schemas.ts
+import { z } from 'zod';
+
+const InputSchema = z.object({
+  param1: z.string(),
+  param2: z.number(),
+});
+
+type Input = z.infer<typeof InputSchema>;
+```
+
+```typescript
+// main.ts
+import { InputSchema } from './myLambda.schemas';
+import { doSomeLogic } from './myLambda';
+
+export const handler = lambdaHandler<Input, Output>(async (event) => {
+  const payload = zod.parse(event);
+  const result = await doSomeLogic(payload);
+  return result;
+});
+```
+
+### Error Handling
+
+- Define custom error classes
+- Use descriptive error messages
+- Include error details and context
+- Log errors appropriately
+
+```typescript
+export class CustomError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'CustomError';
+  }
+}
+```
+
+### Environment Configuration
+
+- Use environment variables for configuration as needed
+- Validate required environment variables
+- Provide clear error messages for missing config
+- Use TypeScript for type safety
+
+```typescript
+function validateConfig(): Config {
+  const { REQUIRED_VAR } = process.env;
+  if (!REQUIRED_VAR) {
+    throw new Error('REQUIRED_VAR is not set');
+  }
+  return { requiredVar: REQUIRED_VAR };
+}
+```
+
+### Testing
+
+- Test handler with different event types
+- Mock external services
+- Test error conditions
+- Use Jest for testing
+- Include integration tests (marked as .skip by default)
+
+```typescript
+describe('handler', () => {
+  test('should handle valid input', async () => {
+    const result = await handler(validInput);
+    expect(result).toBeDefined();
+  });
+
+  test('should handle errors', async () => {
+    await expect(handler(invalidInput)).rejects.toThrow();
+  });
+});
+```
+
+### Logging
+
+- Use structured logging
+- Include relevant context
+- Log appropriate levels (info/error/debug)
+- Use `@namespace/logger`
+
+```typescript
+import logger from '@namespace/logger';
+
+logger.info('A log message');
+logger.error({ error }, 'Error occurred', { error });
+```
+
+### Best Practices
+
+- Keep functions small and focused
+- Use TypeScript for type safety
+- Validate input/output
+- Handle all error cases
+- Document complex logic
+- Use meaningful variable names
+- Consider cold start impact
+
+## Example Lambda Structure
+
+```
+lambdas/
+  my-lambda/
+    src/
+      main.ts            # Main lambda handler
+      myLambda.ts         # Logic/helpers for the main lambda handler
+      myLambda.schemas.ts # Input/output schemas
+      myLambda.errors.ts  # Custom errors
+      myLambda.spec.ts    # Test files
+```
+
+# Examples
+
+```typescript
+// slack-message/src/main.ts
+import type { SlackMessage } from './slackClient.schemas';
+import { lambdaHandler } from '@namespace/lambda-handler';
+import { postSlackMessage } from './slackClient';
+
+/**
+ * This Lambda handler is responsible for sending messages to Slack.
+ */
+export const handler = lambdaHandler<SlackMessage, null>(async (slackMessage) => {
+  await postSlackMessage(slackMessage);
+  return null;
+});
+
+```

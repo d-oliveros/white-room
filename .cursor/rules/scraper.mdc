@@ -1,0 +1,143 @@
+---
+description: Describes the patterns used in scraper files
+globs: scrapers/**/src/**/*.ts
+---
+# Scraper Patterns
+
+## File Structure
+- Scrapers are organized in `/lambdas/scrapers/` directory
+- Each scraper has its own directory named after the service
+- Scrapers are also Lambda functions, and follow the same rules as Lambda functions defined in [lambda.mdc](mdc:NAMESPACE/NAMESPACE/.cursor/rules/lambda.mdc)
+- Standard files:
+  - `src/index.ts` - Main handler
+  - `src/lib/` - Shared utilities and types
+  - `src/flows/` - Different scraping flows
+  - `src/helpers/` - Helper functions
+  - `src/flows/*.spec.ts` - E2E scraping test files
+  - `src/*.errors.ts` - Error classes
+
+## Core Patterns
+
+### Flow Organization
+- Separate different scraping flows into directories
+- Each flow has its own types and error handling
+- Common flow types:
+  - Data retrieval (e.g., get plans)
+  - Form submission (e.g., place order)
+  - Authentication flows
+
+```typescript
+export default async function getInternetPlans(
+  params: GetInternetPlansParams
+): Promise<GetPlansOutput> {
+  // Flow implementation
+}
+```
+
+### Browser Automation
+- Use Playwright for browser automation
+- Handle page navigation and timeouts
+- Take screenshots for debugging
+- Use selectors effectively
+
+```typescript
+async function fillForm(page: Page): Promise<void> {
+  await page.fill('input[name="field"]', value);
+  await page.click('button[type="submit"]');
+  await page.waitForNavigation();
+}
+```
+
+### Error Handling
+- Define custom error classes for specific scenarios
+- Include helpful error messages and details
+- Handle different error types appropriately
+
+```typescript
+export class PlanNotFoundError extends NamespaceError {
+  constructor(message: string) {
+    super({
+      name: 'PlanNotFound',
+      message,
+      statusCode: 400,
+    });
+  }
+}
+```
+
+### Data Extraction
+- Use appropriate selectors for data extraction
+- Handle different data formats
+- Validate extracted data
+- Transform data to required format
+
+```typescript
+async function extractData(page: Page): Promise<Data> {
+  return page.evaluate(() => {
+    // Data extraction logic
+  });
+}
+```
+
+### Testing
+- Test different scraping scenarios
+- Mock external services
+- Use descriptive test names
+- Include integration tests (marked as .skip)
+- Handle test timeouts
+
+```typescript
+describe('Scraper', () => {
+  test('should extract data', async () => {
+    const result = await scrapeData(params);
+    expect(result).toMatchObject(expected);
+  });
+});
+```
+
+### Environment Configuration
+- Use environment variables for configuration as needed
+- Handle required credentials
+- Support different environments
+- Validate configuration
+
+```typescript
+function validateConfig(): Config {
+  const { REQUIRED_VAR } = process.env;
+  if (!REQUIRED_VAR) {
+    throw new Error('REQUIRED_VAR is not set');
+  }
+  return { requiredVar: REQUIRED_VAR };
+}
+```
+
+### Best Practices
+- Keep scraping functions focused
+- Use meaningful selectors
+- Document complex flows
+- Handle edge cases
+- Take screenshots for debugging
+- Clean up resources properly
+
+## Example Scraper Structure
+
+```
+lambdas/
+  scrapers/
+    my-scraper/
+      src/
+        index.ts             # Main handler
+        lib/
+          schemas.ts         # Input/output schemas
+          enums.ts           # Constants and enums
+          account.ts         # Account management
+        flows/
+          get-data/          # Specific flow
+            getData.ts
+            getData.steps.ts
+            getData.errors.ts
+        helpers/
+          login.ts           # Helper functions
+          screenshot.ts
+        *.spec.ts            # Test files
+```

@@ -1,0 +1,408 @@
+---
+description: Describes the patterns used in model factory files
+globs: domain/test/factories/*.factory.ts
+---
+# Domain Model Factory Patterns
+
+## File Structure
+- Factories are organized in `/core/domain/test/factories/` directory
+- Each model has a corresponding factory file
+- File names should be in camelCase and end with `.factory.ts` (e.g., `user.factory.ts`)
+- All factories are exported from an `index.ts` file in `/core/domain/test/factories/index.ts`
+
+## Core Patterns
+
+### Factory Class
+- Factories extend `Factory<T>` from `@jorgebodega/typeorm-factory`
+- Each factory is specific to one entity type
+- Factories take a `DataSource` in their constructor
+- Basic pattern:
+
+```typescript
+export class EntityFactory extends Factory<Entity> {
+  protected entity = Entity;
+  protected dataSource: DataSource;
+
+  constructor(dataSource: DataSource) {
+    super();
+    this.dataSource = dataSource;
+  }
+}
+```
+
+### Data Generation
+- Use `faker` from `@faker-js/faker` for generating test data
+- Define `attrs()` method to specify default attributes
+- Use appropriate faker methods for different data types
+- Handle relationships using `SingleSubfactory`
+- Use `EagerInstanceAttribute` for computed values
+
+```typescript
+protected attrs(): FactorizedAttrs<Entity> {
+  return {
+    name: faker.company.name(),
+    email: faker.internet.email(),
+    createdAt: faker.date.past(),
+    // Relationship using SingleSubfactory
+    relatedEntity: new SingleSubfactory(new RelatedEntityFactory(this.dataSource)),
+    // Computed value using EagerInstanceAttribute
+    computedField: new EagerInstanceAttribute((instance) =>
+      compute(instance.someValue)
+    ),
+  };
+}
+```
+
+### Relationship Handling
+- Use `SingleSubfactory` for one-to-one/many-to-one relationships
+- Initialize related factories with the same dataSource
+- Handle circular dependencies appropriately
+- Support nested factory creation
+
+### Custom Factory Methods
+- Provide methods for common entity states
+- Follow naming convention: `create{State}Entity`
+- Allow overrides through method parameters
+- Handle complex setup scenarios
+
+```typescript
+public async createActiveEntity(attrs: Partial<Entity> = {}): Promise<Entity> {
+  return this.create({
+    status: EntityStatus.ACTIVE,
+    ...attrs
+  });
+}
+```
+
+### Type Safety
+- Use TypeScript types for all parameters and returns
+- Define DTOs for complex creation parameters
+- Use `FactorizedAttrs<T>` type for attributes
+- Avoid using `any` types
+
+### Best Practices
+- Keep factories focused on single entity
+- Use meaningful fake data
+- Handle required relationships
+- Support common test scenarios
+- Follow consistent patterns across factories
+- Document complex factory methods
+- Use appropriate faker methods for each field type
+- Handle computed fields and relationships properly
+
+## Example Factory Structure
+
+```typescript
+import type { DataSource } from 'typeorm';
+import type { FactorizedAttrs } from '@jorgebodega/typeorm-factory';
+
+import { Factory, SingleSubfactory, EagerInstanceAttribute } from '@jorgebodega/typeorm-factory';
+import { faker } from '@faker-js/faker';
+import { Entity } from './entity.model';
+import { EntityStatus } from './entity.constants';
+
+export class EntityFactory extends Factory<Entity> {
+  protected entity = Entity;
+  protected dataSource: DataSource;
+
+  constructor(dataSource: DataSource) {
+    super();
+    this.dataSource = dataSource;
+  }
+
+  protected attrs(): FactorizedAttrs<Entity> {
+    return {
+      name: faker.company.name(),
+      status: EntityStatus.ACTIVE,
+      createdAt: faker.date.past(),
+      relatedEntity: new SingleSubfactory(
+        new RelatedEntityFactory(this.dataSource)
+      ),
+      computedField: new EagerInstanceAttribute((instance) =>
+        instance.someValue ? 'computed' : 'default'
+      ),
+    };
+  }
+
+  public async createCustomEntity(
+    attrs: Partial<Entity> = {}
+  ): Promise<Entity> {
+    return this.create({
+      status: EntityStatus.CUSTOM,
+      ...attrs,
+    });
+  }
+}
+```
+
+# Domain Model Factory Documentation for @jorgebodega/typeorm-factory
+
+## `make` & `makeMany`
+
+Make and makeMany executes the factory functions and return a new instance of the given entity. The instance is filled with the generated values from the factory function, but not saved in the database.
+
+- **overrideParams** - Override some of the attributes of the entity.
+
+```ts
+make(overrideParams: Partial<FactorizedAttrs<T>> = {}): Promise<T>
+makeMany(amount: number, overrideParams: Partial<FactorizedAttrs<T>> = {}): Promise<T[]>
+```
+
+```ts
+new UserFactory().make()
+new UserFactory().makeMany(10)
+
+// override the email
+new UserFactory().make({ email: 'other@mail.com' })
+new UserFactory().makeMany(10, { email: 'other@mail.com' })
+```
+
+## `create` & `createMany`
+
+the create and createMany method is similar to the make and makeMany method, but at the end the created entity instance gets persisted in the database using TypeORM entity manager.
+
+```ts
+create(overrideParams: Partial<FactorizedAttrs<T>> = {}, saveOptions?: SaveOptions): Promise<T>
+createMany(amount: number, overrideParams: Partial<FactorizedAttrs<T>> = {}, saveOptions?: SaveOptions): Promise<T[]>
+```
+
+```ts
+new UserFactory().create()
+new UserFactory().createMany(10)
+
+// override the email
+new UserFactory().create({ email: 'other@mail.com' })
+new UserFactory().createMany(10, { email: 'other@mail.com' })
+
+// using save options
+new UserFactory().create({ email: 'other@mail.com' }, { listeners: false })
+new UserFactory().createMany(10, { email: 'other@mail.com' }, { listeners: false })
+```
+
+## `attrs`
+
+Attributes objects are superset from the original entity attributes.
+
+```ts
+protected attrs: FactorizedAttrs<User> = {
+  name: faker.person.firstName(),
+  lastName: async () => faker.person.lastName(),
+  email: new InstanceAttribute((instance) =>
+    [instance.name.toLowerCase(), instance.lastName.toLowerCase(), '@email.com'].join(''),
+  ),
+  country: new Subfactory(CountryFactory),
+}
+```
+
+Those factorized attributes resolves to the value of the original attribute, and could be one of the following types:
+
+- Simple Value
+- Function
+- InstanceAttribute
+- Subfactory
+
+### Simple value
+
+Nothing special, just a value with same type.
+
+```ts
+protected attrs(): FactorizedAttrs<User> = {
+  return {
+    name: faker.person.firstName(),
+  }
+}
+```
+
+### Function
+
+Function that could be sync or async, and return a value of the same type.
+
+```ts
+protected attrs: FactorizedAttrs<User> = {
+  return {
+    lastName: async () => faker.person.lastName(),
+  }
+}
+```
+
+### InstanceAttribute
+
+Class with a function that receive the current instance and returns a value of the same type. It is ideal for attributes that could depend on some others to be computed.
+
+```ts
+protected attrs: FactorizedAttrs<User> = {
+  return {
+    ...,
+    email: new EagerInstanceAttribute((instance) =>
+      [instance.name.toLowerCase(), instance.lastName.toLowerCase(), '@email.com'].join(''),
+    ),
+  }
+}
+```
+
+In this simple case, if `name` or `lastName` override the value in any way, the `email` attribute will be affected too.
+
+There are two types of `InstanceAttribute`:
+
+- `EagerInstanceAttribute`: Executed after creation of the entity and before persisting it, so database id will be undefined.
+- `LazyInstanceAttribute`: Executed after creation of the entity and after persisting it.
+
+Just remember that, if you use `make` or `makeMany`, the only difference between `EagerInstanceAttribute` and `LazyInstanceAttribute` is that `LazyInstanceAttribute` will be processed the last.
+
+### Subfactory
+
+Subfactories are just a wrapper of another factory. This could help to avoid explicit operations that could lead to unexpected results over that factory, like
+
+```ts
+protected attrs: FactorizedAttrs<User> = {
+  country: async () => new CountryFactory(this.dataSource).create({
+    name: faker.address.country(),
+  }),
+}
+```
+
+instead of the same with
+
+```ts
+protected attrs: FactorizedAttrs<User> = {
+  country: new SingleSubfactory(new CountryFactory(this.dataSource), {
+    name: faker.address.country(),
+  }),
+}
+```
+
+Subfactory just execute the same kind of operation (`make` or `create`) over the factory. There are two types of `Subfactory`:
+
+- `SingleSubfactory`: Execute `make` or `create` to return a single element.
+- `CollectionSubfactory`: Execute `makeMany` or `createMany` to return an array of elements.
+
+A `CollectionSubfactory` is equivalent now to an array of `SingleSubfactory`, so this two statements produce the same result.
+
+```ts
+protected attrs: FactorizedAttrs<User> = {
+  pets: new CollectionSubfactory(PetFactory, 2, ...)
+  // or
+  pets: [
+    new SingleSubfactory(PetFactory, ...),
+    new SingleSubfactory(PetFactory, ...),
+  ],
+}
+```
+
+# Examples
+
+```typescript
+// listing.factory.ts
+import type { DataSource } from 'typeorm';
+import type { FactorizedAttrs } from '@jorgebodega/typeorm-factory';
+
+import { faker } from '@faker-js/faker';
+import { Factory, SingleSubfactory } from '@jorgebodega/typeorm-factory';
+import { Listing } from '@domain/listing/listing.model';
+import { ListingSource, ListingStatus } from '@domain/listing/listing.constants';
+import { AddressFactory } from './address.factory';
+import { PartnerFactory } from './partner.factory';
+
+export type CreateOverrideParams = {
+  addressId: number;
+  status?: ListingStatus;
+  source?: ListingSource;
+};
+export class ListingFactory extends Factory<Listing> {
+  protected entity = Listing;
+  protected dataSource: DataSource;
+
+  constructor(dataSource: DataSource) {
+    super();
+    this.dataSource = dataSource;
+  }
+
+  protected attrs(): FactorizedAttrs<Listing> {
+    return {
+      partner: new SingleSubfactory(new PartnerFactory(this.dataSource)),
+      address: new SingleSubfactory(new AddressFactory(this.dataSource)),
+      status: faker.helpers.arrayElement(Object.values(ListingStatus)),
+      source: ListingSource.PARTNER,
+    };
+  }
+
+  public createListedListing(overrides: Partial<Listing> = {}): Promise<Listing> {
+    return super.create({ ...overrides, status: ListingStatus.LISTED });
+  }
+}
+```
+
+```typescript
+// asset.factory.ts
+import type { DataSource } from 'typeorm';
+import type { FactorizedAttrs } from '@jorgebodega/typeorm-factory';
+import {
+  Factory,
+  SingleSubfactory,
+  EagerInstanceAttribute,
+  LazyInstanceAttribute,
+} from '@jorgebodega/typeorm-factory';
+import dayjs from 'dayjs';
+import { faker } from '@faker-js/faker';
+import { AssetType, AssetStatus } from '@namespace/shared';
+import { ProjectStatus } from '@domain/assets/project/project.enums';
+import { Asset } from '@domain/assets/asset/asset.model';
+import { AssetFileStatus } from '@domain/assets/assetFile/assetFile.enums';
+import { generateSnowflakeId } from '@domain/lib/snowflake';
+import { ProjectFactory } from './project.factory';
+import { AssetFileFactory } from './assetFile.factory';
+
+export class AssetFactory extends Factory<Asset> {
+  protected entity = Asset;
+  protected dataSource: DataSource;
+
+  constructor(dataSource: DataSource) {
+    super();
+    this.dataSource = dataSource;
+  }
+
+  protected attrs(): FactorizedAttrs<Asset> {
+    return {
+      id: generateSnowflakeId(),
+      project: new SingleSubfactory(new ProjectFactory(this.dataSource), {
+        status: ProjectStatus.Active,
+      }),
+      type: faker.helpers.arrayElement(Object.values(AssetType)),
+      status: faker.helpers.arrayElement(Object.values(AssetStatus)),
+      createdAt: faker.date.between({
+        from: dayjs().subtract(1, 'days').toDate(),
+        to: dayjs().toDate(),
+      }),
+      deletedAt: new EagerInstanceAttribute((asset) =>
+        asset.status === AssetStatus.Deleted
+          ? dayjs(asset.createdAt).add(5, 'minutes').toDate()
+          : null,
+      ),
+      files: new LazyInstanceAttribute((asset) => {
+        if (asset.status === AssetStatus.Generating) return [];
+
+        return [
+          new SingleSubfactory(new AssetFileFactory(this.dataSource), {
+            asset,
+            status:
+              asset.status === AssetStatus.Deleted
+                ? AssetFileStatus.Deleted
+                : AssetFileStatus.Active,
+          }),
+          new SingleSubfactory(new AssetFileFactory(this.dataSource), {
+            asset,
+            status:
+              asset.status === AssetStatus.Deleted
+                ? AssetFileStatus.Deleted
+                : AssetFileStatus.Active,
+          }),
+          new SingleSubfactory(new AssetFileFactory(this.dataSource), {
+            asset,
+            status: AssetFileStatus.Deleted,
+          }),
+        ];
+      }),
+    };
+  }
+}
+```

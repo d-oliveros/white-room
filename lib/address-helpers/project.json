@@ -1,0 +1,9 @@
+{
+  "name": "address-helpers",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "lib/address-helpers/src",
+  "projectType": "library",
+  "tags": [],
+  "// targets": "to see all targets run: nx show project address-helpers --web",
+  "targets": {}
+}

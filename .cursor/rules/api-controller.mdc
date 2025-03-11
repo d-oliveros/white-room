@@ -1,0 +1,257 @@
+---
+description: Describes the patterns used in the Fastify API controller files.
+globs: *.controller.ts
+alwaysApply: false
+---
+# API Controller Patterns
+
+## File Structure
+- Controllers are organized in `/core/api/src/controllers/`
+- Each controller is responsible for a specific domain entity (e.g., `address.controller.ts`, `user.controller.ts`)
+- File names should be in camelCase and end with `.controller.ts` (e.g., `assetFile.controller.ts`)
+
+## Core Patterns
+
+### Module Export
+- Controllers are exported using `fastify-plugin` (fp)
+- Each controller exports a default function that takes a FastifyInstance parameter
+
+```typescript
+export default fp((fastify: FastifyInstance) => {
+  // Route definitions
+});
+```
+
+### Route Definition
+- Routes are defined using `fastify.route()`
+- Each route has a configuration object with:
+  - `method`: HTTP method (GET, POST, PUT, DELETE)
+  - `url`: Route path with parameters using `:param` syntax
+  - `schema`: Request/response validation schemas
+  - `handler`: Async function handling the request
+
+```typescript
+fastify.route({
+  method: 'GET',
+  url: '/resource/:id',
+  schema: {
+    params: zodToJsonSchema(ParamsSchema),
+    response: {
+      200: zodToJsonSchema(ResponseSchema),
+      404: zodToJsonSchema(ApiResponseErrorSchema)
+    }
+  },
+  handler: async function(request, reply) {
+    // Handler implementation
+  }
+});
+```
+
+### Request Typing
+- Request parameters are typed using TypeScript generics
+- Types are imported from schema files
+- Common parameter types: Body, Params, Querystring
+- Request parameter types are never specified in the handler function, they are inferred from the zod schemas, either in the handler function or in a schemas file
+
+```typescript
+handler: async function(
+  request: FastifyRequest<{
+    Body: RequestDto;
+    Params: ParamsDto;
+    Querystring: z.infer<typeof QuerySchema>
+  }>,
+  reply: FastifyReply
+) {
+  // Handler implementation
+}
+```
+
+### Schema Validation
+- All request/response data is validated using Zod schemas
+- Schemas are converted to JSON Schema using `zodToJsonSchema`
+- Schemas are typically imported from corresponding `.schemas.ts` files
+- Common schema validations:
+  - Request body
+  - URL parameters
+  - Query parameters
+  - Response body
+  - Error responses (using ApiResponseErrorSchema)
+- Always include examples in schema definitions when possible using the `examples` property:
+  ```typescript
+  schema: {
+    body: {
+      ...zodToJsonSchema(UserSchema),
+      examples: [
+        {
+          firstName: "John",
+          lastName: "Doe",
+          email: "john.doe@example.com"
+        }
+      ]
+    }
+  }
+  ```
+  These examples help with API documentation and testing.
+
+### Service Pattern
+- Business logic is delegated to services
+- Services are accessed via `this.domain`
+- Available services are defined in the file "domain.module.ts"
+- Each controller typically uses services matching its domain
+
+```typescript
+const { userService, assetService } = this.;
+```
+
+### Response Handling
+- Return the results directly when the status code is 200
+- Creating new entities should return HTTP status code 201
+- Errors use standard error responses (400, 404)
+- Response data is validated against schemas before sending
+- Responses can be sent using `reply.send()` or by returning data
+
+```
+// Just return the results when the status code is 200
+fastify.route({
+  method: 'GET',
+  url: '/users/:userId',
+  handler: async function (request: FastifyRequest<{ Params: UserGetPathParamsDto }>) {
+    const { userService } = this.services;
+
+    const user = await userService.getById(request.params.userId);
+
+    return {
+      user,
+    };
+  },
+});
+
+// Return 201 when creating new entities
+fastify.route({
+  method: 'POST',
+  url: '/users',
+  handler: async function (request: FastifyRequest<{ Body: ... }>) {
+    const { userService } = this.services;
+    const newUser = await userService.create(request.params.userData);
+    return reply.status(201).send(newUser);
+  },
+});
+```
+
+### Error Handling
+- Domain-specific errors are imported and handled appropriately
+- Common error responses use `ApiResponseErrorSchema`
+- Not found conditions return 404 using `reply.notFound()`
+
+### Authentication & Authorization
+- Controllers can access session data via `request.session`
+- Partner-specific routes check `partnerId` from session
+
+### Naming Conventions
+- Route paths use kebab-case (`/asset-files`)
+- Handler functions are async and use function keyword
+- Schema names are PascalCase and descriptive of their purpose
+- DTOs (Data Transfer Objects) end with `Dto` suffix
+
+## Examples
+
+```typescript
+// address.controller.ts
+import type { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
+import type { z } from 'zod';
+
+import { zodToJsonSchema, ApiResponseErrorSchema, ServiceUnavailableError } from '@namespace/shared';
+import { isGoogleEnabled, getAutocompleteSuggestions } from '@namespace/google-client';
+import { AddressSchema, AddressPartialSchema } from '@namespace/address-helpers';
+import {
+  AddressIdParamsSchema,
+  AddressGetResponseSchema,
+  AddressAutocompleteQuerySchema,
+  AddressAutocompleteResponseSchema,
+} from '../schemas/address.schemas';
+
+export default function AddressController(fastify: FastifyInstance) {
+  fastify.route({
+    method: 'GET',
+    url: '/addresses/:addressId',
+    schema: {
+      params: zodToJsonSchema(AddressIdParamsSchema),
+      response: {
+        200: zodToJsonSchema(AddressGetResponseSchema),
+        404: zodToJsonSchema(ApiResponseErrorSchema),
+      },
+    },
+    async handler(request: FastifyRequest<{ Params: z.infer<typeof AddressIdParamsSchema> }>) {
+      const { addressId } = request.params;
+      const { address: { addressService } } = this.domain;
+
+      const address = await addressService.getById(addressId);
+
+      return {
+        address: AddressSchema.parse(address),
+      };
+    },
+  });
+
+  fastify.route({
+    method: 'GET',
+    url: '/google/autocomplete',
+    schema: {
+      querystring: zodToJsonSchema(AddressAutocompleteQuerySchema),
+      response: {
+        200: zodToJsonSchema(AddressAutocompleteResponseSchema),
+        503: zodToJsonSchema(ApiResponseErrorSchema),
+      },
+    },
+    async handler(
+      request: FastifyRequest<{
+        Querystring: z.infer<typeof AddressAutocompleteQuerySchema>;
+      }>,
+    ) {
+      const { searchTerm } = request.query;
+
+      if (!isGoogleEnabled) {
+        throw new ServiceUnavailableError('Google service is not available');
+      }
+
+      const suggestions = await getAutocompleteSuggestions(searchTerm);
+
+      return { suggestions };
+    },
+  });
+
+  fastify.route({
+    method: 'POST',
+    url: '/addresses',
+    schema: {
+      body: {
+        ...zodToJsonSchema(AddressPartialSchema),
+        examples: [
+          {
+            streetName: 'Baylor',
+            streetNumber: '123',
+            city: 'Austin',
+            stateCode: 'TX',
+            zip: '12345',
+          },
+        ],
+      },
+      response: {
+        201: zodToJsonSchema(AddressGetResponseSchema),
+        400: zodToJsonSchema(ApiResponseErrorSchema),
+      },
+    },
+    async handler(
+      request: FastifyRequest<{ Body: z.infer<typeof AddressPartialSchema> }>,
+      reply: FastifyReply,
+    ) {
+      const { address: { addressService } } = this.services;
+      const address = await addressService.getOrCreate(request.body);
+
+      return reply.status(201).send({
+        address: AddressSchema.parse(address),
+      });
+    },
+  });
+}
+```

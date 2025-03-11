@@ -1,0 +1,62 @@
+{
+  "name": "lambda-backend",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "infra/lambda-backend/src",
+  "projectType": "application",
+  "tags": [],
+  "implicitDependencies": ["slack-message", "pdf-generator"],
+  "targets": {
+    "build": {
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "platform": "node",
+        "outputPath": "dist/infra/lambda-backend",
+        "format": ["cjs"],
+        "bundle": false,
+        "main": "infra/lambda-backend/src/main.ts",
+        "tsConfig": "infra/lambda-backend/tsconfig.app.json",
+        "assets": [],
+        "generatePackageJson": true,
+        "esbuildOptions": {
+          "sourcemap": true,
+          "outExtension": {
+            ".js": ".js"
+          }
+        }
+      },
+      "configurations": {
+        "development": {},
+        "production": {
+          "esbuildOptions": {
+            "sourcemap": false,
+            "outExtension": {
+              ".js": ".js"
+            }
+          }
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "dependsOn": ["build"],
+      "options": {
+        "buildTarget": "lambda-backend:build",
+        "runBuildTargetDependencies": false
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "lambda-backend:build:development"
+        },
+        "production": {
+          "buildTarget": "lambda-backend:build:production"
+        }
+      }
+    },
+    "test": {
+      "executor": "nx:noop"
+    }
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "name": "slack-message",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "lambdas/slack-message/src",
+  "projectType": "application",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "platform": "node",
+        "outputPath": "dist/lambdas/slack-message",
+        "format": ["cjs"],
+        "bundle": false,
+        "main": "lambdas/slack-message/src/main.ts",
+        "tsConfig": "lambdas/slack-message/tsconfig.app.json",
+        "assets": ["lambdas/slack-message/src/assets"],
+        "generatePackageJson": true,
+        "esbuildOptions": {
+          "sourcemap": true,
+          "outExtension": {
+            ".js": ".js"
+          }
+        }
+      },
+      "configurations": {
+        "development": {},
+        "production": {
+          "esbuildOptions": {
+            "sourcemap": false,
+            "outExtension": {
+              ".js": ".js"
+            }
+          }
+        }
+      }
+    },
+    "npm-install": {
+      "dependsOn": ["build"],
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npm ci --omit=optional",
+        "cwd": "dist/lambdas/slack-message"
+      }
+    }
+  }
+}

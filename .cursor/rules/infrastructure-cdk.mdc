@@ -1,0 +1,220 @@
+---
+description: Describes the patterns used in CDK infrastructure files
+globs: infra/cdk/**/*.ts
+alwaysApply: false
+---
+# CDK Infrastructure Patterns
+
+## File Structure
+- CDK files are organized in `/infra/cdk/` directory
+- Standard files:
+  - `bin/main.ts` - Main CDK app entry point
+  - `stacks/*.stack.ts` - Stack definitions
+  - `assets/` - Stack assets
+
+## Core Patterns
+
+### CDK App Organization
+- CDK using TypeScript
+- Main app entry point handles environment setup
+- Stack creation is organized by functionality
+- Environment-based configuration
+- Clear stack dependencies
+
+```typescript
+export function processCdkApp(app: cdk.App, env: Record<string, string>) {
+  const awsEnv = {
+    account: env.AWS_ACCOUNT_ID,
+    region: env.AWS_REGION,
+  };
+
+  // Create stacks
+  new MyStack(app, `${environment}-MyStack`, {
+    env: awsEnv,
+    // Stack props
+  });
+}
+```
+
+### Stack Definition
+- Each stack extends `cdk.Stack`
+- Clear interface for stack properties
+- Resource organization by functionality
+- Resource naming follows environment patterns
+
+```typescript
+interface MyStackProps extends cdk.StackProps {
+  environment: string;
+  // Other props
+}
+
+export class MyStack extends cdk.Stack {
+  constructor(scope: Construct, id: string, props: MyStackProps) {
+    super(scope, id, props);
+    // Stack implementation
+  }
+}
+```
+
+### Resource Naming
+- Include environment in resource names
+- Use consistent naming patterns
+- Clear and descriptive identifiers
+- Follow AWS naming restrictions
+
+```typescript
+const resourceName = `${environment}-${resourceType}-${purpose}`;
+```
+
+### Environment Configuration
+- Use environment variables for configuration
+- Validate required variables
+- Support different environments (dev/staging/prod)
+- Handle environment-specific settings
+
+```typescript
+function validateEnvironment(env: Record<string, string>): void {
+  if (!env.REQUIRED_VAR) {
+    throw new Error('REQUIRED_VAR is not set');
+  }
+}
+```
+
+### Security Groups
+- Define clear ingress/egress rules
+- Group related resources
+- Use VPC CIDR blocks appropriately
+- Document security group purposes
+
+```typescript
+const securityGroup = new ec2.SecurityGroup(this, id, {
+  vpc,
+  description: 'Clear description of purpose',
+  allowAllOutbound: true,
+});
+
+securityGroup.addIngressRule(
+  ec2.Peer.ipv4(vpc.vpcCidrBlock),
+  ec2.Port.tcp(port),
+);
+```
+
+### VPC Configuration
+- Use existing VPCs when possible
+- Configure appropriate subnet types
+- Handle VPC lookups properly
+- Define clear networking rules
+
+```typescript
+const vpc = ec2.Vpc.fromLookup(this, id, {
+  vpcId: props.vpcId,
+});
+```
+
+### Lambda Configuration
+- Configure memory and timeout using the settings from [lambda.settings.ts](mdc:NAMESPACE/NAMESPACE/lib/lambda/src/lambda.settings.ts)
+- Set appropriate IAM roles
+- Handle environment variables
+- Configure VPC access if needed
+- Support different runtimes
+
+```typescript
+new lambda.Function(this, id, {
+  runtime: lambda.Runtime.NODEJS_20_X,
+  handler: 'index.handler',
+  code: lambda.Code.fromAsset(path),
+  environment: variables,
+  vpc: vpc,
+});
+```
+
+### Database Configuration
+- Secure database access
+- Configure appropriate instance types
+- Set up security groups
+- Handle credentials securely
+- Configure backup and maintenance
+
+```typescript
+new rds.DatabaseInstance(this, id, {
+  engine: rds.DatabaseInstanceEngine.postgres({ version }),
+  vpc: vpc,
+  instanceType: ec2.InstanceType.of(class, size),
+  securityGroups: [dbSecurityGroup],
+});
+```
+
+### Monitoring & Logging
+- Configure CloudWatch logs
+- Set up monitoring
+- Define alarms
+- Configure third-party monitoring (e.g., Datadog)
+
+```typescript
+new logs.LogGroup(this, id, {
+  retention: logs.RetentionDays.ONE_MONTH,
+  removalPolicy: cdk.RemovalPolicy.DESTROY,
+});
+```
+
+### Best Practices
+- Use TypeScript for type safety
+- Document stack purposes
+- Handle cleanup properly
+- Use meaningful resource names
+- Configure appropriate permissions
+- Follow AWS best practices
+- Handle errors gracefully
+- Use constants for repeated values
+- Consider cost implications
+- Document infrastructure decisions
+
+## Example Stack Structure
+
+```typescript
+import * as cdk from 'aws-cdk-lib';
+import * as ec2 from 'aws-cdk-lib/aws-ec2';
+
+interface MyStackProps extends cdk.StackProps {
+  environment: string;
+  vpcId: string;
+}
+
+export class MyStack extends cdk.Stack {
+  constructor(scope: Construct, id: string, props: MyStackProps) {
+    super(scope, id, props);
+
+    // Validate props
+    if (!props.vpcId) {
+      throw new Error('VPC_ID is not set');
+    }
+
+    // Get VPC
+    const vpc = ec2.Vpc.fromLookup(this, `${props.environment}-Vpc`, {
+      vpcId: props.vpcId,
+    });
+
+    // Create resources
+    const securityGroup = new ec2.SecurityGroup(
+      this,
+      `${props.environment}-SecurityGroup`,
+      {
+        vpc,
+        description: 'Security group description',
+      }
+    );
+
+    // Configure resources
+    securityGroup.addIngressRule(
+      ec2.Peer.ipv4(vpc.vpcCidrBlock),
+      ec2.Port.tcp(443)
+    );
+
+    // Output important values
+    new cdk.CfnOutput(this, 'OutputName', {
+      value: 'output-value',
+      description: 'Output description',
+    });
+  }
+}
+```

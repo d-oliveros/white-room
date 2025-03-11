@@ -1,0 +1,109 @@
+---
+description: Describes the patterns used for implementing core functionality
+globs: core/*
+---
+# Core Feature Implementation Guide
+
+## Overview
+This guide describes the process of implementing core functionality in the application. Core functionality is composed of domain models, services, and API endpoints. Follow these steps in order when implementing a new feature or modifying existing ones.
+
+## Implementation Steps
+
+### 1. Domain Model Analysis
+- Location: `/core/domain/src/{domain}/**/*.model.ts`
+- Analyze existing domain models to determine if:
+  - A new domain model is needed
+  - Existing models need new fields
+  - Existing models need new methods
+- If creating a new model:
+  - Follow TypeORM entity patterns
+  - Use appropriate decorators (@Entity, @Column, etc.)
+  - Define relationships with other entities
+  - Implement domain-specific methods
+- If updating existing model:
+  - Maintain backward compatibility
+  - Update related migration files if needed
+  - Update model methods if behavior changes
+
+### 2. Schema Updates
+- Location: `/core/domain/src/{domain}/**/*.schemas.ts`
+- For new models:
+  - Create base schema (EntitySchema)
+  - Create input schemas (EntityCreateSchema, EntityUpdateSchema)
+  - Define validation rules using Zod
+- For updated models:
+  - Update existing schemas to match model changes
+  - Maintain backward compatibility
+  - Add new validation rules as needed
+- Export TypeScript types using z.infer<typeof Schema>
+
+### 3. Service Implementation
+- Location: `/core/domain/src/{domain}/**/*.service.ts`
+- Analyze existing services to determine:
+  - If new service methods are needed
+  - If existing methods need updates
+- For new services:
+  - Create service class with appropriate dependencies
+  - Implement business logic methods
+  - Handle error cases
+  - Emit domain events when needed
+- For updated services:
+  - Add new methods or update existing ones
+  - Maintain backward compatibility
+  - Update error handling
+  - Update event emission if needed
+
+### 4. Error Handling
+- Location: `/core/domain/src/{domain}/**/*.errors.ts`
+- Create or update domain-specific error classes
+- Extend from appropriate base error classes
+- Use descriptive error names and messages
+- Include relevant error details
+
+### 5. Unit Testing
+- Location: `/core/domain/test/**/*.spec.ts`
+- For new functionality:
+  - Create test factories if needed
+  - Write comprehensive test cases
+  - Test happy path and error cases
+  - Test edge cases and validation
+- For updated functionality:
+  - Update existing tests
+  - Add new test cases
+  - Ensure backward compatibility
+- Use TestService for setup and teardown
+
+### 6. API Integration
+- Location: `/core/api/src/**/*.ts`
+- Determine if service methods should be exposed via API
+- If exposing new endpoints:
+  - Create route handlers
+  - Define request/response schemas
+  - Implement input validation
+  - Add appropriate error handling
+  - Document API endpoints
+- If updating existing endpoints:
+  - Maintain backward compatibility
+  - Update validation schemas
+  - Update documentation
+
+## Best Practices
+- Follow TypeScript strict mode guidelines
+- Never use "any" types
+- Use dependency injection for services
+- Write comprehensive unit tests
+- Document public APIs
+- Handle errors gracefully
+- Emit domain events for significant state changes
+- Keep services focused and single-responsibility
+- Use appropriate access modifiers (private/protected/public)
+- Follow existing patterns in the codebase
+
+## Related Rules
+- domain-model: Details about domain model implementation
+- domain-service: Service implementation patterns
+- domain-repository: Repository patterns
+- schema: Schema definition patterns
+- api-controller: API endpoint implementation
+- domain-service-test: Testing patterns
+- Always load all the related rules when working with a core feature in composer
