@@ -92,13 +92,6 @@ describe('User Getters', () => {
 - Use factories to create test data
 - Create minimal data needed for each test
 - Use descriptive variable names for test entities
-- Clean up data between tests, only if needed. Try not to clean data between tests unless really needed. Ideally you can use different data when creating entities
-
-```typescript
-import { resetDbData } from '../testHelpers';
-...
-after(() => resetDbData());
-```
 
 ### Assertions
 - Use Jest's expect assertions
