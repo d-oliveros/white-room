@@ -1,7 +1,7 @@
 services:
   namespace-postgres:
     container_name: namespace-postgres
-    image: postgis/postgis:16-3.4-alpine
+    image: postgres:16-alpine
     shm_size: 2g
     restart: always
     environment:
@@ -10,6 +10,4 @@ services:
       POSTGRES_DB: ${CORE_DB_NAME}
     ports:
       - ${CORE_DB_PORT}:5432
-    volumes:
-      - ./.docker-db:/docker-entrypoint-initdb.d
 #
