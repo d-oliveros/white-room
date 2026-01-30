@@ -5,7 +5,7 @@ export default function TestingController(fastify: FastifyInstance) {
     method: 'GET',
     url: '/testing-hello',
     handler: () => {
-      return { ok: true };
+      return { ok: true, now: Date.now() };
     },
   });
 }
