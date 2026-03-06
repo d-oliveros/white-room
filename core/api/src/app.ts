@@ -67,6 +67,15 @@ export function app(fastify: FastifyInstance, opts: AppOptions) {
       return { status: 'ok' };
     },
   });
+
+  // Test health route
+  fastify.route({
+    method: 'GET',
+    url: '/testing-1234',
+    handler: () => {
+      return { ok: true };
+    },
+  });
 }
 
 /**
