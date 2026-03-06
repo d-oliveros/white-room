@@ -44,6 +44,7 @@ const LoginForm = ({ onSubmit, isLoading, error }: LoginFormProps) => {
       isLoading={isLoading}
       error={error}
       submitText="Log In"
+      enableEnterKeyNavigation
     />
   );
 };
